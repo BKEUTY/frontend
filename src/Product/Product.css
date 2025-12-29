@@ -134,6 +134,10 @@
     align-items: center;
 }
 
+.add_cart {
+    cursor: pointer;
+}
+
 .section3 {
     padding: 0 var(--general_padding_left_right);
 }

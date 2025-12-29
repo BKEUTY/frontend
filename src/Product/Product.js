@@ -1,4 +1,5 @@
 import "./Product.css";
+import { useEffect, useState } from "react";
 import banner_image from "../Assets/Images/image_84.svg";
 import best_selling_image from "../Assets/Images/product image.svg";
 import about_image from "../Assets/Images/Frame 26085715.svg";
@@ -6,6 +7,47 @@ import blog_image from "../Assets/Images/blog image.svg";
 import search_image from "../Assets/Images/Vector.svg";
 
 export default function Product() {
+  const [products, setProducts] = useState([]);
+
+  useEffect(() => {
+    fetch(
+      "https://capstoneproject.orangedesert-3e8e63bd.eastasia.azurecontainerapps.io/api/product"
+    )
+      .then((res) => res.json())
+      .then((data) => setProducts(data))
+      .catch((err) => console.error(err));
+  }, []);
+
+  const handleAddToCart = async (e) => {
+    const productId = e.currentTarget
+      .closest(".product_item")
+      .getAttribute("id");
+    try {
+      const response = await fetch(
+        "https://capstoneproject.orangedesert-3e8e63bd.eastasia.azurecontainerapps.io/api/cart",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            productId: productId,
+            userId: 1,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Thêm vào giỏ hàng thất bại");
+      }
+
+      const data = await response.json();
+      console.log("Thêm vào giỏ hàng thành công:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <main>
       <section className="section1">
@@ -125,245 +167,30 @@ export default function Product() {
             </div>
           </section>
           <section className="section2_row3_col2">
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
+            {products.map((product) => (
+              <div id={product.productId} className="product_item">
+                <img
+                  className="product_image"
+                  loading="lazy"
+                  decoding="async"
+                  src={best_selling_image} //Có thể trang web chặn load product.image
+                  alt="icon"
+                />
 
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
+                <div className="product_text ">
+                  <h4 className="product_name">{product.name}</h4>
+                  <h5 className="product_description">{product.description}</h5>
+                  <div className="product_bottom">
+                    <h4 className="product_price">
+                      {product.price.toLocaleString("vi-VN")}đ
+                    </h4>
+                    <span className="add_cart" onClick={handleAddToCart}>
+                      🛒
+                    </span>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="product_item ">
-              <img
-                className="product_image"
-                loading="lazy"
-                decoding="async"
-                src={best_selling_image}
-                alt="icon"
-              />
-
-              <div className="product_text ">
-                <h4 className="product_name">
-                  Beautya Capture Total Dreamskin Care & Perfect
-                </h4>
-                <h5 className="product_description">
-                  Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                  Hydration
-                </h5>
-                <div className="product_bottom">
-                  <h4 className="product_price">76000đ</h4>
-                  <span className="add_cart">🛒</span>
-                </div>
-              </div>
-            </div>
+            ))}
           </section>
         </section>
       </section>

@@ -38,14 +38,15 @@
     text-align: center;
 }
 
-.cart_field_value {
+.cart_field_value_item {
     display: flex;
     border-top: 2px solid rgb(223, 223, 223);
     border-bottom: 2px solid rgb(223, 223, 223);
     height: 300px;
     margin-top: 20px;
-
 }
+
+
 
 .cart_field_value_product {
     width: 35%;

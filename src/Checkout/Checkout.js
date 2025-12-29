@@ -1,9 +1,42 @@
 import "./Checkout.css";
+import { useLocation } from "react-router-dom";
 import master_card_image from "../Assets/Images/Mastercard.svg";
 import visa_image from "../Assets/Images/Visa.svg";
 import apple_pay_image from "../Assets/Images/ApplePay.svg";
 
 export default function Cart() {
+  const { state } = useLocation();
+  const cartIds = state?.cartIds;
+
+  const handleCheckout = async (e) => {
+    try {
+      const response = await fetch(
+        "https://capstoneproject.orangedesert-3e8e63bd.eastasia.azurecontainerapps.io/api/order",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userId: 1,
+            paymentMethod: "direct",
+            address: "string",
+            orderItems: cartIds.map((id) => ({ cartItemId: id })),
+          }),
+        }
+      );
+      // const a = [cartIds.map((id) => ({ cartItemId: id }))];
+      // console.log(a);
+      if (!response.ok) {
+        throw new Error("Thanh toán thất bại");
+      }
+
+      const data = await response.json();
+      console.log("Thanh toán thành công:", data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <main className="checkout">
       <div className="checkout_title">Thanh Toán</div>
@@ -109,7 +142,10 @@ export default function Cart() {
               <p>100000đ</p>
             </div>
 
-            <button className="checkout_section1_col2_bt checkout_bt">
+            <button
+              className="checkout_section1_col2_bt checkout_bt"
+              onClick={handleCheckout}
+            >
               Thanh Toán
             </button>
           </section>

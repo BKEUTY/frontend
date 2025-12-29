@@ -25,14 +25,13 @@ export default function Cart() {
           }),
         }
       );
-      // const a = [cartIds.map((id) => ({ cartItemId: id }))];
-      // console.log(a);
       if (!response.ok) {
         throw new Error("Thanh toán thất bại");
       }
 
       const data = await response.json();
       console.log("Thanh toán thành công:", data);
+      alert("Thanh toán thành công!");
     } catch (error) {
       console.error(error);
     }

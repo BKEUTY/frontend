@@ -43,6 +43,7 @@ export default function Product() {
 
       const data = await response.json();
       console.log("Thêm vào giỏ hàng thành công:", data);
+      alert("Thêm vào giỏ hàng thành công!");
     } catch (error) {
       console.error(error);
     }

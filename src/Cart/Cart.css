@@ -143,14 +143,10 @@
     display: flex;
     justify-content: space-between;
     margin-top: 30px;
+    color: var(--color_general_text);
 }
 
 .cart_all_sum_bt {
     width: 100%;
-    background-color: black;
-    color: white;
-    border-radius: 20px;
-    height: 50px;
-    margin-top: 20px;
-    font-size: 20px;
+
 }

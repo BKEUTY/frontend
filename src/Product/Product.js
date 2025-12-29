@@ -59,7 +59,7 @@ export default function Product() {
             </div>
 
             <div className="filter">
-              <h2 className="filter_title">Filter 1</h2>
+              <h2 className="filter_title">Lọc 1</h2>
 
               <label class="filter_item">
                 <input type="checkbox" />
@@ -81,7 +81,7 @@ export default function Product() {
             </div>
 
             <div className="filter2">
-              <h2 className="filter2_title">Filter 2</h2>
+              <h2 className="filter2_title">Lọc 2</h2>
 
               <label class="filter2_item">
                 <input type="checkbox" />
@@ -103,7 +103,7 @@ export default function Product() {
             </div>
 
             <div className="filter3">
-              <h2 className="filter3_title">Filter 3</h2>
+              <h2 className="filter3_title">Lọc 3</h2>
 
               <label class="filter3_item">
                 <input type="checkbox" />
@@ -143,7 +143,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -167,7 +167,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -215,7 +215,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -239,7 +239,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -263,7 +263,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -287,7 +287,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -311,7 +311,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -335,7 +335,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -359,7 +359,7 @@ export default function Product() {
                   Hydration
                 </h5>
                 <div className="product_bottom">
-                  <h4 className="product_price">$76.00</h4>
+                  <h4 className="product_price">76000đ</h4>
                   <span className="add_cart">🛒</span>
                 </div>
               </div>
@@ -388,7 +388,7 @@ export default function Product() {
                 Plumping Gloss - Instant and Long-Term Volume Effect - 24h
                 Hydration
               </p>
-              <h3 className="best_selling_price">$76.00</h3>
+              <h3 className="best_selling_price">76000đ</h3>
             </div>
           </div>
 
@@ -409,7 +409,7 @@ export default function Product() {
                 Plumping Gloss - Instant and Long-Term Volume Effect - 24h
                 Hydration
               </h5>
-              <h3 className="best_selling_price">$76.00</h3>
+              <h3 className="best_selling_price">76000đ</h3>
             </div>
           </div>
 
@@ -430,7 +430,7 @@ export default function Product() {
                 Plumping Gloss - Instant and Long-Term Volume Effect - 24h
                 Hydration
               </h5>
-              <h3 className="best_selling_price">$76.00</h3>
+              <h3 className="best_selling_price">76000đ</h3>
             </div>
           </div>
 
@@ -451,7 +451,7 @@ export default function Product() {
                 Plumping Gloss - Instant and Long-Term Volume Effect - 24h
                 Hydration
               </h5>
-              <h3 className="best_selling_price">$76.00</h3>
+              <h3 className="best_selling_price">76000đ</h3>
             </div>
           </div>
         </div>

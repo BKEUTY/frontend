@@ -1,7 +1,13 @@
 import "./Cart.css";
+import { useNavigate } from "react-router-dom";
 import product_cart_image from "../Assets/Images/Rectangle 119.svg";
 
 export default function Cart() {
+  const navigate = useNavigate();
+
+  const handleCheckout = () => {
+    navigate("/checkout");
+  };
   return (
     <main className="cart">
       <div className="cart_title">Giỏ Hàng</div>
@@ -28,7 +34,7 @@ export default function Cart() {
               <p className="cart_field_value_product_delete">Xóa </p>
             </div>
           </div>
-          <p className="cart_field_value_price">$14.90</p>
+          <p className="cart_field_value_price">14900đ</p>
           <div className="cart_field_value_count">
             <div className="cart_field_value_count_box">
               <button className="cart_field_value_count_minus">-</button>
@@ -39,7 +45,7 @@ export default function Cart() {
           <div className="cart_field_value_sum">
             <p></p>
             <p>Tổng</p>
-            <p>$14.90</p>
+            <p>14900đ</p>
           </div>
         </div>
 
@@ -58,7 +64,7 @@ export default function Cart() {
               <p className="cart_field_value_product_delete">Xóa </p>
             </div>
           </div>
-          <p className="cart_field_value_price">$14.90</p>
+          <p className="cart_field_value_price">14900đ</p>
           <div className="cart_field_value_count">
             <div className="cart_field_value_count_box">
               <button className="cart_field_value_count_minus">-</button>
@@ -69,7 +75,7 @@ export default function Cart() {
           <div className="cart_field_value_sum">
             <p></p>
             <p>Tổng</p>
-            <p>$14.90</p>
+            <p>14900đ</p>
           </div>
         </div>
 
@@ -88,7 +94,7 @@ export default function Cart() {
               <p className="cart_field_value_product_delete">Xóa </p>
             </div>
           </div>
-          <p className="cart_field_value_price">$14.90</p>
+          <p className="cart_field_value_price">14900đ</p>
           <div className="cart_field_value_count">
             <div className="cart_field_value_count_box">
               <button className="cart_field_value_count_minus">-</button>
@@ -99,7 +105,7 @@ export default function Cart() {
           <div className="cart_field_value_sum">
             <p></p>
             <p>Tổng</p>
-            <p>$14.90</p>
+            <p>14900đ</p>
           </div>
         </div>
       </div>
@@ -109,16 +115,21 @@ export default function Cart() {
           <label class="filter_item">
             <input type="checkbox" />
             <span class="checkmark"></span>
-            For <span className="cart_all_sum_tax">$10.00</span> please wrap the
-            product
+            Với <span className="cart_all_sum_tax">15000đ</span> vui lòng gói
+            sản phẩm giúp tôi
           </label>
           <div className="cart_all_sum_line"></div>
           <div className="cart_all_sum_value">
             <p>Tổng cộng</p>
-            <p>$100.00</p>
+            <p>100000đ</p>
           </div>
 
-          <button className="cart_all_sum_bt">Checkout</button>
+          <button
+            className="cart_all_sum_bt checkout_bt"
+            onClick={handleCheckout}
+          >
+            Thanh Toán
+          </button>
         </div>
       </div>
     </main>

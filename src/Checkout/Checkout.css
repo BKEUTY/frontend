@@ -1,0 +1,114 @@
+.checkout {
+    padding: 0 var(--general_padding_left_right3);
+}
+
+.checkout_title {
+    font-size: 42px;
+    text-align: center;
+    padding-top: var(--general_padding_top_bottom);
+    font-weight: 700;
+}
+
+.checkout_section1 {
+    display: flex;
+    gap: 5%;
+    padding-top: var(--general_padding_top_bottom);
+}
+
+.checkout_section1_col1 {
+    width: 70%;
+}
+
+.checkout_section1_col2 {
+    width: 30%;
+}
+
+.checkout_section1_box {
+    background-color: rgb(222, 222, 222);
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.checkout_line {
+    border-bottom: 2px solid black;
+}
+
+.checkout_input {
+    color: white;
+    background-color: rgb(143, 141, 139);
+    border: none;
+    border-radius: 40px;
+    outline: none;
+    font-size: 20px;
+    height: 50px;
+    padding: 0 15px;
+}
+
+input::placeholder {
+    color: white
+}
+
+.checkout_section1_name {
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.checkout_section1_cus_name {
+    margin-top: 20px;
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.checkout_section1_cus_container {
+    padding-top: 30px;
+    display: flex;
+    gap: 2%;
+    width: 100%;
+}
+
+.checkout_section1_cus_phone,
+.checkout_section1_cus_email {
+    width: 50%;
+}
+
+.checkout_section1_add {
+    margin-top: 50px;
+}
+
+.checkout_section1_add_container {
+    display: flex;
+    gap: 2%;
+    margin-top: 40px;
+}
+
+.checkout_section1_add_address {
+    width: 60%;
+}
+
+.checkout_section1_add_zip {
+    width: 40%;
+}
+
+.checkout_section1_add_container2 {
+    display: flex;
+    gap: 2%;
+    margin-top: 30px;
+}
+
+.checkout_section1_add_phone {
+    width: 50%;
+}
+
+.checkout_section1_add_email {
+    width: 50%;
+}
+
+.checkout_section1_voucher {
+    margin-top: 50px;
+}
+
+.checkout_section1_voucher_name {
+    box-sizing: border-box;
+    margin-top: 20px;
+    width: 100%;
+}

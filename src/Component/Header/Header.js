@@ -101,7 +101,7 @@ export default function Header() {
             alt="icon"
           />
           <Link className="nav_item2_text" to="/account">
-            <h4>Chào, Duy</h4>
+            <h4>Chào, Phong</h4>
           </Link>
         </li>
       </ul>

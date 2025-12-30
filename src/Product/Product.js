@@ -1,13 +1,16 @@
 import "./Product.css";
 import { useEffect, useState } from "react";
+import { useNotification } from "../Context/NotificationContext";
 import banner_image from "../Assets/Images/image_84.svg";
 import best_selling_image from "../Assets/Images/product image.svg";
 import about_image from "../Assets/Images/Frame 26085715.svg";
 import blog_image from "../Assets/Images/blog image.svg";
 import search_image from "../Assets/Images/Vector.svg";
+import cart_icon from "../Assets/Images/flowbite_cart-outline.svg";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
+  const notify = useNotification();
 
   useEffect(() => {
     fetch(
@@ -43,7 +46,7 @@ export default function Product() {
 
       const data = await response.json();
       console.log("Thêm vào giỏ hàng thành công:", data);
-      alert("Thêm vào giỏ hàng thành công!");
+      notify("Thêm vào giỏ hàng thành công!");
     } catch (error) {
       console.error(error);
     }
@@ -186,7 +189,7 @@ export default function Product() {
                       {product.price.toLocaleString("vi-VN")}đ
                     </h4>
                     <span className="add_cart" onClick={handleAddToCart}>
-                      🛒
+                      <img src={cart_icon} alt="Add to cart" style={{ width: '24px', height: '24px', cursor: 'pointer' }} />
                     </span>
                   </div>
                 </div>

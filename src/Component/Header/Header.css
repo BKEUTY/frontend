@@ -39,15 +39,21 @@ header {
     width: 70%;
     display: flex;
     align-items: center;
+    justify-content: space-around;
 }
 
 .nav_item {
-    width: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
 }
 
 .icon_nav_item {
-    transform: translateY(5px);
-    padding-right: 3%;
+    margin-right: 5px;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
 }
 
 .header_product_image {

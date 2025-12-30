@@ -1,26 +1,42 @@
 import "./Checkout.css";
 import { useLocation } from "react-router-dom";
+import { useNotification } from "../Context/NotificationContext";
 import master_card_image from "../Assets/Images/Mastercard.svg";
 import visa_image from "../Assets/Images/Visa.svg";
 import apple_pay_image from "../Assets/Images/ApplePay.svg";
 
-export default function Cart() {
+export default function Checkout() {
   const { state } = useLocation();
-  const cartIds = state?.cartIds;
+  const cartIds = state?.cartIds || [];
+  const subTotal = state?.subTotal || 0;
+  const wrappingFee = state?.wrappingFee || 0;
+  // Hardcoded shipping fee as per original design's spirit, or can be 0 if 'wrapping' implies shipping.
+  // Original had "Vận chuyển 20000d".
+  const shippingFee = 20000;
+  const discount = 0;
+
+  const grandTotal = subTotal + wrappingFee + shippingFee - discount;
+
+  const notify = useNotification();
 
   const handleCheckout = async (e) => {
+    if (!cartIds || cartIds.length === 0) {
+      notify("Không có sản phẩm để thanh toán!");
+      return;
+    }
+
     try {
       const response = await fetch(
-        "https://capstoneproject.orangedesert-3e8e63bd.eastasia.azurecontainerapps.io/api/order",
+        `${process.env.REACT_APP_API_URL}/order`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: 1,
+            userId: 1, // Fixed user ID as per instructions
             paymentMethod: "direct",
-            address: "string",
+            address: "string", // Placeholder
             orderItems: cartIds.map((id) => ({ cartItemId: id })),
           }),
         }
@@ -31,9 +47,10 @@ export default function Cart() {
 
       const data = await response.json();
       console.log("Thanh toán thành công:", data);
-      alert("Thanh toán thành công!");
+      notify("Thanh toán thành công!");
     } catch (error) {
       console.error(error);
+      notify("Có lỗi xảy ra, vui lòng thử lại.");
     }
   };
   return (
@@ -120,25 +137,32 @@ export default function Cart() {
             </p>
             <p className="checkout_line"></p>
             <div className="checkout_section1_sum key_value_position">
-              <p>Tổng</p>
-              <p>80000đ</p>
+              <p>Tổng tiền hàng</p>
+              <p>{subTotal.toLocaleString("vi-VN")}đ</p>
             </div>
+
+            {wrappingFee > 0 && (
+              <div className="checkout_section1_sum key_value_position">
+                <p>Phí gói quà</p>
+                <p>{wrappingFee.toLocaleString("vi-VN")}đ</p>
+              </div>
+            )}
 
             <div className="checkout_section1_discount key_value_position">
               <p>Giảm giá</p>
-              <p>0đ</p>
+              <p>{discount.toLocaleString("vi-VN")}đ</p>
             </div>
 
             <div className="checkout_section1_trans key_value_position">
               <p>Vận chuyển</p>
-              <p>20000đ</p>
+              <p>{shippingFee.toLocaleString("vi-VN")}đ</p>
             </div>
 
             <p className="checkout_line"></p>
 
             <div className="checkout_section1_all_sum key_value_position">
               <p>Tổng cộng</p>
-              <p>100000đ</p>
+              <p>{grandTotal.toLocaleString("vi-VN")}đ</p>
             </div>
 
             <button
@@ -154,9 +178,9 @@ export default function Cart() {
       <section className="checkout_section2">
         <p className="checkout_section1_name">Phương thức thanh toán</p>
         <p className="checkout_line"></p>
-        <label class="checkout_section2_filter filter_item">
+        <label className="checkout_section2_filter filter_item">
           <input type="checkbox" />
-          <span class="checkout_section2_checkmark checkmark"></span>
+          <span className="checkout_section2_checkmark checkmark"></span>
           Thanh toán khi nhận hàng
         </label>
         <div className="checkout_section2_payment_list">

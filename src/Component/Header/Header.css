@@ -16,6 +16,7 @@
 .nav_item2 a {
     text-decoration: none;
     font-weight: 700;
+    color: var(--color_main_title);
 }
 
 .nav_item a:visited,

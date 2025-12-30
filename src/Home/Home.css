@@ -1,0 +1,109 @@
+.home-container {
+    width: 100%;
+}
+
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, rgba(61, 2, 30, 0.6) 0%, rgba(61, 2, 30, 0.3) 100%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    color: white;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-brand {
+    color: var(--color_main_title);
+    font-family: 'Brush Script MT', cursive;
+    /* Fallback for a customized font */
+    font-size: 60px;
+}
+
+.hero-buttons {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-hero-primary {
+    background-color: var(--color_main_title);
+    color: white;
+    padding: 12px 60px;
+    border: 2px solid white;
+    /* Add white border given the image */
+    border-radius: 30px;
+    /* Rounded corners */
+    font-size: 16px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-hero-primary:hover {
+    background-color: #be005b;
+}
+
+.link-hero-secondary {
+    color: var(--color_main_title);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.link-hero-text {
+    color: white;
+    font-size: 14px;
+}
+
+.carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+    padding: 20px;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+
+.carousel-arrow:hover {
+    opacity: 1;
+}
+
+.arrow-left {
+    left: 20px;
+}
+
+.arrow-right {
+    right: 20px;
+}

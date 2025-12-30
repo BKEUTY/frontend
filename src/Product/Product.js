@@ -1,12 +1,12 @@
 import "./Product.css";
 import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
-import banner_image from "../Assets/Images/image_84.svg";
-import best_selling_image from "../Assets/Images/product image.svg";
-import about_image from "../Assets/Images/Frame 26085715.svg";
-import blog_image from "../Assets/Images/blog image.svg";
-import search_image from "../Assets/Images/Vector.svg";
-import cart_icon from "../Assets/Images/flowbite_cart-outline.svg";
+import banner_image from "../Assets/Images/Banners/image_84.svg";
+import best_selling_image from "../Assets/Images/Products/product image.svg";
+import about_image from "../Assets/Images/Banners/Frame 26085715.svg";
+import blog_image from "../Assets/Images/Banners/blog image.svg";
+import search_image from "../Assets/Images/Icons/Vector.svg";
+import cart_icon from "../Assets/Images/Icons/flowbite_cart-outline.svg";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -46,7 +46,7 @@ export default function Product() {
 
       const data = await response.json();
       console.log("Thêm vào giỏ hàng thành công:", data);
-      notify("Thêm vào giỏ hàng thành công!");
+      notify("Thêm vào giỏ hàng thành công!", "success");
     } catch (error) {
       console.error(error);
     }
@@ -94,13 +94,13 @@ export default function Product() {
               <input
                 className="price_range_input"
                 type="number"
-                placeholder="Min"
+                placeholder="Tối thiểu"
               />
               <span className="price_separator">-</span>
               <input
                 className="price_range_input"
                 type="number"
-                placeholder="Max"
+                placeholder="Tối đa"
               />
             </div>
 
@@ -110,19 +110,19 @@ export default function Product() {
               <label class="filter_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
 
               <label class="filter_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
 
               <label class="filter_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
             </div>
 
@@ -132,19 +132,19 @@ export default function Product() {
               <label class="filter2_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
 
               <label class="filter2_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
 
               <label class="filter2_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
             </div>
 
@@ -154,19 +154,19 @@ export default function Product() {
               <label class="filter3_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
 
               <label class="filter3_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
 
               <label class="filter3_item">
                 <input type="checkbox" />
                 <span class="checkmark"></span>
-                Checkbox with label
+                Tùy chọn
               </label>
             </div>
           </section>
@@ -216,8 +216,7 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </div>
               <p className="best_selling_description">
-                Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                Hydration
+                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
               </p>
               <h3 className="best_selling_price">76000đ</h3>
             </div>
@@ -237,8 +236,7 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </div>
               <h5 className="best_selling_description">
-                Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                Hydration
+                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
               </h5>
               <h3 className="best_selling_price">76000đ</h3>
             </div>
@@ -258,8 +256,7 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </div>
               <h5 className="best_selling_description">
-                Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                Hydration
+                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
               </h5>
               <h3 className="best_selling_price">76000đ</h3>
             </div>
@@ -279,8 +276,7 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </div>
               <h5 className="best_selling_description">
-                Plumping Gloss - Instant and Long-Term Volume Effect - 24h
-                Hydration
+                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
               </h5>
               <h3 className="best_selling_price">76000đ</h3>
             </div>
@@ -310,10 +306,10 @@ export default function Product() {
       </section>
 
       <section className="section5">
-        <h1 className="section5_title">Our Blog</h1>
+        <h1 className="section5_title">Góc Làm Đẹp</h1>
 
         <div className="section5_more_view">
-          <div>View All</div>
+          <div>Xem Tất Cả</div>
         </div>
 
         <div className="blog_list ">
@@ -331,13 +327,13 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </h2>
               <h5 className="blog_more_info">
-                Skincare | Dr. Wade Warren | Jan 20, 2021
+                Chăm sóc da | Bác sĩ Wade Warren | 20/01/2025
               </h5>
               <p className="blog_description">
-                Many people find it difficult to get clear skin. The methods for
-                getting clear skin will vary, depending on the person's skin
-                type. In general, people struggling with acne or blemishes have
-                skin that is dry, oily, or a combination of the two.
+                Nhiều người cảm thấy khó khăn trong việc có được làn da sạch mụn.
+                Các phương pháp để có làn da sạch sẽ thay đổi tùy thuộc vào loại da
+                của mỗi người. Nhìn chung, những người gặp vấn đề về mụn thường có
+                làn da khô, da dầu hoặc kết hợp cả hai.
               </p>
             </div>
           </div>
@@ -356,13 +352,13 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </h2>
               <h5 className="blog_more_info">
-                Skincare | Dr. Wade Warren | Jan 20, 2021
+                Chăm sóc da | Bác sĩ Wade Warren | 20/01/2025
               </h5>
               <p className="blog_description">
-                Many people find it difficult to get clear skin. The methods for
-                getting clear skin will vary, depending on the person's skin
-                type. In general, people struggling with acne or blemishes have
-                skin that is dry, oily, or a combination of the two.
+                Nhiều người cảm thấy khó khăn trong việc có được làn da sạch mụn.
+                Các phương pháp để có làn da sạch sẽ thay đổi tùy thuộc vào loại da
+                của mỗi người. Nhìn chung, những người gặp vấn đề về mụn thường có
+                làn da khô, da dầu hoặc kết hợp cả hai.
               </p>
             </div>
           </div>
@@ -381,13 +377,13 @@ export default function Product() {
                 Beautya Capture Total Dreamskin Care & Perfect
               </h2>
               <h5 className="blog_more_info">
-                Skincare | Dr. Wade Warren | Jan 20, 2021
+                Chăm sóc da | Bác sĩ Wade Warren | 20/01/2025
               </h5>
               <p className="blog_description">
-                Many people find it difficult to get clear skin. The methods for
-                getting clear skin will vary, depending on the person's skin
-                type. In general, people struggling with acne or blemishes have
-                skin that is dry, oily, or a combination of the two.
+                Nhiều người cảm thấy khó khăn trong việc có được làn da sạch mụn.
+                Các phương pháp để có làn da sạch sẽ thay đổi tùy thuộc vào loại da
+                của mỗi người. Nhìn chung, những người gặp vấn đề về mụn thường có
+                làn da khô, da dầu hoặc kết hợp cả hai.
               </p>
             </div>
           </div>

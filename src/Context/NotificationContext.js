@@ -13,10 +13,12 @@ export const useNotification = () => {
 
 export const NotificationProvider = ({ children }) => {
     const [notification, setNotification] = useState(null);
+    const [type, setType] = useState('success');
     const [isFading, setIsFading] = useState(false);
 
-    const showNotification = useCallback((message) => {
+    const showNotification = useCallback((message, notiType = 'success') => {
         setNotification(message);
+        setType(notiType);
         setIsFading(false);
 
         // Auto dismiss after 3 seconds
@@ -33,7 +35,7 @@ export const NotificationProvider = ({ children }) => {
         <NotificationContext.Provider value={showNotification}>
             {children}
             {notification && (
-                <div className={`notification-popup ${isFading ? 'fade-out' : ''}`}>
+                <div className={`notification-popup ${type} ${isFading ? 'fade-out' : ''}`}>
                     {notification}
                 </div>
             )}

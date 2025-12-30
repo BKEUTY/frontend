@@ -14,6 +14,17 @@ const AccountInfo = ({ onUpdate }) => {
         }
     };
 
+    const handleSave = (e) => {
+        e.preventDefault();
+        // Mimic API call
+        setTimeout(() => {
+            // Assuming onUpdate is the notification function or triggers it
+            if (onUpdate) {
+                onUpdate("Cập nhật thông tin thành công!", "success");
+            }
+        }, 500);
+    };
+
     return (
         <div>
             <div className="info-header">

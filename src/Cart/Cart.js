@@ -1,10 +1,12 @@
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import product_cart_image from "../Assets/Images/Rectangle 119.svg";
+import { useNotification } from "../Context/NotificationContext";
+import product_cart_image from "../Assets/Images/Products/Rectangle 119.svg";
 
 export default function Cart() {
   const navigate = useNavigate();
+  const notify = useNotification();
   const [products, setProducts] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [isWrapped, setIsWrapped] = useState(false);
@@ -47,7 +49,7 @@ export default function Cart() {
 
   const handleCheckout = () => {
     if (selectedIds.size === 0) {
-      alert("Vui lòng chọn ít nhất một sản phẩm để thanh toán.");
+      notify("Vui lòng chọn ít nhất một sản phẩm để thanh toán.", "error");
       return;
     }
     navigate("/checkout", {

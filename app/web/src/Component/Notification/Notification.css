@@ -1,0 +1,58 @@
+.notification-popup {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+    animation: slideIn 0.5s ease-out;
+    font-family: var(--inter_font);
+    font-size: 16px;
+    font-weight: 500;
+    max-width: 300px;
+}
+
+.notification-popup.success {
+    background-color: #2ecc71;
+    /* Green */
+}
+
+.notification-popup.error {
+    background-color: #e74c3c;
+    /* Red */
+}
+
+.notification-popup.info {
+    background-color: var(--color_main_title);
+    /* Default Pink */
+}
+
+.notification-popup.fade-out {
+    animation: fadeOut 0.5s ease-in forwards;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}

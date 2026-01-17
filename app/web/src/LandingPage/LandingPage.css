@@ -1,0 +1,106 @@
+@import url('https://fonts.googleapis.com/css2?family=Oleo+Script:wght@700&display=swap');
+
+.landing-page {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.landing-hero {
+    flex: 1;
+    min-height: 100vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.landing-content {
+    text-align: center;
+    color: white;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    padding: 20px;
+}
+
+.landing-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.brand-name {
+    font-family: 'Oleo Script', cursive;
+    font-weight: 700;
+    color: #e91e63;
+    font-size: 4rem;
+    display: block;
+    margin-top: 10px;
+    /* Black border/stroke effect */
+    text-shadow:
+        -2px -2px 0 #000,
+        2px -2px 0 #000,
+        -2px 2px 0 #000,
+        2px 2px 0 #000,
+        -3px 0 0 #000,
+        3px 0 0 #000,
+        0 -3px 0 #000,
+        0 3px 0 #000;
+}
+
+.landing-btn-login {
+    background-color: #9c1c5a;
+    color: white;
+    padding: 15px 50px;
+    border-radius: 30px;
+    font-size: 1.2rem;
+    text-decoration: none;
+    font-weight: 600;
+    border: 2px solid #9c1c5a;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.landing-btn-login:hover {
+    background-color: #7b1344;
+    border-color: #7b1344;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+}
+
+.landing-register-text {
+    font-size: 1.1rem;
+    margin-top: 10px;
+    color: white;
+}
+
+.landing-register-text a {
+    color: #e91e63;
+    font-weight: 700;
+    text-decoration: none;
+    margin-left: 5px;
+}
+
+.landing-register-text a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .landing-title {
+        font-size: 2rem;
+    }
+
+    .brand-name {
+        font-size: 2.5rem;
+    }
+}

@@ -1,0 +1,144 @@
+:root {
+    /* background-color: var(--general_background_color); */
+    --general_background_color: rgb(251, 249, 245);
+    /* background-color: var(--general_background_color2); */
+    --general_background_color2: rgb(255, 255, 255);
+    /* padding: 0 var(--general_padding_left_right); */
+    --general_padding_left_right: 6vw;
+    /* padding: 0 var(--general_padding_left_right2); */
+    --general_padding_left_right2: 5vw;
+    /* padding: 0 var(--general_padding_left_right3); */
+    --general_padding_left_right3: 4vw;
+    /* padding: var(--general_padding_top_bottom) 0; */
+    --general_padding_top_bottom: 50px;
+    /* color: var(--color_main_title) */
+    --color_main_title: rgb(163, 2, 81);
+    /* color: var(--color_main_title2) */
+    --color_main_title2: rgb(255, 255, 255);
+    /* background-image: var(--text_gradient) */
+    --text_gradient: linear-gradient(90deg, #f7e7ee 0%, #ffffff 25%);
+    /* font-family: var(--inter_font) */
+    --inter_font: 'Inter', sans-serif;
+    /* color: var(--color_general_text) */
+    --color_general_text: rgb(0, 0, 0);
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    /*weight: 700,500*/
+    font-size: 16px;
+
+    font-family: var(--inter_font);
+    font-weight: 400;
+
+    background-color: var(--general_background_color);
+    color: var(--color_general_text);
+}
+
+h1,
+h2,
+h3,
+h4 {
+    color: var(--color_main_title);
+    font-family: var(--inter_font);
+}
+
+h1 {
+    font-weight: 700;
+    font-size: 24px;
+}
+
+h2 {
+    font-weight: 700;
+    font-size: 20px;
+}
+
+h3 {
+    font-weight: 400;
+    font-size: 18px;
+}
+
+h4 {
+    font-weight: 400;
+    font-size: 14px;
+}
+
+/* weight: 400,600 */
+h5 {
+    font-size: 12px;
+    font-weight: 400;
+}
+
+.button {
+    background-color: rgb(162, 4, 81);
+    color: white;
+    padding: 15px 30px;
+    border: 2px solid white;
+    font-family: var(--inter_font);
+}
+
+/* Ô checkbox giả */
+.checkmark {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #333;
+    border-radius: 4px;
+    position: relative;
+    transform: translateY(5px);
+    margin-right: 2%;
+
+}
+
+/* Khi checked */
+.filter_item input:checked+.checkmark,
+.filter2_item input:checked+.checkmark,
+.filter3_item input:checked+.checkmark {
+    background-color: rgb(52, 121, 233);
+    border-color: rgb(52, 121, 233);
+}
+
+/* Dấu tick */
+.filter_item input:checked+.checkmark::after,
+.filter2_item input:checked+.checkmark::after,
+.filter3_item input:checked+.checkmark::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.checkout_bt {
+    background-color: black;
+    color: white;
+    border-radius: 40px;
+    height: 50px;
+    margin-top: 20px;
+    font-size: 20px;
+}
+@media (max-width: 768px) {
+    :root {
+        --general_padding_left_right: 4vw;
+        --general_padding_left_right2: 3vw;
+        --general_padding_left_right3: 2vw;
+        --general_padding_top_bottom: 30px;
+    }
+
+    h1 { font-size: 20px; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 16px; }
+    h4 { font-size: 13px; }
+
+    .button {
+        padding: 10px 20px;
+        font-size: 14px;
+    }
+}
+

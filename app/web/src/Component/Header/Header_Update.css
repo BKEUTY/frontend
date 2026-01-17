@@ -1,0 +1,19 @@
+/* Active link state, appended via tool */
+.nav_item .active-link {
+    background-color: #e91e63;
+    color: white !important;
+    padding: 8px 16px;
+    border-radius: 20px;
+}
+
+.nav_item .active-link img {
+    filter: brightness(0) invert(1);
+    display: none;
+    /* Hide icon if text is highlighted buttons style, adjust based on preference. Image shows TEXT only in subheader, but main header has Icons. User said "thanh bar bên trên". */
+}
+
+/* Revert hiding icon if we want both. Let's keep icon but white. */
+.nav_item .active-link img {
+    display: inline-block;
+    filter: brightness(0) invert(1);
+}

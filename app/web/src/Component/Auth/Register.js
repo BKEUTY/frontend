@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/image_login.png';
-import google_icon from '../../Assets/Images/Icons/Vector.svg';
+import google_icon from '../../Assets/Images/Icons/_Google.svg';
 import facebook_icon from '../../Assets/Images/Icons/_Facebook.svg';
 
 const Register = () => {

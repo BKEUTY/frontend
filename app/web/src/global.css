@@ -142,3 +142,219 @@ h5 {
     }
 }
 
+
+/* Shared Banner Slider Styles */
+
+/* Wrapper that holds all slides and moves */
+.slider-wrapper {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Individual slide */
+.hero-slide {
+    width: 100%;
+    height: 100%;
+    flex-shrink: 0;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Dark Overlay for readability */
+.hero-slide::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+/* Navigation Arrows */
+.slider-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    font-size: 2rem;
+    padding: 0;
+    cursor: pointer;
+    z-index: 12;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+}
+
+.slider-arrow:hover {
+    background-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+.slider-arrow.left {
+    left: 20px;
+}
+
+.slider-arrow.right {
+    right: 20px;
+}
+
+@media (max-width: 768px) {
+    .slider-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 1.5rem;
+    }
+    
+    .slider-arrow.left { left: 10px; }
+    .slider-arrow.right { right: 10px; }
+}
+
+
+/* Shared Product Card Styles */
+.product-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    border: 1px solid #f0f0f0;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.card-image-wrapper {
+    position: relative;
+    text-align: center;
+    margin-bottom: 10px;
+    overflow: hidden;
+    height: 180px;
+    background-color: #f9f9f9;
+}
+
+.card-image-wrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.5s;
+    mix-blend-mode: multiply; /* Helps transparent PNGs look better on white */
+}
+
+.product-card:hover .card-image-wrapper img {
+    transform: scale(1.05);
+}
+
+.card-info {
+    padding: 15px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-brand {
+    color: #999;
+    font-size: 0.75rem;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 0;
+}
+
+.card-name {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 40px; /* Fixed height for consistency */
+    color: #333;
+    margin-top: 0;
+}
+
+.card-meta {
+    font-size: 0.85rem;
+    color: #ffc107;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.sold {
+    color: #aaa;
+    margin-left: 8px;
+    font-size: 0.75rem;
+}
+
+.card-price {
+    color: #c2185b;
+    font-weight: 700;
+    font-size: 1.1rem;
+    text-align: left;
+    margin-top: auto; /* Push to bottom */
+}
+
+.card-badges {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 2;
+    display: flex;
+    gap: 5px;
+}
+
+.badge-red {
+    background-color: #d32f2f;
+    color: white;
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+}
+
+.badge-yellow {
+    background-color: #fbc02d;
+    color: black;
+    font-size: 0.7rem;
+    padding: 3px 6px;
+    border-radius: 3px;
+    font-weight: 700;
+}
+
+/* Star Icon shared */
+.star-icon {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background-color: #ffc107;
+    mask-size: contain;
+    -webkit-mask-size: contain;
+    mask-position: center;
+    -webkit-mask-position: center;
+    mask-repeat: no-repeat;
+    -webkit-mask-repeat: no-repeat;
+    margin-right: 4px;
+    vertical-align: middle;
+}
+

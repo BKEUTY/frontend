@@ -1,5 +1,6 @@
 // Header.js
-import { Link, NavLink } from "react-router-dom";
+import { useState } from 'react';
+import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./Header.css";
 import logo_image from "../../Assets/Images/logo.svg";
@@ -13,13 +14,24 @@ import account_image from "../../Assets/Images/Icons/mdi_account.svg";
 
 export default function Header() {
   const { t, toggleLanguage, language } = useLanguage();
+  const location = useLocation();
+  const isLanding = location.pathname === "/";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const getNavLinkClass = ({ isActive }) => {
     return isActive ? "active-link" : "";
   };
 
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
   return (
     <header className="header">
+      <div className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+        <span className="bar"></span>
+        <span className="bar"></span>
+        <span className="bar"></span>
+      </div>
+
       <div className="logo">
         <img
           className="brand_image"
@@ -29,9 +41,9 @@ export default function Header() {
           alt="icon"
         />
       </div>
-      <ul className="nav_list">
+      <ul className={`nav_list ${isMobileMenuOpen ? 'mobile-active' : ''}`}>
         <li className="nav_item">
-          <NavLink to="/home" className={getNavLinkClass}>
+          <NavLink to="/home" className={getNavLinkClass} onClick={closeMobileMenu}>
             <img
               className="icon_nav_item"
               loading="lazy"
@@ -44,7 +56,7 @@ export default function Header() {
         </li>
 
         <li className="nav_item">
-          <NavLink to="/product" className={getNavLinkClass}>
+          <NavLink to="/product" className={getNavLinkClass} onClick={closeMobileMenu}>
             <img
               className="icon_nav_item header_product_image"
               loading="lazy"
@@ -57,7 +69,7 @@ export default function Header() {
         </li>
 
         <li className="nav_item">
-          <NavLink to="/service" className={getNavLinkClass}>
+          <NavLink to="/service" className={getNavLinkClass} onClick={closeMobileMenu}>
             <img
               className="icon_nav_item"
               loading="lazy"
@@ -70,7 +82,7 @@ export default function Header() {
         </li>
 
         <li className="nav_item">
-          <NavLink to="/promotion" className={getNavLinkClass}>
+          <NavLink to="/promotion" className={getNavLinkClass} onClick={closeMobileMenu}>
             <img
               className="icon_nav_item"
               loading="lazy"
@@ -83,7 +95,7 @@ export default function Header() {
         </li>
 
         <li className="nav_item">
-          <NavLink to="/retail-system" className={getNavLinkClass}>
+          <NavLink to="/retail-system" className={getNavLinkClass} onClick={closeMobileMenu}>
             <img
               className="icon_nav_item"
               loading="lazy"
@@ -118,7 +130,7 @@ export default function Header() {
             alt="icon"
           />
           <Link className="nav_item2_text" to="/account">
-            <h4>{t('account')}</h4>
+            <h4>{isLanding ? t('not_logged_in') : t('account')}</h4>
           </Link>
         </li>
         <li style={{ display: 'flex', alignItems: 'center' }}>

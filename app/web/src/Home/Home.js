@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import './Home.css';
-import hero_bg from '../Assets/Images/Banners/image_84.svg'; // Reuse or placeholder
-// We need product images. Reusing existing for now.
+import banner1 from '../Assets/Images/Banners/bkeuty_banner.png';
+import banner2 from '../Assets/Images/Banners/bkeuty_banner2.png';
 import product_img from "../Assets/Images/Products/product image.svg";
 import about_image from "../Assets/Images/Banners/Frame 26085715.svg";
+import starIcon from "../Assets/Images/Icons/star.svg";
 
-// Mock data to match image
+const bannerImages = [banner1, banner2];
+
 // Mock data to match image
 
 const bestSellers = [
@@ -26,35 +29,122 @@ const suggestedProducts = [
 
 const Home = () => {
     const { t } = useLanguage();
+    const [currentBanner, setCurrentBanner] = useState(0);
+
+    // Auto-slide every 30 seconds
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(timer);
+    }, []);
+
+    const nextBanner = () => {
+        setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
+    };
+
+    const prevBanner = () => {
+        setCurrentBanner((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
+    };
 
     return (
         <div className="home-container">
             {/* Sub Header for Categories - As seen in image */}
+            {/* Sub Header for Categories */}
             <div className="category-bar">
                 <div className="category-list">
-                    <span className="cat-item">☰ {t('categories')}</span> |
-                    <span className="cat-item">{t('brands')}</span> |
-                    <span className="cat-item">{t('new_arrivals')}</span> |
-                    <span className="cat-item">{t('best_sellers')}</span> |
-                    <span className="cat-item">{t('hot_deals')}</span> |
+                    <div className="cat-item cancel-hover">
+                        <span className="cat-trigger">☰ {t('categories')}</span>
+                        {/* Mega Menu Dropdown */}
+                        <div className="mega-menu">
+                            <div className="mega-column">
+                                <h3>{t('makeup')}</h3>
+                                <Link to="/product">{t('makeup_face')}</Link>
+                                <Link to="/product">{t('makeup_lips')}</Link>
+                                <Link to="/product">{t('makeup_eyes')}</Link>
+                                <Link to="/product">{t('makeup_nails')}</Link>
+                            </div>
+                            <div className="mega-column">
+                                <h3>{t('skincare')}</h3>
+                                <Link to="/product">{t('cleanser')}</Link>
+                                <Link to="/product">{t('toner')}</Link>
+                                <Link to="/product">{t('serum')}</Link>
+                                <Link to="/product">{t('moisturizer')}</Link>
+                                <Link to="/product">{t('sunscreen')}</Link>
+                            </div>
+                            <div className="mega-column">
+                                <h3>{t('body_care')}</h3>
+                                <Link to="/product">{t('shower_gel')}</Link>
+                                <Link to="/product">{t('body_lotion')}</Link>
+                                <Link to="/product">{t('body_scrub')}</Link>
+                            </div>
+                            <div className="mega-column">
+                                <h3>{t('hair_care')}</h3>
+                                <Link to="/product">{t('shampoo')}</Link>
+                                <Link to="/product">{t('conditioner')}</Link>
+                                <Link to="/product">{t('hair_oil')}</Link>
+                            </div>
+                        </div>
+                    </div>
+                    <span className="cat-divider">|</span>
+                    <span className="cat-item">{t('brands')}</span>
+                    <span className="cat-divider">|</span>
+                    <span className="cat-item">{t('new_arrivals')}</span>
+                    <span className="cat-divider">|</span>
+                    <span className="cat-item">{t('best_sellers')}</span>
+                    <span className="cat-divider">|</span>
+                    <span className="cat-item">{t('hot_deals')}</span>
+                    <span className="cat-divider">|</span>
                     <span className="cat-item">{t('bkeuty_deals')}</span>
                 </div>
-                <div className="search-bar-mini">
-                    <input type="text" placeholder={t('search_hint')} />
+                <div className="search-bar-wrapper">
+                    <input type="text" placeholder={t('search_hint')} className="search-input" />
+                    <button className="search-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                    </button>
                 </div>
             </div>
 
-            {/* Hero Section */}
-            <section className="hero-section" style={{ backgroundImage: `url("${hero_bg}")` }}>
-                {/* Overlay gradient usually handled in CSS */}
-                <div className="hero-content">
-                    <h1 className="hero-title">{t('mid_autumn_promo')}</h1>
-                    <p className="hero-subtitle">{t('promo_subtitle')}</p>
-                    <button className="btn-hero-primary">{t('shop_now')}</button>
+            {/* Hero Section Slider */}
+            <div className="home-hero-slider">
+                <div
+                    className="slider-wrapper"
+                    style={{ transform: `translateX(-${currentBanner * 100}%)` }}
+                >
+                    {bannerImages.map((img, index) => (
+                        <div
+                            key={index}
+                            className="hero-slide"
+                            style={{ backgroundImage: `url(${img})` }}
+                        >
+                        </div>
+                    ))}
                 </div>
-                <button className="carousel-arrow arrow-left">❮</button>
-                <button className="carousel-arrow arrow-right">❯</button>
-            </section>
+
+                {/* Fixed Overlay Content */}
+                <div className="glass-overlay">
+                    <h1 className="glass-title">{t('mid_autumn_promo')}</h1>
+                    <p className="glass-subtitle">{t('promo_subtitle')}</p>
+                    <button className="btn-glass-primary">{t('explore')}</button>
+                </div>
+
+                <button className="slider-arrow left" onClick={prevBanner}>&#10094;</button>
+                <button className="slider-arrow right" onClick={nextBanner}>&#10095;</button>
+
+                <div className="slider-dots">
+                    {bannerImages.map((_, idx) => (
+                        <span
+                            key={idx}
+                            className={`dot ${currentBanner === idx ? 'active' : ''}`}
+                            onClick={() => setCurrentBanner(idx)}
+                        ></span>
+                    ))}
+                </div>
+            </div>
 
             {/* Best Sellers */}
             <section className="section-full-width">
@@ -71,7 +161,8 @@ const Home = () => {
                                 <p className="card-brand">Obagi</p>
                                 <h3 className="card-name">{item.name}</h3>
                                 <div className="card-meta">
-                                    <span className="rating">⭐ {item.rating}</span>
+                                    <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
+                                    <span className="rating">{item.rating}</span>
                                     <span className="sold">({item.sold})</span>
                                 </div>
                                 <div className="card-price">{item.price}</div>
@@ -96,7 +187,8 @@ const Home = () => {
                                 <p className="card-brand">Anessa</p>
                                 <h3 className="card-name">{item.name}</h3>
                                 <div className="card-meta">
-                                    <span className="rating">⭐ {item.rating} ({item.sold})</span>
+                                    <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
+                                    <span className="rating">{item.rating} ({item.sold})</span>
                                 </div>
                                 <div className="price-row">
                                     <span className="old-price">{item.oldPrice}</span>
@@ -128,19 +220,21 @@ const Home = () => {
                     ))}
                 </div>
                 <div style={{ textAlign: 'center', marginTop: 20 }}>
-                    <button className="btn-view-more">Xem Thêm</button>
+                    <button className="btn-view-more">{t('view_more')}</button>
                 </div>
             </section>
 
             <section className="section4">
-                <section className="section4_col1">
-                    <h1>{t('brand_story')}</h1>
-                    <p>{t('brand_desc')}</p>
-                    <button className="section4_col1_bt button">{t('explore')}</button>
-                </section>
-                <section className="section4_col2">
-                    <img className="ablout_image" src={about_image} alt="About Us" />
-                </section>
+                <div className="section4-content">
+                    <div className="section4-text">
+                        <h2>{t('brand_story')}</h2>
+                        <p>{t('brand_desc')}</p>
+                        <button className="btn-explore-brand">{t('explore_more')}</button>
+                    </div>
+                    <div className="section4-image">
+                        <img src={about_image} alt="About Us" />
+                    </div>
+                </div>
             </section>
         </div>
     );

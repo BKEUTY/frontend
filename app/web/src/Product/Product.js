@@ -2,12 +2,9 @@ import "./Product.css";
 import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext"; // Add import
-import banner_image from "../Assets/Images/Banners/image_84.svg";
 import best_selling_image from "../Assets/Images/Products/product image.svg";
-import about_image from "../Assets/Images/Banners/Frame 26085715.svg";
-import blog_image from "../Assets/Images/Banners/blog image.svg";
-import search_image from "../Assets/Images/Icons/Vector.svg";
-import cart_icon from "../Assets/Images/Icons/flowbite_cart-outline.svg";
+import search_image from "../Assets/Images/Icons/search.svg";
+import starIcon from "../Assets/Images/Icons/star.svg";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -94,301 +91,92 @@ export default function Product() {
   };
 
   return (
-    <main>
-      <section className="section1">
-        <img
-          className="banner_image"
-          loading="lazy"
-          decoding="async"
-          src={banner_image}
-          alt="icon"
-        />
-      </section>
-
-      <section className="section2">
-        <section className="section2_row1">
-          <img
-            className="search_image"
-            loading="lazy"
-            decoding="async"
-            src={search_image}
-            alt="icon"
-          />
-          <input
-            className="search_bar"
-            type="text"
-            placeholder={t('search_placeholder')}
-            onChange={handleSearch}
-          />
-        </section>
-
-        <section className="section2_row2">
-          <span className="indicator active"></span>
-          <span className="indicator"></span>
-          <span className="indicator"></span>
-        </section>
-
-        <section className="section2_row3">
-          <section className="section2_row3_col1">
-            <div className="price_range">
-              <h2 className="price_range_title">{t('price_range')}</h2>
-
+    <main className="product-page">
+      <div className="product-container">
+        {/* Sidebar */}
+        <aside className="product-sidebar">
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">{t('search')}</h3>
+            <div className="sidebar-search-box">
               <input
-                className="price_range_input"
+                type="text"
+                placeholder={t('search_placeholder')}
+                onChange={handleSearch}
+              />
+              <img src={search_image} alt="search" />
+            </div>
+          </div>
+
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">{t('price_range')}</h3>
+            <div className="price-inputs">
+              <input
                 type="number"
-                placeholder={t('min_price') || "Tối thiểu"}
+                placeholder="Min"
                 value={minPrice}
                 onChange={(e) => setMinPrice(e.target.value)}
               />
-              <span className="price_separator">-</span>
+              <span className="separator">-</span>
               <input
-                className="price_range_input"
                 type="number"
-                placeholder={t('max_price') || "Tối đa"}
+                placeholder="Max"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(e.target.value)}
               />
             </div>
+          </div>
 
-            <div className="filter">
-              <h2 className="filter_title">{t('filter')}</h2>
-              {/* Mock Categories */}
-              <label className="filter_item">
-                <input type="checkbox" />
-                <span className="checkmark"></span>
-                Skincare
-              </label>
+          <div className="sidebar-section">
+            <h3 className="sidebar-title">{t('filter')}</h3>
+            <label className="filter-item">
+              <input type="checkbox" />
+              <span className="checkmark"></span> Skincare
+            </label>
+            <label className="filter-item">
+              <input type="checkbox" />
+              <span className="checkmark"></span> Makeup
+            </label>
+            <label className="filter-item">
+              <input type="checkbox" />
+              <span className="checkmark"></span> Body Care
+            </label>
+          </div>
+        </aside>
 
-              <label className="filter_item">
-                <input type="checkbox" />
-                <span className="checkmark"></span>
-                Makeup
-              </label>
+        {/* Main Content */}
+        <section className="product-main-content">
+          <div className="product-header-bar">
+            <h2>{t('all_products') || "Tất cả sản phẩm"} ({filteredProducts.length})</h2>
+          </div>
 
-              <label className="filter_item">
-                <input type="checkbox" />
-                <span className="checkmark"></span>
-                Body Care
-              </label>
-            </div>
-          </section>
-          <section className="section2_row3_col2">
-            {filteredProducts.length === 0 ? <p>No products found</p> : filteredProducts.map((product) => (
-              <div id={product.productId} className="product_item" key={product.productId}>
-                <img
-                  className="product_image"
-                  loading="lazy"
-                  decoding="async"
-                  src={best_selling_image}
-                  alt="icon"
-                />
+          {filteredProducts.length === 0 ? (
+            <div className="no-products">{t('no_products_found') || "Không tìm thấy sản phẩm"}</div>
+          ) : (
+            <div className="product-grid">
+              {filteredProducts.map((product) => (
+                <div key={product.productId} className="product-card" id={product.productId}>
+                  <div className="card-image-wrapper">
+                    <img src={best_selling_image} alt={product.name} />
+                  </div>
+                  <div className="card-info">
+                    <p className="card-brand">BKEUTY</p>
+                    <h3 className="card-name">{product.name}</h3>
+                    <div className="card-meta">
+                      <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
+                      <span className="rating">4.8 (120)</span>
+                    </div>
+                    <div className="card-price">{product.price.toLocaleString("vi-VN")}đ</div>
 
-                <div className="product_text ">
-                  <h4 className="product_name">{product.name}</h4>
-                  <h5 className="product_description">{product.description}</h5>
-                  <div className="product_bottom">
-                    <h4 className="product_price">
-                      {product.price.toLocaleString("vi-VN")}đ
-                    </h4>
-                    <span className="add_cart" onClick={(e) => handleAddToCart(e, product.productId)}>
-                      <img src={cart_icon} alt="Add to cart" className="product-cart-icon" />
-                    </span>
+                    <button className="btn-add-cart" onClick={(e) => handleAddToCart(e, product.productId)}>
+                      {t('add_to_cart') || "Thêm vào giỏ"}
+                    </button>
                   </div>
                 </div>
-              </div>
-            ))}
-          </section>
+              ))}
+            </div>
+          )}
         </section>
-      </section>
-
-      <section className="section3">
-        <h1 className="section3_title">{t('best_selling')}</h1>
-        <div className="best_selling_list ">
-          <div className="best_selling_item ">
-            <img
-              className="best_selling_image"
-              loading="lazy"
-              decoding="async"
-              src={best_selling_image}
-              alt="icon"
-            />
-
-            <div className="best_selling_text ">
-              <div className="best_selling_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </div>
-              <p className="best_selling_description">
-                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
-              </p>
-              <h3 className="best_selling_price">76000đ</h3>
-            </div>
-          </div>
-
-          <div className="best_selling_item ">
-            <img
-              className="best_selling_image"
-              loading="lazy"
-              decoding="async"
-              src={best_selling_image}
-              alt="icon"
-            />
-
-            <div className="best_selling_text ">
-              <div className="best_selling_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </div>
-              <h5 className="best_selling_description">
-                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
-              </h5>
-              <h3 className="best_selling_price">76000đ</h3>
-            </div>
-          </div>
-
-          <div className="best_selling_item ">
-            <img
-              className="best_selling_image"
-              loading="lazy"
-              decoding="async"
-              src={best_selling_image}
-              alt="icon"
-            />
-
-            <div className="best_selling_text ">
-              <div className="best_selling_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </div>
-              <h5 className="best_selling_description">
-                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
-              </h5>
-              <h3 className="best_selling_price">76000đ</h3>
-            </div>
-          </div>
-
-          <div className="best_selling_item ">
-            <img
-              className="best_selling_image"
-              loading="lazy"
-              decoding="async"
-              src={best_selling_image}
-              alt="icon"
-            />
-
-            <div className="best_selling_text ">
-              <div className="best_selling_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </div>
-              <h5 className="best_selling_description">
-                Son bóng làm đầy môi - Hiệu quả tức thì và lâu dài - Dưỡng ẩm 24h
-              </h5>
-              <h3 className="best_selling_price">76000đ</h3>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="section4">
-        <section className="section4_col1">
-          <h1>{t('brand_story')}</h1>
-          <p>
-            {t('brand_desc')}
-          </p>
-          <button className="section4_col1_bt button">Khám Phá Thêm</button>
-        </section>
-        <section className="section4_col2">
-          <img
-            className="ablout_image"
-            loading="lazy"
-            decoding="async"
-            src={about_image}
-            alt="icon"
-          />
-        </section>
-      </section>
-
-      <section className="section5">
-        <h1 className="section5_title">Góc Làm Đẹp</h1>
-
-        <div className="section5_more_view">
-          <div>Xem Tất Cả</div>
-        </div>
-
-        <div className="blog_list ">
-          <div className="blog_item ">
-            <img
-              className="blog_image"
-              loading="lazy"
-              decoding="async"
-              src={blog_image}
-              alt="icon"
-            />
-
-            <div className="blog_text ">
-              <h2 className="blog_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </h2>
-              <h5 className="blog_more_info">
-                Chăm sóc da | Bác sĩ Wade Warren | 20/01/2026
-              </h5>
-              <p className="blog_description">
-                Nhiều người cảm thấy khó khăn trong việc có được làn da sạch mụn.
-                Các phương pháp để có làn da sạch sẽ thay đổi tùy thuộc vào loại da
-                của mỗi người. Nhìn chung, những người gặp vấn đề về mụn thường có
-                làn da khô, da dầu hoặc kết hợp cả hai.
-              </p>
-            </div>
-          </div>
-
-          <div className="blog_item ">
-            <img
-              className="blog_image"
-              loading="lazy"
-              decoding="async"
-              src={blog_image}
-              alt="icon"
-            />
-
-            <div className="blog_text ">
-              <h2 className="blog_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </h2>
-              <h5 className="blog_more_info">
-                Chăm sóc da | Bác sĩ Wade Warren | 20/01/2026
-              </h5>
-              <p className="blog_description">
-                Nhiều người cảm thấy khó khăn trong việc có được làn da sạch mụn.
-                Các phương pháp để có làn da sạch sẽ thay đổi tùy thuộc vào loại da
-                của mỗi người. Nhìn chung, những người gặp vấn đề về mụn thường có
-                làn da khô, da dầu hoặc kết hợp cả hai.
-              </p>
-            </div>
-          </div>
-
-          <div className="blog_item ">
-            <img
-              className="blog_image"
-              loading="lazy"
-              decoding="async"
-              src={blog_image}
-              alt="icon"
-            />
-
-            <div className="blog_text ">
-              <h2 className="blog_name">
-                Beautya Capture Total Dreamskin Care & Perfect
-              </h2>
-              <h5 className="blog_more_info">
-                Chăm sóc da | Bác sĩ Wade Warren | 20/01/2026
-              </h5>
-              <p className="blog_description">
-                Nhiều người cảm thấy khó khăn trong việc có được làn da sạch mụn.
-                Các phương pháp để có làn da sạch sẽ thay đổi tùy thuộc vào loại da
-                của mỗi người. Nhìn chung, những người gặp vấn đề về mụn thường có
-                làn da khô, da dầu hoặc kết hợp cả hai.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      </div>
     </main>
   );
 }

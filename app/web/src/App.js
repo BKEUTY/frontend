@@ -22,12 +22,10 @@ function Layout() {
   const path = location.pathname;
 
   // Determine if we should show Header/Footer
-  // Landing Page: No Header, Yes Footer (per request "chỉ có ảnh và footer")
   // Auth Pages: No Header, No Footer (typically)
-  const isLanding = path === "/";
   const isAuth = path === "/login" || path === "/register";
 
-  const showHeader = !isLanding && !isAuth;
+  const showHeader = !isAuth;
   const showFooter = !isAuth; // Landing has Footer
 
   return (

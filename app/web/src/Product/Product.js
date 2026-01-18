@@ -2,9 +2,9 @@ import "./Product.css";
 import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext"; // Add import
-import best_selling_image from "../Assets/Images/Products/product image.svg";
-import search_image from "../Assets/Images/Icons/search.svg";
-import starIcon from "../Assets/Images/Icons/star.svg";
+import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
+import search_image from "../Assets/Images/Icons/icon_search.svg";
+import starIcon from "../Assets/Images/Icons/icon_star.svg";
 
 export default function Product() {
   const [products, setProducts] = useState([]);

@@ -4,15 +4,15 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import "./Footer.css";
 
 // Importing icons
-import location_icon from "../../Assets/Images/Icons/location_on.svg";
-import call_icon from "../../Assets/Images/Icons/call.svg";
-import instagram_icon from "../../Assets/Images/Icons/_Instagram.svg";
-import twitter_icon from "../../Assets/Images/Icons/_Twitter.svg";
-import pinterest_icon from "../../Assets/Images/Icons/_Pinterest.svg";
-import reddit_icon from "../../Assets/Images/Icons/_Reddit.svg";
-import tiktok_icon from "../../Assets/Images/Icons/_TikTok.svg";
-import facebook_icon from "../../Assets/Images/Icons/_Facebook.svg";
-import chat_icon from "../../Assets/Images/Icons/chat.svg";
+import location_icon from "../../Assets/Images/Icons/icon_location.svg";
+import call_icon from "../../Assets/Images/Icons/icon_phone.svg";
+import instagram_icon from "../../Assets/Images/Icons/social_instagram.svg";
+import twitter_icon from "../../Assets/Images/Icons/social_twitter.svg";
+import pinterest_icon from "../../Assets/Images/Icons/social_pinterest.svg";
+import reddit_icon from "../../Assets/Images/Icons/social_reddit.svg";
+import tiktok_icon from "../../Assets/Images/Icons/social_tiktok.svg";
+import facebook_icon from "../../Assets/Images/Icons/social_facebook.svg";
+import chat_icon from "../../Assets/Images/Icons/icon_chat.svg";
 
 export default function Footer() {
   const { t } = useLanguage();

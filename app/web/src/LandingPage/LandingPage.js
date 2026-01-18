@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import './LandingPage.css';
-import banner1 from '../Assets/Images/Banners/bkeuty_banner.png';
-import banner2 from '../Assets/Images/Banners/bkeuty_banner2.png';
+import banner1 from '../Assets/Images/Banners/banner_home_1.png';
+import banner2 from '../Assets/Images/Banners/banner_home_2.png';
 
 const images = [banner1, banner2];
 

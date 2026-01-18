@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Account.css';
+import default_avatar from '../../Assets/Images/Icons/icon_account.svg';
 
 const AccountInfo = ({ onUpdate }) => {
     const { t } = useLanguage();
     // Using refs or state to handle form data. For simplicity, just unmanaged inputs 
     // or mocks as requested visuals are main focus.
 
-    // Hardcoded initial values based on image
-    const [avatar, setAvatar] = useState(null);
+    // Initialize with default_avatar
+    const [avatar, setAvatar] = useState(default_avatar);
 
     const handleFileChange = (e) => {
         if (e.target.files && e.target.files[0]) {
@@ -69,7 +70,7 @@ const AccountInfo = ({ onUpdate }) => {
                         <label>{t('dob')}</label>
                         <input type="date" className="form-input" defaultValue="2004-08-28" />
                     </div>
-                    <div className="form-group">
+                    <div className="form-group full-width">
                         <label>{t('address')}</label>
                         <input type="text" className="form-input" defaultValue="xã Long Phước, tỉnh Đồng Nai" />
                     </div>
@@ -82,7 +83,7 @@ const AccountInfo = ({ onUpdate }) => {
 
                 <div className="avatar-section">
                     <div className="avatar-preview">
-                        {avatar ? <img src={avatar} alt="Avatar" /> : <div className="avatar-placeholder"></div>}
+                        <img src={avatar} alt="Avatar" className={avatar === default_avatar ? "default-icon" : "user-photo"} />
                     </div>
                     <label className="button upload-avatar-btn">
                         {t('update_avatar')}

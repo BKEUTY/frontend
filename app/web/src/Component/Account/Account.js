@@ -5,7 +5,7 @@ import AccountInfo from './AccountInfo';
 import MyOrders from './MyOrders';
 import { useNotification } from '../../Context/NotificationContext';
 import { useLanguage } from '../../i18n/LanguageContext';
-import account_image from "../../Assets/Images/mdi_account.svg";
+import account_image from "../../Assets/Images/Icons/icon_account.svg";
 
 export default function Account() {
     const notify = useNotification();

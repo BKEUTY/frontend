@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import './Home.css';
-import banner1 from '../Assets/Images/Banners/bkeuty_banner.png';
-import banner2 from '../Assets/Images/Banners/bkeuty_banner2.png';
-import product_img from "../Assets/Images/Products/product image.svg";
-import about_image from "../Assets/Images/Banners/Frame 26085715.svg";
-import starIcon from "../Assets/Images/Icons/star.svg";
+import banner1 from '../Assets/Images/Banners/banner_home_1.png';
+import banner2 from '../Assets/Images/Banners/banner_home_2.png';
+import product_img from "../Assets/Images/Products/product_placeholder.svg";
+import about_image from "../Assets/Images/Banners/banner_about_us.svg";
+import starIcon from "../Assets/Images/Icons/icon_star.svg";
 
 const bannerImages = [banner1, banner2];
 

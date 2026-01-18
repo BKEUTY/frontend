@@ -4,13 +4,13 @@ import { Link, NavLink, useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./Header.css";
 import logo_image from "../../Assets/Images/logo.svg";
-import home_image from "../../Assets/Images/Icons/ic_baseline-home.svg";
-import header_product_image from "../../Assets/Images/Products/ix_product.svg";
-import service_image from "../../Assets/Images/Icons/ri_service-fill.svg";
-import promotion_image from "../../Assets/Images/Icons/mdi_voucher.svg";
-import retail_system_image from "../../Assets/Images/Icons/solar_shop-bold.svg";
-import cart_image from "../../Assets/Images/Icons/flowbite_cart-outline.svg";
-import account_image from "../../Assets/Images/Icons/mdi_account.svg";
+import home_image from "../../Assets/Images/Icons/icon_home.svg";
+import header_product_image from "../../Assets/Images/Products/icon_product.svg";
+import service_image from "../../Assets/Images/Icons/icon_service.svg";
+import promotion_image from "../../Assets/Images/Icons/icon_voucher.svg";
+import retail_system_image from "../../Assets/Images/Icons/icon_shop.svg";
+import cart_image from "../../Assets/Images/Icons/icon_cart.svg";
+import account_image from "../../Assets/Images/Icons/icon_account.svg";
 
 export default function Header() {
   const { t, toggleLanguage, language } = useLanguage();

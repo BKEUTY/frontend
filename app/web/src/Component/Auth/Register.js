@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Auth.css';
-import auth_bg from '../../Assets/Images/Banners/image_login.png';
-import google_icon from '../../Assets/Images/Icons/_Google.svg';
-import facebook_icon from '../../Assets/Images/Icons/_Facebook.svg';
+import auth_bg from '../../Assets/Images/Banners/auth_background.png';
+import google_icon from '../../Assets/Images/Icons/social_google.svg';
+import facebook_icon from '../../Assets/Images/Icons/social_facebook.svg';
 
 const Register = () => {
     const navigate = useNavigate();

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext"; // Added import
-import product_cart_image from "../Assets/Images/Products/Rectangle 119.svg";
+import product_cart_image from "../Assets/Images/Products/product_placeholder_rect.svg";
 
 export default function Cart() {
   const navigate = useNavigate();

@@ -1,9 +1,9 @@
 import "./Checkout.css";
 import { useLocation } from "react-router-dom";
 import { useNotification } from "../Context/NotificationContext";
-import master_card_image from "../Assets/Images/Payment/Mastercard.svg";
-import visa_image from "../Assets/Images/Payment/Visa.svg";
-import apple_pay_image from "../Assets/Images/Payment/ApplePay.svg";
+import master_card_image from "../Assets/Images/Payment/payment_mastercard.svg";
+import visa_image from "../Assets/Images/Payment/payment_visa.svg";
+import apple_pay_image from "../Assets/Images/Payment/payment_apple_pay.svg";
 
 export default function Checkout() {
   const { state } = useLocation();

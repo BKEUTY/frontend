@@ -51,7 +51,7 @@ export default function Cart() {
 
   const handleCheckout = () => {
     if (selectedIds.size === 0) {
-      notify("Vui lòng chọn ít nhất một sản phẩm để thanh toán.", "error");
+      notify(t('select_min_one'), "error");
       return;
     }
     navigate("/checkout", {
@@ -60,16 +60,12 @@ export default function Cart() {
         subTotal: subTotal,
         wrappingFee: wrappingFee,
         total: total,
-        // Sending product details to show in checkout if needed, 
-        // or just rely on global state/refetch. 
-        // Since Checkout page needs to show "Total", "Discount", "Shipping", 
-        // passing these calculated values is good.
       },
     });
   };
 
   const handleDelete = (cartId) => {
-    if (!window.confirm("Bạn có chắc chắn muốn xóa sản phẩm này?")) return;
+    if (!window.confirm(t('confirm_delete_item'))) return;
 
     fetch(`${process.env.REACT_APP_API_URL}/cart/${cartId}`, {
       method: 'DELETE'
@@ -80,115 +76,128 @@ export default function Cart() {
           const newSelected = new Set(selectedIds);
           newSelected.delete(cartId);
           setSelectedIds(newSelected);
-          notify("Xóa sản phẩm thành công", "success");
+          notify(t('delete_success'), "success");
         } else {
-          notify("Lỗi khi xóa sản phẩm", "error");
+          notify(t('delete_error'), "error");
         }
       })
       .catch(err => console.error(err));
   };
 
   return (
-    <main className="cart">
-      <div className="cart_title">{t('cart')}</div>
-      <div className="cart_list">
-        <div className="cart_field_name">
-          <div className="cart-checkbox-wrapper-th">
-            <input
-              type="checkbox"
-              onChange={handleSelectAll}
-              checked={products.length > 0 && selectedIds.size === products.length}
-              className="cart-checkbox-th"
-            />
-          </div>
-          <p className="cart_field_name_product cart-product-col-header">{t('product')}</p>
-          <p className="cart_field_name_price">Giá</p>
-          <p className="cart_field_name_count">Số Lượng</p>
-          <p className="cart_field_name_sum"></p>
-        </div>
+    <main className="cart-page">
+      <div className="cart-page-container">
+        <h1 className="cart-page-title">{t('cart')}</h1>
 
-        <div className="cart_field_value_list">
-          {products.length === 0 ? (
-            <p className="cart-empty-text">{t('cart_empty')}</p>
-          ) : (
-            products.map((product) => (
-              <div id={product.cartId} className="cart_field_value_item" key={product.cartId}>
-                <div className="cart-checkbox-wrapper-td">
-                  <input
-                    type="checkbox"
-                    checked={selectedIds.has(product.cartId)}
-                    onChange={() => handleSelectOne(product.cartId)}
-                    className="cart-checkbox-th"
-                  />
-                </div>
-                <div id={product.productId} className="cart_field_value_product cart-product-col-item">
-                  <img
-                    className="cart_field_value_product_image"
-                    loading="lazy"
-                    decoding="async"
-                    src={product_cart_image}
-                    alt="icon"
-                  />
-                  <div className="cart_field_value_product_text">
-                    <p className="cart_field_value_product_name">
-                      {product.name}
-                    </p>
-                    <p className="cart_field_value_product_color">
-                      {t('description')}: {product.description}
-                    </p>
-                    <p className="cart_field_value_product_delete" onClick={() => handleDelete(product.cartId)} style={{ cursor: 'pointer' }}>{t('delete')} </p>
-                  </div>
-                </div>
-                <p className="cart_field_value_price">
-                  {product.price.toLocaleString("vi-VN")}đ
-                </p>
-                <div className="cart_field_value_count">
-                  <div className="cart_field_value_count_box">
-                    <button className="cart_field_value_count_minus">-</button>
-                    <span className="cart_field_value_count_value">
-                      {product.quantity}
-                    </span>
-                    <button className="cart_field_value_count_add">+</button>
-                  </div>
-                </div>
-                <div className="cart_field_value_sum">
-                  <p></p>
-                  <p>{t('total')}</p>
-                  <p>
-                    {(product.price * product.quantity).toLocaleString("vi-VN")}đ
-                  </p>
+        <div className="cart-list">
+          <div className="cart-header-row">
+            <div className="cart-col-checkbox">
+              <input
+                type="checkbox"
+                onChange={handleSelectAll}
+                checked={products.length > 0 && selectedIds.size === products.length}
+                className="cart-checkbox"
+              />
+            </div>
+            <div className="cart-col-product">{t('product')}</div>
+            <div className="cart-col-price">{t('price')}</div>
+            <div className="cart-col-quantity">{t('quantity')}</div>
+            <div className="cart-col-total">{t('total')}</div>
+          </div>
+
+          <div className="cart-items-container">
+            {products.length === 0 ? (
+              <div className="cart-empty-state">
+                <p>{t('cart_empty')}</p>
+                <div className="btn-continue-shopping" onClick={() => navigate('/')}>
+                  {t('continue_shopping') || "Continue Shopping"}
                 </div>
               </div>
-            ))
-          )}
-        </div>
-      </div>
+            ) : (
+              products.map((product) => (
+                <div id={product.cartId} className="cart-item-row" key={product.cartId}>
+                  <div className="cart-col-checkbox">
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(product.cartId)}
+                      onChange={() => handleSelectOne(product.cartId)}
+                      className="cart-checkbox"
+                    />
+                  </div>
 
-      <div className="cart_all_sum_container">
-        <div className="cart_all_sum">
-          <label className="filter_item cart-wrapping-label">
-            <input
-              type="checkbox"
-              checked={isWrapped}
-              onChange={(e) => setIsWrapped(e.target.checked)}
-              className="cart-wrapping-checkbox"
-            />
-            {/* <span className="checkmark"></span> */}
-            <span>{t('wrapping_option')} <span className="cart_all_sum_tax">15.000đ</span></span>
-          </label>
-          <div className="cart_all_sum_line"></div>
-          <div className="cart_all_sum_value">
-            <p>{t('total')} ({selectedIds.size} sản phẩm)</p>
-            <p>{total.toLocaleString("vi-VN")}đ</p>
+                  <div className="cart-col-product cart-product-info">
+                    <div className="cart-product-img-wrapper">
+                      <img
+                        className="cart-product-img"
+                        loading="lazy"
+                        src={product_cart_image}
+                        alt="product"
+                      />
+                    </div>
+                    <div className="cart-product-details">
+                      <p className="cart-product-name">{product.name}</p>
+                      <p className="cart-product-desc">
+                        {t('description')}: {product.description}
+                      </p>
+                      <button
+                        className="cart-btn-delete"
+                        onClick={() => handleDelete(product.cartId)}
+                      >
+                        {t('delete')}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="cart-col-price">
+                    {product.price.toLocaleString("vi-VN")}đ
+                  </div>
+
+                  <div className="cart-col-quantity">
+                    <div className="quantity-control">
+                      <button className="qty-btn">-</button>
+                      <span className="qty-value">{product.quantity}</span>
+                      <button className="qty-btn">+</button>
+                    </div>
+                  </div>
+
+                  <div className="cart-col-total cart-item-total">
+                    {(product.price * product.quantity).toLocaleString("vi-VN")}đ
+                  </div>
+                </div>
+              ))
+            )}
           </div>
-
-          <button
-            className={`cart_all_sum_bt checkout_bt ${selectedIds.size === 0 ? 'checkout_bt_disabled' : ''}`}
-            onClick={handleCheckout}
-          >
-            {t('checkout')}
-          </button>
         </div>
+
+        {products.length > 0 && (
+          <div className="cart-summary-section">
+            <div className="cart-summary-box">
+              <label className="cart-wrapping-option">
+                <input
+                  type="checkbox"
+                  checked={isWrapped}
+                  onChange={(e) => setIsWrapped(e.target.checked)}
+                />
+                <span className="wrap-text">{t('wrapping_option')} <span className="highlight-price">15.000đ</span></span>
+              </label>
+
+              <div className="cart-divider"></div>
+
+              <div className="cart-total-row">
+                <span className="total-label">{t('total')} ({selectedIds.size} {t('product')}):</span>
+                <span className="total-amount">{total.toLocaleString("vi-VN")}đ</span>
+              </div>
+
+              <button
+                className={`btn-checkout ${selectedIds.size === 0 ? 'disabled' : ''}`}
+                onClick={handleCheckout}
+                disabled={selectedIds.size === 0}
+              >
+                {t('checkout')}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </main>
   );

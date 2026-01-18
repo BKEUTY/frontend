@@ -109,28 +109,28 @@ export default function Header() {
       </ul>
       <ul className="nav_list2">
         <li className="nav_item2">
-          <img
-            className="icon_nav_item2"
-            loading="lazy"
-            decoding="async"
-            src={cart_image}
-            alt="icon"
-          />
-          <Link className="nav_item2_text" to="/cart">
-            <h4>{t('cart')}</h4>
+          <Link className="nav_item2_link" to="/cart">
+            <img
+              className="icon_nav_item2"
+              loading="lazy"
+              decoding="async"
+              src={cart_image}
+              alt="icon"
+            />
+            <span className="nav_item2_text">{t('cart')}</span>
           </Link>
         </li>
 
         <li className="nav_item2">
-          <img
-            className="icon_nav_item2"
-            loading="lazy"
-            decoding="async"
-            src={account_image}
-            alt="icon"
-          />
-          <Link className="nav_item2_text" to="/account">
-            <h4>{isLanding ? t('not_logged_in') : t('account')}</h4>
+          <Link className="nav_item2_link" to="/account">
+            <img
+              className="icon_nav_item2"
+              loading="lazy"
+              decoding="async"
+              src={account_image}
+              alt="icon"
+            />
+            <span className="nav_item2_text">{isLanding ? t('not_logged_in') : t('account')}</span>
           </Link>
         </li>
         <li style={{ display: 'flex', alignItems: 'center' }}>

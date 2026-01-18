@@ -123,6 +123,7 @@ h5 {
     margin-top: 20px;
     font-size: 20px;
 }
+
 @media (max-width: 768px) {
     :root {
         --general_padding_left_right: 4vw;
@@ -131,10 +132,21 @@ h5 {
         --general_padding_top_bottom: 30px;
     }
 
-    h1 { font-size: 20px; }
-    h2 { font-size: 18px; }
-    h3 { font-size: 16px; }
-    h4 { font-size: 13px; }
+    h1 {
+        font-size: 20px;
+    }
+
+    h2 {
+        font-size: 18px;
+    }
+
+    h3 {
+        font-size: 16px;
+    }
+
+    h4 {
+        font-size: 13px;
+    }
 
     .button {
         padding: 10px 20px;
@@ -218,9 +230,14 @@ h5 {
         height: 40px;
         font-size: 1.5rem;
     }
-    
-    .slider-arrow.left { left: 10px; }
-    .slider-arrow.right { right: 10px; }
+
+    .slider-arrow.left {
+        left: 10px;
+    }
+
+    .slider-arrow.right {
+        right: 10px;
+    }
 }
 
 
@@ -229,17 +246,22 @@ h5 {
     background: white;
     border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+    /* More subtle shadow start */
     transition: transform 0.3s, box-shadow 0.3s;
     position: relative;
     border: 1px solid #f0f0f0;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    /* Crucial */
 }
 
 .product-card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 12px 20px rgba(0, 0, 0, 0.12);
+    z-index: 2;
+    /* Bring to front on hover */
 }
 
 .card-image-wrapper {
@@ -256,7 +278,8 @@ h5 {
     height: 100%;
     object-fit: contain;
     transition: transform 0.5s;
-    mix-blend-mode: multiply; /* Helps transparent PNGs look better on white */
+    mix-blend-mode: multiply;
+    /* Helps transparent PNGs look better on white */
 }
 
 .product-card:hover .card-image-wrapper img {
@@ -288,7 +311,8 @@ h5 {
     line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 40px; /* Fixed height for consistency */
+    height: 40px;
+    /* Fixed height for consistency */
     color: #333;
     margin-top: 0;
 }
@@ -312,7 +336,8 @@ h5 {
     font-weight: 700;
     font-size: 1.1rem;
     text-align: left;
-    margin-top: auto; /* Push to bottom */
+    margin-top: auto;
+    /* Push to bottom */
 }
 
 .card-badges {
@@ -357,4 +382,3 @@ h5 {
     margin-right: 4px;
     vertical-align: middle;
 }
-

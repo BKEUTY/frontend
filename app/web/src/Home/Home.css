@@ -4,20 +4,17 @@
     font-family: 'Inter', sans-serif;
 }
 
-/* Category Bar */
 .category-bar {
     background-color: #f8c1d6;
     padding: 10px 40px;
     display: flex;
     justify-content: space-between;
-    /* Keep separation between nav and search */
     align-items: center;
     font-size: 0.9rem;
     font-weight: 700;
     color: #9c1c5a;
     position: relative;
     z-index: 20;
-    /* Higher than slider */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
@@ -25,13 +22,11 @@
     display: flex;
     align-items: center;
     gap: 25px;
-    /* Increased gap for better separate separation */
     text-transform: uppercase;
     flex: 1;
-    /* Take up space */
     justify-content: flex-start;
-    /* Ensure left alignment */
 }
+
 
 .cat-item {
     cursor: pointer;
@@ -54,7 +49,7 @@
     color: #d88fa5;
 }
 
-/* Mega Menu */
+
 .mega-menu {
     display: none;
     position: absolute;
@@ -116,13 +111,12 @@
     font-weight: 500;
 }
 
-/* Search Bar */
+
 .search-bar-wrapper {
     display: flex;
     align-items: center;
     background: white;
     border-radius: 4px;
-    /* More squared as per image */
     padding: 8px 15px;
     border: 1px solid #e91e63;
     width: 400px;
@@ -151,19 +145,12 @@
     justify-content: center;
     padding: 0;
     margin-right: 8px;
-    /* Icon on left usually, but let's see */
 }
 
-/* Reorder logic if icon is left */
 .search-bar-wrapper {
     flex-direction: row-reverse;
-    /* Put icon at start if strictly needed, but design varies. Let's keep simpler. */
-    /* Input first, button (icon) last? */
 }
 
-/* Actually typically icon is right or left. Code has btn last. Let's keep it. */
-
-/* Slider Section */
 .home-hero-slider {
     position: relative;
     width: 100%;
@@ -171,11 +158,8 @@
     overflow: hidden;
     background: #000;
     z-index: 1;
-    /* Lower than category bar */
 }
 
-/* Slider Wrapper and Slide moved to global.css */
-/* Glass Overlay Fixed Position */
 .glass-overlay {
     position: absolute;
     top: 50%;
@@ -188,7 +172,6 @@
     max-width: 800px;
     padding: 0 20px;
     pointer-events: none;
-    /* Let clicks pass through if needed, but button needs clicks. So pointer-events auto on button. */
 }
 
 .glass-overlay>* {
@@ -230,8 +213,6 @@
     border-color: white;
 }
 
-/* Slider Controls */
-/* Slider Controls moved to global.css */
 
 .slider-dots {
     position: absolute;
@@ -259,9 +240,8 @@
     transform: scale(1.3);
 }
 
-/* Product Sections */
 .section-full-width {
-    padding: 60px 40px;
+    padding: 60px 12vw;
 }
 
 .home-section-title {
@@ -274,59 +254,137 @@
     letter-spacing: 1px;
 }
 
-.home-product-grid {
-    display: flex;
-    justify-content: center;
-    gap: 25px;
-    flex-wrap: wrap;
-}
 
+.best-seller-grid,
 .suggested-grid {
-    display: grid;
+    display: grid !important;
+    width: 90%;
+    margin: 0 auto;
     grid-template-columns: repeat(5, 1fr);
-    gap: 20px;
+    gap: 30px;
+    padding-bottom: 20px;
+    align-items: stretch;
+    justify-content: center;
 }
 
-.product-card {
-    background: white;
-    border: 1px solid #f0f0f0;
-    border-radius: 8px;
-    padding: 15px;
-    width: 230px;
-    text-align: left;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-
-.card-image-wrapper {
-    position: relative;
-    text-align: center;
-    margin-bottom: 15px;
-    overflow: hidden;
-    height: 180px;
-}
-
-.card-image-wrapper img {
-    max-width: 100%;
+.home-product-grid .product-card,
+.suggested-grid .product-card {
+    width: 100%;
+    margin: 0;
     height: 100%;
-    object-fit: contain;
-    transition: transform 0.5s;
 }
 
-.product-card:hover img {
-    transform: scale(1.05);
+@media (max-width: 1400px) {
+
+
+    .best-seller-grid,
+    .suggested-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
+
+@media (max-width: 1100px) {
+
+    .best-seller-grid,
+    .suggested-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .section-full-width {
+        padding: 30px 15px;
+    }
+
+    .best-seller-grid,
+    .suggested-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        width: 100%;
+    }
+
+    .category-bar {
+        flex-direction: column;
+        padding: 15px;
+        gap: 15px;
+        align-items: stretch;
+    }
+
+    .category-list {
+        width: 100%;
+        overflow-x: auto;
+        white-space: nowrap;
+        padding-bottom: 5px;
+    }
+
+    .search-bar-wrapper {
+        width: 100%;
+    }
+
+    .mega-menu {
+        display: none !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-full-width {
+        padding: 10px 5px;
+    }
+
+    .best-seller-grid,
+    .suggested-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        width: 100%;
+        margin: 0;
+    }
+
+    .home-container .product-card {
+        padding: 8px;
+    }
+
+    .home-container .card-image-wrapper {
+        height: 140px;
+        margin-bottom: 8px;
+    }
+
+    .home-container .card-info {
+        padding: 0 5px 5px 5px;
+    }
+
+    .home-container .card-brand {
+        font-size: 0.7rem;
+        margin-bottom: 2px;
+    }
+
+    .home-container .card-name {
+        font-size: 0.85rem;
+        height: 34px;
+        margin-bottom: 4px;
+        line-height: 1.3;
+    }
+
+    .home-container .card-meta {
+        margin-bottom: 5px;
+    }
+
+    .home-container .card-price {
+        font-size: 1rem;
+    }
+
+    .home-container .price-row {
+        margin-top: 5px;
+    }
+
+    .home-container .glass-title {
+        font-size: 1.8rem;
+    }
+}
+
 
 .arrow-left-card,
 .arrow-right-card {
     display: none;
-    /* Hide internal card arrows unless needed */
 }
 
 .suggested-img {
@@ -336,85 +394,9 @@
     margin-bottom: 15px;
 }
 
-.card-brand {
-    color: #999;
-    font-size: 0.75rem;
-    margin-bottom: 5px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
 
-.card-name {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    height: 42px;
-    /* Fixed height for 2 lines */
-    color: #333;
-}
-
-.card-meta {
-    font-size: 0.85rem;
-    color: #ffc107;
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-}
-
-.sold {
-    color: #aaa;
-    margin-left: 8px;
-    font-size: 0.75rem;
-}
-
-.card-price {
-    color: #c2185b;
-    font-weight: 700;
-    font-size: 1.2rem;
-    text-align: left;
-    border: none;
-    padding: 0;
-}
-
-/* Suggested specific */
 .bg-gray {
     background-color: #f9f9f9;
-}
-
-.suggested-card {
-    width: auto;
-}
-
-.card-badges {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 1;
-    display: flex;
-    gap: 5px;
-}
-
-.badge-red {
-    background-color: #d32f2f;
-    color: white;
-    font-size: 0.7rem;
-    padding: 3px 6px;
-    border-radius: 3px;
-    font-weight: 700;
-}
-
-.badge-yellow {
-    background-color: #fbc02d;
-    color: black;
-    font-size: 0.7rem;
-    padding: 3px 6px;
-    border-radius: 3px;
-    font-weight: 700;
 }
 
 .price-row {
@@ -436,7 +418,6 @@
     font-size: 1.1rem;
 }
 
-/* Brand Section (About Us) */
 .section4 {
     padding: 60px 20px;
     background: white;
@@ -449,14 +430,12 @@
     width: 100%;
     max-width: 1200px;
     height: 400px;
-    /* Fixed height for split layout */
     box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
 }
 
 .section4-text {
     flex: 1;
     background-color: #33001b;
-    /* Dark purple/wine background */
     padding: 60px;
     display: flex;
     flex-direction: column;
@@ -561,18 +540,15 @@
         font-size: 0.8rem;
     }
 
-    /* Hide Mega Menu on Mobile to prevent UX issues */
     .cat-item:hover .mega-menu {
         display: none;
     }
 
-    /* Search Bar */
     .search-bar-wrapper {
         width: 100%;
         box-sizing: border-box;
     }
 
-    /* Hero Slider */
     .home-hero-slider {
         height: 300px;
     }
@@ -610,44 +586,6 @@
         right: 5px;
     }
 
-    /* Product Sections */
-    .section-full-width {
-        padding: 30px 15px;
-    }
-
-    .home-section-title {
-        font-size: 1.5rem;
-        margin-bottom: 25px;
-    }
-
-    .home-product-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-        /* Space between cards */
-        justify-content: center;
-    }
-
-    .suggested-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
-    .product-card {
-        width: 100%;
-        min-width: 0;
-        padding: 10px;
-    }
-
-    .card-image-wrapper {
-        height: 140px;
-    }
-
-    .suggested-img {
-        height: 140px;
-    }
-
-    /* Brand Section */
     .section4 {
         padding: 40px 15px;
     }
@@ -659,7 +597,6 @@
 
     .section4-image {
         height: 250px;
-        /* Fixed height for image area */
         flex: none;
     }
 
@@ -667,25 +604,18 @@
         padding: 30px 20px;
         text-align: center;
         align-items: center;
-        /* Center content */
     }
 
     .section4-text h2 {
         font-size: 1.8rem;
     }
-
-    .btn-explore-brand {
-        align-self: center;
-    }
 }
 
-/* Star Icon */
 .star-icon {
     display: inline-block;
     width: 14px;
     height: 14px;
     background-color: #ffc107;
-    /* Yellow/Gold */
     mask-size: contain;
     -webkit-mask-size: contain;
     mask-position: center;

@@ -93,7 +93,7 @@ header.header {
     cursor: pointer;
 }
 
-.nav_item2 a {
+.nav_item2_link {
     text-decoration: none;
     display: flex;
     flex-direction: column;
@@ -108,10 +108,10 @@ header.header {
     object-fit: contain;
 }
 
-.nav_item2_text h4 {
-    margin: 0;
+.nav_item2_text {
     font-size: 0.9rem;
     font-weight: 600;
+    margin: 0;
 }
 
 .nav_lang_toggle {
@@ -207,11 +207,11 @@ header.header {
         gap: 10px;
     }
 
-    .nav_item2_text h4 {
+    .nav_item2_text {
         display: none;
     }
 
-    .nav_item2 a {
+    .nav_item2_link {
         gap: 0;
     }
 

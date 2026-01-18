@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import './Home.css';
 import banner1 from '../Assets/Images/Banners/banner_home_1.png';
@@ -16,7 +15,8 @@ const bestSellers = [
     { id: 1, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img },
     { id: 2, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img },
     { id: 3, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img },
-    { id: 4, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img }
+    { id: 4, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img },
+    { id: 5, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img }
 ];
 
 const suggestedProducts = [
@@ -51,64 +51,6 @@ const Home = () => {
     return (
         <div className="home-container">
             {/* Sub Header for Categories - As seen in image */}
-            {/* Sub Header for Categories */}
-            <div className="category-bar">
-                <div className="category-list">
-                    <div className="cat-item cancel-hover">
-                        <span className="cat-trigger">☰ {t('categories')}</span>
-                        {/* Mega Menu Dropdown */}
-                        <div className="mega-menu">
-                            <div className="mega-column">
-                                <h3>{t('makeup')}</h3>
-                                <Link to="/product">{t('makeup_face')}</Link>
-                                <Link to="/product">{t('makeup_lips')}</Link>
-                                <Link to="/product">{t('makeup_eyes')}</Link>
-                                <Link to="/product">{t('makeup_nails')}</Link>
-                            </div>
-                            <div className="mega-column">
-                                <h3>{t('skincare')}</h3>
-                                <Link to="/product">{t('cleanser')}</Link>
-                                <Link to="/product">{t('toner')}</Link>
-                                <Link to="/product">{t('serum')}</Link>
-                                <Link to="/product">{t('moisturizer')}</Link>
-                                <Link to="/product">{t('sunscreen')}</Link>
-                            </div>
-                            <div className="mega-column">
-                                <h3>{t('body_care')}</h3>
-                                <Link to="/product">{t('shower_gel')}</Link>
-                                <Link to="/product">{t('body_lotion')}</Link>
-                                <Link to="/product">{t('body_scrub')}</Link>
-                            </div>
-                            <div className="mega-column">
-                                <h3>{t('hair_care')}</h3>
-                                <Link to="/product">{t('shampoo')}</Link>
-                                <Link to="/product">{t('conditioner')}</Link>
-                                <Link to="/product">{t('hair_oil')}</Link>
-                            </div>
-                        </div>
-                    </div>
-                    <span className="cat-divider">|</span>
-                    <span className="cat-item">{t('brands')}</span>
-                    <span className="cat-divider">|</span>
-                    <span className="cat-item">{t('new_arrivals')}</span>
-                    <span className="cat-divider">|</span>
-                    <span className="cat-item">{t('best_sellers')}</span>
-                    <span className="cat-divider">|</span>
-                    <span className="cat-item">{t('hot_deals')}</span>
-                    <span className="cat-divider">|</span>
-                    <span className="cat-item">{t('bkeuty_deals')}</span>
-                </div>
-                <div className="search-bar-wrapper">
-                    <input type="text" placeholder={t('search_hint')} className="search-input" />
-                    <button className="search-btn">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <circle cx="11" cy="11" r="8"></circle>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
             {/* Hero Section Slider */}
             <div className="home-hero-slider">
                 <div
@@ -149,9 +91,12 @@ const Home = () => {
             {/* Best Sellers */}
             <section className="section-full-width">
                 <h2 className="home-section-title">{t('best_sellers')}</h2>
-                <div className="home-product-grid">
+                <div className="best-seller-grid">
                     {bestSellers.map((item) => (
                         <div key={item.id} className="product-card">
+                            <div className="card-badges" style={{ top: '10px', left: '10px' }}>
+                                <span className="badge-red">HOT</span>
+                            </div>
                             <div className="card-image-wrapper">
                                 <img src={item.image} alt={item.name} />
                                 <button className="carousel-arrow arrow-left-card">❮</button>
@@ -172,23 +117,27 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Suggested For You */}
+            {/* Suggested For You - Mocking 10 Items */}
             <section className="section-full-width bg-gray">
                 <h2 className="home-section-title">{t('section_suggested')}</h2>
                 <div className="suggested-grid">
-                    {suggestedProducts.map((item) => (
-                        <div key={item.id} className="product-card suggested-card">
+                    {/* Displaying exactly 10 items by duplicating mock data if needed or slicing */}
+                    {[...suggestedProducts, ...suggestedProducts].slice(0, 10).map((item, index) => (
+                        <div key={`${item.id}-${index}`} className="product-card">
                             <div className="card-badges">
                                 <span className="badge-red">{t('so_hot')}</span>
                                 <span className="badge-yellow">-{item.discount}</span>
                             </div>
-                            <img src={item.image} alt={item.name} className="suggested-img" />
+                            <div className="card-image-wrapper">
+                                <img src={item.image} alt={item.name} />
+                            </div>
                             <div className="card-info">
                                 <p className="card-brand">Anessa</p>
                                 <h3 className="card-name">{item.name}</h3>
                                 <div className="card-meta">
                                     <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
-                                    <span className="rating">{item.rating} ({item.sold})</span>
+                                    <span className="rating">{item.rating}</span>
+                                    <span className="sold">({item.sold})</span>
                                 </div>
                                 <div className="price-row">
                                     <span className="old-price">{item.oldPrice}</span>
@@ -197,30 +146,6 @@ const Home = () => {
                             </div>
                         </div>
                     ))}
-                    {/* Duplicate row to simulate grid */}
-                    {suggestedProducts.map((item) => (
-                        <div key={`dup-${item.id}`} className="product-card suggested-card">
-                            <div className="card-badges">
-                                <span className="badge-red">{t('so_hot')}</span>
-                                <span className="badge-yellow">-{item.discount}</span>
-                            </div>
-                            <img src={item.image} alt={item.name} className="suggested-img" />
-                            <div className="card-info">
-                                <p className="card-brand">Anessa</p>
-                                <h3 className="card-name">{item.name}</h3>
-                                <div className="card-meta">
-                                    <span className="rating">⭐ {item.rating} ({item.sold})</span>
-                                </div>
-                                <div className="price-row">
-                                    <span className="old-price">{item.oldPrice}</span>
-                                    <span className="new-price">{item.price}</span>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div style={{ textAlign: 'center', marginTop: 20 }}>
-                    <button className="btn-view-more">{t('view_more')}</button>
                 </div>
             </section>
 

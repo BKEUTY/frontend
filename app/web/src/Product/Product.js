@@ -1,5 +1,5 @@
 import "./Product.css";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -26,6 +26,7 @@ export default function Product() {
     setPage(0);
     setIsPaginationMode(false);
     fetchProducts(0, false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Keep empty for initial load only, disable lint if needed, OR fix fetchProducts.
 
   // Handlers

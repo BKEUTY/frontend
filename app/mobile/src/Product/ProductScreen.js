@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert, TextInput } from 'react-native';
 import { COLORS } from '../constants/Theme';
 import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -8,31 +8,51 @@ const ProductScreen = ({ navigation }) => {
     const { t } = useLanguage();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [searchText, setSearchText] = useState('');
 
     useEffect(() => {
-        // Mimic the web fetch
-        axiosClient.get('/product')
-            .then(response => {
-                setProducts(response.data);
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("Fetch products error:", err);
-                setLoading(false);
-            });
+        fetchProducts();
     }, []);
+
+    const fetchProducts = async () => {
+        try {
+            const response = await axiosClient.get('/product');
+            setProducts(response.data);
+            setLoading(false);
+        } catch (err) {
+            console.error("Fetch products error:", err);
+            setLoading(false);
+        }
+    };
+
+    const addToCart = async (productId) => {
+        try {
+            await axiosClient.post('/cart', {
+                productId: productId,
+                userId: 1,
+            });
+            Alert.alert(t('success') || "Thành công", t('add_cart_success') || "Đã thêm vào giỏ hàng");
+        } catch (error) {
+            console.error(error);
+            Alert.alert("Error", "Failed to add to cart");
+        }
+    };
 
     const renderItem = ({ item }) => (
         <View style={styles.productItem}>
-            {/* Placeholder image since we might not have the URL working cleanly yet or need specific assets */}
             <View style={styles.imagePlaceholder}>
-                <Text style={{ color: '#888' }}>Image</Text>
+                {/* Placeholders */}
             </View>
 
             <View style={styles.productInfo}>
+                <Text style={styles.productBrand}>BKEUTY</Text>
                 <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-                <Text style={styles.productDesc} numberOfLines={2}>{item.description}</Text>
-                <View style={styles.productBottom}>
+                <View style={styles.ratingRow}>
+                    <Text style={{ color: '#ffc107', fontSize: 10 }}>⭐⭐⭐⭐⭐</Text>
+                    <Text style={{ fontSize: 10, color: '#999' }}>(100)</Text>
+                </View>
+
+                <View style={styles.priceRow}>
                     <Text style={styles.productPrice}>{item.price ? item.price.toLocaleString("vi-VN") : 0}đ</Text>
                     <TouchableOpacity style={styles.addToCartBtn} onPress={() => addToCart(item.productId)}>
                         <Text style={styles.addToCartText}>+</Text>
@@ -41,19 +61,6 @@ const ProductScreen = ({ navigation }) => {
             </View>
         </View>
     );
-
-    const addToCart = async (productId) => {
-        try {
-            await axiosClient.post('/cart', {
-                productId: productId,
-                userId: 1, // Hardcoded for now as per web
-            });
-            Alert.alert("Success", t('add_cart_success')); // Using Alert instead of lower case alert for consistency in RN
-        } catch (error) {
-            console.error(error);
-            Alert.alert("Error", "Failed to add to cart");
-        }
-    };
 
     if (loading) {
         return (
@@ -65,7 +72,20 @@ const ProductScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.headerTitle}>{t('product')}</Text>
+            <View style={styles.header}>
+                <Text style={styles.headerTitle}>{t('product')}</Text>
+                <View style={styles.searchBar}>
+                    <Text style={styles.searchIcon}>🔍</Text>
+                    <TextInput
+                        placeholder={t('search_placeholder') || "Tìm kiếm sản phẩm..."}
+                        style={styles.searchInput}
+                        value={searchText}
+                        onChangeText={setSearchText}
+                        placeholderTextColor="#999"
+                    />
+                </View>
+            </View>
+
             <FlatList
                 data={products}
                 keyExtractor={(item) => item.productId?.toString() || Math.random().toString()}
@@ -73,6 +93,7 @@ const ProductScreen = ({ navigation }) => {
                 numColumns={2}
                 contentContainerStyle={styles.listContent}
                 columnWrapperStyle={styles.columnWrapper}
+                showsVerticalScrollIndicator={false}
             />
         </View>
     );
@@ -87,15 +108,43 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
+    header: {
+        padding: 20,
+        backgroundColor: 'white',
+        paddingBottom: 15,
+        elevation: 2,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+    },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 22,
         fontWeight: 'bold',
         color: COLORS.mainTitle,
+        marginBottom: 15,
         textAlign: 'center',
-        marginVertical: 15,
+        textTransform: 'uppercase',
+    },
+    searchBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f5f5f5',
+        borderRadius: 8,
+        paddingHorizontal: 10,
+        height: 45,
+    },
+    searchIcon: {
+        marginRight: 10,
+        fontSize: 16,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 14,
+        color: '#333',
     },
     listContent: {
-        paddingHorizontal: 10,
+        padding: 15,
         paddingBottom: 20,
     },
     columnWrapper: {
@@ -103,58 +152,68 @@ const styles = StyleSheet.create({
     },
     productItem: {
         width: '48%',
-        backgroundColor: COLORS.background2,
+        backgroundColor: 'white',
         marginBottom: 15,
         borderRadius: 8,
         overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#eee',
         elevation: 2, // Shadow for android
         shadowColor: '#000', // Shadow for IOS
         shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.2,
-        shadowRadius: 1.41,
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
     },
     imagePlaceholder: {
         width: '100%',
-        height: 150,
-        backgroundColor: '#e0e0e0',
-        justifyContent: 'center',
-        alignItems: 'center',
+        height: 140,
+        backgroundColor: '#f9f9f9',
     },
     productInfo: {
         padding: 10,
     },
+    productBrand: {
+        fontSize: 10,
+        color: '#999',
+        marginBottom: 3,
+        textTransform: 'uppercase',
+    },
     productName: {
-        fontWeight: 'bold',
-        fontSize: 14,
-        marginBottom: 5,
-        color: '#000',
+        fontWeight: '500',
+        fontSize: 13,
+        marginBottom: 6,
+        color: '#333',
+        height: 36, // 2 lines fixed
     },
-    productDesc: {
-        fontSize: 12,
-        color: '#666',
-        marginBottom: 10,
+    ratingRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 8,
+        gap: 5,
     },
-    productBottom: {
+    priceRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     productPrice: {
-        fontSize: 14,
+        fontSize: 15,
         fontWeight: 'bold',
         color: COLORS.mainTitle,
     },
     addToCartBtn: {
         backgroundColor: COLORS.mainTitle,
-        width: 24,
-        height: 24,
-        borderRadius: 12,
+        width: 28,
+        height: 28,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
     },
     addToCartText: {
         color: 'white',
         fontWeight: 'bold',
+        fontSize: 16,
+        lineHeight: 18,
     },
 });
 

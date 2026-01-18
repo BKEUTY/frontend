@@ -1,15 +1,18 @@
-
 export const COLORS = {
-  background: 'rgb(251, 249, 245)',
-  background2: 'rgb(255, 255, 255)',
-  mainTitle: 'rgb(163, 2, 81)',
-  mainTitleText: 'rgb(255, 255, 255)',
-  text: 'rgb(0, 0, 0)',
-  buttonBackground: 'rgb(162, 4, 81)',
+  background: '#fbf9f5',
+  background2: '#ffffff',
+  mainTitle: '#c2185b',
+  mainTitleText: '#ffffff',
+  text: '#333333',
+  buttonBackground: '#c2185b',
   buttonText: 'white',
-  inputBorder: '#333',
-  checked: 'rgb(52, 121, 233)',
-  checkoutButton: 'black',
+  inputBorder: '#ddd',
+  checked: '#c2185b',
+  checkoutButton: '#c2185b',
+  lightPink: '#fce4ec',
+  secondary: '#f9f9f9',
+  gray: '#777777',
+  danger: '#d32f2f'
 };
 
 export const SIZES = {
@@ -18,11 +21,11 @@ export const SIZES = {
   h3: 18,
   h4: 14,
   h5: 12,
-  padding: 50, 
-  paddingSide: 20, 
+  padding: 50,
+  paddingSide: 20,
 };
 
 export const FONTS = {
-  interRegular: 'System', 
+  interRegular: 'System',
   interBold: 'System',
 };

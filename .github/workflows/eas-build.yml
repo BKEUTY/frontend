@@ -5,6 +5,7 @@ on:
       - main
     paths:
       - 'app/mobile/**'
+      - '.github/workflows/eas-build.yml'
   workflow_dispatch:
 
 jobs:

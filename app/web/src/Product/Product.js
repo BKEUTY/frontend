@@ -14,7 +14,7 @@ export default function Product() {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [minPrice, setMinPrice] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
+
 
   const notify = useNotification();
   const { t } = useLanguage();

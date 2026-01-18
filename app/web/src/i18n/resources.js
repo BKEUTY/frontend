@@ -49,8 +49,7 @@ export const en = {
     cart_empty: "Your cart is empty",
     description: "Description",
     delete: "Delete",
-    delete: "Delete",
-    delete: "Delete",
+
     wrapping_option: "Please wrap product for ",
     service: "Service",
     promotion: "Promotion",

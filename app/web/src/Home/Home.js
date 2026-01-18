@@ -7,7 +7,7 @@ import product_img from "../Assets/Images/Products/product image.svg";
 import about_image from "../Assets/Images/Banners/Frame 26085715.svg";
 
 // Mock data to match image
-const categories = ['DANH MỤC', 'THƯƠNG HIỆU', 'HÀNG MỚI VỀ', 'BÁN CHẠY', 'HOT DEALS', 'BKEUTY DEALS'];
+// Mock data to match image
 
 const bestSellers = [
     { id: 1, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: '314 đã bán', image: product_img },

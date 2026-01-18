@@ -67,12 +67,12 @@ export default function Footer() {
         </div>
 
         <div className="social-icons">
-          <a href="#" className="social-icon"><img src={facebook_icon} alt="Facebook" /></a>
-          <a href="#" className="social-icon"><img src={instagram_icon} alt="Instagram" /></a>
-          <a href="#" className="social-icon"><img src={twitter_icon} alt="Twitter" /></a>
-          <a href="#" className="social-icon"><img src={pinterest_icon} alt="Pinterest" /></a>
-          <a href="#" className="social-icon"><img src={reddit_icon} alt="Reddit" /></a>
-          <a href="#" className="social-icon"><img src={tiktok_icon} alt="TikTok" /></a>
+          <a href="/" className="social-icon"><img src={facebook_icon} alt="Facebook" /></a>
+          <a href="/" className="social-icon"><img src={instagram_icon} alt="Instagram" /></a>
+          <a href="/" className="social-icon"><img src={twitter_icon} alt="Twitter" /></a>
+          <a href="/" className="social-icon"><img src={pinterest_icon} alt="Pinterest" /></a>
+          <a href="/" className="social-icon"><img src={reddit_icon} alt="Reddit" /></a>
+          <a href="/" className="social-icon"><img src={tiktok_icon} alt="TikTok" /></a>
         </div>
       </div>
 

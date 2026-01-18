@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Account.css';
 

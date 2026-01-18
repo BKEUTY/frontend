@@ -24,6 +24,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "da90474c-d0c6-4833-807b-a3d59c3c75b9"
+      }
+    },
+    "owner": "clearwind"
   }
 }

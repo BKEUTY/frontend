@@ -7,9 +7,12 @@ import { View, Text } from 'react-native';
 import HomeScreen from '../Home/HomeScreen';
 import ProductScreen from '../Product/ProductScreen';
 import CartScreen from '../Cart/CartScreen';
+import CheckoutScreen from '../Cart/CheckoutScreen';
 import AccountScreen from '../Account/AccountScreen';
+import RetailSystemScreen from '../StaticPages/RetailSystemScreen';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
+import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, BeautyCornerScreen, TermsScreen } from '../StaticPages/StaticScreens';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -31,7 +34,7 @@ function TabNavigator() {
                     else if (route.name === 'Cart') iconName = '🛒';
                     else if (route.name === 'Account') iconName = '👤';
 
-                    return <Text style={{ fontSize: 24 }}>{iconName}</Text>;
+                    return <Text style={{ fontSize: 24, color: color }}>{iconName}</Text>;
                 },
                 tabBarLabelStyle: { fontSize: 12, paddingBottom: 5 }
             })}
@@ -45,11 +48,22 @@ function TabNavigator() {
 }
 
 export default function AppNavigator() {
+    const { t } = useLanguage();
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{ headerShown: false }}>
                 <Stack.Screen name="Main" component={TabNavigator} />
-                {/* Add Detail screens here later, e.g. ProductDetail, Checkout */}
+                <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: true, title: t('checkout') }} />
+
+                {/* Static Pages */}
+                <Stack.Screen name="AboutUs" component={AboutUsScreen} options={{ headerShown: true, title: t('about_brand') }} />
+                <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: true, title: t('contact') }} />
+                <Stack.Screen name="FAQ" component={FAQScreen} options={{ headerShown: true, title: t('faq') }} />
+                <Stack.Screen name="RetailSystem" component={RetailSystemScreen} options={{ headerShown: true, title: t('retail_system') }} />
+                <Stack.Screen name="BeautyCorner" component={BeautyCornerScreen} options={{ headerShown: true, title: t('beauty_corner') }} />
+                <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
+
+                <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -2,9 +2,11 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Image } from 'react-native';
 import { COLORS } from '../constants/Theme';
 
+import { useNavigation } from '@react-navigation/native';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const AccountScreen = () => {
+    const navigation = useNavigation();
     const { t, toggleLanguage, language } = useLanguage();
 
     // Placeholder data
@@ -20,7 +22,21 @@ const AccountScreen = () => {
         { id: 3, title: t('my_appointments') },
         { id: 4, title: t('my_wallet') },
         { id: 5, title: t('shipping_address') },
+        // Static Pages
+        { id: 6, title: t('about_brand'), route: 'AboutUs' },
+        { id: 7, title: t('retail_system'), route: 'RetailSystem' },
+        { id: 8, title: t('faq'), route: 'FAQ' },
+        { id: 9, title: t('beauty_corner'), route: 'BeautyCorner' },
+        { id: 10, title: t('terms'), route: 'Terms' },
+        { id: 11, title: t('contact'), route: 'Contact' },
+        { id: 12, title: 'App Info', route: 'AppInfo' },
     ];
+
+    const handlePress = (item) => {
+        if (item.route) {
+            navigation.navigate(item.route);
+        }
+    };
 
     return (
         <ScrollView style={styles.container}>
@@ -40,7 +56,7 @@ const AccountScreen = () => {
 
             <View style={styles.menuSection}>
                 {menuItems.map(item => (
-                    <TouchableOpacity key={item.id} style={styles.menuItem}>
+                    <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handlePress(item)}>
                         <Text style={styles.menuItemText}>{item.title}</Text>
                         <Text style={styles.chevron}>{'>'}</Text>
                     </TouchableOpacity>

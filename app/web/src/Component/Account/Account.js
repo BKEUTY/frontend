@@ -47,10 +47,10 @@ export default function Account() {
                     <li><span className="sidebar-item">{t('my_appointments')}</span></li>
                     <li><span className="sidebar-item">{t('my_wallet')}</span></li>
                     <li><span className="sidebar-item">{t('shipping_address')}</span></li>
-                    <li className="sidebar-divider-item">
-                        <Link to="/" className="sidebar-item">{t('logout')}</Link>
-                    </li>
                 </ul>
+                <div className="sidebar-footer">
+                    <Link to="/" className="sidebar-item logout-item">{t('logout')}</Link>
+                </div>
             </div>
 
             <div className="account-content">

@@ -1,6 +1,6 @@
 // Header.js
 import { useState } from 'react';
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./Header.css";
 import logo_image from "../../Assets/Images/logo.svg";
@@ -109,20 +109,23 @@ export default function Header() {
       </ul>
       <ul className="nav_list2">
         <li className="nav_item2">
-          <Link className="nav_item2_link" to="/cart">
-            <img
-              className="icon_nav_item2"
-              loading="lazy"
-              decoding="async"
-              src={cart_image}
-              alt="icon"
-            />
+          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link" : (isActive ? "nav_item2_link active-link-right" : "nav_item2_link")} to="/cart">
+            <div style={{ position: 'relative' }}>
+              <img
+                className="icon_nav_item2"
+                loading="lazy"
+                decoding="async"
+                src={cart_image}
+                alt="icon"
+              />
+              <span className="cart-badge">3</span>
+            </div>
             <span className="nav_item2_text">{t('cart')}</span>
-          </Link>
+          </NavLink>
         </li>
 
         <li className="nav_item2">
-          <Link className="nav_item2_link" to="/account">
+          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link" : (isActive ? "nav_item2_link active-link-right" : "nav_item2_link")} to="/account">
             <img
               className="icon_nav_item2"
               loading="lazy"
@@ -131,7 +134,7 @@ export default function Header() {
               alt="icon"
             />
             <span className="nav_item2_text">{isLanding ? t('not_logged_in') : t('account')}</span>
-          </Link>
+          </NavLink>
         </li>
         <li style={{ display: 'flex', alignItems: 'center' }}>
           <button className="nav_lang_toggle" onClick={toggleLanguage}>

@@ -23,20 +23,20 @@ export default function Footer() {
         <div className="footer-column">
           <h3 className="footer-title">{t('support_team')}</h3>
           <ul className="footer-links">
-            <li><Link to="/he-thong-cua-hang">{t('retail_system')}</Link></li>
-            <li><Link to="/lien-he">{t('contact')}</Link></li>
-            <li><Link to="/cau-hoi-thuong-gap">{t('faq')}</Link></li>
-            <li><Link to="/ve-thuong-hieu">{t('about_brand')}</Link></li>
-            <li><Link to="/goc-lam-dep">{t('beauty_corner')}</Link></li>
+            <li><Link to="/retail-system">{t('retail_system')}</Link></li>
+            <li><Link to="/contact">{t('contact')}</Link></li>
+            <li><Link to="/faq">{t('faq')}</Link></li>
+            <li><Link to="/about-brand">{t('about_brand')}</Link></li>
+            <li><Link to="/beauty-corner">{t('beauty_corner')}</Link></li>
           </ul>
         </div>
 
         <div className="footer-column">
           <h3 className="footer-title">{t('product_section')}</h3>
           <ul className="footer-links">
-            <li><Link to="/trang-diem">{t('makeup')}</Link></li>
-            <li><Link to="/cham-soc-da">{t('skincare')}</Link></li>
-            <li><Link to="/bo-qua-tang">{t('gift_sets')}</Link></li>
+            <li><Link to="/product">{t('makeup')}</Link></li>
+            <li><Link to="/product">{t('skincare')}</Link></li>
+            <li><Link to="/product">{t('gift_sets')}</Link></li>
           </ul>
         </div>
 

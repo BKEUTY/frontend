@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert, Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constants/Theme';
 import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
 
 const CartScreen = () => {
+    const navigation = useNavigation();
     const { t } = useLanguage();
     const [products, setProducts] = useState([]);
     const [refreshing, setRefreshing] = useState(false);
@@ -12,9 +14,8 @@ const CartScreen = () => {
 
     const fetchCart = async () => {
         try {
-            const response = await axiosClient.get('/cart/1'); // userId 1
+            const response = await axiosClient.get('/cart/1');
             setProducts(response.data);
-            // Default select all or none? Let's select all initially for demo
             const initialSelection = {};
             response.data.forEach(item => initialSelection[item.cartId] = true);
             setSelectedItems(initialSelection);
@@ -73,28 +74,33 @@ const CartScreen = () => {
         const isSelected = !!selectedItems[item.cartId];
         return (
             <View style={styles.cartCard}>
-                {/* Checkbox */}
-                <TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.cartId)}>
-                    <View style={[styles.checkbox, isSelected && styles.checkedCheckbox]}>
-                        {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                {/* Top Row: CheckBox + Image + Name + Delete */}
+                <View style={styles.topRow}>
+                    <TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.cartId)}>
+                        <View style={[styles.checkbox, isSelected && styles.checkedCheckbox]}>
+                            {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                        </View>
+                    </TouchableOpacity>
+
+                    <View style={styles.imagePlaceholder} />
+
+                    <View style={styles.itemInfo}>
+                        <View style={styles.headerRow}>
+                            <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+                            <TouchableOpacity onPress={() => handleDelete(item.cartId)} style={styles.deleteBtn}>
+                                <Text style={styles.deleteIcon}>×</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </TouchableOpacity>
+                </View>
 
-                {/* Image Placeholder */}
-                <View style={styles.imagePlaceholder} />
-
-                {/* Info */}
-                <View style={styles.itemInfo}>
-                    <View style={styles.headerRow}>
-                        <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
-                        <TouchableOpacity onPress={() => handleDelete(item.cartId)} style={styles.deleteBtn}>
-                            <Text style={styles.deleteIcon}>×</Text>
-                        </TouchableOpacity>
+                {/* Bottom Row: Price/Total + Qty */}
+                <View style={styles.bottomRow}>
+                    <View style={styles.priceContainer}>
+                        <Text style={styles.itemPrice}>{item.price.toLocaleString("vi-VN")}đ</Text>
+                        <Text style={styles.itemTotal}>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</Text>
                     </View>
 
-                    <Text style={styles.itemPrice}>{item.price.toLocaleString("vi-VN")}đ</Text>
-
-                    {/* Quantity Control */}
                     <View style={styles.qtyContainer}>
                         <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>-</Text></TouchableOpacity>
                         <Text style={styles.qtyValue}>{item.quantity}</Text>
@@ -103,6 +109,26 @@ const CartScreen = () => {
                 </View>
             </View>
         );
+    };
+
+    const handleCheckout = () => {
+        const selectedIds = Object.keys(selectedItems).filter(id => selectedItems[id]);
+        if (selectedIds.length === 0) {
+            Alert.alert("Error", t('select_min_one'));
+            return;
+        }
+
+        const selectedProductsList = products.filter(p => selectedItems[p.cartId]);
+
+        // Mock promo logic similar to web
+        const discount = 0; // Or calculate if promo selected
+
+        navigation.navigate('Checkout', {
+            cartIds: selectedIds,
+            selectedProducts: selectedProductsList,
+            subTotal: totalPrice,
+            discount: discount
+        });
     };
 
     return (
@@ -114,6 +140,9 @@ const CartScreen = () => {
             {products.length === 0 ? (
                 <View style={styles.emptyContainer}>
                     <Text style={styles.emptyText}>{t('cart_empty')}</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('Main', { screen: 'Product' })}>
+                        <Text style={{ color: COLORS.mainTitle, marginTop: 10 }}>{t('shop_now')}</Text>
+                    </TouchableOpacity>
                 </View>
             ) : (
                 <FlatList
@@ -131,7 +160,7 @@ const CartScreen = () => {
                         <Text style={styles.totalLabel}>{t('total')}:</Text>
                         <Text style={styles.totalValue}>{totalPrice.toLocaleString("vi-VN")}đ</Text>
                     </View>
-                    <TouchableOpacity style={styles.checkoutBtn}>
+                    <TouchableOpacity style={styles.checkoutBtn} onPress={handleCheckout}>
                         <Text style={styles.checkoutText}>{t('checkout')} ({Object.values(selectedItems).filter(Boolean).length})</Text>
                     </TouchableOpacity>
                 </View>
@@ -171,27 +200,31 @@ const styles = StyleSheet.create({
         paddingBottom: 100, // Space for footer
     },
     cartCard: {
-        flexDirection: 'row',
         backgroundColor: 'white',
-        borderRadius: 10,
-        padding: 12,
+        borderRadius: 12,
+        padding: 15,
         marginBottom: 15,
-        alignItems: 'center',
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
+        shadowOpacity: 0.08,
         shadowRadius: 4,
         elevation: 3,
     },
+    topRow: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 12,
+    },
     checkboxContainer: {
         padding: 5,
-        marginRight: 5,
+        marginRight: 8,
+        justifyContent: 'center',
     },
     checkbox: {
-        width: 20,
-        height: 20,
+        width: 24,
+        height: 24,
         borderRadius: 4,
-        borderWidth: 1,
+        borderWidth: 2,
         borderColor: '#ccc',
         justifyContent: 'center',
         alignItems: 'center',
@@ -203,20 +236,19 @@ const styles = StyleSheet.create({
     },
     checkmark: {
         color: 'white',
-        fontSize: 12,
+        fontSize: 14,
         fontWeight: 'bold',
     },
     imagePlaceholder: {
-        width: 70,
-        height: 70,
+        width: 80,
+        height: 80,
         backgroundColor: '#f5f5f5',
-        borderRadius: 6,
+        borderRadius: 8,
         marginRight: 12,
     },
     itemInfo: {
         flex: 1,
-        justifyContent: 'space-between',
-        height: 80,
+        minHeight: 80,
     },
     headerRow: {
         flexDirection: 'row',
@@ -225,20 +257,40 @@ const styles = StyleSheet.create({
     },
     itemName: {
         flex: 1,
-        fontSize: 14,
+        fontSize: 15,
         color: '#333',
-        fontWeight: '500',
+        fontWeight: '600',
         marginRight: 10,
+        marginBottom: 4,
     },
     deleteBtn: {
-        padding: 5,
+        padding: 8,
+        marginTop: -8,
+        marginRight: -8,
     },
     deleteIcon: {
-        fontSize: 20,
+        fontSize: 22,
         color: '#999',
-        marginTop: -5,
+    },
+    // Bottom Row for Price, Qty, Total
+    bottomRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginTop: 5,
+        borderTopWidth: 1,
+        borderTopColor: '#f9f9f9',
+        paddingTop: 10,
+    },
+    priceContainer: {
+        flex: 1,
     },
     itemPrice: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 2,
+    },
+    itemTotal: {
         fontSize: 15,
         fontWeight: 'bold',
         color: COLORS.mainTitle,
@@ -246,28 +298,33 @@ const styles = StyleSheet.create({
     qtyContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        alignSelf: 'flex-end',
         borderWidth: 1,
-        borderColor: '#ddd',
-        borderRadius: 4,
+        borderColor: '#eee',
+        borderRadius: 6,
         backgroundColor: '#fff',
     },
     qtyBtn: {
-        paddingHorizontal: 8,
-        paddingVertical: 2,
+        width: 36,
+        height: 36,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     qtyBtnText: {
-        fontSize: 16,
+        fontSize: 18,
         color: '#555',
+        fontWeight: '500',
     },
     qtyValue: {
-        paddingHorizontal: 10,
-        fontSize: 14,
-        fontWeight: 'bold',
+        paddingHorizontal: 15,
+        fontSize: 15,
+        fontWeight: '600',
         color: '#333',
         borderLeftWidth: 1,
         borderRightWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#eee',
+        height: 24, // Visual separator height
+        textAlignVertical: 'center', // Android
+        lineHeight: 24, // iOS
     },
     footer: {
         position: 'absolute',

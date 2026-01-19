@@ -1,30 +1,63 @@
+
 import "./Checkout.css";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useNotification } from "../Context/NotificationContext";
-import master_card_image from "../Assets/Images/Payment/payment_mastercard.svg";
-import visa_image from "../Assets/Images/Payment/payment_visa.svg";
-import apple_pay_image from "../Assets/Images/Payment/payment_apple_pay.svg";
+import { useState } from "react";
+import { useLanguage } from "../i18n/LanguageContext";
 
 export default function Checkout() {
   const { state } = useLocation();
+  const navigate = useNavigate();
+  const notify = useNotification();
+  const { t } = useLanguage();
+
   const cartIds = state?.cartIds || [];
   const subTotal = state?.subTotal || 0;
-  const wrappingFee = state?.wrappingFee || 0;
-  // Hardcoded shipping fee as per original design's spirit, or can be 0 if 'wrapping' implies shipping.
-  // Original had "Vận chuyển 20000d".
+
   const shippingFee = 20000;
-  const discount = 0;
+  const discount = state?.discount || 0;
+  const selectedProducts = state?.selectedProducts || [];
 
-  const grandTotal = subTotal + wrappingFee + shippingFee - discount;
+  const grandTotal = Math.max(0, subTotal + shippingFee - discount);
 
-  const notify = useNotification();
+  const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod' or 'banking'
+  const [showQR, setShowQR] = useState(false);
 
-  const handleCheckout = async (e) => {
-    if (!cartIds || cartIds.length === 0) {
-      notify("Không có sản phẩm để thanh toán!");
+  // Form State
+  const [formData, setFormData] = useState({
+    fullName: "",
+    phone: "",
+    address: "",
+    note: ""
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCheckout = async () => {
+    // Basic Validation
+    if (!formData.fullName || !formData.phone || !formData.address) {
+      notify(t('fill_delivery_info'), "error");
       return;
     }
 
+    if (!cartIds || cartIds.length === 0) {
+      notify(t('no_products_payment'), "error");
+      return;
+    }
+
+    if (paymentMethod === 'banking') {
+      setShowQR(true);
+      return;
+    }
+
+    // COD Flow
+    await processOrder("COD");
+  };
+
+  const processOrder = async (method) => {
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/order`,
@@ -34,181 +67,182 @@ export default function Checkout() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            userId: 1, // Fixed user ID as per instructions
-            paymentMethod: "direct",
-            address: "string", // Placeholder
+            userId: 1, // Fixed user ID
+            paymentMethod: method, // "COD" or "Banking"
+            address: formData.address,
+            phone: formData.phone,
+            recipientName: formData.fullName,
+            note: formData.note,
             orderItems: cartIds.map((id) => ({ cartItemId: id })),
           }),
         }
       );
+
       if (!response.ok) {
         throw new Error("Thanh toán thất bại");
       }
 
-      const data = await response.json();
-      console.log("Thanh toán thành công:", data);
-      notify("Thanh toán thành công!");
+      // const data = await response.json();
+      notify(t('order_success'), "success");
+
+      // Redirect to success or home
+      setTimeout(() => navigate('/'), 2000);
+
     } catch (error) {
       console.error(error);
-      notify("Có lỗi xảy ra, vui lòng thử lại.");
+      notify(t('payment_error_try_again'), "error");
     }
   };
+
+  if (showQR) {
+    return (
+      <main className="checkout-qr-page">
+        <div className="qr-container">
+          <h2>{t('payment_qr_title')}</h2>
+          <p>{t('scan_qr_desc')}</p>
+          <div className="qr-code-box">
+            {/* Placeholder QR */}
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=BKEUTY_ORDER_PAYMENT" alt="QR Code" />
+          </div>
+          <div className="amount-display">
+            {t('amount')}: <strong>{grandTotal.toLocaleString("vi-VN")}đ</strong>
+          </div>
+          <button className="btn-confirm-payment" onClick={() => processOrder("Banking")}>
+            {t('paid_confirm')}
+          </button>
+          <button className="btn-back" onClick={() => setShowQR(false)}>
+            {t('back')}
+          </button>
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <main className="checkout">
-      <div className="checkout_title">Thanh Toán</div>
+    <main className="checkout-page">
+      <h1 className="checkout-title">{t('checkout')}</h1>
 
-      <section className="checkout_section1">
-        <section className="checkout_section1_col1">
-          <section className="checkout_section1_cus checkout_section1_box">
-            <p className="checkout_section1_cus_name checkout_section1_name">
-              Thông tin khách hàng
-            </p>
-            <p className="checkout_line"></p>
-
-            <input
-              className="checkout_section1_cus_name checkout_input"
-              type="text"
-              placeholder="Họ và tên"
-            />
-            <div className="checkout_section1_cus_container">
+      <div className="checkout-container">
+        {/* Left Column: Information */}
+        <div className="checkout-left">
+          <div className="checkout-section">
+            <h2 className="section-header">{t('delivery_info')}</h2>
+            <div className="form-group">
+              <label>{t('full_name')}</label>
               <input
-                className="checkout_section1_cus_phone checkout_input"
-                type="tel"
-                placeholder="Số điện thoại"
-              />
-              <input
-                className="checkout_section1_cus_email checkout_input"
-                type="email"
-                placeholder="Email"
-              />
-            </div>
-          </section>
-
-          <section className="checkout_section1_add checkout_section1_box">
-            <p className="checkout_section1_add_name checkout_section1_name">
-              Địa chỉ
-            </p>
-            <p className="checkout_line"></p>
-
-            <div className="checkout_section1_add_container">
-              <input
-                className="checkout_section1_add_address checkout_input"
                 type="text"
-                placeholder="Số nhà, Phường, Xã"
-              />
-              <input
-                className="checkout_section1_add_zip checkout_input"
-                type="text"
-                placeholder="Mã bưu điện"
+                name="fullName"
+                value={formData.fullName}
+                onChange={handleInputChange}
+                placeholder={t('full_name_placeholder')}
               />
             </div>
-
-            <div className="checkout_section1_add_container2">
+            <div className="form-group">
+              <label>{t('phone')}</label>
               <input
-                className="checkout_section1_add_phone checkout_input"
                 type="tel"
-                placeholder="Số điện thoại"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                placeholder={t('phone_placeholder')}
               />
+            </div>
+            <div className="form-group">
+              <label>{t('address')}</label>
               <input
-                className="checkout_section1_add_email checkout_input"
-                type="email"
-                placeholder="Email"
+                type="text"
+                name="address"
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder={t('address_placeholder')}
               />
             </div>
-          </section>
+            <div className="form-group">
+              <label>{t('note')}</label>
+              <textarea
+                name="note"
+                value={formData.note}
+                onChange={handleInputChange}
+                placeholder={t('note_placeholder')}
+              />
+            </div>
+          </div>
 
-          <section className="checkout_section1_voucher checkout_section1_box">
-            <p className="checkout_section1_voucher_name checkout_section1_name">
-              Voucher
-            </p>
-            <p className="checkout_line"></p>
+          <div className="checkout-section">
+            <h2 className="section-header">{t('payment_method')}</h2>
+            <div className="payment-methods">
+              <div
+                className={`payment-option ${paymentMethod === 'cod' ? 'selected' : ''}`}
+                onClick={() => setPaymentMethod('cod')}
+              >
+                <div className="radio-circle"></div>
+                <span>{t('payment_cod')}</span>
+              </div>
+              <div
+                className={`payment-option ${paymentMethod === 'banking' ? 'selected' : ''}`}
+                onClick={() => setPaymentMethod('banking')}
+              >
+                <div className="radio-circle"></div>
+                <span>{t('payment_banking')}</span>
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <input
-              className="checkout_section1_voucher_name checkout_input"
-              type="text"
-              placeholder="Chọn voucher"
-            />
-          </section>
-        </section>
-        <section className="checkout_section1_col2">
-          <section className="checkout_section1_cart checkout_section1_box">
-            <p className="checkout_section1_cart_name checkout_section1_name">
-              Giỏ Hàng
-            </p>
-            <p className="checkout_line"></p>
-            <div className="checkout_section1_sum key_value_position">
-              <p>Tổng tiền hàng</p>
-              <p>{subTotal.toLocaleString("vi-VN")}đ</p>
+        {/* Right Column: Order Summary */}
+        <div className="checkout-right">
+          <div className="order-summary-box">
+            <h2 className="summary-title">{t('order_summary')} ({selectedProducts.length} {t('products_lower')})</h2>
+
+            <div className="order-items-list">
+              {selectedProducts.map((p, idx) => (
+                <div key={idx} className="summary-item">
+                  <div className="summary-item-info">
+                    <div className="summary-item-name">{p.name || `Product #${p.cartId}`}</div>
+                    <div className="summary-item-qty">x{p.quantity}</div>
+                  </div>
+                  <div className="summary-item-price">{(p.price * p.quantity).toLocaleString("vi-VN")}đ</div>
+                </div>
+              ))}
             </div>
 
-            {wrappingFee > 0 && (
-              <div className="checkout_section1_sum key_value_position">
-                <p>Phí gói quà</p>
-                <p>{wrappingFee.toLocaleString("vi-VN")}đ</p>
+            <div className="summary-divider"></div>
+
+            <div className="summary-row">
+              <span>{t('subtotal')}</span>
+              <span>{subTotal.toLocaleString("vi-VN")}đ</span>
+            </div>
+
+            <div className="summary-row">
+              <span>{t('shipping_fee')}</span>
+              <span>{shippingFee.toLocaleString("vi-VN")}đ</span>
+            </div>
+            {discount > 0 && (
+              <div className="summary-row discount">
+                <span>{t('discount')}</span>
+                <span>-{discount.toLocaleString("vi-VN")}đ</span>
               </div>
             )}
 
-            <div className="checkout_section1_discount key_value_position">
-              <p>Giảm giá</p>
-              <p>{discount.toLocaleString("vi-VN")}đ</p>
+            <div className="summary-divider"></div>
+
+            <div className="summary-total">
+              <span>{t('total')}</span>
+              <span className="total-price">{grandTotal.toLocaleString("vi-VN")}đ</span>
             </div>
 
-            <div className="checkout_section1_trans key_value_position">
-              <p>Vận chuyển</p>
-              <p>{shippingFee.toLocaleString("vi-VN")}đ</p>
-            </div>
-
-            <p className="checkout_line"></p>
-
-            <div className="checkout_section1_all_sum key_value_position">
-              <p>Tổng cộng</p>
-              <p>{grandTotal.toLocaleString("vi-VN")}đ</p>
-            </div>
-
-            <button
-              className="checkout_section1_col2_bt checkout_bt"
-              onClick={handleCheckout}
-            >
-              Thanh Toán
+            <button className="btn-place-order" onClick={handleCheckout}>
+              {paymentMethod === 'banking' ? t('continue_payment') : t('place_order')}
             </button>
-          </section>
-        </section>
-      </section>
 
-      <section className="checkout_section2">
-        <p className="checkout_section1_name">Phương thức thanh toán</p>
-        <p className="checkout_line"></p>
-        <label className="checkout_section2_filter filter_item">
-          <input type="checkbox" />
-          <span className="checkout_section2_checkmark checkmark"></span>
-          Thanh toán khi nhận hàng
-        </label>
-        <div className="checkout_section2_payment_list">
-          <img
-            className="checkout_section2_payment_item"
-            loading="lazy"
-            decoding="async"
-            src={master_card_image}
-            alt="icon"
-          />
-
-          <img
-            className="checkout_section2_payment_item"
-            loading="lazy"
-            decoding="async"
-            src={visa_image}
-            alt="icon"
-          />
-
-          <img
-            className="checkout_section2_payment_item"
-            loading="lazy"
-            decoding="async"
-            src={apple_pay_image}
-            alt="icon"
-          />
+            <div className="back-link-wrapper">
+              <span className="btn-back-cart" onClick={() => navigate('/cart')}>
+                {t('back_to_cart')}
+              </span>
+            </div>
+          </div>
         </div>
-      </section>
+      </div>
     </main>
   );
 }

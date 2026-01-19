@@ -100,12 +100,38 @@ header.header {
     align-items: center;
     color: #880e4f;
     gap: 4px;
+    padding: 6px 10px;
+    /* Add padding for active state */
+    border-radius: 8px;
+    /* Rounded corners */
+    transition: all 0.3s ease;
 }
 
-.icon_nav_item2 {
-    width: 24px;
-    height: 24px;
-    object-fit: contain;
+.active-link-right {
+    background-color: #C2185B !important;
+    color: white !important;
+    box-shadow: 0 4px 6px rgba(194, 24, 91, 0.3);
+}
+
+.active-link-right .icon_nav_item2 {
+    filter: brightness(0) invert(1);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -8px;
+    background-color: #d32f2f;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid white;
 }
 
 .nav_item2_text {

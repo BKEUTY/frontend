@@ -9,9 +9,17 @@ export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
   const { t } = useLanguage(); // Initialized hook
+
+  // Mock Promotions
+  const PROMOTIONS = [
+    { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: 'Giảm 10% cho đơn hàng đầu tiên' },
+    { id: 'PROMO2', code: 'FREESHIP', discount: 20000, type: 'fixed', label: 'Miễn phí vận chuyển (tối đa 20k)' },
+  ];
+
+  // State
   const [products, setProducts] = useState([]);
   const [selectedIds, setSelectedIds] = useState(new Set());
-  const [isWrapped, setIsWrapped] = useState(false);
+  const [selectedPromo, setSelectedPromo] = useState(null);
 
   useEffect(() => {
     fetch(
@@ -20,8 +28,6 @@ export default function Cart() {
       .then((res) => res.json())
       .then((data) => {
         setProducts(data);
-        // Default select all products
-        // setSelectedIds(new Set(data.map(p => p.cartId))); 
       })
       .catch((err) => console.error(err));
   }, []);
@@ -46,8 +52,18 @@ export default function Cart() {
 
   const selectedProducts = products.filter(p => selectedIds.has(p.cartId));
   const subTotal = selectedProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
-  const wrappingFee = isWrapped ? 15000 : 0;
-  const total = subTotal + wrappingFee;
+
+  // Calculate Discount
+  let discountAmount = 0;
+  if (selectedPromo) {
+    if (selectedPromo.type === 'fixed') {
+      discountAmount = selectedPromo.discount;
+    } else {
+      discountAmount = subTotal * selectedPromo.discount;
+    }
+  }
+
+  const total = Math.max(0, subTotal - discountAmount);
 
   const handleCheckout = () => {
     if (selectedIds.size === 0) {
@@ -57,8 +73,9 @@ export default function Cart() {
     navigate("/checkout", {
       state: {
         cartIds: Array.from(selectedIds),
+        selectedProducts: selectedProducts, // Pass full product objects
         subTotal: subTotal,
-        wrappingFee: wrappingFee,
+        discount: discountAmount,
         total: total,
       },
     });
@@ -172,20 +189,35 @@ export default function Cart() {
         {products.length > 0 && (
           <div className="cart-summary-section">
             <div className="cart-summary-box">
-              <label className="cart-wrapping-option">
-                <input
-                  type="checkbox"
-                  checked={isWrapped}
-                  onChange={(e) => setIsWrapped(e.target.checked)}
-                />
-                <span className="wrap-text">{t('wrapping_option')} <span className="highlight-price">15.000đ</span></span>
-              </label>
+              {/* Promotion Section */}
+              <div className="promotion-section">
+                <h3>{t('promotion')}</h3>
+                <select
+                  className="promo-select"
+                  onChange={(e) => {
+                    const promo = PROMOTIONS.find(p => p.code === e.target.value);
+                    setSelectedPromo(promo || null);
+                  }}
+                >
+                  <option value="">{t('select_promo')}</option>
+                  {PROMOTIONS.map(p => (
+                    <option key={p.id} value={p.code}>{p.code} - {p.label}</option>
+                  ))}
+                </select>
+              </div>
 
               <div className="cart-divider"></div>
 
               <div className="cart-total-row">
                 <span className="total-label">{t('total')} ({selectedIds.size} {t('product')}):</span>
-                <span className="total-amount">{total.toLocaleString("vi-VN")}đ</span>
+                <div style={{ textAlign: 'right' }}>
+                  {selectedPromo && (
+                    <div style={{ fontSize: '0.9rem', color: '#2e7d32', marginBottom: '5px' }}>
+                      - {discountAmount.toLocaleString("vi-VN")}đ
+                    </div>
+                  )}
+                  <span className="total-amount">{total.toLocaleString("vi-VN")}đ</span>
+                </div>
               </div>
 
               <button
@@ -193,7 +225,7 @@ export default function Cart() {
                 onClick={handleCheckout}
                 disabled={selectedIds.size === 0}
               >
-                {t('checkout')}
+                {t('continue') || t('checkout')}
               </button>
             </div>
           </div>

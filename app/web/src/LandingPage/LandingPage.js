@@ -37,11 +37,11 @@ const LandingPage = () => {
                 </div>
 
                 {/* Overlay Content (Static) */}
-                <div className="landing-content">
-                    <h1 className="landing-title">{t('welcome_landing')} <span className="brand-name">BKEUTY</span></h1>
-                    <Link to="/login" className="landing-btn-login">{t('login')}</Link>
-                    <p className="landing-register-text">
-                        {t('no_account')} <Link to="/register">{t('register')}</Link>
+                <div className="glass-overlay">
+                    <h1 className="glass-title">{t('welcome_landing')} <span className="brand-name">BKEUTY</span></h1>
+                    <Link to="/login" className="btn-glass-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>{t('login')}</Link>
+                    <p className="glass-subtitle" style={{ marginTop: '20px' }}>
+                        {t('no_account')} <Link to="/register" style={{ color: '#fff', fontWeight: 'bold', textDecoration: 'underline' }}>{t('register')}</Link>
                     </p>
                 </div>
 

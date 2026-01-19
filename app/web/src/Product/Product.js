@@ -1,5 +1,5 @@
 import "./Product.css";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext";
@@ -21,13 +21,37 @@ export default function Product() {
   const notify = useNotification();
   const { t } = useLanguage();
 
+
+  const fetchProducts = useCallback((pageIndex, append) => {
+    fetch(
+      `${process.env.REACT_APP_API_URL}/product?page=${pageIndex}&size=${pageSize}`
+    )
+      .then((res) => res.json())
+      .then((data) => {
+        let newContent = data.content || [];
+
+        if (searchTerm) {
+          newContent = newContent.filter(p => {
+            return p.name.toLowerCase().includes(searchTerm.toLowerCase());
+          });
+        }
+
+        if (append) {
+          setProducts(prev => [...prev, ...newContent]);
+        } else {
+          setProducts(newContent);
+        }
+        setTotalPages(data.totalPages);
+      })
+      .catch((err) => console.error(err));
+  }, [searchTerm]);
+
   // Initial Load
   useEffect(() => {
     setPage(0);
     setIsPaginationMode(false);
     fetchProducts(0, false);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // Keep empty for initial load only, disable lint if needed, OR fix fetchProducts.
+  }, [fetchProducts]);
 
   // Handlers
   const handleLoadMore = () => {
@@ -46,33 +70,6 @@ export default function Product() {
     setIsPaginationMode(true);
     setPage(0);
     fetchProducts(0, false);
-  };
-
-  const fetchProducts = (pageIndex, append) => {
-    fetch(
-      `${process.env.REACT_APP_API_URL}/product?page=${pageIndex}&size=${pageSize}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        let newContent = data.content || [];
-
-        // Simulating Filter (Client-side)
-        if (searchTerm) {
-          newContent = newContent.filter(p => {
-            return p.name.toLowerCase().includes(searchTerm.toLowerCase());
-          });
-        }
-
-        // Note: minPrice/maxPrice removed
-
-        if (append) {
-          setProducts(prev => [...prev, ...newContent]);
-        } else {
-          setProducts(newContent);
-        }
-        setTotalPages(data.totalPages);
-      })
-      .catch((err) => console.error(err));
   };
 
 
@@ -167,7 +164,10 @@ export default function Product() {
           {/* Main Content */}
           <section className="product-main-content">
             <div className="product-header-bar">
-              <h2>{t('all_products') || "Tất cả sản phẩm"} ({products.length}{isPaginationMode ? '' : '+'})</h2>
+              <div className="product-breadcrumb">
+                <span className="current">{t('all_products')}</span>
+                <span className="count-badge">({products.length}{isPaginationMode ? '' : '+'})</span>
+              </div>
             </div>
 
             {products.length === 0 ? (
@@ -177,12 +177,16 @@ export default function Product() {
                 <div className="product-grid">
                   {products.map((product, idx) => (
                     <div key={`${product.productId}-${idx}`} className="product-card" id={product.productId}>
-                      <div className="card-image-wrapper">
+                      <Link to={`/product/${product.productId}`} className="card-image-wrapper" style={{ display: 'block' }}>
                         <img src={best_selling_image} alt={product.name} />
-                      </div>
+                      </Link>
                       <div className="card-info">
                         <p className="card-brand">BKEUTY</p>
-                        <h3 className="card-name">{product.name}</h3>
+                        <h3 className="card-name">
+                          <Link to={`/product/${product.productId}`} style={{ color: 'inherit', textDecoration: 'none' }}>
+                            {product.name}
+                          </Link>
+                        </h3>
                         <div className="card-meta">
                           <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
                           <span className="rating">4.8/5</span>

@@ -4,6 +4,7 @@ import { NotificationProvider } from "./Context/NotificationContext";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import Home from "./Home/Home";
 import Product from "./Product/Product";
+import ProductDetail from "./Product/ProductDetail";
 // import Service from "./Service/Service";
 // import Promotion from "./Promotion/Promotion";
 // import RetailSystem from "./RettailSystem/RetailSystem";
@@ -16,6 +17,7 @@ import Footer from "./Component/Footer/Footer";
 import LandingPage from "./LandingPage/LandingPage";
 import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
+import { AboutUs, Contact, FAQ, RetailSystem, BeautyCorner, Terms } from "./Component/StaticPages/FooterPages";
 
 function Layout() {
   const location = useLocation();
@@ -39,6 +41,7 @@ function Layout() {
           <Route path="/register" element={<Register />} />
 
           <Route path="/product" element={<Product />} />
+          <Route path="/product/:id" element={<ProductDetail />} />
           {/* <Route path="/service" element={<Service />} /> */}
           {/* <Route path="/promotion" element={<Promotion />} /> */}
           {/* <Route path="/retail-system" element={<RetailSystem />} /> */}
@@ -46,6 +49,14 @@ function Layout() {
           <Route path="/account/*" element={<Account />} />
 
           <Route path="/checkout" element={<Checkout />} />
+
+          {/* Static Footer Pages */}
+          <Route path="/about-brand" element={<AboutUs />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/retail-system" element={<RetailSystem />} />
+          <Route path="/beauty-corner" element={<BeautyCorner />} />
+          <Route path="/terms" element={<Terms />} />
         </Routes>
       </main>
       {showFooter && <Footer />}

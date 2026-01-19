@@ -14,30 +14,9 @@
     overflow: hidden;
 }
 
-.landing-content {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    color: white;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 30px;
-    padding: 20px;
-    width: 100%;
-    max-width: 800px;
-}
-
-.landing-title {
-    font-size: 3.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-}
+/* Main Landing Page Styles */
+/* Slider styles inherited from global.css */
+/* Overlay styles inherited from global.css (glass-*) */
 
 .brand-name {
     font-family: 'Oleo Script', cursive;
@@ -58,51 +37,43 @@
         0 3px 0 #000;
 }
 
-.landing-btn-login {
-    background-color: #9c1c5a;
-    color: white;
-    padding: 15px 50px;
-    border-radius: 30px;
-    font-size: 1.2rem;
-    text-decoration: none;
-    font-weight: 600;
-    border: 2px solid #9c1c5a;
-    transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-}
-
-.landing-btn-login:hover {
-    background-color: #7b1344;
-    border-color: #7b1344;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-}
-
-.landing-register-text {
-    font-size: 1.1rem;
-    margin-top: 10px;
-    color: white;
-}
-
-.landing-register-text a {
-    color: #e91e63;
-    font-weight: 700;
-    text-decoration: none;
-    margin-left: 5px;
-}
-
-.landing-register-text a:hover {
-    text-decoration: underline;
-}
-
 /* Responsive */
 @media (max-width: 768px) {
+    .landing-page {
+        min-height: auto;
+        /* Allow height to collapse to content (banner) on mobile */
+    }
+
+    .landing-hero {
+        min-height: 300px;
+        height: 300px;
+        flex: none;
+    }
+
+    .landing-content {
+        padding: 0 15px;
+        width: 100%;
+        max-width: 100%;
+        gap: 15px;
+    }
+
     .landing-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 5px;
     }
 
     .brand-name {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
+        margin-top: 5px;
+    }
+
+    .landing-btn-login {
+        padding: 10px 30px;
+        font-size: 0.95rem;
+    }
+
+    .landing-register-text {
+        font-size: 0.9rem;
     }
 }
 
@@ -115,4 +86,3 @@
     width: 100%;
     height: 100%;
 }
-

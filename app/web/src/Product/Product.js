@@ -10,6 +10,7 @@ import starIcon from "../Assets/Images/Icons/icon_star.svg";
 export default function Product() {
   // State
   const [products, setProducts] = useState([]);
+  const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
 
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -75,7 +76,7 @@ export default function Product() {
 
   const handleAddToCart = async (e, productId) => {
     if (!productId) {
-      productId = e.currentTarget.closest(".product_item").getAttribute("id");
+      productId = e.currentTarget.closest(".product-card").getAttribute("id");
     }
     try {
       const response = await fetch(
@@ -97,7 +98,6 @@ export default function Product() {
       }
 
       const data = await response.json();
-      console.log("Thêm vào giỏ hàng thành công:", data);
       notify(t('add_cart_success'), "success");
     } catch (error) {
       console.error(error);
@@ -106,9 +106,17 @@ export default function Product() {
 
   return (
     <main className="product-page-wrapper">
-      {/* Category Bar from Home Page */}
       <div className="category-bar">
-        <div className="category-list">
+        {/* Mobile Toggle */}
+        <div
+          className="prod-mobile-cat-header"
+          onClick={() => setIsMobileCatOpen(!isMobileCatOpen)}
+        >
+          <span>☰ {t('categories')}</span>
+          <span className={`arrow ${isMobileCatOpen ? 'open' : ''}`}>▼</span>
+        </div>
+
+        <div className={`category-list ${isMobileCatOpen ? 'mobile-open' : ''}`}>
           <div className="cat-item cancel-hover">
             <span className="cat-trigger">☰ {t('categories')}</span>
             {/* Mega Menu Dropdown */}
@@ -142,24 +150,23 @@ export default function Product() {
           <span className="cat-divider">|</span>
           <span className="cat-item">{t('hot_deals')}</span>
         </div>
-        <div className="search-bar-wrapper">
+        <div className="prod-search-bar-wrapper">
+          <button className="prod-search-btn" onClick={handleSearchSubmit}>
+            <img src={search_image} alt="search" style={{ width: '18px' }} />
+          </button>
           <input
             type="text"
             placeholder={t('search_hint') || "Tìm kiếm..."}
-            className="search-input"
+            className="prod-search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
           />
-          <button className="search-btn" onClick={handleSearchSubmit}>
-            <img src={search_image} alt="search" style={{ width: '20px' }} />
-          </button>
         </div>
       </div>
 
       <div className="product-page">
         <div className="product-container">
-          {/* Sidebar Removed */}
 
           {/* Main Content */}
           <section className="product-main-content">

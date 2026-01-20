@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext"; // Added import
 import product_cart_image from "../Assets/Images/Products/product_placeholder_rect.svg";
+import cart_empty_icon from "../Assets/Images/Icons/icon_cart.svg";
 
 export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
   const { t } = useLanguage(); // Initialized hook
 
-  // Mock Promotions
   const PROMOTIONS = [
     { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: 'Giảm 10% cho đơn hàng đầu tiên' },
     { id: 'PROMO2', code: 'FREESHIP', discount: 20000, type: 'fixed', label: 'Miễn phí vận chuyển (tối đa 20k)' },
@@ -107,28 +107,31 @@ export default function Cart() {
         <h1 className="cart-page-title">{t('cart')}</h1>
 
         <div className="cart-list">
-          <div className="cart-header-row">
-            <div className="cart-col-checkbox">
-              <input
-                type="checkbox"
-                onChange={handleSelectAll}
-                checked={products.length > 0 && selectedIds.size === products.length}
-                className="cart-checkbox"
-              />
+          {products.length > 0 && (
+            <div className="cart-header-row">
+              <div className="cart-col-checkbox">
+                <input
+                  type="checkbox"
+                  onChange={handleSelectAll}
+                  checked={products.length > 0 && selectedIds.size === products.length}
+                  className="cart-checkbox"
+                />
+              </div>
+              <div className="cart-col-product">{t('product')}</div>
+              <div className="cart-col-price">{t('price')}</div>
+              <div className="cart-col-quantity">{t('quantity')}</div>
+              <div className="cart-col-total">{t('total')}</div>
             </div>
-            <div className="cart-col-product">{t('product')}</div>
-            <div className="cart-col-price">{t('price')}</div>
-            <div className="cart-col-quantity">{t('quantity')}</div>
-            <div className="cart-col-total">{t('total')}</div>
-          </div>
+          )}
 
           <div className="cart-items-container">
             {products.length === 0 ? (
               <div className="cart-empty-state">
-                <p>{t('cart_empty')}</p>
-                <div className="btn-continue-shopping" onClick={() => navigate('/')}>
+                <img src={cart_empty_icon} alt="Empty Cart" className="cart-empty-img" />
+                <p className="cart-empty-text">{t('cart_empty')}</p>
+                <button className="btn-continue-shopping" onClick={() => navigate('/')}>
                   {t('continue_shopping') || "Continue Shopping"}
-                </div>
+                </button>
               </div>
             ) : (
               products.map((product) => (

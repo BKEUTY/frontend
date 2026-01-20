@@ -18,7 +18,6 @@ export default function ProductDetail() {
     const categoryName = location.state?.category || t('all_products');
     const categoryLink = location.state?.from || '/product';
 
-    // Mock Data with specific localization
     const productData = {
         id: id,
         name: "Beauty Prestige LA Micro-Huile De Rose Advanced Serum",

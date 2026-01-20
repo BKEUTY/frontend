@@ -5,9 +5,8 @@ import { LanguageProvider } from "./i18n/LanguageContext";
 import Home from "./Home/Home";
 import Product from "./Product/Product";
 import ProductDetail from "./Product/ProductDetail";
-// import Service from "./Service/Service";
-// import Promotion from "./Promotion/Promotion";
-// import RetailSystem from "./RettailSystem/RetailSystem";
+
+import Promotion from "./Promotion/Promotion";
 import Cart from "./Cart/Cart";
 import Account from "./Component/Account/Account";
 import Checkout from "./Checkout/Checkout";
@@ -42,9 +41,7 @@ function Layout() {
 
           <Route path="/product" element={<Product />} />
           <Route path="/product/:id" element={<ProductDetail />} />
-          {/* <Route path="/service" element={<Service />} /> */}
-          {/* <Route path="/promotion" element={<Promotion />} /> */}
-          {/* <Route path="/retail-system" element={<RetailSystem />} /> */}
+          <Route path="/promotion" element={<Promotion />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/account/*" element={<Account />} />
 

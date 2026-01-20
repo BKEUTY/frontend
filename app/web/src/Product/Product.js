@@ -97,7 +97,7 @@ export default function Product() {
         throw new Error("Thêm vào giỏ hàng thất bại");
       }
 
-      const data = await response.json();
+      await response.json();
       notify(t('add_cart_success'), "success");
     } catch (error) {
       console.error(error);

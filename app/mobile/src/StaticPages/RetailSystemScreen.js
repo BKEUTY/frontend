@@ -70,31 +70,40 @@ const RetailSystemScreen = ({ navigation }) => {
         );
     }
 
-    const renderItem = ({ item }) => (
-        <View style={styles.card}>
-            <View style={styles.cardHeader}>
-                <Text style={styles.cardTitle}>{item.name}</Text>
-                <View style={[styles.badge, item.status === 'Open' ? styles.badgeOpen : styles.badgeClosed]}>
-                    <Text style={styles.badgeText}>
-                        {item.status === 'Open' ? t('retail_status_open') : t('retail_status_closed')}
-                    </Text>
+    const renderItem = ({ item }) => {
+        const isClosed = item.status === 'Closed';
+        return (
+            <View style={[styles.card, isClosed && styles.cardDisabled]}>
+                <View style={styles.cardHeader}>
+                    <Text style={styles.cardTitle}>{item.name}</Text>
+                    <View style={[styles.badge, item.status === 'Open' ? styles.badgeOpen : styles.badgeClosed]}>
+                        <Text style={styles.badgeText}>
+                            {item.status === 'Open' ? t('retail_status_open') : t('retail_status_closed')}
+                        </Text>
+                    </View>
                 </View>
-            </View>
 
-            <View style={styles.infoRow}>
-                <Text style={styles.infoIcon}>📍</Text>
-                <Text style={styles.infoText}>{item.address}</Text>
-            </View>
-            <View style={styles.infoRow}>
-                <Text style={styles.infoIcon}>📞</Text>
-                <Text style={styles.infoText}>{item.phone}</Text>
-            </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.infoIcon}>📍</Text>
+                    <Text style={styles.infoText}>{item.address}</Text>
+                </View>
+                <View style={styles.infoRow}>
+                    <Text style={styles.infoIcon}>📞</Text>
+                    <Text style={styles.infoText}>{item.phone}</Text>
+                </View>
 
-            <TouchableOpacity style={styles.detailButton} onPress={() => setSelectedBranch(item)}>
-                <Text style={styles.detailButtonText}>{t('retail_detail')}</Text>
-            </TouchableOpacity>
-        </View>
-    );
+                <TouchableOpacity
+                    style={[styles.detailButton, isClosed && styles.detailButtonDisabled]}
+                    onPress={() => !isClosed && setSelectedBranch(item)}
+                    disabled={isClosed}
+                >
+                    <Text style={[styles.detailButtonText, isClosed && styles.detailButtonTextDisabled]}>
+                        {t('retail_detail')}
+                    </Text>
+                </TouchableOpacity>
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>
@@ -159,20 +168,21 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     searchInput: {
-        height: 40,
+        height: 48,
         borderColor: '#ddd',
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 15,
-        marginBottom: 10,
-        backgroundColor: '#fafafa',
+        marginBottom: 15,
+        backgroundColor: 'white',
+        fontSize: 16,
     },
     statusFilters: {
         flexDirection: 'row',
     },
     filterChip: {
-        paddingVertical: 6,
-        paddingHorizontal: 12,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
         borderRadius: 20,
         borderWidth: 1,
         borderColor: '#ddd',
@@ -186,6 +196,7 @@ const styles = StyleSheet.create({
     filterChipText: {
         color: '#666',
         fontWeight: '600',
+        fontSize: 14,
     },
     filterChipTextActive: {
         color: 'white',
@@ -195,67 +206,83 @@ const styles = StyleSheet.create({
     },
     card: {
         backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 15,
+        borderRadius: 16,
+        padding: 24,
         marginBottom: 15,
-        elevation: 2,
+        elevation: 4,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 8,
+    },
+    cardDisabled: {
+        backgroundColor: '#f2f2f2',
+        opacity: 0.6,
     },
     cardHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 15,
     },
     cardTitle: {
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#333',
         flex: 1,
+        marginRight: 10,
     },
     badge: {
-        paddingHorizontal: 8,
-        paddingVertical: 4,
+        paddingHorizontal: 10,
+        paddingVertical: 5,
         borderRadius: 12,
     },
     badgeOpen: {
-        backgroundColor: '#2e7d32',
+        backgroundColor: '#00c853',
     },
     badgeClosed: {
-        backgroundColor: '#d32f2f',
+        backgroundColor: '#9e9e9e',
     },
     badgeText: {
         color: 'white',
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: 'bold',
     },
     infoRow: {
         flexDirection: 'row',
-        marginBottom: 5,
+        marginBottom: 8,
         alignItems: 'flex-start',
     },
     infoIcon: {
         marginRight: 8,
+        fontSize: 16,
     },
     infoText: {
         color: '#555',
-        fontSize: 14,
+        fontSize: 15,
         flex: 1,
+        lineHeight: 22,
     },
     detailButton: {
-        marginTop: 10,
+        marginTop: 15,
         borderWidth: 1,
         borderColor: COLORS.mainTitle || '#c2185b',
-        paddingVertical: 8,
-        borderRadius: 6,
+        paddingVertical: 10,
+        borderRadius: 8,
         alignItems: 'center',
+        backgroundColor: 'white',
+    },
+    detailButtonDisabled: {
+        borderColor: '#ddd',
+        backgroundColor: 'transparent',
     },
     detailButtonText: {
         color: COLORS.mainTitle || '#c2185b',
         fontWeight: 'bold',
+        fontSize: 15,
+    },
+    detailButtonTextDisabled: {
+        color: '#999',
     },
     noResult: {
         textAlign: 'center',
@@ -265,41 +292,46 @@ const styles = StyleSheet.create({
     backButton: {
         padding: 15,
         backgroundColor: 'white',
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     backButtonText: {
         color: COLORS.mainTitle || '#c2185b',
         fontSize: 16,
         fontWeight: 'bold',
+        marginLeft: 5,
     },
     detailContainer: {
-        padding: 20,
+        padding: 24,
         backgroundColor: 'white',
         flex: 1,
         margin: 15,
-        borderRadius: 12,
+        borderRadius: 16,
+        elevation: 4,
     },
     detailTitle: {
         fontSize: 22,
         fontWeight: 'bold',
         color: COLORS.mainTitle || '#c2185b',
         marginBottom: 20,
-        textAlign: 'center',
+        textAlign: 'left',
     },
     detailRow: {
-        flexDirection: 'row',
-        marginBottom: 15,
+        marginBottom: 20,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-        paddingBottom: 10,
+        borderBottomColor: '#f0f0f0',
+        paddingBottom: 15,
     },
     detailLabel: {
-        flex: 1,
         fontWeight: 'bold',
-        color: '#333',
+        color: '#888',
+        fontSize: 14,
+        marginBottom: 5,
     },
     detailValue: {
-        flex: 2,
-        color: '#555',
+        color: '#333',
+        fontSize: 16,
+        fontWeight: '500',
     },
 });
 

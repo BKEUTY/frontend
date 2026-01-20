@@ -5,7 +5,6 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
-// Mock Data matching Web
 const bestSellers = [
     { id: 1, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9', sold: '314 đã bán' },
     { id: 2, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9', sold: '314 đã bán' },

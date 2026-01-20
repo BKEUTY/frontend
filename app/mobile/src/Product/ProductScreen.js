@@ -40,9 +40,7 @@ const ProductScreen = ({ navigation }) => {
 
     const renderItem = ({ item }) => (
         <View style={styles.productItem}>
-            <View style={styles.imagePlaceholder}>
-                {/* Placeholders */}
-            </View>
+            <View style={styles.imagePlaceholder} />
 
             <View style={styles.productInfo}>
                 <Text style={styles.productBrand}>BKEUTY</Text>
@@ -109,34 +107,40 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     header: {
-        padding: 20,
+        paddingVertical: 15,
+        paddingHorizontal: 20, /* Match web padding */
         backgroundColor: 'white',
-        paddingBottom: 15,
-        elevation: 2,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        borderBottomWidth: 1,
+        borderBottomColor: '#fce4ec',
+        elevation: 0,
     },
     headerTitle: {
-        fontSize: 22,
+        fontSize: 20,
         fontWeight: 'bold',
         color: COLORS.mainTitle,
-        marginBottom: 15,
+        marginBottom: 12,
         textAlign: 'center',
         textTransform: 'uppercase',
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f5f5f5',
-        borderRadius: 8,
-        paddingHorizontal: 10,
-        height: 45,
+        backgroundColor: 'white',
+        borderRadius: 20, // Match web radius
+        paddingHorizontal: 15,
+        height: 40, // Match web height
+        borderWidth: 1,
+        borderColor: '#f8bbd0', // Match web border color
+        elevation: 2,
+        shadowColor: '#c2185b',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
     },
     searchIcon: {
         marginRight: 10,
         fontSize: 16,
+        opacity: 0.6,
     },
     searchInput: {
         flex: 1,
@@ -158,8 +162,8 @@ const styles = StyleSheet.create({
         overflow: 'hidden',
         borderWidth: 1,
         borderColor: '#eee',
-        elevation: 2, // Shadow for android
-        shadowColor: '#000', // Shadow for IOS
+        elevation: 2,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 1 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
@@ -183,7 +187,7 @@ const styles = StyleSheet.create({
         fontSize: 13,
         marginBottom: 6,
         color: '#333',
-        height: 36, // 2 lines fixed
+        height: 36,
     },
     ratingRow: {
         flexDirection: 'row',

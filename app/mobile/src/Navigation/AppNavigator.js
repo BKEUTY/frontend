@@ -10,6 +10,7 @@ import CartScreen from '../Cart/CartScreen';
 import CheckoutScreen from '../Cart/CheckoutScreen';
 import AccountScreen from '../Account/AccountScreen';
 import RetailSystemScreen from '../StaticPages/RetailSystemScreen';
+import PromotionScreen from '../StaticPages/PromotionScreen';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, BeautyCornerScreen, TermsScreen } from '../StaticPages/StaticScreens';
@@ -60,6 +61,7 @@ export default function AppNavigator() {
                 <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: true, title: t('contact') }} />
                 <Stack.Screen name="FAQ" component={FAQScreen} options={{ headerShown: true, title: t('faq') }} />
                 <Stack.Screen name="RetailSystem" component={RetailSystemScreen} options={{ headerShown: true, title: t('retail_system') }} />
+                <Stack.Screen name="Promotions" component={PromotionScreen} options={{ headerShown: true, title: t('promotions') }} />
                 <Stack.Screen name="BeautyCorner" component={BeautyCornerScreen} options={{ headerShown: true, title: t('beauty_corner') }} />
                 <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
 

@@ -3,6 +3,8 @@ import { Routes, Route, Link, useLocation } from 'react-router-dom';
 import './Account.css';
 import AccountInfo from './AccountInfo';
 import MyOrders from './MyOrders';
+import AppointmentList from './AppointmentList';
+import OrderDetail from './OrderDetail';
 import { useNotification } from '../../Context/NotificationContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
@@ -20,6 +22,7 @@ export default function Account() {
         // Simple active check
         if (path === '/account' && (location.pathname === '/account' || location.pathname === '/account/')) return true;
         if (path === '/account/orders' && location.pathname.includes('/orders')) return true;
+        if (path === '/account/appointments' && location.pathname.includes('/appointments')) return true;
         return false;
     };
 
@@ -44,7 +47,11 @@ export default function Account() {
                             {t('my_orders')}
                         </Link>
                     </li>
-                    <li><span className="sidebar-item">{t('my_appointments')}</span></li>
+                    <li>
+                        <Link to="/account/appointments" className={`sidebar-item ${isActive('/account/appointments') ? 'active' : ''}`}>
+                            {t('my_appointments')}
+                        </Link>
+                    </li>
                     <li><span className="sidebar-item">{t('my_wallet')}</span></li>
                     <li><span className="sidebar-item">{t('shipping_address')}</span></li>
                 </ul>
@@ -57,6 +64,8 @@ export default function Account() {
                 <Routes>
                     <Route path="/" element={<AccountInfo onUpdate={handleUpdate} />} />
                     <Route path="/orders" element={<MyOrders />} />
+                    <Route path="/orders/:id" element={<OrderDetail />} />
+                    <Route path="/appointments" element={<AppointmentList />} />
                 </Routes>
             </div>
         </div>

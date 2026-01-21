@@ -1,0 +1,490 @@
+/* General Container */
+.order-detail-container {
+    width: 100%;
+    font-family: var(--inter_font);
+    color: var(--color_general_text);
+    padding-bottom: 20px;
+}
+
+/* Header Section */
+.order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.order-header h2 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--color_main_title);
+    /* Brand Purple/Pink */
+    margin: 0;
+}
+
+.order-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-invoice,
+.btn-track {
+    padding: 8px 16px;
+    border-radius: 6px;
+    /* Increased border radius */
+    font-size: 14px;
+    font-weight: 600;
+    /* Bolder text */
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    font-family: var(--inter_font);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    /* Improved icon-text spacing */
+}
+
+.btn-invoice {
+    background: white;
+    border: 1px solid var(--color_main_text);
+    /* Neutral border */
+    color: var(--color_main_text);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.btn-invoice:hover {
+    background-color: #f8f9fa;
+    border-color: #ccc;
+    color: #333;
+}
+
+.btn-track {
+    background: var(--color_main_title);
+    color: white;
+    border: 1px solid var(--color_main_title);
+    box-shadow: 0 2px 4px rgba(163, 2, 81, 0.2);
+}
+
+.btn-track:hover {
+    background: #8e0246;
+    /* Slightly darker shade */
+    border-color: #8e0246;
+    transform: translateY(-1px);
+}
+
+/* Dates Section */
+.order-dates {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 24px;
+    font-size: 14px;
+    margin-bottom: 40px;
+    padding: 16px;
+    background-color: #fafafa;
+    border-radius: 8px;
+    border: 1px solid #eee;
+}
+
+.order-dates span {
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    /* Icon spacing */
+}
+
+.expected-date {
+    color: var(--color_main_title) !important;
+    font-weight: 600;
+}
+
+/* Timeline - Purple Theme */
+.order-timeline {
+    width: 100%;
+    padding: 20px 0;
+    margin-bottom: 50px;
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+}
+
+.timeline-step {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+}
+
+/* Connecting Line */
+.order-timeline::before {
+    content: '';
+    position: absolute;
+    top: 44px;
+    /* Perfectly centered with 48px icon (20px padding + 24px half-height) */
+    left: 10%;
+    width: 80%;
+    height: 3px;
+    background: #e9e9e9;
+    z-index: 1;
+}
+
+.step-icon-box {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+    font-size: 18px;
+    /* Adjusted icon size */
+    color: #bbb;
+    z-index: 2;
+    transition: all 0.3s;
+    position: relative;
+    /* Ensure overlapping line */
+}
+
+/* Completed State - Uses Brand Color */
+.timeline-step.completed .step-icon-box {
+    border-color: var(--color_main_title);
+    background-color: white;
+    color: var(--color_main_title);
+}
+
+/* Active State (Current) - Solid Brand Color */
+.timeline-step.active .step-icon-box {
+    border-color: var(--color_main_title);
+    background-color: var(--color_main_title);
+    color: white;
+    box-shadow: 0 4px 10px rgba(163, 2, 81, 0.25);
+    transform: scale(1.1);
+}
+
+.step-label {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+    margin-bottom: 4px;
+}
+
+.timeline-step.completed .step-label {
+    color: #333;
+    /* Darker for readability */
+}
+
+.timeline-step.active .step-label {
+    color: var(--color_main_title);
+    font-weight: 700;
+}
+
+.step-date {
+    font-size: 12px;
+    color: #999;
+}
+
+/* Status Logs Detail */
+.order-logs {
+    margin-bottom: 40px;
+    position: relative;
+    padding-left: 20px;
+    /* Space for the vertical line */
+}
+
+/* Vertical line for logs */
+.order-logs::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    bottom: 30px;
+    /* Don't extend past last item */
+    left: 24px;
+    /* Align with icon center */
+    width: 2px;
+    background: #e9e9e9;
+    z-index: 0;
+}
+
+.log-item {
+    display: flex;
+    align-items: flex-start;
+    padding-bottom: 32px;
+    position: relative;
+    gap: 20px;
+    /* Gap between icon and content */
+}
+
+.log-item:last-child {
+    padding-bottom: 0;
+}
+
+/* Removing old bullet */
+.log-item::before {
+    content: none;
+}
+
+/* Log Icon Styling */
+.log-icon-placeholder {
+    width: 10px;
+    height: 10px;
+    background: #fff;
+    z-index: 2;
+    margin-top: 6px;
+    /* Visual alignment with title */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    color: #aaa;
+    /* Resetting from previous bullet style */
+    border-radius: 0;
+    border: none;
+}
+
+/* Special styling for icon container in log items - Making it look like timeline dots */
+.log-item .log-icon-placeholder {
+    width: 40px;
+    height: 40px;
+    /* Consistent box size */
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background: #f5f5f5;
+    /* Light grey bg */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    /* Prevent shrinking */
+    margin-top: 0;
+    color: #666;
+}
+
+/* Highlight latest log */
+.log-item:first-child .log-icon-placeholder {
+    color: white;
+    background-color: var(--color_main_title);
+    box-shadow: 0 4px 12px rgba(163, 2, 81, 0.2);
+}
+
+.log-content {
+    flex: 1;
+}
+
+.log-content h4 {
+    margin: 0 0 6px 0;
+    font-size: 15px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Highlight latest log title */
+.log-item:first-child .log-content h4 {
+    color: var(--color_main_title);
+    font-size: 16px;
+    /* Slightly larger */
+}
+
+.log-content p {
+    margin: 0;
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+.log-time {
+    font-size: 13px;
+    color: #999;
+    min-width: 80px;
+    text-align: right;
+    margin-top: 2px;
+}
+
+/* Info Grid (Payment & Address) */
+.order-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.info-section {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #fceef5;
+    /* Very subtle purple border */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+}
+
+.info-section h3 {
+    font-size: 16px;
+    margin: 0 0 15px 0;
+    color: var(--color_main_title);
+    border-bottom: 2px solid #fceef5;
+    padding-bottom: 10px;
+}
+
+.info-text,
+.address-box p {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.visa-badge {
+    background: #1a1f71;
+    /* Standard Visa Blue - keep for realism */
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+/* Footer Section */
+.order-summary-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 40px;
+    border-top: 1px solid #eee;
+    padding-top: 30px;
+}
+
+.help-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.help-links li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: #555;
+    padding: 10px 0;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.help-links li:hover {
+    color: var(--color_main_title);
+}
+
+.help-icon {
+    font-size: 16px;
+    color: #999;
+}
+
+.help-links li:hover .help-icon {
+    color: var(--color_main_title);
+}
+
+.link-arrow {
+    margin-left: auto;
+    font-size: 12px;
+    opacity: 0.5;
+}
+
+.summary-section {
+    flex: 1;
+    min-width: 300px;
+    background: #fffbfc;
+    /* Very light pink/purple background */
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #f8e1eb;
+}
+
+.summary-section h3 {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #555;
+}
+
+.total-row {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px dashed #dabac8;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--color_main_title);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .order-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .order-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .btn-invoice,
+    .btn-track {
+        flex: 1;
+    }
+
+    .order-timeline {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 20px;
+        gap: 0;
+        margin-left: 10px;
+    }
+
+    .order-timeline::before {
+        width: 3px;
+        height: 100%;
+        left: 42px;
+        /* Center with 48px icon (20px padding + 22px(half w margin)) => 44px */
+        top: 0;
+        background: linear-gradient(to bottom, var(--color_main_title) 50%, #eee 50%);
+        /* Gradient line for effect */
+    }
+
+    .timeline-step {
+        flex-direction: row;
+        align-items: flex-start;
+        text-align: left;
+        margin-bottom: 30px;
+        width: 100%;
+    }
+
+    .step-icon-box {
+        margin-right: 20px;
+        flex-shrink: 0;
+        margin-bottom: 0;
+        background: white;
+    }
+
+    .order-summary-section {
+        flex-direction: column;
+        gap: 20px;
+    }
+}

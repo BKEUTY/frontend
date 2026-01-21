@@ -37,6 +37,25 @@
     color: #999;
     font-style: italic;
     border-radius: 8px;
+    overflow: hidden;
+    /* Ensure content doesn't spill out */
+}
+
+/* Map specific override */
+.content-image-placeholder.map-container {
+    height: 400px;
+    /* Taller map */
+    border: none;
+    /* No border for map */
+    padding: 0;
+    background: none;
+}
+
+.content-image-placeholder.map-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Cover the area nicely */
 }
 
 .static-page-content h3 {
@@ -418,8 +437,10 @@
         gap: 15px;
     }
 
+    .retail-search-container,
     .retail-status-dropdown-container {
         width: 100%;
+        min-width: 0;
     }
 
     .retail-grid {

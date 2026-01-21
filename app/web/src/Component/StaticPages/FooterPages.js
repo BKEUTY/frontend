@@ -4,6 +4,7 @@ import './StaticPage.css';
 import location_icon from "../../Assets/Images/Icons/icon_location.svg";
 import call_icon from "../../Assets/Images/Icons/icon_phone.svg";
 import search_icon from "../../Assets/Images/Icons/icon_search.svg";
+import contact_map from "../../Assets/Images/contact_google_map.png";
 
 
 const StaticPageLayout = ({ title, children }) => {
@@ -52,8 +53,8 @@ export const Contact = () => {
         <StaticPageLayout title={t('contact') || "Liên Hệ"}>
             <p>{t('contact_intro')}</p>
 
-            <div className="content-image-placeholder">
-                {t('contact_map_placeholder')}
+            <div className="content-image-placeholder map-container">
+                <img src={contact_map} alt="Google Map Store Location" className="contact-map-img" style={{ width: '100%', height: 'auto', display: 'block' }} />
             </div>
 
             <h3>{t('contact_channels_title')}</h3>

@@ -153,11 +153,11 @@ export default function Promotion() {
             </div>
 
             <div className="promotion-controls">
-                <div className="search-bar">
-                    <img src={search_icon} alt="search" className="search-icon-img" />
+                <div className="promo-search-bar">
+                    <img src={search_icon} alt="search" className="promo-search-icon" />
                     <input
                         type="text"
-                        className="search-input"
+                        className="promo-search-input"
                         placeholder={t('promo_search_placeholder')}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}

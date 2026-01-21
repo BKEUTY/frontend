@@ -190,7 +190,7 @@
 }
 
 .section-full-width {
-    padding: 60px 12vw;
+    padding: 60px var(--general_padding_left_right);
 }
 
 .home-section-title {
@@ -207,7 +207,7 @@
 .best-seller-grid,
 .suggested-grid {
     display: grid !important;
-    width: 90%;
+    width: 100%;
     margin: 0 auto;
     grid-template-columns: repeat(5, 1fr);
     gap: 30px;
@@ -216,11 +216,23 @@
     justify-content: center;
 }
 
+/* Force Home cards to match Product List Card Height & Structure */
 .home-product-grid .product-card,
-.suggested-grid .product-card {
+.suggested-grid .product-card,
+.best-seller-grid .product-card {
     width: 100%;
     margin: 0;
     height: 100%;
+    min-height: 420px;
+    /* Match Product.css */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Ensure image wrapper height is consistent */
+.home-container .card-image-wrapper {
+    height: 220px;
+    /* Match global tweak */
 }
 
 @media (max-width: 1400px) {
@@ -248,8 +260,25 @@
     .best-seller-grid,
     .suggested-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+        gap: 15px;
+        /* Slight gap increase */
         width: 100%;
+        margin: 0;
+        padding: 0 10px;
+        /* Side padding */
+    }
+
+    /* Reset min-height for mobile to avoid overly tall cards */
+    .home-product-grid .product-card,
+    .suggested-grid .product-card,
+    .best-seller-grid .product-card {
+        min-height: auto;
+        height: auto;
+    }
+
+    /* Ensure image wrapper overrides match global mobile */
+    .home-container .card-image-wrapper {
+        height: 160px;
     }
 
     .category-bar {
@@ -283,13 +312,16 @@
     .best-seller-grid,
     .suggested-grid {
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 12px;
+        /* Increased gap for mobile */
         width: 100%;
         margin: 0;
+        padding: 0 10px;
     }
 
     .home-container .product-card {
-        padding: 8px;
+        padding: 0;
+        /* Remove internal padding if global handles it */
     }
 
     .home-container .card-image-wrapper {
@@ -394,11 +426,14 @@
 }
 
 .section4-text h2 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     margin-bottom: 20px;
-    font-weight: 700;
+    font-weight: 800;
     line-height: 1.2;
+    color: #ffffff !important;
 }
+
+
 
 .section4-text p {
     font-size: 1rem;

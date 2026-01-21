@@ -98,13 +98,26 @@ header.header {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    /* Center vertical */
     color: #880e4f;
-    gap: 4px;
-    padding: 6px 10px;
-    /* Add padding for active state */
+    gap: 6px;
+    padding: 8px 12px;
+    /* Slightly larger hit area */
     border-radius: 8px;
-    /* Rounded corners */
     transition: all 0.3s ease;
+    min-width: 80px;
+    /* Ensure consistent width for both items */
+    text-align: center;
+}
+
+.icon_nav_item2 {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    /* Ensure icon aspect ratio */
+    display: block;
+    /* Remove inline spacing gaps */
 }
 
 .active-link-right {
@@ -185,15 +198,21 @@ header.header {
     }
 
     .logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
         width: auto;
-        flex: 1;
-        /* Center logo by making it take space or just let it sit */
         display: flex;
         justify-content: center;
+        align-items: center;
+        margin: 0;
     }
 
     .brand_image {
-        height: 36px;
+        height: 32px;
+        width: auto;
+        max-width: 120px;
+        object-fit: contain;
     }
 
     /* Mobile Menu Style */
@@ -230,7 +249,8 @@ header.header {
 
     /* Right Side Icons */
     .nav_list2 {
-        gap: 10px;
+        gap: 8px;
+        /* Slightly tighter gap */
     }
 
     .nav_item2_text {
@@ -239,6 +259,9 @@ header.header {
 
     .nav_item2_link {
         gap: 0;
+        min-width: auto;
+        /* Remove fixed width on mobile */
+        padding: 6px;
     }
 
     .nav_lang_toggle {

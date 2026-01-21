@@ -52,7 +52,7 @@ const Home = () => {
         <div className="home-container">
             {/* Sub Header for Categories - As seen in image */}
             {/* Hero Section Slider */}
-            <div className="home-hero-slider">
+            <div className="home-hero-slider animate-fade-in">
                 <div
                     className="slider-wrapper"
                     style={{ transform: `translateX(-${currentBanner * 100}%)` }}
@@ -89,7 +89,7 @@ const Home = () => {
             </div>
 
             {/* Best Sellers */}
-            <section className="section-full-width">
+            <section className="section-full-width animate-slide-up delay-100">
                 <h2 className="home-section-title">{t('best_sellers')}</h2>
                 <div className="best-seller-grid">
                     {bestSellers.map((item) => (
@@ -118,7 +118,7 @@ const Home = () => {
             </section>
 
             {/* Suggested For You - Mocking 10 Items */}
-            <section className="section-full-width bg-gray">
+            <section className="section-full-width bg-gray animate-slide-up delay-200">
                 <h2 className="home-section-title">{t('section_suggested')}</h2>
                 <div className="suggested-grid">
                     {/* Displaying exactly 10 items by duplicating mock data if needed or slicing */}
@@ -149,7 +149,7 @@ const Home = () => {
                 </div>
             </section>
 
-            <section className="section4">
+            <section className="section4 animate-slide-up delay-300">
                 <div className="section4-content">
                     <div className="section4-text">
                         <h2>{t('brand_story')}</h2>

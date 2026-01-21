@@ -32,37 +32,48 @@
   gap: 20px;
 }
 
-.search-bar {
-  position: relative;
+.promo-search-bar {
+  display: flex;
+  align-items: center;
   flex: 1;
   min-width: 300px;
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  /* Pill shape for modern look */
+  padding: 5px 20px;
+  background: white;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-.search-input {
+.promo-search-bar:focus-within {
+  border-color: #c2185b;
+  box-shadow: 0 4px 12px rgba(194, 24, 91, 0.15);
+  transform: translateY(-2px);
+}
+
+.promo-search-input {
+  border: none;
+  outline: none;
   width: 100%;
-  padding: 12px 20px 12px 45px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
+  padding: 10px 0;
   font-size: 1rem;
   font-family: var(--inter_font);
-  transition: all 0.3s;
-  box-sizing: border-box;
+  color: #333;
+  background: transparent;
+  flex: 1;
 }
 
-.search-input:focus {
-  outline: none;
-  border-color: #c2185b;
-  box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.1);
-}
-
-.search-icon-img {
-  position: absolute;
-  left: 15px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
+.promo-search-icon {
+  width: 20px;
+  height: 20px;
   opacity: 0.5;
+  margin-right: 12px;
+  transition: opacity 0.3s;
+}
+
+.promo-search-bar:focus-within .promo-search-icon {
+  opacity: 1;
+  filter: drop-shadow(0 2px 4px rgba(194, 24, 91, 0.2));
 }
 
 .filter-tabs {
@@ -101,14 +112,34 @@
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-  overflow: hidden;
+  overflow-x: auto;
+  /* Enable horizontal scroll */
   border: 1px solid #eee;
 }
 
 .promotion-table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 900px;
+  min-width: 1000px;
+  /* Ensure table has minimum width to trigger scroll */
+}
+
+/* ... existing th styles ... */
+
+.promotion-table td {
+  padding: 16px 20px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 15px;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Allow name to wrap if needed, but preferably keep single line if space permits */
+.promotion-table td:first-child {
+  white-space: normal;
+  min-width: 200px;
+  /* Minimum width for name to prevent squashing */
 }
 
 .promotion-table th {
@@ -132,6 +163,8 @@
   border-bottom: 1px solid #f0f0f0;
   font-size: 15px;
   color: #333;
+  white-space: nowrap;
+  /* Force content on one line */
 }
 
 .promotion-table tbody tr:hover {
@@ -319,35 +352,12 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+/* Responsive */
+@media (max-width: 992px) {
+
+  /* Increased breakpoint for earlier switch to cards */
   .promotion-page {
     padding: 20px 15px;
-  }
-
-  .promotion-title {
-    font-size: 1.5rem;
-    margin-bottom: 20px;
-  }
-
-  .promotion-controls {
-    flex-direction: column;
-    align-items: stretch;
-    padding: 15px;
-  }
-
-  .search-bar {
-    min-width: 0;
-  }
-
-  .filter-tabs {
-    gap: 8px;
-  }
-
-  .filter-tab {
-    flex: 1;
-    text-align: center;
-    padding: 10px 5px;
-    font-size: 12px;
   }
 
   .promotion-table,
@@ -357,5 +367,27 @@
 
   .mobile-card-view {
     display: block;
+  }
+
+  /* Scrollable Filter Tabs */
+  .filter-tabs {
+    gap: 8px;
+    overflow-x: auto;
+    white-space: nowrap;
+    display: flex;
+    flex-wrap: nowrap;
+    padding-bottom: 5px;
+    /* Space for scrollbar */
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .filter-tab {
+    flex: 0 0 auto;
+    text-align: center;
+    padding: 8px 16px;
+    font-size: 13px;
+    white-space: nowrap;
   }
 }

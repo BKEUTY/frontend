@@ -1,17 +1,17 @@
 export const COLORS = {
-  background: '#fbf9f5',
+  background: '#f8f9fa',
   background2: '#ffffff',
-  mainTitle: '#c2185b',
+  mainTitle: '#a30251',
   mainTitleText: '#ffffff',
-  text: '#333333',
-  buttonBackground: '#c2185b',
+  text: '#2c3e50',
+  buttonBackground: '#a30251',
   buttonText: 'white',
   inputBorder: '#ddd',
-  checked: '#c2185b',
-  checkoutButton: '#c2185b',
-  lightPink: '#fce4ec',
+  checked: '#a30251',
+  checkoutButton: '#a30251',
+  lightPink: '#fff0f5', // Matches web header gradient start
   secondary: '#f9f9f9',
-  gray: '#777777',
+  gray: '#636e72',
   danger: '#d32f2f'
 };
 

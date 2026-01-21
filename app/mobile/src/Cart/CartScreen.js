@@ -5,6 +5,8 @@ import { COLORS } from '../constants/Theme';
 import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
 
+import Header from '../Component/Header';
+
 const CartScreen = () => {
     const navigation = useNavigation();
     const { t } = useLanguage();
@@ -133,6 +135,7 @@ const CartScreen = () => {
 
     return (
         <View style={styles.container}>
+            <Header />
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>{t('cart')}</Text>
             </View>

@@ -5,6 +5,8 @@ import { COLORS } from '../constants/Theme';
 import { useNavigation } from '@react-navigation/native';
 import { useLanguage } from '../i18n/LanguageContext';
 
+import Header from '../Component/Header';
+
 const AccountScreen = () => {
     const navigation = useNavigation();
     const { t, toggleLanguage, language } = useLanguage();
@@ -39,41 +41,44 @@ const AccountScreen = () => {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <View style={styles.header}>
-                <View style={styles.avatarContainer}>
-                    {user.avatar ? (
-                        <Image source={{ uri: user.avatar }} style={styles.avatar} />
-                    ) : (
-                        <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                            <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
-                        </View>
-                    )}
+        <View style={styles.container}>
+            <Header />
+            <ScrollView style={styles.scrollContent}>
+                <View style={styles.profileHeader}>
+                    <View style={styles.avatarContainer}>
+                        {user.avatar ? (
+                            <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                        ) : (
+                            <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                                <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
+                            </View>
+                        )}
+                    </View>
+                    <Text style={styles.username}>{user.name}</Text>
+                    <Text style={styles.email}>{user.email}</Text>
                 </View>
-                <Text style={styles.username}>{user.name}</Text>
-                <Text style={styles.email}>{user.email}</Text>
-            </View>
 
-            <View style={styles.menuSection}>
-                {menuItems.map(item => (
-                    <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handlePress(item)}>
-                        <Text style={styles.menuItemText}>{item.title}</Text>
-                        <Text style={styles.chevron}>{'>'}</Text>
+                <View style={styles.menuSection}>
+                    {menuItems.map(item => (
+                        <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handlePress(item)}>
+                            <Text style={styles.menuItemText}>{item.title}</Text>
+                            <Text style={styles.chevron}>{'>'}</Text>
+                        </TouchableOpacity>
+                    ))}
+
+                    <TouchableOpacity style={styles.menuItem} onPress={toggleLanguage}>
+                        <Text style={styles.menuItemText}>{t('language')}</Text>
+                        <Text style={{ fontWeight: 'bold', color: COLORS.mainTitle }}>
+                            {language === 'vi' ? 'Tiếng Việt' : 'English'} &gt;
+                        </Text>
                     </TouchableOpacity>
-                ))}
 
-                <TouchableOpacity style={styles.menuItem} onPress={toggleLanguage}>
-                    <Text style={styles.menuItemText}>{t('language')}</Text>
-                    <Text style={{ fontWeight: 'bold', color: COLORS.mainTitle }}>
-                        {language === 'vi' ? 'Tiếng Việt' : 'English'} &gt;
-                    </Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={[styles.menuItem, styles.logoutItem]}>
-                    <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
-                </TouchableOpacity>
-            </View>
-        </ScrollView>
+                    <TouchableOpacity style={[styles.menuItem, styles.logoutItem]}>
+                        <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
+                    </TouchableOpacity>
+                </View>
+            </ScrollView>
+        </View>
     );
 };
 
@@ -82,7 +87,10 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.background,
     },
-    header: {
+    scrollContent: {
+        flex: 1,
+    },
+    profileHeader: {
         backgroundColor: 'white',
         padding: 30,
         alignItems: 'center',

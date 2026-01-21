@@ -145,12 +145,16 @@ const PromotionScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.filters}>
-                <TextInput
-                    style={styles.searchInput}
-                    placeholder={t('search_placeholder') || "Search promotions..."}
-                    value={searchTerm}
-                    onChangeText={setSearchTerm}
-                />
+                <View style={styles.searchContainer}>
+                    <Text style={styles.searchIcon}>🔍</Text>
+                    <TextInput
+                        style={styles.searchInput}
+                        placeholder={t('search_placeholder') || "Search promotions..."}
+                        value={searchTerm}
+                        onChangeText={setSearchTerm}
+                        placeholderTextColor="#999"
+                    />
+                </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
                     {['all', 'ongoing', 'upcoming', 'expired', 'applicable'].map((type) => (
                         <TouchableOpacity
@@ -191,15 +195,26 @@ const styles = StyleSheet.create({
         backgroundColor: 'white',
         elevation: 2,
     },
-    searchInput: {
-        height: 48,
-        borderColor: '#ddd',
-        borderWidth: 1,
-        borderRadius: 8,
-        paddingHorizontal: 15,
-        marginBottom: 15,
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
         backgroundColor: 'white',
+        borderRadius: 24, // Pill shape
+        borderWidth: 1,
+        borderColor: '#ddd',
+        paddingHorizontal: 15,
+        height: 48,
+        marginBottom: 15,
+    },
+    searchIcon: {
+        fontSize: 18,
+        marginRight: 10,
+        opacity: 0.5,
+    },
+    searchInput: {
+        flex: 1,
         fontSize: 16,
+        color: '#333',
     },
     chipContainer: {
         flexDirection: 'row',

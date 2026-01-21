@@ -4,6 +4,8 @@ import { COLORS } from '../constants/Theme';
 import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
 
+import Header from '../Component/Header';
+
 const ProductScreen = ({ navigation }) => {
     const { t } = useLanguage();
     const [products, setProducts] = useState([]);
@@ -70,6 +72,7 @@ const ProductScreen = ({ navigation }) => {
 
     return (
         <View style={styles.container}>
+            <Header />
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>{t('product')}</Text>
                 <View style={styles.searchBar}>
@@ -126,16 +129,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'white',
-        borderRadius: 20, // Match web radius
+        borderRadius: 20, // Pill shape
         paddingHorizontal: 15,
-        height: 40, // Match web height
+        height: 40,
         borderWidth: 1,
-        borderColor: '#f8bbd0', // Match web border color
+        borderColor: COLORS.lightPink, // Match web border color
         elevation: 2,
-        shadowColor: '#c2185b',
+        shadowColor: COLORS.mainTitle,
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowOpacity: 0.08,
+        shadowRadius: 4,
     },
     searchIcon: {
         marginRight: 10,
@@ -158,15 +161,14 @@ const styles = StyleSheet.create({
         width: '48%',
         backgroundColor: 'white',
         marginBottom: 15,
-        borderRadius: 8,
+        borderRadius: 16, // Modern rounded corners
         overflow: 'hidden',
-        borderWidth: 1,
-        borderColor: '#eee',
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
+        // No heavy border
+        elevation: 4,
+        shadowColor: COLORS.mainTitle, // Colored shadow
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
-        shadowRadius: 2,
+        shadowRadius: 5,
     },
     imagePlaceholder: {
         width: '100%',

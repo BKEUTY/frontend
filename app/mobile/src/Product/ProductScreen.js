@@ -3,11 +3,13 @@ import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndi
 import { COLORS } from '../constants/Theme';
 import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useCart } from '../Context/CartContext';
 
 import Header from '../Component/Header';
 
 const ProductScreen = ({ navigation }) => {
     const { t } = useLanguage();
+    const { addToCart } = useCart();
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
@@ -27,17 +29,15 @@ const ProductScreen = ({ navigation }) => {
         }
     };
 
-    const addToCart = async (productId) => {
-        try {
-            await axiosClient.post('/cart', {
-                productId: productId,
-                userId: 1,
-            });
-            Alert.alert(t('success') || "Thành công", t('add_cart_success') || "Đã thêm vào giỏ hàng");
-        } catch (error) {
-            console.error(error);
-            Alert.alert("Error", "Failed to add to cart");
-        }
+    const handleAddToCart = async (product) => {
+        addToCart({
+            id: product.productId || product.id,
+            name: product.name,
+            price: product.price,
+            image: 'placeholder',
+            quantity: 1
+        });
+        Alert.alert(t('success') || "Thành công", t('add_cart_success') || "Đã thêm vào giỏ hàng");
     };
 
     const renderItem = ({ item }) => (
@@ -54,7 +54,7 @@ const ProductScreen = ({ navigation }) => {
 
                 <View style={styles.priceRow}>
                     <Text style={styles.productPrice}>{item.price ? item.price.toLocaleString("vi-VN") : 0}đ</Text>
-                    <TouchableOpacity style={styles.addToCartBtn} onPress={() => addToCart(item.productId)}>
+                    <TouchableOpacity style={styles.addToCartBtn} onPress={() => handleAddToCart(item)}>
                         <Text style={styles.addToCartText}>+</Text>
                     </TouchableOpacity>
                 </View>

@@ -7,33 +7,23 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 import Header from '../Component/Header';
 
+import { useCart } from '../Context/CartContext';
+
 const CartScreen = () => {
     const navigation = useNavigation();
     const { t } = useLanguage();
-    const [products, setProducts] = useState([]);
+    const { cartItems: products, fetchCart, deleteCartItem } = useCart();
     const [refreshing, setRefreshing] = useState(false);
     const [selectedItems, setSelectedItems] = useState({});
 
-    const fetchCart = async () => {
-        try {
-            const response = await axiosClient.get('/cart/1');
-            setProducts(response.data);
-            const initialSelection = {};
-            response.data.forEach(item => initialSelection[item.cartId] = true);
-            setSelectedItems(initialSelection);
-        } catch (error) {
-            console.error(error);
-        }
-    };
+    // Sync selected items when products load (optional, or just keep manual selection)
+    // Products update comes from context
 
-    useEffect(() => {
-        fetchCart();
-    }, []);
-
-    const onRefresh = React.useCallback(() => {
+    const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
-        fetchCart().then(() => setRefreshing(false));
-    }, []);
+        await fetchCart();
+        setRefreshing(false);
+    }, [fetchCart]);
 
     const toggleSelection = (cartId) => {
         setSelectedItems(prev => ({
@@ -52,12 +42,7 @@ const CartScreen = () => {
                     text: t('delete') || "Xóa",
                     style: 'destructive',
                     onPress: async () => {
-                        try {
-                            await axiosClient.delete(`/cart/${cartId}`);
-                            setProducts(prev => prev.filter(item => item.cartId !== cartId));
-                        } catch (error) {
-                            Alert.alert('Error', 'Failed to delete item');
-                        }
+                        await deleteCartItem(cartId);
                     }
                 }
             ]

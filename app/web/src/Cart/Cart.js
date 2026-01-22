@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext"; // Added import
+import { useCart } from "../Context/CartContext";
 import product_cart_image from "../Assets/Images/Products/product_placeholder_rect.svg";
 import cart_empty_icon from "../Assets/Images/Icons/icon_cart.svg";
 
@@ -10,6 +11,7 @@ export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
   const { t } = useLanguage(); // Initialized hook
+  const { cartItems: products, setCartItems, fetchCart, updateQuantity } = useCart();
 
   const PROMOTIONS = [
     { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: 'Giảm 10% cho đơn hàng đầu tiên' },
@@ -17,19 +19,12 @@ export default function Cart() {
   ];
 
   // State
-  const [products, setProducts] = useState([]);
+  // const [products, setProducts] = useState([]); // Removed local state
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedPromo, setSelectedPromo] = useState(null);
 
   useEffect(() => {
-    fetch(
-      `${process.env.REACT_APP_API_URL}/cart/1`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        setProducts(data);
-      })
-      .catch((err) => console.error(err));
+    fetchCart();
   }, []);
 
   const handleSelectOne = (id) => {
@@ -89,7 +84,8 @@ export default function Cart() {
     })
       .then(res => {
         if (res.ok) {
-          setProducts(prev => prev.filter(p => p.cartId !== cartId));
+          // setProducts(prev => prev.filter(p => p.cartId !== cartId)); // No local update
+          fetchCart(); // Sync context
           const newSelected = new Set(selectedIds);
           newSelected.delete(cartId);
           setSelectedIds(newSelected);
@@ -174,9 +170,9 @@ export default function Cart() {
 
                   <div className="cart-col-quantity">
                     <div className="quantity-control">
-                      <button className="qty-btn">-</button>
+                      <button className="qty-btn" onClick={() => updateQuantity(product.cartId, product.quantity - 1)}>-</button>
                       <span className="qty-value">{product.quantity}</span>
-                      <button className="qty-btn">+</button>
+                      <button className="qty-btn" onClick={() => updateQuantity(product.cartId, product.quantity + 1)}>+</button>
                     </div>
                   </div>
 

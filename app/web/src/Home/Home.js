@@ -104,8 +104,8 @@ const Home = () => {
                 <div className="best-seller-grid bento-grid">
                     {isLoading ? (
                         Array(5).fill(0).map((_, i) => (
-                            <div key={i} className={`product-card ${i === 0 ? 'bento-item-large' : ''}`}>
-                                <Skeleton width="100%" height={i === 0 ? "100%" : "220px"} style={{ minHeight: i === 0 ? '400px' : '220px' }} />
+                            <div key={i} className="product-card">
+                                <Skeleton width="100%" height="220px" />
                                 <div style={{ padding: '20px' }}>
                                     <Skeleton width="60%" height="20px" style={{ marginBottom: '10px' }} />
                                     <Skeleton width="80%" height="20px" style={{ marginBottom: '10px' }} />
@@ -115,7 +115,7 @@ const Home = () => {
                         ))
                     ) : (
                         bestSellers.map((item, index) => (
-                            <div key={item.id} className={`product-card ${index === 0 ? 'bento-item-large' : ''}`}>
+                            <div key={item.id} className="product-card">
                                 <div className="card-badges" style={{ top: '10px', left: '10px' }}>
                                     <span className="badge-red">HOT</span>
                                 </div>

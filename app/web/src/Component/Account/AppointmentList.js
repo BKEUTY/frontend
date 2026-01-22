@@ -1,15 +1,23 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { FiEdit3, FiTrash2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import searchIcon from '../../Assets/Images/Icons/icon_search.svg';
+import Skeleton from '../Common/Skeleton';
 import './AppointmentList.css';
 
 const AppointmentList = () => {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [isLoading, setIsLoading] = useState(true);
     const itemsPerPage = 5;
+
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => setIsLoading(false), 800);
+        return () => clearTimeout(timer);
+    }, [searchTerm, currentPage]);
 
     const allAppointments = Array.from({ length: 15 }, (_, i) => ({
         id: i + 1,
@@ -69,7 +77,32 @@ const AppointmentList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentAppointments.length > 0 ? (
+                        {isLoading ? (
+                            Array(5).fill(0).map((_, i) => (
+                                <tr key={i}>
+                                    <td><Skeleton width="20px" height="20px" /></td>
+                                    <td>
+                                        <div className="service-info">
+                                            <Skeleton width="120px" height="20px" style={{ marginBottom: '5px' }} />
+                                            <Skeleton width="80px" height="15px" />
+                                        </div>
+                                    </td>
+                                    <td><Skeleton width="100px" height="20px" /></td>
+                                    <td>
+                                        <div className="date-time">
+                                            <Skeleton width="50px" height="20px" style={{ marginBottom: '5px' }} />
+                                            <Skeleton width="70px" height="14px" />
+                                        </div>
+                                    </td>
+                                    <td><Skeleton width="50px" height="24px" borderRadius="12px" /></td>
+                                    <td><Skeleton width="80px" height="20px" /></td>
+                                    <td className="action-cell">
+                                        <Skeleton width="24px" height="24px" borderRadius="4px" style={{ display: 'inline-block', marginRight: '5px' }} />
+                                        <Skeleton width="24px" height="24px" borderRadius="4px" style={{ display: 'inline-block' }} />
+                                    </td>
+                                </tr>
+                            ))
+                        ) : currentAppointments.length > 0 ? (
                             currentAppointments.map((apt) => (
                                 <tr key={apt.id}>
                                     <td data-label="#"><span className="id-badge">#{apt.id}</span></td>

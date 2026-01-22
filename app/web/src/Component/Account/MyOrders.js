@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
+import Skeleton from '../Common/Skeleton';
 import { FiEye } from "react-icons/fi";
 
 const MyOrders = () => {
@@ -36,7 +37,36 @@ const MyOrders = () => {
             });
     }, []);
 
-    if (loading) return <div>{t('loading')}...</div>;
+    if (loading) {
+        return (
+            <div>
+                <h2>{t('my_orders')}</h2>
+                <br />
+                <table className="orders-table">
+                    <thead>
+                        <tr>
+                            <th>{t('order_id')}</th>
+                            <th>{t('order_date')}</th>
+                            <th>{t('total')}</th>
+                            <th>{t('status')}</th>
+                            <th className="text-center">{t('actions_col')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {Array(5).fill(0).map((_, i) => (
+                            <tr key={i}>
+                                <td><Skeleton width="80px" height="20px" /></td>
+                                <td><Skeleton width="100px" height="20px" /></td>
+                                <td><Skeleton width="80px" height="20px" /></td>
+                                <td><Skeleton width="100px" height="24px" borderRadius="12px" /></td>
+                                <td className="text-center"><Skeleton width="24px" height="24px" borderRadius="4px" style={{ display: 'inline-block' }} /></td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        );
+    }
 
     return (
         <div>

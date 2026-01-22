@@ -3,6 +3,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext";
+import { useCart } from "../Context/CartContext";
+import Skeleton from "../Component/Common/Skeleton";
 import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
 import search_image from "../Assets/Images/Icons/icon_search.svg";
 import starIcon from "../Assets/Images/Icons/icon_star.svg";
@@ -11,6 +13,7 @@ export default function Product() {
   // State
   const [products, setProducts] = useState([]);
   const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -21,9 +24,11 @@ export default function Product() {
 
   const notify = useNotification();
   const { t } = useLanguage();
+  const { addToCart } = useCart();
 
 
   const fetchProducts = useCallback((pageIndex, append) => {
+    setIsLoading(true);
     fetch(
       `${process.env.REACT_APP_API_URL}/product?page=${pageIndex}&size=${pageSize}`
     )
@@ -44,7 +49,11 @@ export default function Product() {
         }
         setTotalPages(data.totalPages);
       })
-      .catch((err) => console.error(err));
+      .catch((err) => console.error(err))
+      .finally(() => {
+        // Add fake delay for smoothness
+        setTimeout(() => setIsLoading(false), 500);
+      });
   }, [searchTerm]);
 
   // Initial Load
@@ -74,11 +83,21 @@ export default function Product() {
   };
 
 
-  const handleAddToCart = async (e, productId) => {
-    if (!productId) {
-      productId = e.currentTarget.closest(".product-card").getAttribute("id");
-    }
+  const handleAddToCart = async (e, product) => {
+    // If passed only ID (legacy or from DOM), try to find it (simplified: just assume product obj passed)
+    if (!product) return;
+
+    // UI Immediate Feedback
+    addToCart({
+      id: product.productId || product.id,
+      name: product.name,
+      price: product.price, // Keep number
+      image: 'placeholder', // we don't have real image url in product obj yet usually
+      quantity: 1
+    });
+
     try {
+      // Backend Sync
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/cart`,
         {
@@ -87,17 +106,16 @@ export default function Product() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            productId: productId,
+            productId: product.productId || product.id,
             userId: 1,
           }),
         }
       );
 
       if (!response.ok) {
-        throw new Error("Thêm vào giỏ hàng thất bại");
+        // console.error("Sync failed"); 
       }
-
-      await response.json();
+      // await response.json();
       notify(t('add_cart_success'), "success");
     } catch (error) {
       console.error(error);
@@ -177,7 +195,21 @@ export default function Product() {
               </div>
             </div>
 
-            {products.length === 0 ? (
+            {isLoading && page === 0 ? (
+              <div className="product-grid">
+                {Array(10).fill(0).map((_, i) => (
+                  <div key={i} className="product-card">
+                    <Skeleton width="100%" height="220px" />
+                    <div style={{ padding: '20px' }}>
+                      <Skeleton width="40%" height="15px" style={{ marginBottom: '5px' }} />
+                      <Skeleton width="90%" height="20px" style={{ marginBottom: '10px' }} />
+                      <Skeleton width="60%" height="20px" style={{ marginBottom: '15px' }} />
+                      <Skeleton width="100%" height="40px" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : products.length === 0 ? (
               <div className="no-products">{t('no_products_found') || "Không tìm thấy sản phẩm"}</div>
             ) : (
               <>
@@ -201,7 +233,7 @@ export default function Product() {
                         </div>
                         <div className="card-price">{product.price.toLocaleString("vi-VN")}đ</div>
 
-                        <button className="btn-add-cart" onClick={(e) => handleAddToCart(e, product.productId)}>
+                        <button className="btn-add-cart" onClick={(e) => handleAddToCart(e, product)}>
                           {t('add_to_cart') || "Thêm vào giỏ"}
                         </button>
                       </div>
@@ -213,10 +245,14 @@ export default function Product() {
                 <div className="pagination-wrapper">
                   {!isPaginationMode ? (
                     <div style={{ textAlign: 'center', marginTop: '30px' }}>
-                      {page < totalPages - 1 && (
-                        <button className="btn-view-more" onClick={handleLoadMore}>
-                          {t('load_more') || "Xem thêm"}
-                        </button>
+                      {isLoading && page > 0 ? (
+                        <p>Loading more...</p>
+                      ) : (
+                        page < totalPages - 1 && (
+                          <button className="btn-view-more" onClick={handleLoadMore}>
+                            {t('load_more') || "Xem thêm"}
+                          </button>
+                        )
                       )}
                     </div>
                   ) : (

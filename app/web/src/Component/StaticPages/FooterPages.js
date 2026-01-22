@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './StaticPage.css';
+import Skeleton from '../Common/Skeleton';
 import location_icon from "../../Assets/Images/Icons/icon_location.svg";
 import call_icon from "../../Assets/Images/Icons/icon_phone.svg";
 import search_icon from "../../Assets/Images/Icons/icon_search.svg";
@@ -104,7 +105,15 @@ export const RetailSystem = () => {
     const [statusFilter, setStatusFilter] = useState('all');
     const [currentPage, setCurrentPage] = useState(1);
     const [selectedBranch, setSelectedBranch] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, [searchTerm, statusFilter, currentPage]);
     const branches = useMemo(() => [
         { id: 1, name: "BKEUTY - Quận 1", address: "123 Lê Lợi, Phường Bến Nghé, Quận 1", phone: "0908 741 625", status: "Open", open_date: "2024-01-15", manager: "Nguyễn Văn A" },
         { id: 9, name: "BKEUTY - Đồng Nai", address: "Ấp Đất Mới, xã Long Phước, Đồng Nai", phone: "0908 741 633", status: "Closed", open_date: "2024-05-10", manager: "Nguyễn Văn I" },
@@ -212,7 +221,27 @@ export const RetailSystem = () => {
                 </div>
             </div>
 
-            {paginatedBranches.length > 0 ? (
+            {isLoading ? (
+                <div className="retail-grid">
+                    {Array(6).fill(0).map((_, i) => (
+                        <div key={i} className="store-card">
+                            <div className="store-header">
+                                <Skeleton width="60%" height="24px" />
+                                <Skeleton width="60px" height="20px" borderRadius="12px" />
+                            </div>
+                            <div className="store-info-item">
+                                <Skeleton width="20px" height="20px" borderRadius="50%" />
+                                <Skeleton width="80%" height="16px" style={{ marginLeft: '10px' }} />
+                            </div>
+                            <div className="store-info-item">
+                                <Skeleton width="20px" height="20px" borderRadius="50%" />
+                                <Skeleton width="50%" height="16px" style={{ marginLeft: '10px' }} />
+                            </div>
+                            <Skeleton width="100%" height="36px" borderRadius="18px" style={{ marginTop: '15px' }} />
+                        </div>
+                    ))}
+                </div>
+            ) : paginatedBranches.length > 0 ? (
                 <>
                     <div className="retail-grid">
                         {paginatedBranches.map(branch => (

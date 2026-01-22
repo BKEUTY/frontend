@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useNotification } from '../Context/NotificationContext';
+import { useCart } from '../Context/CartContext';
 import './ProductDetail.css';
 import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
 import starIcon from "../Assets/Images/Icons/icon_star.svg";
@@ -11,6 +12,7 @@ export default function ProductDetail() {
     const { id } = useParams();
     const { t, language } = useLanguage(); // Get language ('en', 'vi')
     const notify = useNotification();
+    const { addToCart } = useCart();
     const location = useLocation();
 
     // Determine breadcrumb category based on state passed from navigation or default
@@ -80,6 +82,13 @@ export default function ProductDetail() {
     };
 
     const handleAddToCart = () => {
+        addToCart({
+            id: productData.id,
+            name: productData.name,
+            price: productData.price, // Keep as number
+            image: mainImage,
+            quantity: quantity
+        });
         notify(t('add_cart_success'), "success");
     };
 

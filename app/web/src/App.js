@@ -18,6 +18,9 @@ import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
 import { AboutUs, Contact, FAQ, RetailSystem, BeautyCorner, Terms } from "./Component/StaticPages/FooterPages";
 
+import { CartProvider } from "./Context/CartContext";
+import CartDrawer from "./Cart/CartDrawer";
+
 function Layout() {
   const location = useLocation();
   const path = location.pathname;
@@ -65,9 +68,12 @@ function App() {
   return (
     <LanguageProvider>
       <NotificationProvider>
-        <Router>
-          <Layout />
-        </Router>
+        <CartProvider>
+          <Router>
+            <Layout />
+            <CartDrawer />
+          </Router>
+        </CartProvider>
       </NotificationProvider>
     </LanguageProvider>
   );

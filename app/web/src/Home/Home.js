@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../i18n/LanguageContext';
 import './Home.css';
+import Skeleton from '../Component/Common/Skeleton';
 import banner1 from '../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../Assets/Images/Banners/banner_home_2.png';
 import product_img from "../Assets/Images/Products/product_placeholder.svg";
@@ -30,6 +31,15 @@ const suggestedProducts = [
 const Home = () => {
     const { t } = useLanguage();
     const [currentBanner, setCurrentBanner] = useState(0);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        // Simulate loading
+        const loadTimer = setTimeout(() => {
+            setIsLoading(false);
+        }, 1500);
+        return () => clearTimeout(loadTimer);
+    }, []);
 
     // Auto-slide every 30 seconds
     useEffect(() => {
@@ -91,29 +101,41 @@ const Home = () => {
             {/* Best Sellers */}
             <section className="section-full-width animate-slide-up delay-100">
                 <h2 className="home-section-title">{t('best_sellers')}</h2>
-                <div className="best-seller-grid">
-                    {bestSellers.map((item) => (
-                        <div key={item.id} className="product-card">
-                            <div className="card-badges" style={{ top: '10px', left: '10px' }}>
-                                <span className="badge-red">HOT</span>
-                            </div>
-                            <div className="card-image-wrapper">
-                                <img src={item.image} alt={item.name} />
-                                <button className="carousel-arrow arrow-left-card">❮</button>
-                                <button className="carousel-arrow arrow-right-card">❯</button>
-                            </div>
-                            <div className="card-info">
-                                <p className="card-brand">Obagi</p>
-                                <h3 className="card-name">{item.name}</h3>
-                                <div className="card-meta">
-                                    <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
-                                    <span className="rating">{item.rating}</span>
-                                    <span className="sold">({item.sold})</span>
+                <div className="best-seller-grid bento-grid">
+                    {isLoading ? (
+                        Array(5).fill(0).map((_, i) => (
+                            <div key={i} className={`product-card ${i === 0 ? 'bento-item-large' : ''}`}>
+                                <Skeleton width="100%" height={i === 0 ? "100%" : "220px"} style={{ minHeight: i === 0 ? '400px' : '220px' }} />
+                                <div style={{ padding: '20px' }}>
+                                    <Skeleton width="60%" height="20px" style={{ marginBottom: '10px' }} />
+                                    <Skeleton width="80%" height="20px" style={{ marginBottom: '10px' }} />
+                                    <Skeleton width="40%" height="20px" />
                                 </div>
-                                <div className="card-price">{item.price}</div>
                             </div>
-                        </div>
-                    ))}
+                        ))
+                    ) : (
+                        bestSellers.map((item, index) => (
+                            <div key={item.id} className={`product-card ${index === 0 ? 'bento-item-large' : ''}`}>
+                                <div className="card-badges" style={{ top: '10px', left: '10px' }}>
+                                    <span className="badge-red">HOT</span>
+                                </div>
+                                <div className="card-image-wrapper">
+                                    <img src={item.image} alt={item.name} />
+                                    <button className="carousel-arrow arrow-left-card">❮</button>
+                                    <button className="carousel-arrow arrow-right-card">❯</button>
+                                </div>
+                                <div className="card-info">
+                                    <p className="card-brand">Obagi</p>
+                                    <h3 className="card-name">{item.name}</h3>
+                                    <div className="card-meta">
+                                        <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
+                                        <span className="rating">{item.rating}</span>
+                                        <span className="sold">({item.sold})</span>
+                                    </div>
+                                    <div className="card-price">{item.price}</div>
+                                </div>
+                            </div>
+                        )))}
                 </div>
             </section>
 

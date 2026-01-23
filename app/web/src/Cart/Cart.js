@@ -11,7 +11,7 @@ export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
   const { t } = useLanguage(); // Initialized hook
-  const { cartItems: products, setCartItems, fetchCart, updateQuantity } = useCart();
+  const { cartItems: products, fetchCart, updateQuantity } = useCart();
 
   const PROMOTIONS = [
     { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: 'Giảm 10% cho đơn hàng đầu tiên' },
@@ -25,7 +25,7 @@ export default function Cart() {
 
   useEffect(() => {
     fetchCart();
-  }, []);
+  }, [fetchCart]);
 
   const handleSelectOne = (id) => {
     const newSelected = new Set(selectedIds);

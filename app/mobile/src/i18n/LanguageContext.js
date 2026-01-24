@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
-import { enMobile, viMobile } from './resources';
+import { en, vi } from './resources';
 
 const LanguageContext = createContext();
 
@@ -7,16 +7,16 @@ export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('vi');
 
     const t = (key) => {
-        const dict = language === 'vi' ? viMobile : enMobile;
+        const dict = language === 'vi' ? vi : en;
         return dict[key] || key;
     };
 
-    const toggleLanguage = () => {
-        setLanguage(prev => prev === 'vi' ? 'en' : 'vi');
+    const changeLanguage = (lang) => {
+        setLanguage(lang);
     };
 
     return (
-        <LanguageContext.Provider value={{ language, toggleLanguage, t }}>
+        <LanguageContext.Provider value={{ language, changeLanguage, t }}>
             {children}
         </LanguageContext.Provider>
     );

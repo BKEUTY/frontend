@@ -99,7 +99,7 @@ const HomeScreen = ({ navigation }) => {
 
                 {/* Brand Story */}
                 <View style={styles.brandSection}>
-                    <Text style={[styles.sectionTitle, { color: COLORS.mainTitle }]}>{t('brand_story')}</Text>
+                    <Text style={[styles.sectionTitle, { color: 'white', borderBottomColor: 'rgba(255,255,255,0.3)', borderBottomWidth: 1, paddingBottom: 10 }]}>{t('brand_story')}</Text>
                     <Text style={styles.sectionText}>
                         {t('brand_desc')}
                     </Text>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     // ...
     brandSection: {
         padding: 40,
-        backgroundColor: '#33001b', // Match web Brand Story dark bg
+        backgroundColor: COLORS.mainTitle, // Updated from dark #33001b to brand color
         alignItems: 'center',
         marginTop: 20,
     },

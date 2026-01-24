@@ -6,7 +6,11 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const Header = () => {
     const navigation = useNavigation();
-    const { language, toggleLanguage } = useLanguage();
+    const { language, changeLanguage } = useLanguage();
+
+    const handleToggleLanguage = () => {
+        changeLanguage(language === 'vi' ? 'en' : 'vi');
+    };
 
     return (
         <View style={styles.headerContainer}>
@@ -27,8 +31,9 @@ const Header = () => {
                     {/* Optional Badge */}
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={toggleLanguage} style={styles.langButton}>
-                    <Text style={styles.langText}>{language === 'vi' ? 'EN' : 'VI'}</Text>
+                <TouchableOpacity onPress={handleToggleLanguage} style={styles.langButton}>
+                    <Text style={styles.langIcon}>🌐</Text>
+                    <Text style={styles.langText}>{language === 'vi' ? 'VI' : 'EN'}</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -38,7 +43,7 @@ const Header = () => {
 const styles = StyleSheet.create({
     headerContainer: {
         height: 60,
-        backgroundColor: '#fff0f5', // Light pink background to match web header gradient start
+        backgroundColor: '#fce4ec', // Matches web header gradient start
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -51,13 +56,13 @@ const styles = StyleSheet.create({
         zIndex: 100,
     },
     sideContainer: {
-        width: 80, // Fixed width to ensure logo stays centered via absolute positioning logic or flex balance
+        width: 80,
         flexDirection: 'row',
         alignItems: 'center',
     },
     rightContainer: {
         justifyContent: 'flex-end',
-        gap: 10,
+        gap: 15,
     },
     logoContainer: {
         position: 'absolute',
@@ -65,35 +70,41 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        justifyContent: 'center', // Center vertically
-        alignItems: 'center',     // Center horizontally
-        zIndex: -1,               // Behind the side containers so buttons are clickable
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: -1,
     },
     logoText: {
         fontSize: 24,
         fontWeight: 'bold',
         color: COLORS.mainTitle,
-        fontStyle: 'italic', // Mimic Oleo Script if possible
+        fontStyle: 'italic',
     },
     iconButton: {
         padding: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     iconText: {
-        fontSize: 20, // Match web icon size roughly
+        fontSize: 24,
         color: COLORS.mainTitle,
     },
     langButton: {
-        paddingVertical: 4,
-        paddingHorizontal: 8,
-        borderWidth: 1,
-        borderColor: COLORS.mainTitle,
-        borderRadius: 6,
-        backgroundColor: 'transparent',
+        padding: 5,
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: 0, // Tight spacing
+    },
+    langIcon: {
+        fontSize: 22,
+        color: COLORS.mainTitle,
+        lineHeight: 24,
     },
     langText: {
-        fontSize: 12,
+        fontSize: 10,
         fontWeight: 'bold',
         color: COLORS.mainTitle,
+        lineHeight: 12,
     }
 });
 

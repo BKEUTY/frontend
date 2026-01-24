@@ -1,15 +1,15 @@
 export const COLORS = {
   background: '#f8f9fa',
   background2: '#ffffff',
-  mainTitle: '#a30251',
+  mainTitle: '#c2185b',
   mainTitleText: '#ffffff',
   text: '#2c3e50',
-  buttonBackground: '#a30251',
+  buttonBackground: '#c2185b',
   buttonText: 'white',
   inputBorder: '#ddd',
-  checked: '#a30251',
-  checkoutButton: '#a30251',
-  lightPink: '#fff0f5', // Matches web header gradient start
+  checked: '#c2185b',
+  checkoutButton: '#c2185b',
+  lightPink: '#fce4ec', // Matches web header gradient start
   secondary: '#f9f9f9',
   gray: '#636e72',
   danger: '#d32f2f'

@@ -20,7 +20,7 @@ export default function Account() {
 
     const isActive = (path) => {
         // Simple active check
-        if (path === '/account' && (location.pathname === '/account' || location.pathname === '/account/')) return true;
+        if (path === '/account' && (location.pathname === '/account' || location.pathname === '/account/' || location.pathname === '/account/info')) return true;
         if (path === '/account/orders' && location.pathname.includes('/orders')) return true;
         if (path === '/account/appointments' && location.pathname.includes('/appointments')) return true;
         return false;
@@ -63,6 +63,10 @@ export default function Account() {
             <div className="account-content">
                 <Routes>
                     <Route path="/" element={<AccountInfo onUpdate={handleUpdate} />} />
+                    {/* Alias /info to render AccountInfo as well if someone navigates there, or we can just remove it. 
+                        User said "both use /accountinfo interface", so likely wants /account -> Info. 
+                        I'll keep /info just in case but map it to same component or just rely on / */}
+                    <Route path="/info" element={<AccountInfo onUpdate={handleUpdate} />} />
                     <Route path="/orders" element={<MyOrders />} />
                     <Route path="/orders/:id" element={<OrderDetail />} />
                     <Route path="/appointments" element={<AppointmentList />} />

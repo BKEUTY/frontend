@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useNotification } from '../Context/NotificationContext';
 import { useCart } from '../Context/CartContext';
 import './ProductDetail.css';
+import { FaStar, FaCheckCircle, FaRegHeart, FaRegComment } from 'react-icons/fa';
 import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
 import starIcon from "../Assets/Images/Icons/icon_star.svg";
 
@@ -14,6 +14,7 @@ export default function ProductDetail() {
     const notify = useNotification();
     const { addToCart } = useCart();
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Determine breadcrumb category based on state passed from navigation or default
     // If user clicked from "Skincare", location.state.category might be set
@@ -234,31 +235,73 @@ export default function ProductDetail() {
                         </div>
                     )}
                     {activeTab === 'reviews' && (
-                        <div className="tab-content">
-                            <div className="review-stats">
-                                <div className="big-rating">{productData.rating}</div>
-                                <div>
-                                    <div style={{ color: '#ffc107', fontSize: '1.2rem' }}>★★★★★</div>
-                                    <div style={{ color: '#888' }}>Based on {productData.reviews_count} reviews</div>
+                        <div className="tab-content review-tab-content">
+                            {/* Visual-First: Review Summary Card */}
+                            <div className="review-dashboard">
+                                <div className="rating-overview">
+                                    <span className="big-score">{productData.rating}</span>
+                                    <div className="star-stack">
+                                        <div className="star-row">★★★★★</div>
+                                        <span className="total-reviews">{productData.reviews_count} {t('reviews')}</span>
+                                    </div>
                                 </div>
-                            </div>
-                            {productData.reviews.map((rev, i) => (
-                                <div key={i} className="review-item">
-                                    <div className="review-header">
-                                        <div className="reviewer-name">
-                                            {rev.user}
-                                            {rev.verified && <span className="verified-badge">✓ {t('verified_purchase')}</span>}
+                                <div className="rating-bars">
+                                    {[5, 4, 3, 2, 1].map((star) => (
+                                        <div key={star} className="bar-row">
+                                            <span className="star-label">{star} ★</span>
+                                            <div className="progress-bg">
+                                                <div className="progress-fi" style={{ width: star === 5 ? '70%' : star === 4 ? '20%' : '5%' }}></div>
+                                            </div>
                                         </div>
-                                        <div className="review-date">{rev.date}</div>
-                                    </div>
-                                    <div className="review-stars">
-                                        {[...Array(5)].map((_, starIdx) => (
-                                            <span key={starIdx} style={{ opacity: starIdx < rev.rating ? 1 : 0.3, color: '#ffc107' }}>★</span>
-                                        ))}
-                                    </div>
-                                    <p style={{ marginTop: '10px' }}>{rev.content}</p>
+                                    ))}
                                 </div>
-                            ))}
+                                <button className="btn-write-review">{t('write_review')}</button>
+                            </div>
+
+                            {/* Contextual Relevance: Filter Tabs (Mock) */}
+                            <div className="review-filters">
+                                <button className="filter-chip active">{t('all')}</button>
+                                <button className="filter-chip">{t('with_photo_video')} (24)</button>
+                                <button className="filter-chip">5 ★ (80)</button>
+                            </div>
+
+                            {/* Review List */}
+                            <div className="review-list-container">
+                                {productData.reviews.map((rev, i) => (
+                                    <div key={i} className="review-card">
+                                        <div className="review-user-avatar">
+                                            {rev.user.charAt(0)}
+                                        </div>
+                                        <div className="review-content-body">
+                                            <div className="review-header-row">
+                                                <span className="reviewer-name">{rev.user}</span>
+                                                <span className="review-time">{rev.date}</span>
+                                            </div>
+                                            <div className="review-stars-row">
+                                                {[...Array(5)].map((_, starIdx) => (
+                                                    <span key={starIdx} className={`rv-star ${starIdx < rev.rating ? 'filled' : ''}`}>
+                                                        <FaStar />
+                                                    </span>
+                                                ))}
+                                                {rev.verified && <span className="verified-tag"><FaCheckCircle className="icon-check" /> {t('verified_purchase')}</span>}
+                                            </div>
+                                            <div className="review-text">
+                                                {rev.content}
+                                            </div>
+
+                                            {/* Action Buttons: Like & Comment */}
+                                            <div className="review-actions">
+                                                <button className="action-btn">
+                                                    <FaRegHeart className="icon-action" /> {t('like') || 'Like'}
+                                                </button>
+                                                <button className="action-btn">
+                                                    <FaRegComment className="icon-action" /> {t('comment') || 'Comment'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </div>
@@ -271,7 +314,63 @@ export default function ProductDetail() {
                 <div className="product-grid related-products-grid">
                     {/* Mock 5 items */}
                     {[1, 2, 3, 4, 5].map(i => (
-                        <div key={i} className="product-card">
+                        <div
+                            key={i}
+                            className="product-card"
+                            onClick={() => {
+                                // Navigate to a mocked product ID (e.g., related-i) or just reload current for demo
+                                // Using a mock ID to show navigation change
+
+                                // Check if we should actually navigate to ID or if they are placeholders. 
+                                // Assuming they are placeholders for the same product structure.
+                                // In a real app, 'i' would be a product object with an ID.
+                                // For now, let's navigate to the same detail page or a mock ID but with the related state.
+
+                                // Since we don't have real IDs for these mock items, we'll just navigate to a placeholder ID
+                                // or if they are intended to be the same structure as `productData`.
+                                // Let's assume we navigate to /product/related-i
+                                // But to make it work with the current mocked details, maybe just reload or go to top?
+                                // User asked to "switch to product detail", so navigation is expected.
+
+                                // Using a navigate call similar to Home.js
+                                // Construct a mock product object or just pass ID
+                                window.scrollTo(0, 0); // Ensure scroll top
+                                // In real app: navigate(`/product/${item.id}`, ...)
+                                // Here using '1' just to show it reloads the detail page content (since id=1 is used elsewhere or mock)
+                                // Actually let's just force a navigation to a dummy ID to see the URL change.
+
+                                // Use 'related-i' as ID for demo purposes
+                                // navigate(`/product/related-${i}`, { 
+                                //    state: { category: language === 'vi' ? 'Gợi ý' : 'Related Products', from: location.pathname } 
+                                // });
+
+                                // Actually, since we are mocking, let's just navigate to `id` (from params) or a static one to keep it simple 
+                                // but with specific state.
+                                // Let's navigate to `product/99` for demo.
+
+                                // Better:
+                                // If I am on product/1, clicking related item 2 goes to product/2 (if it exists)
+                                // Since I don't have a list of real related IDs, I'll allow navigation to `/product/${i}` 
+                                // assuming 1-5 are valid mock IDs or handled by the component.
+
+                                // Wait, the `id` param in ProductDetail.js is used to fetch data. 
+                                // If I change it, the component re-renders. 
+                                // The current code creates `productData` using `id` from params but uses static content.
+                                // So navigating to any ID works.
+
+                                // Mock category: "Có thể bạn cũng thích" usually implies a recommendation context.
+                                // User said: "tạm thời mock data phần danh mục" -> mock category part.
+                                // So breadcrumb should show "Related Products" or similar.
+
+                                navigate(`/product/${i}`, {
+                                    state: {
+                                        category: language === 'vi' ? 'Gợi ý' : 'Related Products',
+                                        from: location.pathname
+                                    }
+                                });
+                            }}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="card-image-wrapper">
                                 <img src={best_selling_image} alt="Rel" />
                             </div>

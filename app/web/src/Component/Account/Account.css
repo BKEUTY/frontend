@@ -86,21 +86,83 @@
 }
 
 /* Account Info Specifics */
+/* Account Info Specifics */
 .info-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: 15px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    /* Safe wrap for very small screens */
+}
+
+.info-header h2 {
+    margin: 0;
+    /* Remove default margins */
+    line-height: 1.2;
+    /* Better alignment */
+    font-size: 24px;
+    /* Ensure size consistency */
+    display: flex;
+    /* Flex context for text */
+    align-items: center;
+}
+
+.membership-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: #f1f2f6;
+    /* Lighter cool gray */
+    padding: 6px 16px;
+    border-radius: 99px;
+    /* Pill shape */
+    height: 36px;
+    /* Fixed height for alignment */
+    box-sizing: border-box;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.points-progress-bar {
+    width: 80px;
+    height: 8px;
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 4px;
+    /* Minimal spacing */
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #ffd700, #fbc531);
+    /* Gold gradient */
+    border-radius: 4px;
+}
+
+.points-text {
+    font-size: 13px;
+    font-weight: 700;
+    color: #57606f;
+    line-height: 1;
+    white-space: nowrap;
 }
 
 .premium-badge {
-    background-color: #2ecc71;
+    background-color: #00d2d3;
+    /* Teal/Cyan-ish Green like screenshot */
     color: white;
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 10px;
-    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 10px;
+    /* Rounded rect inside pill */
+    font-size: 11px;
+    font-weight: 800;
     text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 20px;
+    line-height: 1;
 }
 
 .info-form-layout {
@@ -338,6 +400,12 @@
     width: 100%;
     height: 100%;
     background: #eee;
+}
+
+.highlight-username {
+    font-weight: 800;
+    color: var(--color_main_title);
+    /* Ensure stroke/shadow where needed */
 }
 
 @media (max-width: 768px) {

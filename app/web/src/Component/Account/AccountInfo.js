@@ -55,9 +55,15 @@ const AccountInfo = ({ onUpdate }) => {
         <div>
             <div className="info-header">
                 <h2>{t('account')}</h2>
-                <span className="premium-badge">{userData.membership_level}</span>
+                <div className="membership-container">
+                    <span className="premium-badge">{userData.membership_level}</span>
+                    <div className="points-progress-bar">
+                        <div className="progress-fill" style={{ width: '70%' }}></div>
+                    </div>
+                    <span className="points-text">1,250 {t('pts')}</span>
+                </div>
             </div>
-            <p className="greeting-text">{t('welcome')} {userData.name},</p>
+            <p className="greeting-text">{t('welcome')} <span className="highlight-username">{userData.name}</span>,</p>
 
             <div className="info-form-layout">
                 <div className="form-fields">

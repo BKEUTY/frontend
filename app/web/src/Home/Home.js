@@ -7,6 +7,7 @@ import banner2 from '../Assets/Images/Banners/banner_home_2.png';
 import product_img from "../Assets/Images/Products/product_placeholder.svg";
 import about_image from "../Assets/Images/Banners/banner_about_us.svg";
 import starIcon from "../Assets/Images/Icons/icon_star.svg";
+import { useNavigate } from 'react-router-dom';
 
 const bannerImages = [banner1, banner2];
 
@@ -29,9 +30,10 @@ const suggestedProducts = [
 ];
 
 const Home = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
     const [currentBanner, setCurrentBanner] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Simulate loading
@@ -56,6 +58,15 @@ const Home = () => {
 
     const prevBanner = () => {
         setCurrentBanner((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
+    };
+
+    const handleProductClick = (product, breadcrumbLabel) => {
+        navigate(`/product/${product.id}`, {
+            state: {
+                category: breadcrumbLabel,
+                from: '/' // Back to Home
+            }
+        });
     };
 
     return (
@@ -115,7 +126,12 @@ const Home = () => {
                         ))
                     ) : (
                         bestSellers.map((item, index) => (
-                            <div key={item.id} className="product-card">
+                            <div
+                                key={item.id}
+                                className="product-card"
+                                onClick={() => handleProductClick(item, language === 'vi' ? 'Bán chạy' : 'Best Sellers')}
+                                style={{ cursor: 'pointer' }}
+                            >
                                 <div className="card-badges" style={{ top: '10px', left: '10px' }}>
                                     <span className="badge-red">HOT</span>
                                 </div>
@@ -145,7 +161,12 @@ const Home = () => {
                 <div className="suggested-grid">
                     {/* Displaying exactly 10 items by duplicating mock data if needed or slicing */}
                     {[...suggestedProducts, ...suggestedProducts].slice(0, 10).map((item, index) => (
-                        <div key={`${item.id}-${index}`} className="product-card">
+                        <div
+                            key={`${item.id}-${index}`}
+                            className="product-card"
+                            onClick={() => handleProductClick(item, language === 'vi' ? 'Giảm giá sốc' : 'Shocking Deals')}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="card-badges">
                                 <span className="badge-red">{t('so_hot')}</span>
                                 <span className="badge-yellow">-{item.discount}</span>
@@ -178,6 +199,7 @@ const Home = () => {
                         <p>{t('brand_desc')}</p>
                         <button className="btn-explore-brand">{t('explore_more')}</button>
                     </div>
+
                     <div className="section4-image">
                         <img src={about_image} alt="About Us" />
                     </div>

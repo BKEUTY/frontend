@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useNotification } from '../Context/NotificationContext';
 import { useCart } from '../Context/CartContext';
@@ -8,13 +8,16 @@ import { FaStar, FaCheckCircle, FaRegHeart, FaRegComment } from 'react-icons/fa'
 import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
 import starIcon from "../Assets/Images/Icons/icon_star.svg";
 
+import Pagination from "../Component/Common/Pagination";
+import ProductCard from "../Component/Common/ProductCard";
+
 export default function ProductDetail() {
     const { id } = useParams();
     const { t, language } = useLanguage(); // Get language ('en', 'vi')
     const notify = useNotification();
     const { addToCart } = useCart();
     const location = useLocation();
-    const navigate = useNavigate();
+
 
     // Determine breadcrumb category based on state passed from navigation or default
     // If user clicked from "Skincare", location.state.category might be set
@@ -58,7 +61,20 @@ export default function ProductDetail() {
         },
         reviews: [
             { user: "Sarah L.", date: "12 Oct 2023", rating: 5, content: "Absolutely amazing! My skin feels so soft and the glow is incredible.", verified: true },
-            { user: "Minh Anh", date: "05 Nov 2023", rating: 4, content: "Đắt nhưng xắt ra miếng. Trải nghiệm rất sang chảnh.", verified: true }
+            { user: "Minh Anh", date: "05 Nov 2023", rating: 4, content: "Đắt nhưng xắt ra miếng. Trải nghiệm rất sang chảnh.", verified: true },
+            { user: "Jessica W.", date: "15 Oct 2023", rating: 5, content: "Best serum I've ever used. Worth every penny.", verified: true },
+            { user: "Lan Huong", date: "20 Oct 2023", rating: 5, content: "Da mình nhạy cảm nhưng dùng em này rất êm, không bị kích ứng.", verified: true },
+            { user: "Emily R.", date: "25 Oct 2023", rating: 4, content: "Great texture, absorbs quickly. Smell is a bit strong for me though.", verified: true },
+            { user: "Thanh Huyen", date: "01 Nov 2023", rating: 5, content: "Dùng hết 1 lọ thấy da cải thiện rõ rệt, căng bóng hơn hẳn.", verified: true },
+            { user: "Sophia K.", date: "08 Nov 2023", rating: 3, content: "It's okay, but I expected more for the price.", verified: false },
+            { user: "Ngoc Chau", date: "10 Nov 2023", rating: 5, content: "Đóng gói đẹp, giao hàng nhanh. Sản phẩm chính hãng.", verified: true },
+            { user: "Olivia P.", date: "12 Nov 2023", rating: 4, content: "Love the packaging and the feel on my skin.", verified: true },
+            { user: "Thu Ha", date: "14 Nov 2023", rating: 5, content: "Sẽ mua lại lần nữa. Rất hài lòng.", verified: true },
+            { user: "Isabella M.", date: "18 Nov 2023", rating: 5, content: "My holy grail skincare product now!", verified: true },
+            { user: "Hoang Yen", date: "20 Nov 2023", rating: 4, content: "Mùi hương dễ chịu, thấm nhanh.", verified: true },
+            { user: "Ava T.", date: "22 Nov 2023", rating: 5, content: "Visible results in just one week.", verified: true },
+            { user: "Kim Ngan", date: "25 Nov 2023", rating: 5, content: "Chất lượng tuyệt vời, đáng tiền.", verified: true },
+            { user: "Mia S.", date: "28 Nov 2023", rating: 4, content: "Good hydration, skin feels plump.", verified: true }
         ]
     };
 
@@ -71,6 +87,12 @@ export default function ProductDetail() {
     const [selectedSize, setSelectedSize] = useState(productData.sizes[0]);
     const [mainImage, setMainImage] = useState(productData.images[0]);
     const [quantity, setQuantity] = useState(1);
+
+    // Review Pagination
+    const [reviewPage, setReviewPage] = useState(0);
+    const reviewsPerPage = 5;
+    const totalReviewPages = Math.ceil(productData.reviews.length / reviewsPerPage);
+    const displayedReviews = productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage);
 
     // Scroll to top on load
     useEffect(() => {
@@ -146,7 +168,7 @@ export default function ProductDetail() {
                             <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')})
                         </div>
                         <span style={{ color: '#ddd' }}>|</span>
-                        <span style={{ fontSize: '0.9rem', color: '#666' }}>Code: #SKU-{id}</span>
+                        <span style={{ fontSize: '0.9rem', color: '#666' }}>{t('sku')}{id}</span>
                     </div>
 
                     <div className="detail-price">
@@ -261,13 +283,12 @@ export default function ProductDetail() {
                             {/* Contextual Relevance: Filter Tabs (Mock) */}
                             <div className="review-filters">
                                 <button className="filter-chip active">{t('all')}</button>
-                                <button className="filter-chip">{t('with_photo_video')} (24)</button>
-                                <button className="filter-chip">5 ★ (80)</button>
+                                <button className="filter-chip">{t('filter_with_media')} (24)</button>
+                                <button className="filter-chip">{t('filter_5_star')} (80)</button>
                             </div>
 
-                            {/* Review List */}
                             <div className="review-list-container">
-                                {productData.reviews.map((rev, i) => (
+                                {displayedReviews.map((rev, i) => (
                                     <div key={i} className="review-card">
                                         <div className="review-user-avatar">
                                             {rev.user.charAt(0)}
@@ -302,6 +323,13 @@ export default function ProductDetail() {
                                     </div>
                                 ))}
                             </div>
+
+                            {/* Pagination Controls */}
+                            <Pagination
+                                page={reviewPage}
+                                totalPages={totalReviewPages}
+                                onPageChange={setReviewPage}
+                            />
                         </div>
                     )}
                 </div>
@@ -313,74 +341,32 @@ export default function ProductDetail() {
                 {/* Reuse Product Grid Logic or Static Items */}
                 <div className="product-grid related-products-grid">
                     {/* Mock 5 items */}
-                    {[1, 2, 3, 4, 5].map(i => (
-                        <div
-                            key={i}
-                            className="product-card"
-                            onClick={() => {
-                                // Navigate to a mocked product ID (e.g., related-i) or just reload current for demo
-                                // Using a mock ID to show navigation change
+                    {[1, 2, 3, 4, 5].map(i => {
+                        const relatedProduct = {
+                            id: i,
+                            name: "Capture Totale Cell Energy",
+                            brand: "Dior",
+                            price: 3500000,
+                            image: best_selling_image,
+                            rating: 4.8,
+                            sold: 120
+                        };
 
-                                // Check if we should actually navigate to ID or if they are placeholders. 
-                                // Assuming they are placeholders for the same product structure.
-                                // In a real app, 'i' would be a product object with an ID.
-                                // For now, let's navigate to the same detail page or a mock ID but with the related state.
+                        const clickState = {
+                            category: language === 'vi' ? 'Gợi ý' : 'Related Products',
+                            from: location.pathname
+                        };
 
-                                // Since we don't have real IDs for these mock items, we'll just navigate to a placeholder ID
-                                // or if they are intended to be the same structure as `productData`.
-                                // Let's assume we navigate to /product/related-i
-                                // But to make it work with the current mocked details, maybe just reload or go to top?
-                                // User asked to "switch to product detail", so navigation is expected.
-
-                                // Using a navigate call similar to Home.js
-                                // Construct a mock product object or just pass ID
-                                window.scrollTo(0, 0); // Ensure scroll top
-                                // In real app: navigate(`/product/${item.id}`, ...)
-                                // Here using '1' just to show it reloads the detail page content (since id=1 is used elsewhere or mock)
-                                // Actually let's just force a navigation to a dummy ID to see the URL change.
-
-                                // Use 'related-i' as ID for demo purposes
-                                // navigate(`/product/related-${i}`, { 
-                                //    state: { category: language === 'vi' ? 'Gợi ý' : 'Related Products', from: location.pathname } 
-                                // });
-
-                                // Actually, since we are mocking, let's just navigate to `id` (from params) or a static one to keep it simple 
-                                // but with specific state.
-                                // Let's navigate to `product/99` for demo.
-
-                                // Better:
-                                // If I am on product/1, clicking related item 2 goes to product/2 (if it exists)
-                                // Since I don't have a list of real related IDs, I'll allow navigation to `/product/${i}` 
-                                // assuming 1-5 are valid mock IDs or handled by the component.
-
-                                // Wait, the `id` param in ProductDetail.js is used to fetch data. 
-                                // If I change it, the component re-renders. 
-                                // The current code creates `productData` using `id` from params but uses static content.
-                                // So navigating to any ID works.
-
-                                // Mock category: "Có thể bạn cũng thích" usually implies a recommendation context.
-                                // User said: "tạm thời mock data phần danh mục" -> mock category part.
-                                // So breadcrumb should show "Related Products" or similar.
-
-                                navigate(`/product/${i}`, {
-                                    state: {
-                                        category: language === 'vi' ? 'Gợi ý' : 'Related Products',
-                                        from: location.pathname
-                                    }
-                                });
-                            }}
-                            style={{ cursor: 'pointer' }}
-                        >
-                            <div className="card-image-wrapper">
-                                <img src={best_selling_image} alt="Rel" />
-                            </div>
-                            <div className="card-info">
-                                <p className="card-brand">Dior</p>
-                                <h3 className="card-name">Capture Totale Cell Energy</h3>
-                                <div className="card-price">3.500.000đ</div>
-                            </div>
-                        </div>
-                    ))}
+                        return (
+                            <ProductCard
+                                key={i}
+                                product={relatedProduct}
+                                t={t}
+                                language={language}
+                                onClickData={clickState}
+                            />
+                        );
+                    })}
                 </div>
             </div>
         </div>

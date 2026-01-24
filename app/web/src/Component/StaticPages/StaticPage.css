@@ -76,104 +76,115 @@
 /* Retail System Specific Styles */
 .retail-filters {
     display: flex;
-    gap: 15px;
-    /* Reduced gap for consistency */
+    gap: 20px;
     margin-bottom: 30px;
     flex-wrap: wrap;
     align-items: center;
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .retail-search-container {
     position: relative;
     flex: 1;
-    min-width: 250px;
+    min-width: 300px;
 }
 
 .retail-search-input {
     width: 100%;
     height: 48px;
-    /* Fixed height for alignment */
-    padding: 0 15px 0 45px;
-    /* Use flex/height for vertical center */
+    padding: 0 20px 0 50px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 25px;
+    /* Pill shape */
     font-size: 1rem;
     font-family: var(--inter_font);
     box-sizing: border-box;
-    transition: all 0.3s;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .search-icon-img {
     position: absolute;
-    left: 15px;
+    left: 20px;
     top: 50%;
     transform: translateY(-50%);
     width: 20px;
     height: 20px;
     opacity: 0.5;
+    transition: opacity 0.3s;
 }
 
 .retail-search-input:focus {
     outline: none;
     border-color: #c2185b;
-    box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.1);
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.15);
+    transform: translateY(-2px);
+}
+
+.retail-search-input:focus+.search-icon-img {
+    opacity: 1;
 }
 
 .retail-status-dropdown-container {
     position: relative;
-    min-width: 250px;
+    min-width: 200px;
     height: 48px;
-    /* Match search input height */
 }
 
 .retail-status-trigger {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 15px;
-    /* Reduced from 20px to match search input */
+    padding: 0 20px;
     height: 100%;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    border-radius: 25px;
+    /* Pill shape */
     background: white;
     cursor: pointer;
     font-size: 1rem;
-    color: #333;
+    color: #555;
     font-family: var(--inter_font);
     transition: all 0.3s;
     user-select: none;
     box-sizing: border-box;
+    font-weight: 500;
 }
 
 .retail-status-trigger:hover,
 .retail-status-menu.show+.retail-status-trigger {
     border-color: #c2185b;
-    box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.1);
+    color: #c2185b;
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.1);
 }
 
 .dropdown-arrow {
     font-size: 0.8rem;
     color: #888;
+    transition: transform 0.3s;
+}
+
+.retail-status-menu.show+.retail-status-trigger .dropdown-arrow {
+    transform: rotate(180deg);
+    color: #c2185b;
 }
 
 .retail-status-menu {
     position: absolute;
-    top: calc(100% + 5px);
-    /* Precise gap */
+    top: calc(100% + 8px);
     left: 0;
     width: 100%;
     min-width: 100%;
-    /* Ensure match */
     background: white;
     border: 1px solid #eee;
     border-radius: 12px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-    /* Stronger shadow */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
     list-style: none;
-    padding: 0;
+    padding: 8px;
     margin: 0;
     z-index: 100;
-    /* Ensure on top */
     display: none;
     animation: fadeIn 0.2s ease;
     box-sizing: border-box;
@@ -197,9 +208,10 @@
 }
 
 .retail-status-menu li.active {
-    background-color: #c2185b;
+    background: linear-gradient(135deg, #c2185b 0%, #e91e63 100%);
     color: white;
     font-weight: 600;
+    box-shadow: 0 4px 10px rgba(194, 24, 91, 0.3);
 }
 
 @keyframes fadeIn {

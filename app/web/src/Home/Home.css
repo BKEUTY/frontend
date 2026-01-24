@@ -510,6 +510,11 @@
         /* Space for bottom nav if any */
     }
 
+    .home-section-title {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+    }
+
     /* Category Bar */
     .category-bar {
         flex-direction: column;

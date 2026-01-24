@@ -391,3 +391,10 @@
     white-space: nowrap;
   }
 }
+
+@media (max-width: 768px) {
+  .promotion-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+  }
+}

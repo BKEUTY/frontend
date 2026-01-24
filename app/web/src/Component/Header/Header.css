@@ -185,7 +185,6 @@ header.header {
 }
 
 /* Responsive Header for Mobile */
-/* Responsive Header for Mobile */
 .mobile-menu-toggle {
     display: none;
     cursor: pointer;
@@ -205,17 +204,26 @@ header.header {
         padding: 10px 15px;
         justify-content: space-between;
         position: relative;
-        /* Context for menu */
+        height: 60px;
+        /* Fixed height for stability */
+        width: 100%;
+        box-sizing: border-box;
     }
 
     .mobile-menu-toggle {
         display: flex;
     }
 
+    .mobile-menu-toggle .bar {
+        background-color: var(--color_main_title);
+        /* Magenta */
+    }
+
     .logo {
         position: absolute;
         left: 50%;
-        transform: translateX(-50%);
+        top: 50%;
+        transform: translate(-50%, -50%);
         width: auto;
         display: flex;
         justify-content: center;
@@ -234,7 +242,8 @@ header.header {
     .nav_list {
         display: none;
         position: absolute;
-        top: 100%;
+        top: 60px;
+        /* Below header */
         left: 0;
         width: 100%;
         background-color: white;
@@ -259,13 +268,14 @@ header.header {
         justify-content: flex-start;
         padding: 12px 20px;
         background-color: #fff0f5;
-        /* Light pink item bg */
     }
 
     /* Right Side Icons */
     .nav_list2 {
-        gap: 8px;
-        /* Slightly tighter gap */
+        gap: 15px;
+        align-items: center;
+        z-index: 5;
+        /* Ensure clicks */
     }
 
     .nav_item2_text {
@@ -275,19 +285,47 @@ header.header {
     .nav_item2_link {
         gap: 0;
         min-width: auto;
-        /* Remove fixed width on mobile */
-        padding: 6px;
+        padding: 0;
     }
 
+    /* Styled Account Box for Mobile */
+    .account-link-mobile {
+        background-color: var(--color_main_title);
+        border-radius: 10px;
+        width: 36px;
+        height: 36px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .account-link-mobile .icon_nav_item2 {
+        filter: brightness(0) invert(1);
+        /* White icon */
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Cart Icon */
+    .icon_nav_item2 {
+        /* Default size for other icons */
+        width: 24px;
+        height: 24px;
+    }
+
+    /* Lang Toggle */
     .nav_lang_toggle {
-        padding: 6px;
-        font-size: 0.8rem;
+        padding: 0;
+        font-size: 0.9rem;
         min-width: auto;
-        gap: 0;
+        font-weight: 700;
+        color: var(--color_main_title);
+        background: transparent;
     }
 
     .nav_lang_toggle .anticon {
-        font-size: 1.2rem;
+        display: none;
     }
 }
 

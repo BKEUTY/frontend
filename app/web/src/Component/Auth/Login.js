@@ -48,7 +48,7 @@ const Login = () => {
                         icon={<GlobalOutlined />}
                         onClick={() => changeLanguage(language === 'en' ? 'vi' : 'en')}
                     >
-                        {language === 'en' ? 'Tiếng Việt' : 'English'}
+                        {language === 'vi' ? 'Tiếng Việt' : 'English'}
                     </Button>
                 </div>
                 <div className="auth-mobile-logo">

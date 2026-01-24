@@ -14,8 +14,8 @@ export default function Cart() {
   const { cartItems: products, fetchCart, updateQuantity } = useCart();
 
   const PROMOTIONS = [
-    { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: 'Giảm 10% cho đơn hàng đầu tiên' },
-    { id: 'PROMO2', code: 'FREESHIP', discount: 20000, type: 'fixed', label: 'Miễn phí vận chuyển (tối đa 20k)' },
+    { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: t('promo_welcome_10') },
+    { id: 'PROMO2', code: 'FREESHIP', discount: 20000, type: 'fixed', label: t('promo_freeship') },
   ];
 
   // State

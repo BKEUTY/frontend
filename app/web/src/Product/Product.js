@@ -1,13 +1,11 @@
 import "./Product.css";
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useNotification } from "../Context/NotificationContext";
 import { useLanguage } from "../i18n/LanguageContext";
-import { useCart } from "../Context/CartContext";
 import Skeleton from "../Component/Common/Skeleton";
-import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
+import ProductCard from "../Component/Common/ProductCard";
+import Pagination from "../Component/Common/Pagination";
 import search_image from "../Assets/Images/Icons/icon_search.svg";
-import starIcon from "../Assets/Images/Icons/icon_star.svg";
 
 export default function Product() {
   // State
@@ -22,9 +20,7 @@ export default function Product() {
 
   const [searchTerm, setSearchTerm] = useState('');
 
-  const notify = useNotification();
-  const { t } = useLanguage();
-  const { addToCart } = useCart();
+  const { t, language } = useLanguage();
 
 
   const fetchProducts = useCallback((pageIndex, append) => {
@@ -83,44 +79,7 @@ export default function Product() {
   };
 
 
-  const handleAddToCart = async (e, product) => {
-    // If passed only ID (legacy or from DOM), try to find it (simplified: just assume product obj passed)
-    if (!product) return;
 
-    // UI Immediate Feedback
-    addToCart({
-      id: product.productId || product.id,
-      name: product.name,
-      price: product.price, // Keep number
-      image: 'placeholder', // we don't have real image url in product obj yet usually
-      quantity: 1
-    });
-
-    try {
-      // Backend Sync
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/cart`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            productId: product.productId || product.id,
-            userId: 1,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        // console.error("Sync failed"); 
-      }
-      // await response.json();
-      notify(t('add_cart_success'), "success");
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   return (
     <main className="product-page-wrapper">
@@ -215,34 +174,18 @@ export default function Product() {
               <>
                 <div className="product-grid">
                   {products.map((product, idx) => (
-                    <div key={`${product.productId}-${idx}`} className="product-card" id={product.productId}>
-                      <Link to={`/product/${product.productId}`} className="card-image-wrapper" style={{ display: 'block' }}>
-                        <img src={best_selling_image} alt={product.name} />
-                      </Link>
-                      <div className="card-info">
-                        <p className="card-brand">BKEUTY</p>
-                        <h3 className="card-name">
-                          <Link to={`/product/${product.productId}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-                            {product.name}
-                          </Link>
-                        </h3>
-                        <div className="card-meta">
-                          <span className="star-icon" style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}></span>
-                          <span className="rating">4.8/5</span>
-                          <span className="sold">(120 đã bán)</span>
-                        </div>
-                        <div className="card-price">{product.price.toLocaleString("vi-VN")}đ</div>
-
-                        <button className="btn-add-cart" onClick={(e) => handleAddToCart(e, product)}>
-                          {t('add_to_cart') || "Thêm vào giỏ"}
-                        </button>
-                      </div>
-                    </div>
+                    <ProductCard
+                      key={`${product.productId}-${idx}`}
+                      product={product}
+                      t={t}
+                      language={language}
+                    // No specific click data needed here mostly, or default
+                    />
                   ))}
                 </div>
 
                 {/* Footer Controls */}
-                <div className="pagination-wrapper">
+                <div className="pagination-wrapper-container">
                   {!isPaginationMode ? (
                     <div style={{ textAlign: 'center', marginTop: '30px' }}>
                       {isLoading && page > 0 ? (
@@ -256,33 +199,15 @@ export default function Product() {
                       )}
                     </div>
                   ) : (
-                    <div className="pagination">
-                      <button
-                        className="page-btn"
-                        disabled={page === 0}
-                        onClick={() => {
-                          setPage(p => p - 1);
-                          fetchProducts(page - 1, false);
-                          window.scrollTo(0, 0);
-                        }}
-                      >
-                        ❮
-                      </button>
-                      <span className="page-info">
-                        Page {page + 1} of {totalPages}
-                      </span>
-                      <button
-                        className="page-btn"
-                        disabled={page >= totalPages - 1}
-                        onClick={() => {
-                          setPage(p => p + 1);
-                          fetchProducts(page + 1, false);
-                          window.scrollTo(0, 0);
-                        }}
-                      >
-                        ❯
-                      </button>
-                    </div>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      onPageChange={(newPage) => {
+                        setPage(newPage);
+                        fetchProducts(newPage, false);
+                        window.scrollTo(0, 0);
+                      }}
+                    />
                   )}
                 </div>
               </>

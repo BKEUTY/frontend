@@ -126,7 +126,7 @@ export default function Header() {
         </li>
 
         <li className="nav_item2">
-          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link" : (isActive ? "nav_item2_link active-link-right" : "nav_item2_link")} to="/account">
+          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link account-link-mobile" : (isActive ? "nav_item2_link active-link-right account-link-mobile" : "nav_item2_link account-link-mobile")} to="/account">
             <img
               className="icon_nav_item2"
               loading="lazy"

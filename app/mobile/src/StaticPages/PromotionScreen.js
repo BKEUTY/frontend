@@ -145,6 +145,7 @@ const PromotionScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.filters}>
+                <Text style={styles.headerTitle}>{t('promo_list_title')}</Text>
                 <View style={styles.searchContainer}>
                     <Text style={styles.searchIcon}>🔍</Text>
                     <TextInput
@@ -194,12 +195,23 @@ const styles = StyleSheet.create({
         padding: 15,
         backgroundColor: 'white',
         elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        paddingBottom: 20,
+    },
+    headerTitle: {
+        fontSize: 24, // 1.5rem approx
+        fontWeight: 'bold',
+        color: COLORS.mainTitle || '#c2185b',
+        marginBottom: 15,
     },
     searchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'white',
-        borderRadius: 24, // Pill shape
+        borderRadius: 25, // Pill shape
         borderWidth: 1,
         borderColor: '#ddd',
         paddingHorizontal: 15,
@@ -220,9 +232,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
     },
     filterChip: {
-        paddingVertical: 8,
+        paddingVertical: 10,
         paddingHorizontal: 16,
-        borderRadius: 20,
+        borderRadius: 25, // Pill shape
         borderWidth: 1,
         borderColor: '#ddd',
         marginRight: 10,
@@ -231,6 +243,11 @@ const styles = StyleSheet.create({
     filterChipActive: {
         backgroundColor: COLORS.mainTitle || '#c2185b',
         borderColor: COLORS.mainTitle || '#c2185b',
+        elevation: 4,
+        shadowColor: COLORS.mainTitle || '#c2185b',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 5,
     },
     filterChipText: {
         color: '#666',
@@ -242,6 +259,7 @@ const styles = StyleSheet.create({
     },
     listContent: {
         padding: 15,
+        paddingBottom: 30,
     },
     card: {
         backgroundColor: 'white',

@@ -9,7 +9,9 @@ import ProductScreen from '../Product/ProductScreen';
 import CartScreen from '../Cart/CartScreen';
 import CheckoutScreen from '../Cart/CheckoutScreen';
 import AccountScreen from '../Account/AccountScreen';
+import ProfileScreen from '../Account/ProfileScreen';
 import RetailSystemScreen from '../StaticPages/RetailSystemScreen';
+import ServiceScreen from '../StaticPages/ServiceScreen';
 import PromotionScreen from '../StaticPages/PromotionScreen';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -28,10 +30,10 @@ function TabNavigator() {
                 tabBarInactiveTintColor: 'gray',
                 tabBarStyle: { paddingBottom: 5, height: 60 },
                 tabBarIcon: ({ focused, color, size }) => {
-                    // Simple placeholder icons or text since we haven't set up full vector icons yet
                     let iconName;
                     if (route.name === 'Home') iconName = '🏠';
                     else if (route.name === 'Product') iconName = '🛍️';
+                    else if (route.name === 'Service') iconName = '🛠️';
                     else if (route.name === 'Cart') iconName = '🛒';
                     else if (route.name === 'Account') iconName = '👤';
 
@@ -42,9 +44,10 @@ function TabNavigator() {
         >
             <Tab.Screen name="Home" component={HomeScreen} options={{ title: t('home') }} />
             <Tab.Screen name="Product" component={ProductScreen} options={{ title: t('product') }} />
+            <Tab.Screen name="Service" component={ServiceScreen} options={{ title: t('service') || "Service" }} />
             <Tab.Screen name="Cart" component={CartScreen} options={{ title: t('cart') }} />
             <Tab.Screen name="Account" component={AccountScreen} options={{ title: t('account') }} />
-        </Tab.Navigator>
+        </Tab.Navigator >
     );
 }
 
@@ -64,6 +67,9 @@ export default function AppNavigator() {
                 <Stack.Screen name="Promotions" component={PromotionScreen} options={{ headerShown: true, title: t('promotions') }} />
                 <Stack.Screen name="BeautyCorner" component={BeautyCornerScreen} options={{ headerShown: true, title: t('beauty_corner') }} />
                 <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
+
+                {/* Profile Screen */}
+                <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
 
                 <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
             </Stack.Navigator>

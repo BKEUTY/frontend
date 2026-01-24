@@ -221,8 +221,8 @@ const styles = StyleSheet.create({
 
     // Bento Grid
     sectionTitle: {
-        fontSize: 18,
-        fontWeight: '700',
+        fontSize: 22, // Increased from 18 to match unified header styles
+        fontWeight: '800',
         color: '#333',
         marginBottom: 15,
         marginLeft: 5,

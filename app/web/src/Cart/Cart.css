@@ -29,7 +29,7 @@
     background-color: #fce4ec;
     padding: 15px 20px;
     font-weight: 700;
-    color: #9c1c5a;
+    color: var(--color_main_title_dark);
     text-transform: uppercase;
     font-size: 0.9rem;
 }

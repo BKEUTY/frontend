@@ -1,17 +1,12 @@
 :root {
-    /* Color System */
     --general_background_color: #f8f9fa;
-    /* Cleaner off-white */
     --general_background_color2: #ffffff;
 
-    /* Brand Colors */
-    --color_main_title: #a30251;
-    /* Deep Magenta */
-    --color_main_title_hover: #cc0366;
+    --color_main_title: #c2185b;
+    --color_main_title_hover: #d81b60;
+    --color_main_title_dark: #ad1457;
     --color_secondary: #ffc107;
-    /* Amber for accents/stars */
     --color_general_text: #2c3e50;
-    /* Darker, richer text */
     --color_light_text: #636e72;
     --color_border: #eff2f5;
 

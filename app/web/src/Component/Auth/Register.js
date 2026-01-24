@@ -1,107 +1,215 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd';
+import { UserOutlined, MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/auth_background.png';
-import google_icon from '../../Assets/Images/Icons/social_google.svg';
-import facebook_icon from '../../Assets/Images/Icons/social_facebook.svg';
+
+const { Title, Text } = Typography;
 
 const Register = () => {
     const navigate = useNavigate();
-    const { t } = useLanguage();
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        password: '',
-        confirmPassword: ''
-    });
-    const [showPassword, setShowPassword] = useState(false);
+    const { t, language, changeLanguage } = useLanguage();
+    const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+    const onFinish = (values) => {
+        setLoading(true);
+        // Simulate API call
+        setTimeout(() => {
+            console.log('Register values:', values);
+            setLoading(false);
+            navigate('/home');
+        }, 1000);
     };
 
-    const handleRegister = (e) => {
-        e.preventDefault();
-        navigate('/home');
+    const handleSocialRegister = (provider) => {
+        console.log(`Register with ${provider}`);
+        // Implement social register logic here
     };
 
     return (
         <div className="auth-container">
+            {/* Left Side - Image */}
             <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
+                <div className="auth-image-overlay">
+                    <div className="auth-brand-section">
+                        <h1 className="auth-brand-logo">BKEUTY</h1>
+                        <p className="auth-brand-tagline">Nâng tầm vẻ đẹp của bạn</p>
+                    </div>
+                </div>
             </div>
+
+            {/* Right Side - Form */}
             <div className="auth-form-side">
-                <div className="auth-logo">BKEUTY</div>
-                <h2 className="auth-title">{t('create_account')}</h2>
+                <div className="auth-lang-switch">
+                    <Button
+                        type="text"
+                        icon={<GlobalOutlined />}
+                        onClick={() => changeLanguage(language === 'en' ? 'vi' : 'en')}
+                    >
+                        {language === 'en' ? 'Tiếng Việt' : 'English'}
+                    </Button>
+                </div>
+                <div className="auth-mobile-logo">
+                    <h1>BKEUTY</h1>
+                    <p>Nâng tầm vẻ đẹp của bạn</p>
+                </div>
+                <div className="auth-form-container">
+                    <div className="auth-header">
+                        <Title level={2} className="auth-title">
+                            {t('create_account')}
+                        </Title>
+                        <Text className="auth-subtitle">
+                            {t('register_subtitle', 'Tạo tài khoản để bắt đầu mua sắm')}
+                        </Text>
+                    </div>
 
-                <form className="auth-form" onSubmit={handleRegister}>
-                    <div className="form-group">
-                        <input
-                            type="text"
+                    <Form
+                        name="register"
+                        onFinish={onFinish}
+                        layout="vertical"
+                        size="large"
+                        className="auth-form"
+                        scrollToFirstError
+                    >
+                        <Form.Item
                             name="name"
-                            className="form-input"
-                            placeholder={t('full_name')}
-                            value={formData.name}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <input
-                            type="email"
+                            label={t('full_name')}
+                            rules={[
+                                { required: true, message: t('name_required') },
+                                { min: 2, message: t('name_min') }
+                            ]}
+                        >
+                            <Input
+                                prefix={<UserOutlined />}
+                                placeholder={t('full_name')}
+                                autoComplete="name"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
                             name="email"
-                            className="form-input"
-                            placeholder={t('email_placeholder')}
-                            value={formData.email}
-                            onChange={handleChange}
-                        />
-                    </div>
-                    <div className="form-group password-input-wrapper">
-                        <input
-                            type={showPassword ? "text" : "password"}
+                            label="Email"
+                            rules={[
+                                { required: true, message: t('email_required') },
+                                { type: 'email', message: t('email_invalid') }
+                            ]}
+                        >
+                            <Input
+                                prefix={<MailOutlined />}
+                                placeholder={t('email_placeholder')}
+                                autoComplete="email"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
                             name="password"
-                            className="form-input"
-                            placeholder={t('password')}
-                            value={formData.password}
-                            onChange={handleChange}
-                        />
-                        <span className="toggle-password" onClick={() => setShowPassword(!showPassword)}>
-                            {showPassword ? "👁️" : "👁️‍🗨️"}
-                        </span>
-                    </div>
-                    <div className="form-group password-input-wrapper">
-                        <input
-                            type={showPassword ? "text" : "password"}
+                            label={t('password')}
+                            rules={[
+                                { required: true, message: t('password_required') },
+                                { min: 6, message: t('password_min') }
+                            ]}
+                            hasFeedback
+                        >
+                            <Input.Password
+                                prefix={<LockOutlined />}
+                                placeholder={t('password')}
+                                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                autoComplete="new-password"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
                             name="confirmPassword"
-                            className="form-input"
-                            placeholder={t('confirm_password')}
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                        />
-                    </div>
+                            label={t('confirm_password')}
+                            dependencies={['password']}
+                            hasFeedback
+                            rules={[
+                                { required: true, message: t('confirm_new_password') },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue('password') === value) {
+                                            return Promise.resolve();
+                                        }
+                                        return Promise.reject(new Error(t('password_match_error')));
+                                    },
+                                }),
+                            ]}
+                        >
+                            <Input.Password
+                                prefix={<LockOutlined />}
+                                placeholder={t('confirm_password')}
+                                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                autoComplete="new-password"
+                            />
+                        </Form.Item>
 
-                    <div className="form-group">
-                        <label className="remember-me">
-                            <input type="checkbox" required /> <span>{t('agree_terms')} <Link to="/terms" className="auth-link">{t('terms')}</Link> {t('and')} <Link to="/policy" className="auth-link">{t('policy')}</Link></span>
-                        </label>
-                    </div>
+                        <Form.Item
+                            name="agreement"
+                            valuePropName="checked"
+                            rules={[
+                                {
+                                    validator: (_, value) =>
+                                        value ? Promise.resolve() : Promise.reject(new Error(t('term_required'))),
+                                },
+                            ]}
+                        >
+                            <Checkbox>
+                                {t('agree_terms')}{' '}
+                                <Link to="/terms" className="auth-link">
+                                    {t('terms')}
+                                </Link>{' '}
+                                {t('and')}{' '}
+                                <Link to="/policy" className="auth-link">
+                                    {t('policy')}
+                                </Link>
+                            </Checkbox>
+                        </Form.Item>
 
-                    <button type="submit" className="auth-button">{t('register')}</button>
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={loading}
+                                block
+                                className="auth-submit-btn"
+                            >
+                                {t('register')}
+                            </Button>
+                        </Form.Item>
 
-                    <div className="auth-divider">{t('or_register_with')}</div>
+                        <Divider plain className="auth-divider">
+                            {t('or_register_with')}
+                        </Divider>
 
-                    <div className="social-login">
-                        <button type="button" className="social-btn">
-                            <img src={google_icon} alt="Google" className="social-icon" />
-                        </button>
-                        <button type="button" className="social-btn">
-                            <img src={facebook_icon} alt="Facebook" className="social-icon" />
-                        </button>
-                    </div>
+                        <Space direction="horizontal" size="middle" className="social-login-container">
+                            <Button
+                                icon={<GoogleOutlined />}
+                                onClick={() => handleSocialRegister('Google')}
+                                className="social-btn social-btn-google"
+                            >
+                                Google
+                            </Button>
+                            <Button
+                                icon={<FacebookOutlined />}
+                                onClick={() => handleSocialRegister('Facebook')}
+                                className="social-btn social-btn-facebook"
+                            >
+                                Facebook
+                            </Button>
+                        </Space>
 
-                    <div className="auth-footer">
-                        {t('already_have_account')} <Link to="/login" className="auth-link">{t('login')}</Link>
-                    </div>
-                </form>
+                        <div className="auth-footer">
+                            <Text>
+                                {t('already_have_account')}{' '}
+                                <Link to="/login" className="auth-link">
+                                    {t('login')}
+                                </Link>
+                            </Text>
+                        </div>
+                    </Form>
+                </div>
             </div>
         </div>
     );

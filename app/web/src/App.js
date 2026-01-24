@@ -16,6 +16,7 @@ import Footer from "./Component/Footer/Footer";
 import LandingPage from "./LandingPage/LandingPage";
 import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
+import ForgotPassword from "./Component/Auth/ForgotPassword";
 import { AboutUs, Contact, FAQ, RetailSystem, BeautyCorner, Terms } from "./Component/StaticPages/FooterPages";
 
 import { CartProvider } from "./Context/CartContext";
@@ -27,7 +28,7 @@ function Layout() {
 
   // Determine if we should show Header/Footer
   // Auth Pages: No Header, No Footer (typically)
-  const isAuth = path === "/login" || path === "/register";
+  const isAuth = path === "/login" || path === "/register" || path === "/forgot-password";
 
   const showHeader = !isAuth;
   const showFooter = !isAuth; // Landing has Footer
@@ -41,6 +42,7 @@ function Layout() {
           <Route path="/home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
 
           <Route path="/product" element={<Product />} />
           <Route path="/product/:id" element={<ProductDetail />} />

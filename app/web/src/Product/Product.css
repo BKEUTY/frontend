@@ -205,7 +205,7 @@
     align-items: center;
     font-size: 0.9rem;
     font-weight: 600;
-    color: #880e4f;
+    color: var(--color_main_title_dark);
     position: relative;
     z-index: 20;
     font-family: var(--inter_font);

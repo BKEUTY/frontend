@@ -1,11 +1,9 @@
 .footer {
-    background-color: #3D021E;
-    /* Dark burgundy color from image */
+    background-color: #ad1457;
     color: white;
     padding: 60px var(--general_padding_left_right) 20px;
     font-family: var(--inter_font);
     text-align: left;
-    /* Override global center alignment */
 }
 
 .footer-content {
@@ -40,14 +38,15 @@
 }
 
 .footer-links a {
-    color: #e0e0e0;
+    color: #f0f0f0;
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s;
 }
 
 .footer-links a:hover {
-    color: var(--color_main_title);
+    color: white;
+    text-decoration: underline;
 }
 
 /* Newsletter Section */
@@ -57,7 +56,7 @@
 
 .newsletter-desc {
     font-size: 14px;
-    color: #e0e0e0;
+    color: #f0f0f0;
     margin-bottom: 20px;
     line-height: 1.5;
 }
@@ -81,12 +80,12 @@
 }
 
 .newsletter-input::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .btn-subscribe {
     background-color: white;
-    color: #3D021E;
+    color: #ad1457;
     border: none;
     padding: 10px 20px;
     font-weight: 700;

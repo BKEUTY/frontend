@@ -12,7 +12,7 @@
     align-items: center;
     font-size: 0.9rem;
     font-weight: 700;
-    color: #9c1c5a;
+    color: var(--color_main_title_dark);
     position: relative;
     z-index: 20;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
@@ -425,7 +425,7 @@
 
 .section4-text {
     flex: 1;
-    background-color: #33001b;
+    background: linear-gradient(135deg, var(--color_main_title_dark) 0%, var(--color_main_title) 100%);
     padding: 60px;
     display: flex;
     flex-direction: column;
@@ -442,17 +442,15 @@
     color: #ffffff !important;
 }
 
-
-
 .section4-text p {
     font-size: 1rem;
     line-height: 1.6;
-    color: #e0e0e0;
+    color: rgba(255, 255, 255, 0.9);
     margin-bottom: 40px;
 }
 
 .btn-view-more {
-    background-color: #9c1c5a;
+    background-color: var(--color_main_title_dark);
     color: white;
     border: none;
     padding: 12px 40px;
@@ -465,26 +463,31 @@
 }
 
 .btn-view-more:hover {
-    background-color: #c2185b;
+    background-color: var(--color_main_title);
     transform: translateY(-2px);
 }
 
 .btn-explore-brand {
     background: transparent;
-    border: 1px solid white;
+    border: 2px solid white;
     color: white;
     padding: 12px 30px;
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     align-self: center;
+    /* Clean align */
     transition: all 0.3s;
     text-transform: uppercase;
+    border-radius: 50px;
+    /* Pill shape */
 }
 
 .btn-explore-brand:hover {
     background-color: white;
-    color: #33001b;
+    color: var(--color_main_title_dark);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transform: translateY(-2px);
 }
 
 .section4-image {

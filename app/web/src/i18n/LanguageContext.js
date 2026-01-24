@@ -11,12 +11,12 @@ export const LanguageProvider = ({ children }) => {
         return dict[key] || key;
     };
 
-    const toggleLanguage = () => {
-        setLanguage(prev => prev === 'vi' ? 'en' : 'vi');
+    const changeLanguage = (lang) => {
+        setLanguage(lang);
     };
 
     return (
-        <LanguageContext.Provider value={{ language, setLanguage, toggleLanguage, t }}>
+        <LanguageContext.Provider value={{ language, changeLanguage, t }}>
             {children}
         </LanguageContext.Provider>
     );

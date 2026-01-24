@@ -11,9 +11,10 @@ import promotion_image from "../../Assets/Images/Icons/icon_voucher.svg";
 import retail_system_image from "../../Assets/Images/Icons/icon_shop.svg";
 import cart_image from "../../Assets/Images/Icons/icon_cart.svg";
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
+import { GlobalOutlined } from '@ant-design/icons';
 
 export default function Header() {
-  const { t, toggleLanguage, language } = useLanguage();
+  const { t, changeLanguage, language } = useLanguage();
   const location = useLocation();
   const isLanding = location.pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -136,9 +137,10 @@ export default function Header() {
             <span className="nav_item2_text">{isLanding ? t('not_logged_in') : t('account')}</span>
           </NavLink>
         </li>
-        <li style={{ display: 'flex', alignItems: 'center' }}>
-          <button className="nav_lang_toggle" onClick={toggleLanguage}>
-            {language === 'vi' ? 'EN' : 'VI'}
+        <li className="nav_item2">
+          <button className="nav_lang_toggle" onClick={() => changeLanguage(language === 'vi' ? 'en' : 'vi')}>
+            <GlobalOutlined />
+            <span>{language === 'vi' ? 'VI' : 'EN'}</span>
           </button>
         </li>
       </ul>

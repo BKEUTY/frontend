@@ -1,0 +1,335 @@
+/**
+ * Ant Design Custom Theme for BKEUTY
+ * This file customizes Ant Design components to match BKEUTY's brand
+ * Import order: index.css -> global.css -> antd-custom.css -> component CSS
+ */
+
+/* Override Ant Design CSS Variables */
+:root {
+    /* Primary Brand Color */
+    --ant-primary-color: var(--color_main_title);
+    --ant-primary-color-hover: var(--color_main_title_hover);
+    --ant-primary-color-active: #7b1344;
+    --ant-primary-1: #fff0f6;
+    --ant-primary-2: #ffd6e7;
+    --ant-primary-3: #ffadd2;
+    --ant-primary-4: #ff85c0;
+    --ant-primary-5: #f759ab;
+    --ant-primary-6: var(--color_main_title);
+    --ant-primary-7: #7b1344;
+
+    /* Success, Warning, Error Colors */
+    --ant-success-color: #52c41a;
+    --ant-warning-color: #faad14;
+    --ant-error-color: #ff4d4f;
+    --ant-info-color: #1890ff;
+
+    /* Text Colors */
+    --ant-text-color: #2c3e50;
+    --ant-text-color-secondary: #636e72;
+    --ant-heading-color: #2c3e50;
+
+    /* Border & Background */
+    --ant-border-color-base: #eff2f5;
+    --ant-border-radius-base: 8px;
+    --ant-background-color-base: #f8f9fa;
+}
+
+/* Ant Design Component Overrides */
+
+/* Input Fields */
+.ant-input,
+.ant-input-password,
+.ant-select-selector {
+    border-radius: 8px !important;
+    border-color: #eff2f5 !important;
+    font-size: 16px !important;
+    padding: 12px 15px !important;
+    transition: all 0.3s ease !important;
+}
+
+.ant-input:hover,
+.ant-input-password:hover,
+.ant-select-selector:hover {
+    border-color: var(--color_main_title) !important;
+}
+
+.ant-input:focus,
+.ant-input-password:focus,
+.ant-input-focused .ant-input,
+.ant-select-focused .ant-select-selector {
+    border-color: var(--color_main_title) !important;
+    box-shadow: 0 0 0 2px rgba(163, 2, 81, 0.1) !important;
+}
+
+/* Buttons */
+.ant-btn {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    height: auto !important;
+    padding: 12px 28px !important;
+    font-size: 16px !important;
+}
+
+.ant-btn-primary {
+    background-color: var(--color_main_title) !important;
+    border-color: var(--color_main_title) !important;
+    box-shadow: 0 4px 12px rgba(163, 2, 81, 0.3) !important;
+}
+
+.ant-btn-primary:hover {
+    background-color: var(--color_main_title_hover) !important;
+    border-color: var(--color_main_title_hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(163, 2, 81, 0.4) !important;
+}
+
+.ant-btn-primary:active {
+    background-color: #7b1344 !important;
+    border-color: #7b1344 !important;
+}
+
+.ant-btn-default {
+    border-color: #eff2f5 !important;
+    color: #2c3e50 !important;
+}
+
+.ant-btn-default:hover {
+    border-color: var(--color_main_title) !important;
+    color: var(--color_main_title) !important;
+}
+
+/* Form Items */
+.ant-form-item {
+    margin-bottom: 20px !important;
+}
+
+.ant-form-item-label>label {
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+}
+
+/* Checkbox */
+.ant-checkbox-wrapper {
+    color: #555 !important;
+}
+
+.ant-checkbox-checked .ant-checkbox-inner {
+    background-color: var(--color_main_title) !important;
+    border-color: var(--color_main_title) !important;
+}
+
+.ant-checkbox-wrapper:hover .ant-checkbox-inner,
+.ant-checkbox:hover .ant-checkbox-inner {
+    border-color: var(--color_main_title) !important;
+}
+
+/* Links */
+.ant-typography a,
+a.ant-typography {
+    color: var(--color_main_title) !important;
+    transition: all 0.3s ease !important;
+}
+
+.ant-typography a:hover,
+a.ant-typography:hover {
+    color: var(--color_main_title_hover) !important;
+}
+
+/* Divider */
+.ant-divider {
+    border-color: #eff2f5 !important;
+}
+
+.ant-divider-horizontal.ant-divider-with-text {
+    color: #888 !important;
+    font-size: 0.9rem !important;
+}
+
+/* Card */
+.ant-card {
+    border-radius: 16px !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03) !important;
+    border: none !important;
+}
+
+/* Modal */
+.ant-modal-content {
+    border-radius: 16px !important;
+}
+
+.ant-modal-header {
+    border-radius: 16px 16px 0 0 !important;
+}
+
+/* Message & Notification */
+.ant-message-notice-content,
+.ant-notification-notice {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Tabs */
+.ant-tabs-tab {
+    font-weight: 600 !important;
+}
+
+.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--color_main_title) !important;
+}
+
+.ant-tabs-ink-bar {
+    background: var(--color_main_title) !important;
+}
+
+/* Select Dropdown */
+.ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: rgba(163, 2, 81, 0.1) !important;
+    color: var(--color_main_title) !important;
+    font-weight: 600 !important;
+}
+
+.ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: rgba(163, 2, 81, 0.05) !important;
+}
+
+/* Spin Loading */
+.ant-spin-dot-item {
+    background-color: var(--color_main_title) !important;
+}
+
+/* Switch */
+.ant-switch-checked {
+    background-color: var(--color_main_title) !important;
+}
+
+/* Slider */
+.ant-slider-track {
+    background-color: var(--color_main_title) !important;
+}
+
+.ant-slider-handle {
+    border-color: var(--color_main_title) !important;
+}
+
+.ant-slider-handle:focus {
+    box-shadow: 0 0 0 5px rgba(163, 2, 81, 0.2) !important;
+}
+
+/* Radio */
+.ant-radio-checked .ant-radio-inner {
+    border-color: var(--color_main_title) !important;
+    background-color: var(--color_main_title) !important;
+}
+
+.ant-radio-wrapper:hover .ant-radio,
+.ant-radio:hover .ant-radio-inner {
+    border-color: var(--color_main_title) !important;
+}
+
+/* Progress */
+.ant-progress-bg {
+    background-color: var(--color_main_title) !important;
+}
+
+/* Badge */
+.ant-badge-count {
+    background-color: var(--color_main_title) !important;
+}
+
+/* Tag */
+.ant-tag-pink {
+    background-color: rgba(163, 2, 81, 0.1) !important;
+    border-color: var(--color_main_title) !important;
+    color: var(--color_main_title) !important;
+}
+
+/* Pagination */
+.ant-pagination-item-active {
+    border-color: var(--color_main_title) !important;
+}
+
+.ant-pagination-item-active a {
+    color: var(--color_main_title) !important;
+}
+
+.ant-pagination-item:hover {
+    border-color: var(--color_main_title) !important;
+}
+
+.ant-pagination-item:hover a {
+    color: var(--color_main_title) !important;
+}
+
+/* Table */
+.ant-table-thead>tr>th {
+    background-color: #faf9f6 !important;
+    font-weight: 700 !important;
+    color: #2c3e50 !important;
+}
+
+.ant-table-tbody>tr:hover>td {
+    background-color: rgba(163, 2, 81, 0.02) !important;
+}
+
+/* Menu */
+.ant-menu-item-selected {
+    background-color: rgba(163, 2, 81, 0.1) !important;
+    color: var(--color_main_title) !important;
+}
+
+.ant-menu-item:hover,
+.ant-menu-submenu-title:hover {
+    color: var(--color_main_title) !important;
+}
+
+/* Drawer */
+.ant-drawer-header {
+    border-bottom: 1px solid #eff2f5 !important;
+}
+
+/* Tooltip */
+.ant-tooltip-inner {
+    background-color: #2c3e50 !important;
+    border-radius: 6px !important;
+}
+
+/* Popover */
+.ant-popover-inner {
+    border-radius: 8px !important;
+}
+
+/* Steps */
+.ant-steps-item-finish .ant-steps-item-icon {
+    background-color: var(--color_main_title) !important;
+    border-color: var(--color_main_title) !important;
+}
+
+.ant-steps-item-finish .ant-steps-item-icon>.ant-steps-icon {
+    color: #fff !important;
+}
+
+.ant-steps-item-process .ant-steps-item-icon {
+    background-color: var(--color_main_title) !important;
+    border-color: var(--color_main_title) !important;
+}
+
+/* Upload */
+.ant-upload.ant-upload-drag:hover {
+    border-color: var(--color_main_title) !important;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .ant-btn {
+        padding: 10px 20px !important;
+        font-size: 14px !important;
+    }
+
+    .ant-input,
+    .ant-input-password {
+        font-size: 14px !important;
+        padding: 10px 12px !important;
+    }
+}

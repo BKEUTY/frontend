@@ -59,7 +59,6 @@ export const en = {
     cart_empty: "Your cart is empty",
     description: "Description",
     delete: "Delete",
-
     wrapping_option: "Checkout with price ",
     service: "Service",
     promotion: "Promotion",
@@ -103,7 +102,6 @@ export const en = {
     contact_us: "Contact Us",
     follow_us: "Follow Us",
     all: "All",
-    // Products
     products: "Products",
     contact: "Contact",
     faq: "FAQ",
@@ -138,8 +136,6 @@ export const en = {
     no_products_found: "No products found.",
     apply: "Apply",
     load_more: "Load More",
-
-    // Product Detail
     product_details: "Product Details",
     how_to_apply: "How To Apply",
     ingredients: "Ingredients",
@@ -189,8 +185,6 @@ export const en = {
     view_cart: "View Cart",
     checkout_now: "Checkout Now",
     payment_error_try_again: "An error occurred, please try again.",
-
-    // About Us
     about_us_banner: "[Brand Banner Image - Luxurious pink tone, showing beauty diversity]",
     about_us_story_title: "BKEUTY's Story",
     about_us_story_p1: "Founded in 2024, BKEUTY is not just a cosmetics store, but a journey to find and honor true beauty. We believe that 'Beauty' has no fixed definition. Beauty is confidence, healthy skin, and how you love yourself every day.",
@@ -203,8 +197,6 @@ export const en = {
     about_us_value_trust: "Trust: Committed to 100% genuine products, transparent origin.",
     about_us_value_dedication: "Dedication: Putting customers at the center, advising on right needs, caring with right process.",
     about_us_value_trend: "Trend: Always leading in updating the latest beauty trends and technologies.",
-
-    // Contact
     contact_intro: "We always want to listen to your opinions. Whether it's questions about orders, product advice or service suggestions, the BKEUTY team is always ready to support.",
     contact_map_placeholder: "[Google Maps pointing to main store address]",
     contact_channels_title: "Official Contact Channels",
@@ -214,8 +206,6 @@ export const en = {
     contact_office_title: "Head Office",
     contact_office_address: "Address: Ward 6, Linh Trung Ward, Thu Duc City, Ho Chi Minh City.",
     contact_office_desc: "This is where we work and operate the system. You can come directly to experience products at the 1st floor showroom.",
-
-    // FAQ
     faq_1_title: "1. Ordering & Payment",
     faq_1_q1: "Q: How do I know my order was placed successfully?",
     faq_1_a1: "A: After placing an order, you will receive an automatic confirmation email from the system. You can also check in 'My Orders'.",
@@ -229,8 +219,6 @@ export const en = {
     faq_3_title: "3. Returns & Warranty",
     faq_3_q1: "Q: What is BKEUTY's return policy?",
     faq_3_a1: "A: Support returns within 7 days if the product has a manufacturing defect, broken due to shipping or wrong model delivered. Products must remain sealed and tagged.",
-
-    // Retail System
     retail_intro: "Experience classy shopping space with thousands of free test products at BKEUTY store system nationwide.",
     retail_store_img: "[Luxurious flagship store facade image]",
     retail_hcm_title: "Ho Chi Minh City Area",
@@ -244,8 +232,6 @@ export const en = {
     retail_hn_1: "BKEUTY Cau Giay",
     retail_hn_1_addr: "Address: 101 Cau Giay, Cau Giay District",
     retail_hn_1_hours: "Opening hours: 8:30 - 21:30",
-
-    // Beauty Corner
     beauty_corner_intro: "Where to update the latest beauty trends, scientific skincare tips and honest product reviews from experts.",
     beauty_corner_img: "[Grid image of featured blog posts: Skincare routine, Makeup tutorial...]",
     beauty_featured_title: "Featured Articles This Month",
@@ -255,8 +241,6 @@ export const en = {
     beauty_art_2_desc: "Compilation of the most natural earth tone and nude pink lipsticks...",
     beauty_art_3_title: "[Ingredient] What is Retinol? How to use Retinol safely for beginners",
     beauty_art_3_desc: "Decoding the anti-aging 'miracle drug' and vital notes...",
-
-    // Retail System Dynamic
     retail_search_placeholder: "Search by branch name...",
     retail_filter_status: "Filter by status",
     retail_status_open: "Open",
@@ -268,16 +252,12 @@ export const en = {
     retail_open_date: "Open Date",
     retail_no_result: "No branches found.",
     retail_back_to_list: "Back to list",
-
-    // Terms
     terms_1_title: "1. Information Privacy Policy",
     terms_1_content: "BKEUTY is committed to absolute confidentiality of customer personal information according to Vietnam's personal information protection laws. We only collect necessary information to process orders and take care of customers.",
     terms_2_title: "2. Payment Policy",
     terms_2_content: "Customers can choose flexible payment methods. For online payments, we use secure payment gateways to ensure transaction safety.",
     terms_3_title: "3. Website Usage Terms",
     terms_3_content: "When accessing the BKEUTY website, customers agree to comply with regulations on image copyright, product information and civilized conduct in the review community.",
-
-    // Promotion Page
     promo_list_title: "Promotion List",
     promo_search_placeholder: "Search by name, promo code...",
     promo_tab_all: "All",
@@ -298,7 +278,6 @@ export const en = {
     yes: "Yes",
     no: "No",
     no_promos_found: "No promotions found matching your criteria.",
-    // Appointment & Order
     appointment_list: "Appointment List",
     manage_appointments_desc: "Manage upcoming appointments and booking history",
     search_appointment_placeholder: "Search service, branch...",
@@ -319,7 +298,6 @@ export const en = {
     nourishing_shampoo: "Nourishing Shampoo",
     upcoming_status: "Upcoming",
     completed_status: "Completed",
-
     order_id_label: "Order ID: ",
     invoice: "Invoice",
     track_order: "Track Order",
@@ -338,13 +316,45 @@ export const en = {
     issue_return: "Return / Refund",
     order_overview: "Order Overview",
     tax: "Tax",
-
     order_placed_success: "Order placed successfully",
     order_placed_desc: "The order has been placed",
     preparing_order: "Preparing Order",
     preparing_order_desc: "[International] Sender is preparing the order",
     international_processing: "Processing Internationally",
     international_processing_desc: "[International] Order has left international warehouse: Nanning",
+
+    // Auth & OTP
+    email_required: "Please enter your email!",
+    email_invalid: "Invalid email format!",
+    password_required: "Please enter your password!",
+    password_min: "Password must be at least 6 characters!",
+    password_match_error: "Passwords do not match!",
+    name_required: "Please enter your full name!",
+    name_min: "Name must be at least 2 characters!",
+    otp_required: "Please enter OTP!",
+    otp_length: "OTP must be 6 characters!",
+    otp_sent: "OTP code has been sent to",
+    otp_mock: "Mock OTP:",
+    otp_success: "OTP verification successful!",
+    otp_error: "Incorrect OTP! Please try again.",
+    reset_success: "Password reset successfully!",
+    resend_otp: "Resend OTP",
+    verify_otp: "Verify OTP",
+    reset_password: "Reset Password",
+    new_password: "New Password",
+    confirm_new_password: "Confirm New Password",
+    back_to_login: "Back to Login",
+    step_email: "Email",
+    step_otp: "OTP Verification",
+    step_new_pass: "New Password",
+    forgot_password_title: "Forgot Password",
+    forgot_password_desc_1: "Enter email to receive OTP",
+    forgot_password_desc_2: "Enter OTP sent to email",
+    forgot_password_desc_3: "Create new password",
+    send_otp: "Send OTP",
+    term_required: "Please agree to the terms!",
+    login_subtitle: "Login to continue shopping",
+    register_subtitle: "Create an account to start shopping",
 };
 
 export const vi = {
@@ -438,8 +448,6 @@ export const vi = {
     no_products_payment: "Không có sản phẩm để thanh toán!",
     order_success: "Đặt hàng thành công!",
     payment_error_try_again: "Có lỗi xảy ra, vui lòng thử lại.",
-
-    // About Us
     about_us_banner: "[Hình ảnh Banner Thương Hiệu - Tone hồng sang trọng, thể hiện sự đa dạng vẻ đẹp]",
     about_us_story_title: "Câu Chuyện Của BKEUTY",
     about_us_story_p1: "Ra đời vào năm 2024, BKEUTY không chỉ là một cửa hàng mỹ phẩm, mà là một hành trình tìm kiếm và tôn vinh vẻ đẹp đích thực. Chúng tôi tin rằng 'Đẹp' không có một định nghĩa cố định. Đẹp là sự tự tin, là làn da khỏe mạnh, và là cách bạn yêu thương bản thân mình mỗi ngày.",
@@ -452,8 +460,6 @@ export const vi = {
     about_us_value_trust: "Tin cậy (Trust): Cam kết 100% sản phẩm chính hãng, minh bạch nguồn gốc xuất xứ.",
     about_us_value_dedication: "Tận tâm (Dedication): Đặt khách hàng làm trung tâm, tư vấn đúng nhu cầu, chăm sóc đúng quy trình.",
     about_us_value_trend: "Tiên phong (Trend): Luôn đi đầu trong việc cập nhật các xu hướng và công nghệ làm đẹp mới nhất.",
-
-    // Contact
     contact_intro: "Chúng tôi luôn mong muốn lắng nghe ý kiến của bạn. Dù là thắc mắc về đơn hàng, tư vấn sản phẩm hay góp ý dịch vụ, đội ngũ BKEUTY luôn sẵn sàng hỗ trợ.",
     contact_map_placeholder: "[Bản đồ Google Maps trỏ đến địa chỉ cửa hàng chính]",
     contact_channels_title: "Kênh Liên Hệ Chính Thức",
@@ -463,8 +469,6 @@ export const vi = {
     contact_office_title: "Văn Phòng Chính",
     contact_office_address: "Địa chỉ: Khu phố 6, Phường Linh Trung, Thành phố Thủ Đức, TP. Hồ Chí Minh.",
     contact_office_desc: "Đây là nơi chúng tôi làm việc và vận hành hệ thống. Quý khách có thể đến trực tiếp để trải nghiệm sản phẩm tại showroom tầng 1.",
-
-    // FAQ
     faq_1_title: "1. Đặt Hàng & Thanh Toán",
     faq_1_q1: "Q: Làm sao để tôi biết đơn hàng đã đặt thành công?",
     faq_1_a1: "A: Sau khi đặt hàng, bạn sẽ nhận được email xác nhận tự động từ hệ thống. Ngoài ra, bạn có thể kiểm tra trong mục 'Đơn hàng của tôi'.",
@@ -478,8 +482,6 @@ export const vi = {
     faq_3_title: "3. Đổi Trả & Bảo Hành",
     faq_3_q1: "Q: Quy định đổi trả của BKEUTY?",
     faq_3_a1: "A: Hỗ trợ đổi trả trong 7 ngày nếu sản phẩm bị lỗi sản xuất, bể vỡ do vận chuyển hoặc giao sai mẫu. Sản phẩm phải còn nguyên seal và tem mác.",
-
-    // Retail System
     retail_intro: "Trải nghiệm không gian mua sắm đẳng cấp với hàng nghìn sản phẩm test miễn phí tại hệ thống cửa hàng BKEUTY trên toàn quốc.",
     retail_store_img: "[Hình ảnh mặt tiền cửa hàng flagship sang trọng]",
     retail_hcm_title: "Khu Vực TP. Hồ Chí Minh",
@@ -493,8 +495,6 @@ export const vi = {
     retail_hn_1: "BKEUTY Cầu Giấy",
     retail_hn_1_addr: "Địa chỉ: 101 Cầu Giấy, Q. Cầu Giấy",
     retail_hn_1_hours: "Giờ mở cửa: 8:30 - 21:30",
-
-    // Beauty Corner
     beauty_corner_intro: "Nơi cập nhật những xu hướng làm đẹp mới nhất, mẹo chăm sóc da khoa học và review sản phẩm chân thực từ chuyên gia.",
     beauty_corner_img: "[Hình ảnh Grid các bài viết blog nổi bật: Skincare routine, Makeup tutorial...]",
     beauty_featured_title: "Bài Viết Nổi Bật Tháng Này",
@@ -504,8 +504,6 @@ export const vi = {
     beauty_art_2_desc: "Tổng hợp những thỏi son tone đất, hồng nude tôn da tự nhiên nhất...",
     beauty_art_3_title: "[Ingredient] Retinol là gì? Cách sử dụng Retinol an toàn cho người mới bắt đầu",
     beauty_art_3_desc: "Giải mã 'thần dược' chống lão hóa và những lưu ý sống còn...",
-
-    // Retail System Dynamic
     retail_search_placeholder: "Tìm kiếm theo tên chi nhánh...",
     retail_filter_status: "Lọc theo trạng thái",
     retail_status_open: "Đang hoạt động",
@@ -517,16 +515,12 @@ export const vi = {
     retail_open_date: "Ngày mở cửa",
     retail_no_result: "Không tìm thấy chi nhánh nào.",
     retail_back_to_list: "Quay lại danh sách",
-
-    // Terms
     terms_1_title: "1. Chính Sách Bảo Mật Thông Tin",
     terms_1_content: "BKEUTY cam kết bảo mật tuyệt đối thông tin cá nhân của Quý khách theo chính sách bảo vệ thông tin cá nhân của pháp luật Việt Nam. Chúng tôi chỉ thu thập thông tin cần thiết để xử lý đơn hàng và chăm sóc khách hàng.",
     terms_2_title: "2. Chính Sách Thanh Toán",
     terms_2_content: "Khách hàng có thể lựa chọn các hình thức thanh toán linh hoạt. Đối với thanh toán online, chúng tôi sử dụng cổng thanh toán bảo mật để đảm bảo an toàn giao dịch.",
     terms_3_title: "3. Điều Khoản Sử Dụng Website",
     terms_3_content: "Khi truy cập website BKEUTY, khách hàng đồng ý tuân thủ các quy định về bản quyền hình ảnh, thông tin sản phẩm và ứng xử văn minh trong cộng đồng đánh giá.",
-
-    // Promotion Page
     promo_list_title: "Danh Sách Khuyến Mãi",
     promo_search_placeholder: "Tìm kiếm theo tên, mã khuyến mãi...",
     promo_tab_all: "Tất cả",
@@ -623,8 +617,6 @@ export const vi = {
     no_products_found: "Không tìm thấy sản phẩm.",
     apply: "Áp Dụng",
     load_more: "Xem Thêm",
-
-    // Product Detail
     product_details: "Chi Tiết Sản Phẩm",
     how_to_apply: "Cách Sử Dụng",
     ingredients: "Thành Phần",
@@ -642,7 +634,6 @@ export const vi = {
     show_less: "Thu gọn",
     star: "sao",
     stars: "sao",
-    // Appointment & Order
     appointment_list: "Danh sách lịch hẹn",
     manage_appointments_desc: "Quản lý các cuộc hẹn sắp tới và lịch sử đặt lịch",
     search_appointment_placeholder: "Tìm kiếm dịch vụ, chi nhánh...",
@@ -663,7 +654,6 @@ export const vi = {
     nourishing_shampoo: "Gội đầu dưỡng sinh",
     upcoming_status: "Sắp tới",
     completed_status: "Đã hoàn thành",
-
     order_id_label: "Mã đơn hàng: ",
     invoice: "Hóa đơn",
     track_order: "Theo dõi đơn hàng",
@@ -682,11 +672,41 @@ export const vi = {
     issue_return: "Hoàn hàng",
     order_overview: "Tổng quan đơn hàng",
     tax: "Thuế",
-
     order_placed_success: "Đặt hàng thành công",
     order_placed_desc: "Đơn hàng đã được đặt",
     preparing_order: "Đang được chuẩn bị",
     preparing_order_desc: "[Quốc Tế] Người gửi đang chuẩn bị hàng",
     international_processing: "Đang được xử lý ở nước ngoài",
     international_processing_desc: "[Quốc Tế] Đơn hàng đã xuất kho quốc tế : Nam Ninh",
+    email_required: "Vui lòng nhập email!",
+    email_invalid: "Email không hợp lệ!",
+    password_required: "Vui lòng nhập mật khẩu!",
+    password_min: "Mật khẩu phải có ít nhất 6 ký tự!",
+    password_match_error: "Mật khẩu không khớp!",
+    name_required: "Vui lòng nhập họ tên!",
+    name_min: "Họ tên phải có ít nhất 2 ký tự!",
+    otp_required: "Vui lòng nhập mã OTP!",
+    otp_length: "Mã OTP phải có 6 ký tự!",
+    otp_sent: "Mã OTP đã được gửi đến",
+    otp_mock: "Mã OTP mock:",
+    otp_success: "Xác thực OTP thành công!",
+    otp_error: "Mã OTP không đúng! Vui lòng thử lại.",
+    reset_success: "Đặt lại mật khẩu thành công!",
+    resend_otp: "Gửi lại mã OTP",
+    verify_otp: "Xác thực OTP",
+    reset_password: "Đặt lại mật khẩu",
+    new_password: "Mật khẩu mới",
+    confirm_new_password: "Xác nhận mật khẩu",
+    back_to_login: "Quay lại đăng nhập",
+    step_email: "Email",
+    step_otp: "Xác thực OTP",
+    step_new_pass: "Mật khẩu mới",
+    forgot_password_title: "Quên mật khẩu",
+    forgot_password_desc_1: "Nhập email để nhận mã OTP",
+    forgot_password_desc_2: "Nhập mã OTP đã gửi đến email",
+    forgot_password_desc_3: "Tạo mật khẩu mới cho tài khoản",
+    send_otp: "Gửi mã OTP",
+    term_required: "Vui lòng đồng ý với điều khoản!",
+    login_subtitle: "Đăng nhập để tiếp tục mua sắm",
+    register_subtitle: "Tạo tài khoản để bắt đầu mua sắm",
 };

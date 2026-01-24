@@ -97,6 +97,7 @@
     margin: 0 0 5px 0;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -112,7 +113,7 @@
 }
 
 .item-price {
-    color: #c2185b;
+    color: var(--color_main_title);
     font-weight: 700;
 }
 
@@ -131,7 +132,7 @@
 }
 
 .total-price {
-    color: #c2185b;
+    color: var(--color_main_title);
 }
 
 .action-buttons {
@@ -162,14 +163,14 @@
 }
 
 .btn-checkout {
-    background: #c2185b;
+    background: var(--color_main_title);
     color: white;
     border: none;
-    box-shadow: 0 4px 10px rgba(194, 24, 91, 0.3);
+    box-shadow: 0 4px 10px rgba(233, 30, 99, 0.3);
 }
 
 .btn-checkout:hover {
-    background: #a30251;
+    background: var(--color_main_title_dark);
     transform: translateY(-2px);
 }
 

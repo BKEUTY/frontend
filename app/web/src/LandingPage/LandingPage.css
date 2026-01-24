@@ -21,7 +21,7 @@
 .brand-name {
     font-family: 'Oleo Script', cursive;
     font-weight: 700;
-    color: #e91e63;
+    color: var(--color_main_title);
     font-size: 4rem;
     display: block;
     margin-top: 10px;

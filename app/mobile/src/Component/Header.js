@@ -3,10 +3,14 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useCart } from '../Context/CartContext';
 
 const Header = () => {
     const navigation = useNavigation();
     const { language, changeLanguage } = useLanguage();
+    const { cartItems } = useCart();
+
+    const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
 
     const handleToggleLanguage = () => {
         changeLanguage(language === 'vi' ? 'en' : 'vi');
@@ -32,9 +36,11 @@ const Header = () => {
                 {/* Cart with Badge */}
                 <TouchableOpacity onPress={() => navigation.navigate('Cart')} style={styles.iconButton}>
                     <Text style={styles.cartIcon}>🛒</Text>
-                    <View style={styles.badge}>
-                        <Text style={styles.badgeText}>3</Text>
-                    </View>
+                    {cartCount > 0 && (
+                        <View style={styles.badge}>
+                            <Text style={styles.badgeText}>{cartCount}</Text>
+                        </View>
+                    )}
                 </TouchableOpacity>
 
                 {/* Account Button - Styled like Web Mobile */}

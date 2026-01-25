@@ -7,18 +7,19 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 import Header from '../Component/Header';
 
+// ... imports
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useCart } from '../Context/CartContext';
 
 const CartScreen = () => {
+    // ... existing setup ...
     const navigation = useNavigation();
     const { t } = useLanguage();
     const { cartItems: products, fetchCart, deleteCartItem } = useCart();
     const [refreshing, setRefreshing] = useState(false);
     const [selectedItems, setSelectedItems] = useState({});
 
-    // Sync selected items when products load (optional, or just keep manual selection)
-    // Products update comes from context
-
+    // ... existing functions ...
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
         await fetchCart();
@@ -57,44 +58,55 @@ const CartScreen = () => {
         return sum;
     }, 0);
 
+    const renderRightActions = (progress, dragX, cartId) => {
+        return (
+            <TouchableOpacity
+                style={styles.deleteAction}
+                onPress={() => handleDelete(cartId)}
+            >
+                <Text style={styles.deleteActionText}>{t('delete') || "Xóa"}</Text>
+            </TouchableOpacity>
+        );
+    };
+
     const renderItem = ({ item }) => {
         const isSelected = !!selectedItems[item.cartId];
         return (
-            <View style={styles.cartCard}>
-                {/* Top Row: CheckBox + Image + Name + Delete */}
-                <View style={styles.topRow}>
-                    <TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.cartId)}>
-                        <View style={[styles.checkbox, isSelected && styles.checkedCheckbox]}>
-                            {isSelected && <Text style={styles.checkmark}>✓</Text>}
+            <Swipeable renderRightActions={(p, d) => renderRightActions(p, d, item.cartId)}>
+                <View style={styles.cartCard}>
+                    {/* Top Row: CheckBox + Image + Name */}
+                    <View style={styles.topRow}>
+                        <TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.cartId)}>
+                            <View style={[styles.checkbox, isSelected && styles.checkedCheckbox]}>
+                                {isSelected && <Text style={styles.checkmark}>✓</Text>}
+                            </View>
+                        </TouchableOpacity>
+
+                        <View style={styles.imagePlaceholder} />
+
+                        <View style={styles.itemInfo}>
+                            <View style={styles.headerRow}>
+                                <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+                                {/* Removed old delete button */}
+                            </View>
                         </View>
-                    </TouchableOpacity>
+                    </View>
 
-                    <View style={styles.imagePlaceholder} />
+                    {/* Bottom Row: Price/Total + Qty */}
+                    <View style={styles.bottomRow}>
+                        <View style={styles.priceContainer}>
+                            <Text style={styles.itemPrice}>{item.price.toLocaleString("vi-VN")}đ</Text>
+                            <Text style={styles.itemTotal}>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</Text>
+                        </View>
 
-                    <View style={styles.itemInfo}>
-                        <View style={styles.headerRow}>
-                            <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
-                            <TouchableOpacity onPress={() => handleDelete(item.cartId)} style={styles.deleteBtn}>
-                                <Text style={styles.deleteIcon}>×</Text>
-                            </TouchableOpacity>
+                        <View style={styles.qtyContainer}>
+                            <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>-</Text></TouchableOpacity>
+                            <Text style={styles.qtyValue}>{item.quantity}</Text>
+                            <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>+</Text></TouchableOpacity>
                         </View>
                     </View>
                 </View>
-
-                {/* Bottom Row: Price/Total + Qty */}
-                <View style={styles.bottomRow}>
-                    <View style={styles.priceContainer}>
-                        <Text style={styles.itemPrice}>{item.price.toLocaleString("vi-VN")}đ</Text>
-                        <Text style={styles.itemTotal}>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</Text>
-                    </View>
-
-                    <View style={styles.qtyContainer}>
-                        <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>-</Text></TouchableOpacity>
-                        <Text style={styles.qtyValue}>{item.quantity}</Text>
-                        <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>+</Text></TouchableOpacity>
-                    </View>
-                </View>
-            </View>
+            </Swipeable>
         );
     };
 
@@ -360,6 +372,21 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: 'bold',
         fontSize: 16,
+    },
+    deleteAction: {
+        backgroundColor: '#e53935',
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 80,
+        height: '100%',
+        marginBottom: 15, // Match card margin
+        borderRadius: 12,
+        marginLeft: 10,
+    },
+    deleteActionText: {
+        color: 'white',
+        fontWeight: '600',
+        fontSize: 14,
     }
 });
 

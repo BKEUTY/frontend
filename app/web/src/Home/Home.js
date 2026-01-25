@@ -5,42 +5,44 @@ import Skeleton from '../Component/Common/Skeleton';
 import ProductCard from '../Component/Common/ProductCard';
 import banner1 from '../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../Assets/Images/Banners/banner_home_2.png';
-import product_img from "../Assets/Images/Products/product_placeholder.svg";
+
 import about_image from "../Assets/Images/Banners/banner_about_us.svg";
 
+
+import productApi from '../api/productApi';
 
 const bannerImages = [banner1, banner2];
 
 const Home = () => {
     const { t, language } = useLanguage();
 
-    // Mock data to match image
-    const bestSellers = [
-        { id: 1, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: 314, image: product_img },
-        { id: 2, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: 314, image: product_img },
-        { id: 3, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: 314, image: product_img },
-        { id: 4, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: 314, image: product_img },
-        { id: 5, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9/5', sold: 314, image: product_img }
-    ];
-
-    const suggestedProducts = [
-        { id: 1, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: t('so_hot'), rating: '4.9', sold: 1400, image: product_img },
-        { id: 2, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: t('so_hot'), rating: '4.9', sold: 1400, image: product_img },
-        { id: 3, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: t('so_hot'), rating: '4.9', sold: 1400, image: product_img },
-        { id: 4, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: t('so_hot'), rating: '4.9', sold: 1400, image: product_img },
-        { id: 5, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: t('so_hot'), rating: '4.9', sold: 1400, image: product_img }
-    ];
-
-    const [currentBanner, setCurrentBanner] = useState(0);
+    const [bestSellers, setBestSellers] = useState([]);
+    const [suggestedProducts, setSuggestedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [currentBanner, setCurrentBanner] = useState(0);
 
     useEffect(() => {
-        // Simulate loading
-        const loadTimer = setTimeout(() => {
-            setIsLoading(false);
-        }, 1500);
-        return () => clearTimeout(loadTimer);
+        const fetchHomeData = async () => {
+            setIsLoading(true);
+            try {
+                // Fetch products for Best Sellers and Suggested
+                // Since backend doesn't support specific endpoints yet, we fetch the first page
+                const response = await productApi.getAll({ page: 0, size: 10 });
+                const fetchedProducts = response.data.content || [];
+
+                // Split products for display
+                setBestSellers(fetchedProducts.slice(0, 5));
+                setSuggestedProducts(fetchedProducts.length > 5 ? fetchedProducts.slice(5, 10) : fetchedProducts);
+
+            } catch (error) {
+                console.error("Failed to fetch home data:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchHomeData();
     }, []);
 
     // Auto-slide every 30 seconds

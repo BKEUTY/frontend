@@ -13,8 +13,11 @@ import cart_image from "../../Assets/Images/Icons/icon_cart.svg";
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
 import { GlobalOutlined } from '@ant-design/icons';
 
+import { useCart } from "../../Context/CartContext";
+
 export default function Header() {
   const { t, changeLanguage, language } = useLanguage();
+  const { cartItems } = useCart();
   const location = useLocation();
   const isLanding = location.pathname === "/";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -24,6 +27,15 @@ export default function Header() {
   };
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
+
+  // Calculate total items (sum of quantities or just number of unique items?)
+  // Usually badge shows number of unique items or total quantity. 
+  // Shopee usually shows total items. The user said "số lượng sản phẩm" which refers to quantity.
+  // Assuming total quantity is better, but typical e-commerce badge is unique items OR quantity.
+  // Let's stick to unique items count (cartItems.length) as it's standard, 
+  // OR calculate total quantity if `quantity` field exists.
+  // Given `cartItems` has `quantity` field from previous steps:
+  const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
 
   return (
     <header className="header">
@@ -119,7 +131,7 @@ export default function Header() {
                 src={cart_image}
                 alt="icon"
               />
-              <span className="cart-badge">3</span>
+              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
             </div>
             <span className="nav_item2_text">{t('cart')}</span>
           </NavLink>

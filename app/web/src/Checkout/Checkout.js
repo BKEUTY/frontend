@@ -5,6 +5,8 @@ import { useNotification } from "../Context/NotificationContext";
 import { useState } from "react";
 import { useLanguage } from "../i18n/LanguageContext";
 
+import orderApi from '../api/orderApi';
+
 export default function Checkout() {
   const { state } = useLocation();
   const navigate = useNavigate();
@@ -59,30 +61,18 @@ export default function Checkout() {
 
   const processOrder = async (method) => {
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/order`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            userId: 1, // Fixed user ID
-            paymentMethod: method, // "COD" or "Banking"
-            address: formData.address,
-            phone: formData.phone,
-            recipientName: formData.fullName,
-            note: formData.note,
-            orderItems: cartIds.map((id) => ({ cartItemId: id })),
-          }),
-        }
-      );
+      // Use API service
+      await orderApi.placeOrder({
+        userId: 1, // Fixed user ID
+        paymentMethod: method, // "COD" or "Banking"
+        address: formData.address,
+        phone: formData.phone,
+        recipientName: formData.fullName,
+        note: formData.note,
+        orderItems: cartIds.map((id) => ({ cartItemId: id })),
+      });
+      // Note: Backend might ignore phone/name/note but we send it anyway just in case backend is updated.
 
-      if (!response.ok) {
-        throw new Error("Thanh toán thất bại");
-      }
-
-      // const data = await response.json();
       notify(t('order_success'), "success");
 
       // Redirect to success or home

@@ -6,6 +6,7 @@ import Skeleton from "../Component/Common/Skeleton";
 import ProductCard from "../Component/Common/ProductCard";
 import Pagination from "../Component/Common/Pagination";
 import search_image from "../Assets/Images/Icons/icon_search.svg";
+import productApi from "../api/productApi";
 
 export default function Product() {
   // State
@@ -25,11 +26,9 @@ export default function Product() {
 
   const fetchProducts = useCallback((pageIndex, append) => {
     setIsLoading(true);
-    fetch(
-      `${process.env.REACT_APP_API_URL}/product?page=${pageIndex}&size=${pageSize}`
-    )
-      .then((res) => res.json())
-      .then((data) => {
+    productApi.getAll({ page: pageIndex, size: pageSize })
+      .then((res) => {
+        const data = res.data;
         let newContent = data.content || [];
 
         if (searchTerm) {

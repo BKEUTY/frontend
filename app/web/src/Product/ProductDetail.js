@@ -7,9 +7,10 @@ import './ProductDetail.css';
 import { FaStar, FaCheckCircle, FaRegHeart, FaRegComment } from 'react-icons/fa';
 import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
 import starIcon from "../Assets/Images/Icons/icon_star.svg";
-
 import Pagination from "../Component/Common/Pagination";
 import ProductCard from "../Component/Common/ProductCard";
+import Skeleton from "../Component/Common/Skeleton";
+import productApi from '../api/productApi';
 
 export default function ProductDetail() {
     const { id } = useParams();
@@ -18,86 +19,103 @@ export default function ProductDetail() {
     const { addToCart } = useCart();
     const location = useLocation();
 
-
     // Determine breadcrumb category based on state passed from navigation or default
-    // If user clicked from "Skincare", location.state.category might be set
     const categoryName = location.state?.category || t('all_products');
     const categoryLink = location.state?.from || '/product';
 
-    const productData = {
-        id: id,
-        name: "Beauty Prestige LA Micro-Huile De Rose Advanced Serum",
-        brand: "Dior",
-        price: 9250000,
-        original_price: 10500000,
-        rating: 4.8,
-        reviews_count: 124,
-        images: [
-            best_selling_image,
-            best_selling_image,
-            best_selling_image,
-            best_selling_image
-        ],
-        sizes: ["30ml", "50ml", "75ml"],
-
-        // Localized Content
-        content: {
-            en: {
-                description: "The first repair supplement enriched with the Rose de Granville's 22 micro-nutrients and the revitalizing power of Rose sap. It corrects the signs of aging and deeply renews the skin.",
-                details: "La Micro-Huile de Rose Advanced Serum is the first repair supplement that concentrates the double power of the Rose de Granville. From the stem to the flower, this extraordinary rose offers a wealth of micro-nutrients essential for skin vitality.",
-                application: "1. Dispense two to three pumps into the palm of your hand. Then, using the pads of the fingers, apply the serum to the entire face from the center outwards.\n2. Use gentle pressure to make the serum penetrate deeply.\n3. Finally, to enhance the contours, hold the chin between the index and middle fingers and move up the jawline.",
-                ingredients: "Aqua (Water), Glycerin, Propanediol, Dimethicone, Limnanthes Alba (Meadowfoam) Seed Oil, ... (Full list usually here)",
-                advance: "The new formula concentrates the nutritive power of the Rose de Granville's 22 micro-nutrients with the revitalizing power of its sap. This synergy allows for a correction of the signs of aging.",
-                benefits_list: ["Revitalizing", "Repairing", "Anti-aging"],
-            },
-            vi: {
-                description: "Tinh chất phục hồi đầu tiên được bổ sung 22 vi chất dinh dưỡng từ Hoa Hồng dòng Granville và sức mạnh tái tạo của nhựa hoa. Nó khắc phục các dấu hiệu lão hóa và đổi mới làn da từ sâu bên trong.",
-                details: "La Micro-Huile de Rose Advanced Serum là tinh chất phục hồi đầu tiên tập trung sức mạnh kép của Hoa Hồng dòng Granville. Từ thân đến hoa, loài hoa hồng phi thường này cung cấp vô số vi chất dinh dưỡng cần thiết cho sức sống của làn da.",
-                application: "1. Lấy hai đến ba lần bơm vào lòng bàn tay. Sau đó, dùng các đầu ngón tay thoa serum lên toàn bộ khuôn mặt từ giữa ra ngoài.\n2. Dùng lực ấn nhẹ để serum thẩm thấu sâu.\n3. Cuối cùng, để nâng cao đường nét, giữ cằm giữa ngón trỏ và ngón giữa và di chuyển lên đường viền hàm.",
-                ingredients: "Nước (Aqua), Glycerin, Propanediol, Dimethicone, Dầu hạt Limnanthes Alba (Meadowfoam)... (Danh sách đầy đủ)",
-                advance: "Công thức mới tập trung sức mạnh dinh dưỡng của 22 vi chất từ Hoa Hồng dòng Granville cùng sức mạnh tái tạo của nhựa hoa. Sự kết hợp này mang lại khả năng khắc phục các dấu hiệu lão hóa vượt trội.",
-                benefits_list: ["Tái Tạo", "Phục Hồi", "Chống Lão Hóa"],
-            }
-        },
-        reviews: [
-            { user: "Sarah L.", date: "12 Oct 2023", rating: 5, content: "Absolutely amazing! My skin feels so soft and the glow is incredible.", verified: true },
-            { user: "Minh Anh", date: "05 Nov 2023", rating: 4, content: "Đắt nhưng xắt ra miếng. Trải nghiệm rất sang chảnh.", verified: true },
-            { user: "Jessica W.", date: "15 Oct 2023", rating: 5, content: "Best serum I've ever used. Worth every penny.", verified: true },
-            { user: "Lan Huong", date: "20 Oct 2023", rating: 5, content: "Da mình nhạy cảm nhưng dùng em này rất êm, không bị kích ứng.", verified: true },
-            { user: "Emily R.", date: "25 Oct 2023", rating: 4, content: "Great texture, absorbs quickly. Smell is a bit strong for me though.", verified: true },
-            { user: "Thanh Huyen", date: "01 Nov 2023", rating: 5, content: "Dùng hết 1 lọ thấy da cải thiện rõ rệt, căng bóng hơn hẳn.", verified: true },
-            { user: "Sophia K.", date: "08 Nov 2023", rating: 3, content: "It's okay, but I expected more for the price.", verified: false },
-            { user: "Ngoc Chau", date: "10 Nov 2023", rating: 5, content: "Đóng gói đẹp, giao hàng nhanh. Sản phẩm chính hãng.", verified: true },
-            { user: "Olivia P.", date: "12 Nov 2023", rating: 4, content: "Love the packaging and the feel on my skin.", verified: true },
-            { user: "Thu Ha", date: "14 Nov 2023", rating: 5, content: "Sẽ mua lại lần nữa. Rất hài lòng.", verified: true },
-            { user: "Isabella M.", date: "18 Nov 2023", rating: 5, content: "My holy grail skincare product now!", verified: true },
-            { user: "Hoang Yen", date: "20 Nov 2023", rating: 4, content: "Mùi hương dễ chịu, thấm nhanh.", verified: true },
-            { user: "Ava T.", date: "22 Nov 2023", rating: 5, content: "Visible results in just one week.", verified: true },
-            { user: "Kim Ngan", date: "25 Nov 2023", rating: 5, content: "Chất lượng tuyệt vời, đáng tiền.", verified: true },
-            { user: "Mia S.", date: "28 Nov 2023", rating: 4, content: "Good hydration, skin feels plump.", verified: true }
-        ]
-    };
-
-    // Helper to get current locale content safely
-    const getLocalContent = (key) => {
-        return productData.content[language === 'vi' ? 'vi' : 'en'][key] || productData.content['en'][key];
-    };
+    const [productData, setProductData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
 
     const [activeTab, setActiveTab] = useState('details');
-    const [selectedSize, setSelectedSize] = useState(productData.sizes[0]);
-    const [mainImage, setMainImage] = useState(productData.images[0]);
+    const [selectedSize, setSelectedSize] = useState("50ml");
+    const [mainImage, setMainImage] = useState(best_selling_image);
     const [quantity, setQuantity] = useState(1);
+
+    // Initial load
+    useEffect(() => {
+        const fetchProduct = async () => {
+            setIsLoading(true);
+            try {
+                // Fetch basic info from backend
+                // Since backend is limited (missing reviews, sizes, specific details), we use a mock template
+                // and override key fields with backend data.
+                const response = await productApi.getAll({ page: 0, size: 100 });
+                const found = response.data.content.find(p => p.productId === id || p.id === id);
+
+                if (found) {
+                    const mergedData = {
+                        id: found.id || found.productId,
+                        name: found.name,
+                        brand: "BKEUTY", // Backend missing brand
+                        price: found.price,
+                        original_price: found.price * 1.1, // Fake original
+                        rating: 4.8,
+                        reviews_count: 124,
+                        images: [
+                            found.image || best_selling_image,
+                            best_selling_image,
+                            best_selling_image
+                        ],
+                        sizes: ["30ml", "50ml", "75ml"],
+                        content: { // Keep mock content
+                            en: {
+                                description: found.description || "Product description...",
+                                details: "Full details...",
+                                application: "Apply daily...",
+                                ingredients: "Aqua, Glycerin...",
+                                advance: "Advanced formula...",
+                                benefits_list: ["Revitalizing", "Repairing"]
+                            },
+                            vi: {
+                                description: found.description || "Mô tả sản phẩm...",
+                                details: "Chi tiết...",
+                                application: "Sử dụng hàng ngày...",
+                                ingredients: "Nước, Glycerin...",
+                                advance: "Công thức tiên tiến...",
+                                benefits_list: ["Tái Tạo", "Phục Hồi"]
+                            }
+                        },
+                        reviews: [] // Keep empty or mock
+                    };
+                    setProductData(mergedData);
+                    setMainImage(mergedData.images[0]);
+                }
+            } catch (err) {
+                console.error("Error fetching product detail:", err);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProduct();
+    }, [id]);
 
     // Review Pagination
     const [reviewPage, setReviewPage] = useState(0);
     const reviewsPerPage = 5;
-    const totalReviewPages = Math.ceil(productData.reviews.length / reviewsPerPage);
-    const displayedReviews = productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage);
+    const totalReviewPages = productData ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
+    const displayedReviews = productData ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage) : [];
 
-    // Scroll to top on load
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, [id]);
+    // Helper to get current locale content safely
+    const getLocalContent = (key) => {
+        if (!productData) return "";
+        return productData.content[language === 'vi' ? 'vi' : 'en'][key] || productData.content['en'][key];
+    };
+
+    if (isLoading || !productData) return (
+        <div className="product-detail-page">
+            <div className="product-top-section">
+                <Skeleton width="50%" height="450px" style={{ marginRight: '20px' }} />
+                <div style={{ flex: 1 }}>
+                    <Skeleton width="40%" height="20px" style={{ marginBottom: '10px' }} />
+                    <Skeleton width="80%" height="40px" style={{ marginBottom: '20px' }} />
+                    <Skeleton width="30%" height="30px" style={{ marginBottom: '20px' }} />
+                    <Skeleton width="100%" height="100px" style={{ marginBottom: '20px' }} />
+                    <Skeleton width="100%" height="50px" />
+                </div>
+            </div>
+        </div>
+    );
+
 
     const handleQuantityChange = (val) => {
         const newVal = quantity + val;

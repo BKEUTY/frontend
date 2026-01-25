@@ -2,15 +2,16 @@ import "./Cart.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useNotification } from "../Context/NotificationContext";
-import { useLanguage } from "../i18n/LanguageContext"; // Added import
+import { useLanguage } from "../i18n/LanguageContext";
 import { useCart } from "../Context/CartContext";
 import product_cart_image from "../Assets/Images/Products/product_placeholder_rect.svg";
 import cart_empty_icon from "../Assets/Images/Icons/icon_cart.svg";
+import { FaTrashAlt } from "react-icons/fa";
 
 export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
-  const { t } = useLanguage(); // Initialized hook
+  const { t } = useLanguage();
   const { cartItems: products, fetchCart, updateQuantity } = useCart();
 
   const PROMOTIONS = [
@@ -155,12 +156,6 @@ export default function Cart() {
                       <p className="cart-product-desc">
                         {t('description')}: {product.description}
                       </p>
-                      <button
-                        className="cart-btn-delete"
-                        onClick={() => handleDelete(product.cartId)}
-                      >
-                        {t('delete')}
-                      </button>
                     </div>
                   </div>
 
@@ -179,6 +174,14 @@ export default function Cart() {
                   <div className="cart-col-total cart-item-total">
                     {(product.price * product.quantity).toLocaleString("vi-VN")}đ
                   </div>
+
+                  <button
+                    className="cart-btn-delete"
+                    onClick={() => handleDelete(product.cartId)}
+                    title={t('delete')}
+                  >
+                    <FaTrashAlt />
+                  </button>
                 </div>
               ))
             )}

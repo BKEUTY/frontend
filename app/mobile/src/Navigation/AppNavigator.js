@@ -16,6 +16,7 @@ import PromotionScreen from '../StaticPages/PromotionScreen';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, BeautyCornerScreen, TermsScreen } from '../StaticPages/StaticScreens';
+import Chatbot from '../Component/Chatbot/Chatbot';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -54,25 +55,28 @@ function TabNavigator() {
 export default function AppNavigator() {
     const { t } = useLanguage();
     return (
-        <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="Main" component={TabNavigator} />
-                <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: true, title: t('checkout') }} />
+        <>
+            <NavigationContainer>
+                <Stack.Navigator screenOptions={{ headerShown: false }}>
+                    <Stack.Screen name="Main" component={TabNavigator} />
+                    <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: true, title: t('checkout') }} />
 
-                {/* Static Pages */}
-                <Stack.Screen name="AboutUs" component={AboutUsScreen} options={{ headerShown: true, title: t('about_brand') }} />
-                <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: true, title: t('contact') }} />
-                <Stack.Screen name="FAQ" component={FAQScreen} options={{ headerShown: true, title: t('faq') }} />
-                <Stack.Screen name="RetailSystem" component={RetailSystemScreen} options={{ headerShown: true, title: t('retail_system') }} />
-                <Stack.Screen name="Promotions" component={PromotionScreen} options={{ headerShown: true, title: t('promotions') }} />
-                <Stack.Screen name="BeautyCorner" component={BeautyCornerScreen} options={{ headerShown: true, title: t('beauty_corner') }} />
-                <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
+                    {/* Static Pages */}
+                    <Stack.Screen name="AboutUs" component={AboutUsScreen} options={{ headerShown: true, title: t('about_brand') }} />
+                    <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: true, title: t('contact') }} />
+                    <Stack.Screen name="FAQ" component={FAQScreen} options={{ headerShown: true, title: t('faq') }} />
+                    <Stack.Screen name="RetailSystem" component={RetailSystemScreen} options={{ headerShown: true, title: t('retail_system') }} />
+                    <Stack.Screen name="Promotions" component={PromotionScreen} options={{ headerShown: true, title: t('promotions') }} />
+                    <Stack.Screen name="BeautyCorner" component={BeautyCornerScreen} options={{ headerShown: true, title: t('beauty_corner') }} />
+                    <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
 
-                {/* Profile Screen */}
-                <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
+                    {/* Profile Screen */}
+                    <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
 
-                <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
-            </Stack.Navigator>
-        </NavigationContainer>
+                    <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
+                </Stack.Navigator>
+            </NavigationContainer>
+            <Chatbot />
+        </>
     );
 }

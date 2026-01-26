@@ -5,18 +5,22 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
-const bestSellers = [
-    { id: 1, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9', sold: '314 đã bán' },
-    { id: 2, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9', sold: '314 đã bán' },
-    { id: 3, name: 'Nước Hoa Hồng Obagi 2% BHA Giảm Nhờn Mụn 148ml', price: '1.150.000đ', rating: '4.9', sold: '314 đã bán' },
+// Mock Data mirroring Web
+const mockProducts = [
+    { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: '450.000đ', brand: 'BKEUTY', image: null, rating: '4.9', sold: '1k đã bán', tag: 'HOT' },
+    { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: '320.000đ', brand: 'MAC', image: null, rating: '4.7', sold: '500 đã bán', discount: '10%' },
+    { id: 3, name: 'Nước Hoa Hồng Dịu Nhẹ Toner', price: '150.000đ', brand: 'Laroche Posay', image: null, rating: '4.5', sold: '200 đã bán' },
+    { id: 4, name: 'Serum Vitamin C Sáng Da Clinical', price: '550.000đ', brand: 'Obagi', image: null, rating: '4.8', sold: '300 đã bán', tag: 'NEW' },
+    { id: 5, name: 'Kem Chống Nắng Phổ Rộng Perfect UV', price: '420.000đ', brand: 'Anessa', image: null, rating: '4.6', sold: '850 đã bán' },
+    { id: 6, name: 'Mặt Nạ Giấy Cấp Ẩm Tea Tree', price: '25.000đ', brand: 'Innisfree', image: null, rating: '4.9', sold: '5k đã bán' },
+    { id: 7, name: 'Tẩy Trang Cho Da Nhạy Cảm Sensibio', price: '180.000đ', brand: 'Bioderma', image: null, rating: '4.7', sold: '1.2k đã bán' },
+    { id: 8, name: 'Xịt Khoáng Cấp Nước Mineral 89', price: '280.000đ', brand: 'Vichy', image: null, rating: '4.5', sold: '600 đã bán' },
+    { id: 9, name: 'Sữa Rửa Mặt Tạo Bọt Foaming Cleanser', price: '120.000đ', brand: 'Cerave', image: null, rating: '4.6', sold: '900 đã bán' },
+    { id: 10, name: 'Dầu Dưỡng Tóc Mềm Mượt Treatment', price: '350.000đ', brand: 'Moroccanoil', image: null, rating: '4.8', sold: '400 đã bán' }
 ];
 
-const suggestedProducts = [
-    { id: 1, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: 'DEAL SỐC', rating: '4.9', sold: '1.4k đã bán' },
-    { id: 2, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: 'DEAL SỐC', rating: '4.9', sold: '1.4k đã bán' },
-    { id: 3, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: 'DEAL SỐC', rating: '4.9', sold: '1.4k đã bán' },
-    { id: 4, name: 'Sữa Chống Nắng Anessa Dưỡng Da Kiềm Dầu 60ml', price: '431.000đ', oldPrice: '700.000đ', discount: '47%', tag: 'DEAL SỐC', rating: '4.9', sold: '1.4k đã bán' },
-];
+const bestSellers = mockProducts.slice(0, 5);
+const suggestedProducts = mockProducts.slice(5, 10);
 
 import Header from '../Component/Header';
 

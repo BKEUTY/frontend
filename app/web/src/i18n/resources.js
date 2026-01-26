@@ -368,6 +368,12 @@ export const en = {
     sold_count: "sold",
     feature_developing_title: "Feature Under Development",
     feature_developing_desc: "We are working hard to bring this feature to you soon. Stay tuned!",
+    chatbot_title: "Virtual Assistant BKEUTY",
+    chatbot_greeting: "Hello, how can I help you today?",
+    chatbot_input_placeholder: "Type your message...",
+    view_now: "View Now",
+    chatbot_response_consult: "Thank you for your message. A consultant will contact you soon!",
+    chatbot_response_product: "Great! Here are some moisturizer suggestions for dry skin that BKEUTY recommends for you:",
 };
 
 export const vi = {
@@ -735,4 +741,10 @@ export const vi = {
     filter_5_star: "5 sao",
     filter_with_media: "Có Hình Ảnh/Video",
     sold_count: "đã bán",
+    chatbot_title: "Trợ lý ảo BKEUTY",
+    chatbot_greeting: "Chào bạn, mình có thể giúp gì cho bạn?",
+    chatbot_input_placeholder: "Nhập tin nhắn của bạn...",
+    view_now: "Xem ngay",
+    chatbot_response_consult: "Cảm ơn bạn đã nhắn tin. Nhân viên tư vấn sẽ sớm liên hệ lại với bạn!",
+    chatbot_response_product: "Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:",
 };

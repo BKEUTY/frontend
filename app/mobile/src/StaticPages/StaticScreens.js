@@ -90,28 +90,7 @@ export const FAQScreen = () => {
     );
 };
 
-export const BeautyCornerScreen = () => {
-    const { t } = useLanguage();
-    return (
-        <StaticPageLayout title={t('beauty_corner') || "Góc Làm Đẹp"}>
-            <Text style={styles.paragraph}>{t('beauty_corner_intro')}</Text>
 
-            <View style={styles.imagePlaceholder}>
-                <Text style={styles.placeholderText}>{t('beauty_corner_img')}</Text>
-            </View>
-
-            <Text style={styles.heading}>{t('beauty_featured_title')}</Text>
-            <Text style={styles.subHeading}>{t('beauty_art_1_title')}</Text>
-            <Text style={styles.paragraph}>{t('beauty_art_1_desc')}</Text>
-
-            <Text style={styles.subHeading}>{t('beauty_art_2_title')}</Text>
-            <Text style={styles.paragraph}>{t('beauty_art_2_desc')}</Text>
-
-            <Text style={styles.subHeading}>{t('beauty_art_3_title')}</Text>
-            <Text style={styles.paragraph}>{t('beauty_art_3_desc')}</Text>
-        </StaticPageLayout>
-    );
-};
 
 export const TermsScreen = () => {
     const { t } = useLanguage();

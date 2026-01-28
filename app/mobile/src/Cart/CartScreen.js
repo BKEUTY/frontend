@@ -7,19 +7,18 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 import Header from '../Component/Header';
 
-// ... imports
+
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useCart } from '../Context/CartContext';
 
 const CartScreen = () => {
-    // ... existing setup ...
     const navigation = useNavigation();
     const { t } = useLanguage();
     const { cartItems: products, fetchCart, deleteCartItem } = useCart();
     const [refreshing, setRefreshing] = useState(false);
     const [selectedItems, setSelectedItems] = useState({});
 
-    // ... existing functions ...
+
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
         await fetchCart();
@@ -87,7 +86,6 @@ const CartScreen = () => {
                         <View style={styles.itemInfo}>
                             <View style={styles.headerRow}>
                                 <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
-                                {/* Removed old delete button */}
                             </View>
                         </View>
                     </View>

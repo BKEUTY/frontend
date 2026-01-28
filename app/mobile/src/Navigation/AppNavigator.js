@@ -15,7 +15,7 @@ import ServiceScreen from '../StaticPages/ServiceScreen';
 import PromotionScreen from '../StaticPages/PromotionScreen';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
-import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, BeautyCornerScreen, TermsScreen } from '../StaticPages/StaticScreens';
+import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, TermsScreen } from '../StaticPages/StaticScreens';
 import Chatbot from '../Component/Chatbot/Chatbot';
 
 const Tab = createBottomTabNavigator();
@@ -67,7 +67,7 @@ export default function AppNavigator() {
                     <Stack.Screen name="FAQ" component={FAQScreen} options={{ headerShown: true, title: t('faq') }} />
                     <Stack.Screen name="RetailSystem" component={RetailSystemScreen} options={{ headerShown: true, title: t('retail_system') }} />
                     <Stack.Screen name="Promotions" component={PromotionScreen} options={{ headerShown: true, title: t('promotions') }} />
-                    <Stack.Screen name="BeautyCorner" component={BeautyCornerScreen} options={{ headerShown: true, title: t('beauty_corner') }} />
+
                     <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
 
                     {/* Profile Screen */}

@@ -98,7 +98,7 @@ const Chatbot = () => {
                     </View>
                     <View style={styles.productCard}>
                         <View style={styles.productImagePlaceholder} />
-                        <Text style={styles.productName}>{item.content.name}</Text>
+                        <Text style={styles.productName} numberOfLines={2}>{item.content.name}</Text>
                         <Text style={styles.productPrice}>{item.content.price}</Text>
                         <TouchableOpacity style={styles.viewButton}>
                             <Text style={styles.viewButtonText}>{t('view_now') || 'Xem ngay'}</Text>

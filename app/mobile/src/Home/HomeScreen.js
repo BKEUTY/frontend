@@ -201,8 +201,8 @@ const styles = StyleSheet.create({
             width: 0,
             height: 2,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
         elevation: 2,
     },
     productPlaceHolder: {
@@ -225,14 +225,14 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         // Remove heavy border
         // shadow
-        shadowColor: "#a30251", // Colored shadow
+        shadowColor: "#000", // Neutral shadow like web
         shadowOffset: {
             width: 0,
-            height: 4,
+            height: 2,
         },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 4,
+        shadowOpacity: 0.06,
+        shadowRadius: 4,
+        elevation: 3,
         overflow: 'hidden',
     },
     // ... rest of styles

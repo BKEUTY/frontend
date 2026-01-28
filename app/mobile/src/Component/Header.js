@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: -4,
         right: -6,
-        backgroundColor: '#d32f2f',
+        backgroundColor: '#ffc107',
         borderRadius: 10,
         minWidth: 16,
         height: 16,
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
         borderColor: '#fce4ec',
     },
     badgeText: {
-        color: 'white',
+        color: '#333',
         fontSize: 9,
         fontWeight: 'bold',
     },

@@ -63,7 +63,7 @@ const Chatbot = ({ isOpen, onClose }) => {
                     type: 'product',
                     sender: 'bot',
                     content: {
-                        name: 'BKEUTY Hydra-Deep Moisturizing Cream',
+                        name: t('chatbot_demo_product_name'),
                         price: '450.000 ₫',
                         image: productPlaceholder
                     }

@@ -306,34 +306,7 @@ export const RetailSystem = () => {
     );
 };
 
-export const BeautyCorner = () => {
-    const { t } = useLanguage();
-    return (
-        <StaticPageLayout title={t('beauty_corner') || "Góc Làm Đẹp"}>
-            <p>{t('beauty_corner_intro')}</p>
 
-            <div className="content-image-placeholder">
-                {t('beauty_corner_img')}
-            </div>
-
-            <h3>{t('beauty_featured_title')}</h3>
-            <ul>
-                <li>
-                    <strong>{t('beauty_art_1_title')}</strong><br />
-                    {t('beauty_art_1_desc')}
-                </li>
-                <li>
-                    <strong>{t('beauty_art_2_title')}</strong><br />
-                    {t('beauty_art_2_desc')}
-                </li>
-                <li>
-                    <strong>{t('beauty_art_3_title')}</strong><br />
-                    {t('beauty_art_3_desc')}
-                </li>
-            </ul>
-        </StaticPageLayout>
-    );
-};
 
 export const Terms = () => {
     const { t } = useLanguage();

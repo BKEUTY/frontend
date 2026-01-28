@@ -18,7 +18,7 @@ import LandingPage from "./LandingPage/LandingPage";
 import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
 import ForgotPassword from "./Component/Auth/ForgotPassword";
-import { AboutUs, Contact, FAQ, RetailSystem, BeautyCorner, Terms } from "./Component/StaticPages/FooterPages";
+import { AboutUs, Contact, FAQ, RetailSystem, Terms } from "./Component/StaticPages/FooterPages";
 
 import { CartProvider } from "./Context/CartContext";
 import CartDrawer from "./Cart/CartDrawer";
@@ -27,12 +27,11 @@ function Layout() {
   const location = useLocation();
   const path = location.pathname;
 
-  // Determine if we should show Header/Footer
-  // Auth Pages: No Header, No Footer (typically)
+
   const isAuth = path === "/login" || path === "/register" || path === "/forgot-password";
 
   const showHeader = !isAuth;
-  const showFooter = !isAuth; // Landing has Footer
+  const showFooter = !isAuth;
 
   return (
     <div className="App">
@@ -54,12 +53,12 @@ function Layout() {
 
           <Route path="/checkout" element={<Checkout />} />
 
-          {/* Static Footer Pages */}
+
           <Route path="/about-brand" element={<AboutUs />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/retail-system" element={<RetailSystem />} />
-          <Route path="/beauty-corner" element={<BeautyCorner />} />
+
           <Route path="/terms" element={<Terms />} />
         </Routes>
       </main>

@@ -8,7 +8,6 @@
     display: block;
 }
 
-/* Breadcrumb Styles for Product List */
 .product-breadcrumb {
     font-size: 0.95rem;
     color: #666;
@@ -45,7 +44,6 @@
     font-weight: 400;
 }
 
-/* Main Content */
 .product-main-content {
     flex: 1;
 }
@@ -60,12 +58,10 @@
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 30px;
-    /* Increased gap */
     align-items: stretch;
     padding-bottom: 20px;
 }
 
-/* Responsive Grid */
 @media (max-width: 1400px) {
     .product-grid {
         grid-template-columns: repeat(4, 1fr);
@@ -86,7 +82,6 @@
     .product-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-        /* Matches Home.css */
     }
 
     .product-header-bar {
@@ -95,7 +90,6 @@
     }
 }
 
-/* Product Card Override */
 .product-grid .product-card {
     width: 100% !important;
     margin: 0;
@@ -103,15 +97,12 @@
     display: flex;
     flex-direction: column;
     height: 100%;
-    /* Increase card padding/size indirectly by ensuring component fills space */
     min-height: 420px;
-    /* Taller minimum height */
 }
 
 .btn-add-cart {
     width: 100%;
     margin-top: auto;
-    /* Push to bottom */
     background-color: white;
     border: 1px solid var(--color_main_title);
     color: var(--color_main_title);
@@ -130,7 +121,6 @@
     color: white;
 }
 
-/* Pagination */
 .pagination-wrapper {
     margin-top: 40px;
     padding-bottom: 40px;
@@ -195,22 +185,21 @@
     color: white;
 }
 
-/* Category Bar */
 .category-bar {
-    background-color: #fce4ec;
-    /* Lighter pink */
-    padding: 8px 6vw;
+    background-color: white;
+    padding: 0 var(--general_padding_left_right);
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--color_main_title_dark);
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #333;
     position: relative;
     z-index: 20;
     font-family: var(--inter_font);
-    height: 50px;
-    /* Fixed height for consistency */
+    height: 70px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #ebebeb;
 }
 
 
@@ -220,34 +209,63 @@
 .category-list {
     display: flex;
     align-items: center;
-    gap: 30px;
-    text-transform: uppercase;
+    gap: 0;
+    height: 100%;
     flex: 1;
     justify-content: flex-start;
+    margin-right: 20px;
 }
 
 .cat-item {
     cursor: pointer;
     position: relative;
-    padding: 10px 0;
-    transition: color 0.2s;
+    padding: 0 20px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #333;
+    letter-spacing: 0.02em;
 }
 
 .cat-item:hover {
-    color: #e91e63;
+    color: var(--color_main_title);
+    background-color: #fff0f6;
+}
+
+.cat-item.cancel-hover {
+    padding-left: 0;
+    margin-right: 15px;
+    background: none !important;
 }
 
 .cat-trigger {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 10px;
+    background-color: var(--color_main_title);
+    color: white;
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-weight: 700;
+    transition: transform 0.2s;
+    box-shadow: 0 4px 10px rgba(194, 24, 91, 0.2);
+}
+
+.cat-item:hover .cat-trigger {
+    background-color: var(--color_main_title_hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(194, 24, 91, 0.3);
+    color: white;
 }
 
 .cat-divider {
-    color: #f8bbd0;
+    display: none;
 }
 
-/* Mega Menu */
 .mega-menu {
     display: none;
     position: absolute;
@@ -308,21 +326,22 @@
     padding-left: 5px;
 }
 
-/* Search Bar */
 .prod-search-bar-wrapper {
     display: flex;
     align-items: center;
-    background: white;
-    border-radius: 20px;
-    /* Pill shape */
+    background: #f8f9fa;
+    border-radius: 8px;
     padding: 5px 15px;
-    /* Compact padding */
-    border: 1px solid #f8bbd0;
-    width: 300px;
-    /* Slightly narrower */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
-    height: 36px;
-    /* Fixed height matches compact look */
+    border: 1px solid #e0e0e0;
+    width: 320px;
+    height: 42px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.prod-search-bar-wrapper:focus-within {
+    border-color: var(--color_main_title);
+    background: white;
+    box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.1);
 }
 
 .prod-search-input {
@@ -330,7 +349,7 @@
     outline: none;
     box-shadow: none;
     flex: 1;
-    font-size: 0.85rem;
+    font-size: 0.9rem;
     color: #333;
     font-family: var(--inter_font);
     background: transparent;
@@ -353,16 +372,13 @@
     opacity: 1;
 }
 
-/* Mobile Toggle Hidden by Default */
 .prod-mobile-cat-header {
     display: none;
     align-items: center;
     justify-content: space-between;
     background: linear-gradient(135deg, #fffbfd 0%, #fff 100%);
     padding: 0 20px;
-    /* Horizontal padding only, flex handles vertical alignment */
     border-radius: 20px;
-    /* Match search */
     border: 1px solid #f8bbd0;
     font-weight: 700;
     color: #c2185b;
@@ -371,15 +387,11 @@
     margin-bottom: 0;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
     box-shadow: 0 4px 12px rgba(194, 24, 91, 0.08);
-    /* Pinkish shadow */
     text-transform: uppercase;
     font-size: 0.85rem;
-    /* Slightly smaller text */
     letter-spacing: 0.5px;
     height: 40px;
-    /* Match search */
     box-sizing: border-box;
-    /* Ensure padding doesn't add height */
     display: none;
 }
 
@@ -391,7 +403,6 @@
 
 .prod-mobile-cat-header .arrow {
     transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-    /* Bouncy */
     font-size: 0.8rem;
     color: #e91e63;
 }
@@ -400,47 +411,35 @@
     transform: rotate(180deg);
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
     .prod-mobile-cat-header {
         display: flex;
-        /* Show toggle only on mobile */
         align-items: center;
-        /* Center content */
     }
 
     .category-bar {
         flex-direction: column;
         padding: 15px 20px;
         gap: 12px;
-        /* Consistent spacing */
         height: auto;
-        background: #fff0f5;
-        /* Ensure header bg covers full area */
+        background: white;
         align-items: stretch;
-        /* Ensure full width */
     }
 
     .prod-search-bar-wrapper {
         width: 100%;
         order: -1;
         margin-bottom: 0;
-        /* Use gap */
         height: 40px;
-        /* Standardized height */
         border-radius: 20px;
-        /* Standardized radius */
         box-shadow: 0 4px 12px rgba(194, 24, 91, 0.08);
-        /* Consistent Pink shadow */
         border: 1px solid #f8bbd0;
-        /* Consistent border */
         box-sizing: border-box;
-        /* Crucial for equal width */
+        background: white;
     }
 
     .prod-search-input {
         font-size: 0.9rem;
-        /* Larger font */
     }
 
     .category-list {
@@ -453,7 +452,6 @@
         padding: 5px 0;
         border: none;
         box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-        /* Deep shadow */
         margin-top: 5px;
         overflow: hidden;
     }
@@ -481,7 +479,6 @@
         color: #333;
     }
 
-    /* Keep header hidden in list */
     .cat-item .cat-trigger {
         display: none;
     }
@@ -490,7 +487,6 @@
         display: none;
     }
 
-    /* Mega Menu Items */
     .cat-item:hover .mega-menu,
     .mega-menu {
         display: block !important;
@@ -500,7 +496,6 @@
         border: none;
         padding: 5px 0;
         background: #fafafa;
-        /* Slightly distinct background */
     }
 
     .mega-column {
@@ -514,7 +509,6 @@
         color: #c2185b;
         padding-left: 10px;
         border-left: 3px solid #c2185b;
-        /* Pink accent line */
         text-transform: uppercase;
         font-weight: 700;
         line-height: 1.2;
@@ -538,7 +532,6 @@
         background-color: #fff;
     }
 
-    /* Top-level standard items (Brands, etc) */
     .cat-item:not(:has(.mega-menu)) {
         padding: 16px 20px;
         font-weight: 600;

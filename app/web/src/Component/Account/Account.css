@@ -393,7 +393,12 @@
 }
 
 .update-info-btn {
-    width: fit-content;
+    width: auto;
+    min-width: 180px;
+    grid-column: 1 / -1;
+    white-space: nowrap;
+    justify-self: center;
+    border-radius: 30px;
 }
 
 .avatar-placeholder {

@@ -107,7 +107,7 @@ export const en = {
     contact: "Contact",
     faq: "FAQ",
     about_brand: "About Brand",
-    beauty_corner: "Beauty Corner",
+
     makeup: "Makeup",
     skincare: "Skincare",
     gift_sets: "Gift Sets",
@@ -236,15 +236,7 @@ export const en = {
     retail_hn_1: "BKEUTY Cau Giay",
     retail_hn_1_addr: "Address: 101 Cau Giay, Cau Giay District",
     retail_hn_1_hours: "Opening hours: 8:30 - 21:30",
-    beauty_corner_intro: "Where to update the latest beauty trends, scientific skincare tips and honest product reviews from experts.",
-    beauty_corner_img: "[Grid image of featured blog posts: Skincare routine, Makeup tutorial...]",
-    beauty_featured_title: "Featured Articles This Month",
-    beauty_art_1_title: "[Skincare] Minimalist skincare routine (Skinimalism) for busy people",
-    beauty_art_1_desc: "New skincare trend focusing on quality instead of quantity...",
-    beauty_art_2_title: "[Makeup] Top 5 'MLBB' (My Lips But Better) lippies must-have in your bag",
-    beauty_art_2_desc: "Compilation of the most natural earth tone and nude pink lipsticks...",
-    beauty_art_3_title: "[Ingredient] What is Retinol? How to use Retinol safely for beginners",
-    beauty_art_3_desc: "Decoding the anti-aging 'miracle drug' and vital notes...",
+
     retail_search_placeholder: "Search by branch name...",
     retail_filter_status: "Filter by status",
     retail_status_open: "Open",
@@ -374,6 +366,7 @@ export const en = {
     view_now: "View Now",
     chatbot_response_consult: "Thank you for your message. A consultant will contact you soon!",
     chatbot_response_product: "Great! Here are some moisturizer suggestions for dry skin that BKEUTY recommends for you:",
+    chatbot_demo_product_name: "BKEUTY Hydra-Deep Moisturizing Cream",
 };
 
 export const vi = {
@@ -516,15 +509,7 @@ export const vi = {
     retail_hn_1: "BKEUTY Cầu Giấy",
     retail_hn_1_addr: "Địa chỉ: 101 Cầu Giấy, Q. Cầu Giấy",
     retail_hn_1_hours: "Giờ mở cửa: 8:30 - 21:30",
-    beauty_corner_intro: "Nơi cập nhật những xu hướng làm đẹp mới nhất, mẹo chăm sóc da khoa học và review sản phẩm chân thực từ chuyên gia.",
-    beauty_corner_img: "[Hình ảnh Grid các bài viết blog nổi bật: Skincare routine, Makeup tutorial...]",
-    beauty_featured_title: "Bài Viết Nổi Bật Tháng Này",
-    beauty_art_1_title: "[Skincare] Quy trình skincare tối giản (Skinimalism) cho người bận rộn",
-    beauty_art_1_desc: "Xu hướng dưỡng da mới tập trung vào chất lượng thay vì số lượng...",
-    beauty_art_2_title: "[Makeup] Top 5 màu son 'MLBB' (My Lips But Better) phải có trong túi xách",
-    beauty_art_2_desc: "Tổng hợp những thỏi son tone đất, hồng nude tôn da tự nhiên nhất...",
-    beauty_art_3_title: "[Ingredient] Retinol là gì? Cách sử dụng Retinol an toàn cho người mới bắt đầu",
-    beauty_art_3_desc: "Giải mã 'thần dược' chống lão hóa và những lưu ý sống còn...",
+
     retail_search_placeholder: "Tìm kiếm theo tên chi nhánh...",
     retail_filter_status: "Lọc theo trạng thái",
     retail_status_open: "Đang hoạt động",
@@ -609,7 +594,7 @@ export const vi = {
     contact: "Liên Hệ",
     faq: "Câu Hỏi Thường Gặp",
     about_brand: "Về Thương Hiệu",
-    beauty_corner: "Góc Làm Đẹp",
+
     makeup: "Trang Điểm",
     skincare: "Chăm Sóc Da",
     gift_sets: "Bộ Quà Tặng",
@@ -747,4 +732,5 @@ export const vi = {
     view_now: "Xem ngay",
     chatbot_response_consult: "Cảm ơn bạn đã nhắn tin. Nhân viên tư vấn sẽ sớm liên hệ lại với bạn!",
     chatbot_response_product: "Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:",
+    chatbot_demo_product_name: "Kem dưỡng ẩm sâu BKEUTY Hydra-Deep",
 };

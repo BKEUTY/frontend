@@ -1,4 +1,3 @@
-// Header.js
 import { useState } from 'react';
 import { NavLink, useLocation } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
@@ -28,18 +27,13 @@ export default function Header() {
 
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  // Calculate total items (sum of quantities or just number of unique items?)
-  // Usually badge shows number of unique items or total quantity. 
-  // Shopee usually shows total items. The user said "số lượng sản phẩm" which refers to quantity.
-  // Assuming total quantity is better, but typical e-commerce badge is unique items OR quantity.
-  // Let's stick to unique items count (cartItems.length) as it's standard, 
-  // OR calculate total quantity if `quantity` field exists.
-  // Given `cartItems` has `quantity` field from previous steps:
+
+
   const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
 
   return (
     <header className="header">
-      <div className="mobile-menu-toggle" onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
+      <div className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
         <span className="bar"></span>
         <span className="bar"></span>
         <span className="bar"></span>
@@ -138,7 +132,7 @@ export default function Header() {
         </li>
 
         <li className="nav_item2">
-          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link account-link-mobile" : (isActive ? "nav_item2_link active-link-right account-link-mobile" : "nav_item2_link account-link-mobile")} to="/account">
+          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link" : (isActive ? "nav_item2_link active-link-right" : "nav_item2_link")} to="/account">
             <img
               className="icon_nav_item2"
               loading="lazy"

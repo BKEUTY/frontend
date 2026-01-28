@@ -20,7 +20,6 @@
     background: white;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    /* Softer shadow */
     overflow: hidden;
     margin-bottom: 30px;
     border: 1px solid #f0f0f0;
@@ -30,7 +29,6 @@
     display: flex;
     align-items: center;
     background-color: #fdfdfd;
-    /* Lighter header */
     padding: 18px 25px;
     font-weight: 600;
     color: #666;
@@ -57,7 +55,6 @@
     background-color: #fafafa;
 }
 
-/* Columns */
 .cart-col-checkbox {
     width: 5%;
     display: flex;
@@ -124,22 +121,18 @@
     font-weight: 700;
     color: var(--color_main_title);
     padding-right: 60px;
-    /* Increased padding to reserve space for the delete button */
     font-size: 1.1rem;
 }
 
-/* Product Info */
 .cart-product-info {
     display: flex;
     gap: 20px;
     align-items: flex-start;
-    /* Align top for better multiline text */
 }
 
 .cart-product-img-wrapper {
     width: 90px;
     height: 110px;
-    /* Slightly taller aspect ratio typical for beauty products */
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid #f5f5f5;
@@ -151,7 +144,6 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    /* Contain to show full product */
     padding: 5px;
 }
 
@@ -169,6 +161,7 @@
     line-height: 1.4;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }
@@ -179,7 +172,6 @@
     line-height: 1.4;
 }
 
-/* Delete Button - Absolute Positioned */
 .cart-btn-delete {
     background: white;
     border: 1px solid #eee;
@@ -196,7 +188,6 @@
 
     position: absolute;
     right: 25px;
-    /* Offset from right edge */
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
@@ -214,7 +205,6 @@
 }
 
 
-/* Quantity Control */
 .quantity-control {
     display: flex;
     align-items: center;
@@ -254,7 +244,6 @@
     color: #333;
 }
 
-/* Summary Section */
 .cart-summary-section {
     display: flex;
     justify-content: flex-end;
@@ -310,7 +299,6 @@
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    /* Align baseline */
     margin-bottom: 25px;
 }
 
@@ -345,7 +333,6 @@
 
 .btn-checkout:hover:not(:disabled) {
     background-color: #ad1457;
-    /* Darker Pink */
     transform: translateY(-2px);
     box-shadow: 0 6px 15px rgba(233, 30, 99, 0.3);
 }
@@ -356,7 +343,6 @@
     box-shadow: none;
 }
 
-/* Empty State */
 .cart-empty-state {
     display: flex;
     flex-direction: column;
@@ -418,7 +404,6 @@
 
     .cart-header-row {
         display: none;
-        /* Hide header on mobile */
     }
 
     .cart-item-row {
@@ -446,8 +431,6 @@
         padding-left: 10px;
         flex-direction: row;
         margin-bottom: 15px;
-
-        /* Ensure Text doesn't hit the absolute delete button */
         padding-right: 40px;
     }
 
@@ -469,7 +452,6 @@
         font-size: 0.95rem;
     }
 
-    /* Mobile Bottom Row */
     .cart-col-price,
     .cart-col-quantity,
     .cart-col-total {
@@ -496,33 +478,27 @@
         padding-right: 0;
     }
 
-    /* Move delete button to Top Right on Mobile */
     .cart-btn-delete {
         align-self: auto;
         padding: 0;
         top: 15px;
         right: 15px;
         transform: none;
-        /* remove center Y transform */
         width: 30px;
         height: 30px;
         background: white;
-        /* Ensure bg covers dotted lines if any */
         border-color: #eee;
     }
 
-    /* Ensure rows break correctly */
     .cart-col-checkbox,
     .cart-col-product {
         margin-bottom: 10px;
     }
 
-    /* Force row break for bottom elements */
     .cart-col-product {
         flex-basis: calc(100% - 30px);
     }
 
-    /* Container for bottom controls on mobile */
     .cart-item-row {
         justify-content: space-between;
     }
@@ -537,8 +513,6 @@
 }
 
 @media (max-width: 480px) {
-
-    /* Even smaller screens */
     .cart-item-row {
         padding: 15px 10px;
     }
@@ -550,13 +524,11 @@
 
     .cart-col-price {
         display: none;
-        /* Hide unit price on very small mobile, show total only? Or stack */
     }
 
     .cart-col-quantity {
         justify-content: flex-start;
         padding-left: 40px;
-        /* Align */
         flex: 1;
     }
 

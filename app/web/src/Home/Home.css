@@ -1,4 +1,3 @@
-/* Home.css */
 .home-container {
     padding-bottom: 20px;
     font-family: 'Inter', sans-serif;
@@ -212,7 +211,6 @@
     gap: 30px;
     padding-bottom: 20px;
     grid-auto-flow: dense;
-    /* Helps pack items */
 }
 
 .suggested-grid {
@@ -225,7 +223,6 @@
     justify-content: center;
 }
 
-/* Force Home cards to match Product List Card Height & Structure */
 .home-product-grid .product-card,
 .suggested-grid .product-card,
 .best-seller-grid .product-card {
@@ -233,15 +230,12 @@
     margin: 0;
     height: 100%;
     min-height: 420px;
-    /* Match Product.css */
     display: flex;
     flex-direction: column;
 }
 
-/* Ensure image wrapper height is consistent */
 .home-container .card-image-wrapper {
     height: 220px;
-    /* Match global tweak */
 }
 
 @media (max-width: 1400px) {
@@ -270,14 +264,11 @@
     .suggested-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 15px;
-        /* Slight gap increase */
         width: 100%;
         margin: 0;
         padding: 0 10px;
-        /* Side padding */
     }
 
-    /* Reset min-height for mobile to avoid overly tall cards */
     .home-product-grid .product-card,
     .suggested-grid .product-card,
     .best-seller-grid .product-card {
@@ -285,7 +276,6 @@
         height: auto;
     }
 
-    /* Ensure image wrapper overrides match global mobile */
     .home-container .card-image-wrapper {
         height: 160px;
     }
@@ -322,7 +312,6 @@
     .suggested-grid {
         grid-template-columns: repeat(2, 1fr);
         gap: 12px;
-        /* Increased gap for mobile */
         width: 100%;
         margin: 0;
         padding: 0 10px;
@@ -330,7 +319,6 @@
 
     .home-container .product-card {
         padding: 0;
-        /* Remove internal padding if global handles it */
     }
 
     .home-container .card-image-wrapper {
@@ -476,11 +464,9 @@
     font-weight: 700;
     cursor: pointer;
     align-self: center;
-    /* Clean align */
     transition: all 0.3s;
     text-transform: uppercase;
     border-radius: 50px;
-    /* Pill shape */
 }
 
 .btn-explore-brand:hover {
@@ -501,13 +487,9 @@
     object-fit: cover;
 }
 
-/* Responsive Design for Mobile */
 @media screen and (max-width: 768px) {
-
-    /* Container Padding */
     .home-container {
         padding-bottom: 60px;
-        /* Space for bottom nav if any */
     }
 
     .home-section-title {
@@ -515,7 +497,6 @@
         margin-bottom: 25px;
     }
 
-    /* Category Bar */
     .category-bar {
         flex-direction: column;
         padding: 10px 15px;
@@ -527,7 +508,6 @@
         overflow-x: auto;
         white-space: nowrap;
         padding-bottom: 5px;
-        /* Space for scrollbar */
         gap: 15px;
         -webkit-overflow-scrolling: touch;
     }

@@ -30,7 +30,7 @@ export default function Footer() {
               <li><Link to="/contact">{t('contact')}</Link></li>
               <li><Link to="/faq">{t('faq')}</Link></li>
               <li><Link to="/about-brand">{t('about_brand')}</Link></li>
-              <li><Link to="/beauty-corner">{t('beauty_corner')}</Link></li>
+
             </ul>
           </div>
 
@@ -87,9 +87,11 @@ export default function Footer() {
         </div>
       </footer>
 
-      <button className="chat-button" onClick={() => setIsChatOpen(true)}>
-        <img src={chat_icon} alt="Chat" className="chat-icon-img" /> {t('chat')}
-      </button>
+      {!isChatOpen && (
+        <button className="chat-button" onClick={() => setIsChatOpen(true)}>
+          <img src={chat_icon} alt="Chat" className="chat-icon-img" /> <span className="chat-button-text">{t('chat')}</span>
+        </button>
+      )}
       <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </>
   );

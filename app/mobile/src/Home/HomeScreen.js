@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
+import { FontAwesome } from '@expo/vector-icons';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -7,16 +8,16 @@ const { width, height } = Dimensions.get('window');
 
 // Mock Data mirroring Web
 const mockProducts = [
-    { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: '450.000đ', brand: 'BKEUTY', image: null, rating: '4.9', sold: '1k đã bán', tag: 'HOT' },
-    { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: '320.000đ', brand: 'MAC', image: null, rating: '4.7', sold: '500 đã bán', discount: '10%' },
-    { id: 3, name: 'Nước Hoa Hồng Dịu Nhẹ Toner', price: '150.000đ', brand: 'Laroche Posay', image: null, rating: '4.5', sold: '200 đã bán' },
-    { id: 4, name: 'Serum Vitamin C Sáng Da Clinical', price: '550.000đ', brand: 'Obagi', image: null, rating: '4.8', sold: '300 đã bán', tag: 'NEW' },
-    { id: 5, name: 'Kem Chống Nắng Phổ Rộng Perfect UV', price: '420.000đ', brand: 'Anessa', image: null, rating: '4.6', sold: '850 đã bán' },
-    { id: 6, name: 'Mặt Nạ Giấy Cấp Ẩm Tea Tree', price: '25.000đ', brand: 'Innisfree', image: null, rating: '4.9', sold: '5k đã bán' },
-    { id: 7, name: 'Tẩy Trang Cho Da Nhạy Cảm Sensibio', price: '180.000đ', brand: 'Bioderma', image: null, rating: '4.7', sold: '1.2k đã bán' },
-    { id: 8, name: 'Xịt Khoáng Cấp Nước Mineral 89', price: '280.000đ', brand: 'Vichy', image: null, rating: '4.5', sold: '600 đã bán' },
-    { id: 9, name: 'Sữa Rửa Mặt Tạo Bọt Foaming Cleanser', price: '120.000đ', brand: 'Cerave', image: null, rating: '4.6', sold: '900 đã bán' },
-    { id: 10, name: 'Dầu Dưỡng Tóc Mềm Mượt Treatment', price: '350.000đ', brand: 'Moroccanoil', image: null, rating: '4.8', sold: '400 đã bán' }
+    { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: '450.000đ', brand: 'BKEUTY', image: null, rating: '4.9', sold: '1k', tag: 'tag_hot' },
+    { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: '320.000đ', brand: 'MAC', image: null, rating: '4.7', sold: '500', discount: '10%' },
+    { id: 3, name: 'Nước Hoa Hồng Dịu Nhẹ Toner', price: '150.000đ', brand: 'Laroche Posay', image: null, rating: '4.5', sold: '200' },
+    { id: 4, name: 'Serum Vitamin C Sáng Da Clinical', price: '550.000đ', brand: 'Obagi', image: null, rating: '4.8', sold: '300', tag: 'tag_new' },
+    { id: 5, name: 'Kem Chống Nắng Phổ Rộng Perfect UV', price: '420.000đ', brand: 'Anessa', image: null, rating: '4.6', sold: '850' },
+    { id: 6, name: 'Mặt Nạ Giấy Cấp Ẩm Tea Tree', price: '25.000đ', brand: 'Innisfree', image: null, rating: '4.9', sold: '5k' },
+    { id: 7, name: 'Tẩy Trang Cho Da Nhạy Cảm Sensibio', price: '180.000đ', brand: 'Bioderma', image: null, rating: '4.7', sold: '1.2k' },
+    { id: 8, name: 'Xịt Khoáng Cấp Nước Mineral 89', price: '280.000đ', brand: 'Vichy', image: null, rating: '4.5', sold: '600' },
+    { id: 9, name: 'Sữa Rửa Mặt Tạo Bọt Foaming Cleanser', price: '120.000đ', brand: 'Cerave', image: null, rating: '4.6', sold: '900' },
+    { id: 10, name: 'Dầu Dưỡng Tóc Mềm Mượt Treatment', price: '350.000đ', brand: 'Moroccanoil', image: null, rating: '4.8', sold: '400' }
 ];
 
 const bestSellers = mockProducts.slice(0, 5);
@@ -60,14 +61,14 @@ const HomeScreen = ({ navigation }) => {
                         {bestSellers.map(item => (
                             <View key={item.id} style={styles.productCard}>
                                 <View style={styles.cardBadges}>
-                                    <Text style={styles.badgeRed}>HOT</Text>
+                                    {item.tag && <Text style={styles.badgeRed}>{t(item.tag) || item.tag}</Text>}
                                 </View>
                                 <View style={styles.productPlaceHolder} />
-                                <Text style={styles.productBrand}>Obagi</Text>
+                                <Text style={styles.productBrand}>{item.brand}</Text>
                                 <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
                                 <View style={styles.cardMeta}>
                                     <Text style={styles.rating}>⭐ {item.rating}</Text>
-                                    <Text style={styles.sold}>({item.sold})</Text>
+                                    <Text style={styles.sold}>({item.sold} {t('sold_count')})</Text>
                                 </View>
                                 <Text style={styles.productPrice}>{item.price}</Text>
                             </View>
@@ -82,18 +83,18 @@ const HomeScreen = ({ navigation }) => {
                         {suggestedProducts.map(item => (
                             <View key={item.id} style={styles.gridCard}>
                                 <View style={styles.cardBadges}>
-                                    <Text style={styles.badgeRed}>{item.tag}</Text>
+                                    {item.tag && <Text style={styles.badgeRed}>{t(item.tag) || item.tag}</Text>}
                                     {item.discount && <Text style={styles.badgeYellow}>-{item.discount}</Text>}
                                 </View>
                                 <View style={styles.productPlaceHolder} />
-                                <Text style={styles.productBrand}>Anessa</Text>
+                                <Text style={styles.productBrand}>{item.brand}</Text>
                                 <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
                                 <View style={styles.cardMeta}>
                                     <Text style={styles.rating}>⭐ {item.rating}</Text>
-                                    <Text style={styles.sold}>({item.sold})</Text>
+                                    <Text style={styles.sold}>({item.sold} {t('sold_count')})</Text>
                                 </View>
                                 <View style={styles.priceRow}>
-                                    <Text style={styles.oldPrice}>{item.oldPrice}</Text>
+                                    {item.oldPrice && <Text style={styles.oldPrice}>{item.oldPrice}</Text>}
                                     <Text style={styles.productPrice}>{item.price}</Text>
                                 </View>
                             </View>
@@ -103,6 +104,22 @@ const HomeScreen = ({ navigation }) => {
 
                 {/* Brand Story */}
                 <View style={styles.brandSection}>
+                    {/* Trust Signals */}
+                    <View style={styles.trustContainer}>
+                        <View style={styles.trustItem}>
+                            <FontAwesome name="check-circle" size={20} color="#00e676" />
+                            <Text style={styles.trustText}>{t('trust_authentic') || "Cam kết chính hãng 100%"}</Text>
+                        </View>
+                        <View style={styles.trustItem}>
+                            <FontAwesome name="check-circle" size={20} color="#00e676" />
+                            <Text style={styles.trustText}>{t('trust_return') || "Đổi trả trong 7 ngày"}</Text>
+                        </View>
+                        <View style={styles.trustItem}>
+                            <FontAwesome name="check-circle" size={20} color="#00e676" />
+                            <Text style={styles.trustText}>{t('trust_check') || "Được kiểm hàng trước khi nhận"}</Text>
+                        </View>
+                    </View>
+
                     <Text style={[styles.sectionTitle, { color: 'white', borderBottomColor: 'rgba(255,255,255,0.3)', borderBottomWidth: 1, paddingBottom: 10 }]}>{t('brand_story')}</Text>
                     <Text style={styles.sectionText}>
                         {t('brand_desc')}
@@ -273,6 +290,32 @@ const styles = StyleSheet.create({
     btnTextSecondary: {
         color: 'white',
         fontWeight: '600',
+    },
+    // Trust Signals Styles
+    trustContainer: {
+        flexDirection: 'column',
+        width: '100%',
+        marginBottom: 30,
+        gap: 15,
+        borderBottomWidth: 1,
+        borderBottomColor: 'rgba(255,255,255,0.15)',
+        paddingBottom: 25,
+    },
+    trustItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        paddingVertical: 12,
+        paddingHorizontal: 20,
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderRadius: 50,
+        width: '100%',
+    },
+    trustText: {
+        color: 'white',
+        fontWeight: '700',
+        fontSize: 14,
+        letterSpacing: 0.5,
     },
 });
 

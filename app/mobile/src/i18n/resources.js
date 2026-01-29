@@ -9,9 +9,19 @@ import { en as webEn, vi as webVi } from '../../web/src/i18n/resources';
 export const enMobile = {
     ...webEn,
     // Mobile specific overrides if needed
+    trust_authentic: "100% Authentic Guarantee",
+    trust_return: "7-day Return Policy",
+    trust_check: "Check Before Accept",
+    tag_hot: "HOT",
+    tag_new: "NEW",
 };
 
 export const viMobile = {
     ...webVi,
     // Mobile specific overrides if needed
+    trust_authentic: "Cam kết chính hãng 100%",
+    trust_return: "Đổi trả trong 7 ngày",
+    trust_check: "Được kiểm hàng trước khi nhận",
+    tag_hot: "HOT",
+    tag_new: "MỚI",
 };

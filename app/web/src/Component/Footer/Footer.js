@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./Footer.css";
 import Chatbot from "../Chatbot/Chatbot";
+import { FaCheckCircle } from "react-icons/fa"; // Trust signal icon
 
 // Importing icons
 import location_icon from "../../Assets/Images/Icons/icon_location.svg";
@@ -22,6 +23,21 @@ export default function Footer() {
   return (
     <>
       <footer className="footer">
+        <div className="footer-trust-signals">
+          <div className="trust-item">
+            <FaCheckCircle className="trust-icon" />
+            <span className="trust-text">{t('trust_authentic') || "Cam kết chính hãng 100%"}</span>
+          </div>
+          <div className="trust-item">
+            <FaCheckCircle className="trust-icon" />
+            <span className="trust-text">{t('trust_return') || "Đổi trả trong 7 ngày"}</span>
+          </div>
+          <div className="trust-item">
+            <FaCheckCircle className="trust-icon" />
+            <span className="trust-text">{t('trust_check') || "Được kiểm hàng trước khi nhận"}</span>
+          </div>
+        </div>
+
         <div className="footer-content">
           <div className="footer-column">
             <h3 className="footer-title">{t('support_team')}</h3>

@@ -367,6 +367,9 @@ export const en = {
     chatbot_response_consult: "Thank you for your message. A consultant will contact you soon!",
     chatbot_response_product: "Great! Here are some moisturizer suggestions for dry skin that BKEUTY recommends for you:",
     chatbot_demo_product_name: "BKEUTY Hydra-Deep Moisturizing Cream",
+    trust_authentic: "100% Authentic Guarantee",
+    trust_return: "7-day Return Policy",
+    trust_check: "Check Before Accept",
 };
 
 export const vi = {
@@ -733,4 +736,7 @@ export const vi = {
     chatbot_response_consult: "Cảm ơn bạn đã nhắn tin. Nhân viên tư vấn sẽ sớm liên hệ lại với bạn!",
     chatbot_response_product: "Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:",
     chatbot_demo_product_name: "Kem dưỡng ẩm sâu BKEUTY Hydra-Deep",
+    trust_authentic: "Cam kết chính hãng 100%",
+    trust_return: "Đổi trả trong 7 ngày",
+    trust_check: "Được kiểm hàng trước khi nhận",
 };

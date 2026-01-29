@@ -6,6 +6,47 @@
     text-align: left;
 }
 
+/* Trust Signals Section */
+.footer-trust-signals {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 40px;
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    flex-wrap: wrap;
+}
+
+.trust-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 50px;
+    transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.trust-item:hover {
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.trust-icon {
+    font-size: 22px;
+    color: #00e676;
+    /* Bright Green for Trust */
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.trust-text {
+    font-weight: 700;
+    font-size: 15px;
+    color: white;
+    letter-spacing: 0.3px;
+}
+
 .footer-content {
     display: flex;
     justify-content: space-between;
@@ -202,6 +243,19 @@
         flex-direction: column;
         gap: 30px;
         padding-bottom: 30px;
+    }
+
+    .footer-trust-signals {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding-bottom: 20px;
+        margin-bottom: 30px;
+    }
+
+    .trust-item {
+        width: 100%;
+        background: rgba(255, 255, 255, 0.03);
     }
 
     .footer-column {

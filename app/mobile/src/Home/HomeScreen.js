@@ -1,6 +1,5 @@
 import React from 'react';
-import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Dimensions, ScrollView } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import { View, Text, ImageBackground, StyleSheet, TouchableOpacity, Dimensions, ScrollView, Image } from 'react-native';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 
@@ -104,20 +103,13 @@ const HomeScreen = ({ navigation }) => {
 
                 {/* Brand Story */}
                 <View style={styles.brandSection}>
-                    {/* Trust Signals */}
-                    <View style={styles.trustContainer}>
-                        <View style={styles.trustItem}>
-                            <FontAwesome name="check-circle" size={20} color="#00e676" />
-                            <Text style={styles.trustText}>{t('trust_authentic') || "Cam kết chính hãng 100%"}</Text>
-                        </View>
-                        <View style={styles.trustItem}>
-                            <FontAwesome name="check-circle" size={20} color="#00e676" />
-                            <Text style={styles.trustText}>{t('trust_return') || "Đổi trả trong 7 ngày"}</Text>
-                        </View>
-                        <View style={styles.trustItem}>
-                            <FontAwesome name="check-circle" size={20} color="#00e676" />
-                            <Text style={styles.trustText}>{t('trust_check') || "Được kiểm hàng trước khi nhận"}</Text>
-                        </View>
+                    {/* Government Certificate Only */}
+                    <View style={styles.certContainer}>
+                        <Image
+                            source={{ uri: 'http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png' }}
+                            style={styles.certImage}
+                            resizeMode="contain"
+                        />
                     </View>
 
                     <Text style={[styles.sectionTitle, { color: 'white', borderBottomColor: 'rgba(255,255,255,0.3)', borderBottomWidth: 1, paddingBottom: 10 }]}>{t('brand_story')}</Text>
@@ -291,31 +283,18 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '600',
     },
-    // Trust Signals Styles
-    trustContainer: {
-        flexDirection: 'column',
+    // Certificate Styles
+    certContainer: {
         width: '100%',
-        marginBottom: 30,
-        gap: 15,
+        alignItems: 'center',
+        marginBottom: 25,
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(255,255,255,0.15)',
-        paddingBottom: 25,
+        paddingBottom: 20,
     },
-    trustItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 12,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        backgroundColor: 'rgba(255,255,255,0.08)',
-        borderRadius: 50,
-        width: '100%',
-    },
-    trustText: {
-        color: 'white',
-        fontWeight: '700',
-        fontSize: 14,
-        letterSpacing: 0.5,
+    certImage: {
+        width: 150,
+        height: 55,
     },
 });
 

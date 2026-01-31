@@ -21,7 +21,9 @@ const AccountScreen = () => {
 
     const mainFeatures = [
         { id: 'info', icon: '👤', title: t('account'), route: 'Profile' },
-        { id: 'orders', icon: '📦', title: t('my_orders'), route: 'Orders' },
+        { id: 'info', icon: '👤', title: t('account'), route: 'Profile' },
+        { id: 'orders', icon: '📦', title: t('my_orders'), route: 'OrderDetail' },
+        { id: 'appointments', icon: '📅', title: t('my_appointments'), route: 'Appointments' },
         { id: 'appointments', icon: '📅', title: t('my_appointments'), route: 'Appointments' },
         { id: 'wallet', icon: '💳', title: t('my_wallet'), route: 'Wallet' },
     ];

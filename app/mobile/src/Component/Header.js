@@ -92,19 +92,17 @@ const styles = StyleSheet.create({
         zIndex: 10,
     },
     logoContainer: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
+        marginLeft: 15,
         justifyContent: 'center',
-        alignItems: 'center',
-        zIndex: -1,
+        zIndex: 1, // specific zIndex
+        flex: 1, // Allow taking space
+        alignItems: 'flex-start', // Align left like web
     },
     logoText: {
         fontSize: 22,
         fontWeight: '800',
         color: COLORS.mainTitle,
+        // fontStyle: 'italic', // Removed to match cleaner web look if desired, or keep. Web doesn't seem to be italic in screenshots? Actually image shows styled text. Keep text style but align left.
         fontStyle: 'italic',
         letterSpacing: 0.5,
     },

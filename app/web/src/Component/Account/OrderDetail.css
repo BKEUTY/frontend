@@ -6,7 +6,6 @@
     padding-bottom: 20px;
 }
 
-/* Header Section */
 .order-header {
     display: flex;
     justify-content: space-between;
@@ -22,7 +21,6 @@
     font-size: 22px;
     font-weight: 700;
     color: var(--color_main_title);
-    /* Brand Purple/Pink */
     margin: 0;
 }
 
@@ -35,10 +33,8 @@
 .btn-track {
     padding: 8px 16px;
     border-radius: 6px;
-    /* Increased border radius */
     font-size: 14px;
     font-weight: 600;
-    /* Bolder text */
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     font-family: var(--inter_font);
@@ -46,13 +42,11 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    /* Improved icon-text spacing */
 }
 
 .btn-invoice {
     background: white;
     border: 1px solid var(--color_main_text);
-    /* Neutral border */
     color: var(--color_main_text);
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
@@ -72,12 +66,10 @@
 
 .btn-track:hover {
     background: #8e0246;
-    /* Slightly darker shade */
     border-color: #8e0246;
     transform: translateY(-1px);
 }
 
-/* Dates Section */
 .order-dates {
     display: flex;
     flex-wrap: wrap;
@@ -96,7 +88,6 @@
     display: flex;
     align-items: center;
     gap: 6px;
-    /* Icon spacing */
 }
 
 .expected-date {
@@ -104,7 +95,6 @@
     font-weight: 600;
 }
 
-/* Timeline - Purple Theme */
 .order-timeline {
     width: 100%;
     padding: 20px 0;
@@ -124,12 +114,10 @@
     text-align: center;
 }
 
-/* Connecting Line */
 .order-timeline::before {
     content: '';
     position: absolute;
     top: 44px;
-    /* Perfectly centered with 48px icon (20px padding + 24px half-height) */
     left: 10%;
     width: 80%;
     height: 3px;
@@ -148,22 +136,18 @@
     justify-content: center;
     margin-bottom: 12px;
     font-size: 18px;
-    /* Adjusted icon size */
     color: #bbb;
     z-index: 2;
     transition: all 0.3s;
     position: relative;
-    /* Ensure overlapping line */
 }
 
-/* Completed State - Uses Brand Color */
 .timeline-step.completed .step-icon-box {
     border-color: var(--color_main_title);
     background-color: white;
     color: var(--color_main_title);
 }
 
-/* Active State (Current) - Solid Brand Color */
 .timeline-step.active .step-icon-box {
     border-color: var(--color_main_title);
     background-color: var(--color_main_title);
@@ -181,7 +165,6 @@
 
 .timeline-step.completed .step-label {
     color: #333;
-    /* Darker for readability */
 }
 
 .timeline-step.active .step-label {
@@ -194,23 +177,18 @@
     color: #999;
 }
 
-/* Status Logs Detail */
 .order-logs {
     margin-bottom: 40px;
     position: relative;
     padding-left: 20px;
-    /* Space for the vertical line */
 }
 
-/* Vertical line for logs */
 .order-logs::before {
     content: '';
     position: absolute;
-    top: 10px;
-    bottom: 30px;
-    /* Don't extend past last item */
-    left: 24px;
-    /* Align with icon center */
+    top: 20px;
+    bottom: 20px;
+    left: 39px;
     width: 2px;
     background: #e9e9e9;
     z-index: 0;
@@ -222,55 +200,46 @@
     padding-bottom: 32px;
     position: relative;
     gap: 20px;
-    /* Gap between icon and content */
 }
 
 .log-item:last-child {
     padding-bottom: 0;
 }
 
-/* Removing old bullet */
 .log-item::before {
     content: none;
 }
 
-/* Log Icon Styling */
 .log-icon-placeholder {
     width: 10px;
     height: 10px;
     background: #fff;
     z-index: 2;
     margin-top: 6px;
-    /* Visual alignment with title */
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 16px;
     color: #aaa;
-    /* Resetting from previous bullet style */
     border-radius: 0;
     border: none;
 }
 
-/* Special styling for icon container in log items - Making it look like timeline dots */
 .log-item .log-icon-placeholder {
     width: 40px;
     height: 40px;
-    /* Consistent box size */
     border-radius: 50%;
-    border: 2px solid transparent;
+    border: 2px solid white;
     background: #f5f5f5;
-    /* Light grey bg */
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    /* Prevent shrinking */
     margin-top: 0;
     color: #666;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
-/* Highlight latest log */
 .log-item:first-child .log-icon-placeholder {
     color: white;
     background-color: var(--color_main_title);
@@ -279,6 +248,7 @@
 
 .log-content {
     flex: 1;
+    padding-top: 8px;
 }
 
 .log-content h4 {
@@ -288,11 +258,9 @@
     font-weight: 600;
 }
 
-/* Highlight latest log title */
 .log-item:first-child .log-content h4 {
     color: var(--color_main_title);
     font-size: 16px;
-    /* Slightly larger */
 }
 
 .log-content p {
@@ -307,10 +275,9 @@
     color: #999;
     min-width: 80px;
     text-align: right;
-    margin-top: 2px;
+    margin-top: 10px;
 }
 
-/* Info Grid (Payment & Address) */
 .order-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -323,7 +290,6 @@
     padding: 20px;
     border-radius: 8px;
     border: 1px solid #fceef5;
-    /* Very subtle purple border */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
 }
 
@@ -345,7 +311,6 @@
 
 .visa-badge {
     background: #1a1f71;
-    /* Standard Visa Blue - keep for realism */
     color: white;
     padding: 3px 8px;
     border-radius: 4px;
@@ -355,7 +320,6 @@
     vertical-align: middle;
 }
 
-/* Footer Section */
 .order-summary-section {
     display: flex;
     flex-wrap: wrap;
@@ -404,7 +368,6 @@
     flex: 1;
     min-width: 300px;
     background: #fffbfc;
-    /* Very light pink/purple background */
     padding: 20px;
     border-radius: 8px;
     border: 1px solid #f8e1eb;
@@ -433,7 +396,6 @@
     color: var(--color_main_title);
 }
 
-/* Mobile Responsive */
 @media (max-width: 768px) {
     .order-header {
         flex-direction: column;
@@ -462,10 +424,8 @@
         width: 3px;
         height: 100%;
         left: 42px;
-        /* Center with 48px icon (20px padding + 22px(half w margin)) => 44px */
         top: 0;
         background: linear-gradient(to bottom, var(--color_main_title) 50%, #eee 50%);
-        /* Gradient line for effect */
     }
 
     .timeline-step {
@@ -474,10 +434,11 @@
         text-align: left;
         margin-bottom: 30px;
         width: 100%;
+        gap: 15px;
     }
 
     .step-icon-box {
-        margin-right: 20px;
+        margin-right: 0;
         flex-shrink: 0;
         margin-bottom: 0;
         background: white;

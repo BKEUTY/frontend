@@ -1,7 +1,5 @@
 /**
- * Ant Design Custom Theme for BKEUTY
- * This file customizes Ant Design components to match BKEUTY's brand
- * Import order: index.css -> global.css -> antd-custom.css -> component CSS
+ * Ant Design Custom Theme
  */
 
 /* Override Ant Design CSS Variables */
@@ -35,7 +33,7 @@
     --ant-background-color-base: #f8f9fa;
 }
 
-/* Ant Design Component Overrides */
+
 
 /* Input Fields */
 .ant-input,
@@ -331,5 +329,55 @@ a.ant-typography:hover {
     .ant-input-password {
         font-size: 14px !important;
         padding: 10px 12px !important;
+    }
+}
+
+
+
+.ant-form-item-explain-error {
+    font-size: 0.8rem !important;
+    color: #ff4d4f !important;
+    margin-top: 4px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    animation: slideDownFade 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards !important;
+}
+
+/* Add an icon before the error message (using pseudo-element) */
+.ant-form-item-explain-error::before {
+    content: '⚠';
+    font-size: 0.85rem;
+    margin-right: 2px;
+}
+
+/* Error Input Styling */
+.ant-form-item-has-error .ant-input,
+.ant-form-item-has-error .ant-input-password,
+.ant-form-item-has-error .ant-input-affix-wrapper,
+.ant-form-item-has-error .ant-input:hover,
+.ant-form-item-has-error .ant-input-affix-wrapper:hover {
+    background-color: #fff1f0 !important;
+    border-color: #ff4d4f !important;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1) !important;
+}
+
+.ant-form-item-has-error .ant-input:focus,
+.ant-form-item-has-error .ant-input-affix-wrapper:focus,
+.ant-form-item-has-error .ant-input-focused,
+.ant-form-item-has-error .ant-input-affix-wrapper-focused {
+    box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.15) !important;
+}
+
+@keyframes slideDownFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
     }
 }

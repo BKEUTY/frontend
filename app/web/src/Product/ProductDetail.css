@@ -3,11 +3,10 @@
     background-color: var(--general_background_color);
     /* Use global background */
     color: var(--color_general_text);
-    font-family: var(--inter_font);
+
     /* Unified font */
 }
 
-/* Breadcrumb */
 .breadcrumb {
     font-size: 0.9rem;
     color: #666;
@@ -38,7 +37,6 @@
     font-weight: 500;
 }
 
-/* Main Top Section */
 .product-top-section {
     display: flex;
     gap: 40px;
@@ -97,20 +95,23 @@
     border-radius: 8px;
     padding: 20px;
     position: relative;
-    min-height: 400px;
+    /* Enforce height to match Skeleton (450px) and prevent CLS */
+    height: 450px;
+    width: 100%;
 }
 
 .main-image img {
     width: 100%;
-    height: auto;
-    max-height: 450px;
+    height: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
 }
 
-/* Zoom effect on hover could be added here */
+/* Zoom effect on hover */
+.main-image:hover img {
+    transform: scale(1.05);
+}
 
-/* Info Side */
 .product-info-side {
     flex: 1;
     padding: 10px;
@@ -226,8 +227,9 @@
     gap: 15px;
     margin-bottom: 30px;
     margin-top: auto;
-    /* Push to bottom of container if height is fixed */
 }
+
+
 
 .input-quantity-wrapper {
     display: flex;
@@ -265,13 +267,11 @@
     border: none;
     padding: 0 25px;
     height: 46px;
-    /* Match input height */
     font-size: 1rem;
     font-weight: 600;
     cursor: pointer;
     text-transform: uppercase;
     border-radius: 4px;
-    /* Slightly rounded for modern look */
     transition: background-color 0.2s, transform 0.1s;
     display: flex;
     align-items: center;
@@ -331,7 +331,6 @@
 }
 
 
-/* Content Tabs Section */
 .product-content-tabs {
     background: white;
     padding: 40px 30px;
@@ -432,7 +431,8 @@
     .main-image {
         width: 100%;
         min-height: 350px;
-        /* Ensure height */
+        height: auto !important;
+        /* Ensure height is dynamic on mobile */
         border: none;
         padding: 0;
         order: 1;
@@ -561,9 +561,6 @@
     }
 }
 
-/* =========================================
-   Modern Review Section Styles
-   ========================================= */
 .review-tab-content {
     animation: fadeIn 0.5s ease;
 }

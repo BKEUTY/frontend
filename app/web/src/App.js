@@ -19,6 +19,8 @@ import Login from "./Component/Auth/Login";
 import Register from "./Component/Auth/Register";
 import ForgotPassword from "./Component/Auth/ForgotPassword";
 import { AboutUs, Contact, FAQ, RetailSystem, Terms } from "./Component/StaticPages/FooterPages";
+import NotFound from "./Component/ErrorPages/NotFound";
+import ServerError from "./Component/ErrorPages/ServerError";
 
 import { CartProvider } from "./Context/CartContext";
 import CartDrawer from "./Cart/CartDrawer";
@@ -60,6 +62,9 @@ function Layout() {
           <Route path="/retail-system" element={<RetailSystem />} />
 
           <Route path="/terms" element={<Terms />} />
+
+          <Route path="/500" element={<ServerError />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {showFooter && <Footer />}

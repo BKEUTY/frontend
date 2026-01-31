@@ -11,6 +11,8 @@ export const en = {
     price_range: "Price Range",
     filter: "Filter",
     add_to_cart: "Add to Cart",
+    tag_hot: "Hot",
+    tag_new: "New",
     total: "Total",
     price: "Price",
     quantity: "Quantity",
@@ -370,6 +372,11 @@ export const en = {
     trust_authentic: "100% Authentic Guarantee",
     trust_return: "7-day Return Policy",
     trust_check: "Check Before Accept",
+    error_404_title: "Page Not Found",
+    error_404_desc: "Sorry, the page you are looking for does not exist.",
+    error_500_title: "Internal Server Error",
+    error_500_desc: "Sorry, something went wrong on our server. Please try again later.",
+    back_to_home: "Back to Home",
 };
 
 export const vi = {
@@ -388,6 +395,8 @@ export const vi = {
     price_range: "Khoảng Giá",
     filter: "Bộ Lọc",
     add_to_cart: "Thêm vào giỏ",
+    tag_hot: "Hot",
+    tag_new: "Mới",
     total: "Tổng cộng",
     price: "Giá",
     quantity: "Số Lượng",
@@ -739,4 +748,9 @@ export const vi = {
     trust_authentic: "Cam kết chính hãng 100%",
     trust_return: "Đổi trả trong 7 ngày",
     trust_check: "Được kiểm hàng trước khi nhận",
+    error_404_title: "Không Tìm Thấy Trang",
+    error_404_desc: "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
+    error_500_title: "Lỗi Máy Chủ",
+    error_500_desc: "Xin lỗi, có lỗi xảy ra từ máy chủ. Vui lòng thử lại sau.",
+    back_to_home: "Quay Về Trang Chủ",
 };

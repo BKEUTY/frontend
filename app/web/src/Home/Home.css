@@ -1,6 +1,5 @@
 .home-container {
     padding-bottom: 20px;
-    font-family: 'Inter', sans-serif;
 }
 
 .category-bar {
@@ -236,6 +235,7 @@
 
 .home-container .card-image-wrapper {
     height: 220px;
+    padding-top: 0 !important;
 }
 
 @media (max-width: 1400px) {

@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Oleo+Script:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
 
-/* ============================================
-   MODERN SPLIT-SCREEN AUTHENTICATION LAYOUT
-   ============================================ */
+
 
 .auth-container {
     display: flex;
@@ -12,7 +10,7 @@
     overflow-x: hidden;
 }
 
-/* Language Switcher */
+
 .auth-lang-switch {
     position: absolute;
     top: 24px;
@@ -30,7 +28,7 @@
     background-color: rgba(163, 2, 81, 0.05);
 }
 
-/* Mobile Logo (Visible only on mobile) */
+
 .auth-mobile-logo {
     display: none;
     text-align: center;
@@ -53,9 +51,7 @@
     margin: 0;
 }
 
-/* ============================================
-   LEFT SIDE - IMAGE & BRANDING
-   ============================================ */
+
 
 .auth-image-side {
     flex: 1;
@@ -64,11 +60,11 @@
     background-repeat: no-repeat;
     position: relative;
     display: none;
-    /* Hidden on mobile by default */
+
     overflow: hidden;
 }
 
-/* Gradient Overlay for better text readability */
+
 .auth-image-overlay {
     position: absolute;
     inset: 0;
@@ -111,7 +107,7 @@
     font-family: 'Be Vietnam Pro', sans-serif;
 }
 
-/* Show image on tablet and desktop */
+
 @media (min-width: 992px) {
     .auth-image-side {
         display: block;
@@ -123,9 +119,7 @@
     }
 }
 
-/* ============================================
-   RIGHT SIDE - FORM
-   ============================================ */
+
 
 .auth-form-side {
     flex: 1;
@@ -140,7 +134,7 @@
     width: 100%;
 }
 
-/* Decorative background elements */
+
 .auth-form-side::before {
     content: '';
     position: absolute;
@@ -162,9 +156,7 @@
     /* Space for lang switcher on mobile */
 }
 
-/* ============================================
-   FORM HEADER
-   ============================================ */
+
 
 .auth-header {
     text-align: center;
@@ -227,9 +219,7 @@
     color: #888 !important;
 }
 
-/* ============================================
-   SOCIAL LOGIN BUTTONS
-   ============================================ */
+
 
 .social-login-container {
     display: flex;
@@ -277,9 +267,7 @@
     box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3) !important;
 }
 
-/* ============================================
-   FOOTER LINKS
-   ============================================ */
+
 
 .auth-footer {
     text-align: center;
@@ -301,9 +289,7 @@
     text-decoration: underline;
 }
 
-/* ============================================
-   FORGOT PASSWORD SPECIFIC STYLES
-   ============================================ */
+
 
 .forgot-password-steps {
     margin-bottom: 40px;
@@ -364,9 +350,7 @@
 }
 
 
-/* ============================================
-   ANIMATIONS
-   ============================================ */
+
 
 @keyframes fadeInUp {
     from {
@@ -392,9 +376,7 @@
     }
 }
 
-/* ============================================
-   RESPONSIVE DESIGN
-   ============================================ */
+
 
 /* Tablet & Mobile */
 @media (max-width: 991px) {
@@ -505,9 +487,7 @@
     }
 }
 
-/* ============================================
-   ACCESSIBILITY & FOCUS STATES
-   ============================================ */
+
 
 .auth-form .ant-input:focus,
 .auth-form .ant-input-focused,
@@ -533,9 +513,7 @@
     opacity: 0.8;
 }
 
-/* ============================================
-   PRINT STYLES
-   ============================================ */
+
 
 @media print {
 

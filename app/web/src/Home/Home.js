@@ -26,12 +26,9 @@ const Home = () => {
         const fetchHomeData = async () => {
             setIsLoading(true);
             try {
-                // Fetch products for Best Sellers and Suggested
-                // Since backend doesn't support specific endpoints yet, we fetch the first page
                 // const response = await productApi.getAll({ page: 0, size: 10 });
                 // const fetchedProducts = response.data.content || [];
 
-                // Mock Data
                 const mockProducts = [
                     { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: 450000, brand: 'BKEUTY', image: null, rating: 4.9, sold: 1000, tag: 'HOT' },
                     { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: 320000, brand: 'MAC', image: null, rating: 4.7, sold: 500, discount: '10%' },
@@ -61,7 +58,6 @@ const Home = () => {
         fetchHomeData();
     }, []);
 
-    // Auto-slide every 30 seconds
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
@@ -82,8 +78,6 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            {/* Sub Header for Categories - As seen in image */}
-            {/* Hero Section Slider */}
             <div className="home-hero-slider animate-fade-in">
                 <div
                     className="slider-wrapper"
@@ -99,7 +93,6 @@ const Home = () => {
                     ))}
                 </div>
 
-                {/* Fixed Overlay Content */}
                 <div className="glass-overlay">
                     <h1 className="glass-title">{t('mid_autumn_promo')}</h1>
                     <p className="glass-subtitle">{t('promo_subtitle')}</p>
@@ -120,7 +113,6 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* Best Sellers */}
             <section className="section-full-width animate-slide-up delay-100">
                 <h2 className="home-section-title">{t('best_sellers')}</h2>
                 <div className="best-seller-grid bento-grid">
@@ -151,7 +143,6 @@ const Home = () => {
                 </div>
             </section>
 
-            {/* Suggested For You - Mocking 10 Items */}
             <section className="section-full-width bg-gray animate-slide-up delay-200">
                 <h2 className="home-section-title">{t('section_suggested')}</h2>
                 <div className="suggested-grid">

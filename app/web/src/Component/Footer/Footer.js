@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import "./Footer.css";
 import Chatbot from "../Chatbot/Chatbot";
-import { FaCheckCircle } from "react-icons/fa"; // Trust signal icon
 
 // Importing icons
 import location_icon from "../../Assets/Images/Icons/icon_location.svg";
@@ -23,19 +22,12 @@ export default function Footer() {
   return (
     <>
       <footer className="footer">
-        <div className="footer-trust-signals">
-          <div className="trust-item">
-            <FaCheckCircle className="trust-icon" />
-            <span className="trust-text">{t('trust_authentic') || "Cam kết chính hãng 100%"}</span>
-          </div>
-          <div className="trust-item">
-            <FaCheckCircle className="trust-icon" />
-            <span className="trust-text">{t('trust_return') || "Đổi trả trong 7 ngày"}</span>
-          </div>
-          <div className="trust-item">
-            <FaCheckCircle className="trust-icon" />
-            <span className="trust-text">{t('trust_check') || "Được kiểm hàng trước khi nhận"}</span>
-          </div>
+
+        {/* Government Certificate Only */}
+        <div className="footer-certificates">
+          <a href="http://online.gov.vn/Home/WebDetails/113642" target="_blank" rel="noopener noreferrer" className="cert-link">
+            <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã Thông Báo BCT" className="gov-cert-img" />
+          </a>
         </div>
 
         <div className="footer-content">

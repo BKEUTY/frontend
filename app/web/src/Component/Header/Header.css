@@ -1,6 +1,6 @@
 header.header {
     background: linear-gradient(90deg, #fce4ec 0%, #ffffff 100%);
-    padding: 10px 30px;
+    padding: 10px var(--general_padding_left_right2);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -11,6 +11,7 @@ header.header {
     display: flex;
     align-items: center;
     width: 15%;
+    margin-right: 30px;
 }
 
 .brand_image {

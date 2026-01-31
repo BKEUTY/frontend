@@ -2,7 +2,7 @@
     padding: 30px var(--general_padding_left_right);
     background-color: var(--general_background_color);
     min-height: 80vh;
-    font-family: var(--inter_font);
+
 }
 
 .checkout-title {
@@ -10,10 +10,8 @@
     font-weight: 700;
     margin-bottom: 30px;
     text-align: left;
-    /* Left align title */
     color: #333;
     max-width: 1400px;
-    /* Align with container */
     margin-left: auto;
     margin-right: auto;
 }
@@ -22,7 +20,6 @@
     display: flex;
     gap: 40px;
     max-width: 1400px;
-    /* Widen container */
     margin: 0 auto;
 }
 
@@ -34,7 +31,7 @@
     flex: 1;
 }
 
-/* Sections */
+
 .checkout-section {
     background: white;
     padding: 25px;
@@ -53,7 +50,7 @@
     color: #444;
 }
 
-/* Forms */
+
 .form-group {
     margin-bottom: 15px;
 }
@@ -113,7 +110,6 @@
 .payment-option.selected {
     border-color: var(--color_main_title);
     background-color: #fff0f5;
-    /* Light pink tint */
 }
 
 .radio-circle {
@@ -147,7 +143,6 @@
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    /* position: sticky; */
     top: 20px;
     z-index: 10;
     height: fit-content;
@@ -189,7 +184,6 @@
 
 .total-price {
     color: #c2185b;
-    /* Match pink */
     font-size: 1.3rem;
 }
 
@@ -197,7 +191,6 @@
     width: 100%;
     padding: 15px;
     background-color: #c2185b;
-    /* Pink color */
     color: white;
     border: none;
     border-radius: 4px;
@@ -379,10 +372,9 @@
 
     .checkout-right {
         order: 1;
-        /* Summary at the bottom on mobile */
     }
 
-    /* Disable sticky summary on mobile to avoid layout issues */
+
     .order-summary-box {
         position: static;
         top: unset;

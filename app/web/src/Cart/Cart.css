@@ -2,7 +2,7 @@
     padding: 40px var(--general_padding_left_right);
     background-color: var(--general_background_color);
     min-height: 80vh;
-    font-family: var(--inter_font);
+
     color: var(--color_general_text);
 }
 
@@ -382,9 +382,7 @@
     color: white;
 }
 
-/* =========================================
-   Responsive WEB CSS
-   ========================================= */
+
 
 @media (max-width: 900px) {
     .cart-page {
@@ -412,13 +410,9 @@
         position: relative;
     }
 
-    /* Mobile Layout Config */
-    /* 
-       [ Checkbox ] [ Image ] [ Name/Desc/Delete ]
-       [                  ] [ Price    Qty    Total ]
-    */
 
-    /* Mobile Layout Config */
+
+
     .cart-col-checkbox {
         width: 30px;
         align-items: flex-start;

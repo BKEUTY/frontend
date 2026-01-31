@@ -11,34 +11,32 @@ import Pagination from "../Component/Common/Pagination";
 import ProductCard from "../Component/Common/ProductCard";
 import Skeleton from "../Component/Common/Skeleton";
 import productApi from '../api/productApi';
+import NotFound from '../Component/ErrorPages/NotFound';
 
 export default function ProductDetail() {
     const { id } = useParams();
-    const { t, language } = useLanguage(); // Get language ('en', 'vi')
+    const { t, language } = useLanguage();
     const notify = useNotification();
     const { addToCart } = useCart();
     const location = useLocation();
 
-    // Determine breadcrumb category based on state passed from navigation or default
     const categoryName = location.state?.category || t('all_products');
     const categoryLink = location.state?.from || '/product';
 
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isError, setIsError] = useState(false);
 
     const [activeTab, setActiveTab] = useState('details');
     const [selectedSize, setSelectedSize] = useState("50ml");
     const [mainImage, setMainImage] = useState(best_selling_image);
     const [quantity, setQuantity] = useState(1);
 
-    // Initial load
     useEffect(() => {
         const fetchProduct = async () => {
             setIsLoading(true);
+            setIsError(false);
             try {
-                // Fetch basic info from backend
-                // Since backend is limited (missing reviews, sizes, specific details), we use a mock template
-                // and override key fields with backend data.
                 const response = await productApi.getAll({ page: 0, size: 100 });
                 const found = response.data.content.find(p => p.productId === id || p.id === id);
 
@@ -46,9 +44,9 @@ export default function ProductDetail() {
                     const mergedData = {
                         id: found.id || found.productId,
                         name: found.name,
-                        brand: "BKEUTY", // Backend missing brand
+                        brand: "BKEUTY",
                         price: found.price,
-                        original_price: found.price * 1.1, // Fake original
+                        original_price: found.price * 1.1,
                         rating: 4.8,
                         reviews_count: 124,
                         images: [
@@ -57,7 +55,7 @@ export default function ProductDetail() {
                             best_selling_image
                         ],
                         sizes: ["30ml", "50ml", "75ml"],
-                        content: { // Keep mock content
+                        content: {
                             en: {
                                 description: found.description || "Product description...",
                                 details: "Full details...",
@@ -75,13 +73,16 @@ export default function ProductDetail() {
                                 benefits_list: ["Tái Tạo", "Phục Hồi"]
                             }
                         },
-                        reviews: [] // Keep empty or mock
+                        reviews: []
                     };
                     setProductData(mergedData);
                     setMainImage(mergedData.images[0]);
+                } else {
+                    setIsError(true);
                 }
             } catch (err) {
                 console.error("Error fetching product detail:", err);
+                setIsError(true);
             } finally {
                 setIsLoading(false);
             }
@@ -89,17 +90,17 @@ export default function ProductDetail() {
         fetchProduct();
     }, [id]);
 
-    // Review Pagination
     const [reviewPage, setReviewPage] = useState(0);
     const reviewsPerPage = 5;
     const totalReviewPages = productData ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
     const displayedReviews = productData ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage) : [];
 
-    // Helper to get current locale content safely
     const getLocalContent = (key) => {
         if (!productData) return "";
         return productData.content[language === 'vi' ? 'vi' : 'en'][key] || productData.content['en'][key];
     };
+
+    if (isError) return <NotFound />;
 
     if (isLoading || !productData) return (
         <div className="product-detail-page">
@@ -143,7 +144,6 @@ export default function ProductDetail() {
 
     return (
         <div className="product-detail-page">
-            {/* Breadcrumb */}
             <div className="breadcrumb">
                 <Link to={categoryLink} state={{ fromDetail: true }}>{categoryName}</Link>
                 <span className="divider">/</span>
@@ -276,7 +276,6 @@ export default function ProductDetail() {
                     )}
                     {activeTab === 'reviews' && (
                         <div className="tab-content review-tab-content">
-                            {/* Visual-First: Review Summary Card */}
                             <div className="review-dashboard">
                                 <div className="rating-overview">
                                     <span className="big-score">{productData.rating}</span>
@@ -298,7 +297,6 @@ export default function ProductDetail() {
                                 <button className="btn-write-review">{t('write_review')}</button>
                             </div>
 
-                            {/* Contextual Relevance: Filter Tabs (Mock) */}
                             <div className="review-filters">
                                 <button className="filter-chip active">{t('all')}</button>
                                 <button className="filter-chip">{t('filter_with_media')} (24)</button>
@@ -353,10 +351,8 @@ export default function ProductDetail() {
                 </div>
             </div>
 
-            {/* Recommendations (Mockup) */}
             <div className="recommendations-section">
                 <h2 className="section-title">{t('related_products')}</h2>
-                {/* Reuse Product Grid Logic or Static Items */}
                 <div className="product-grid related-products-grid">
                     {/* Mock 5 items */}
                     {[1, 2, 3, 4, 5].map(i => {

@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd';
 import { MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useAuth } from '../../Context/AuthContext';
+import { useNotification } from '../../Context/NotificationContext';
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/auth_background.png';
 
@@ -12,15 +14,24 @@ const Login = () => {
     const navigate = useNavigate();
     const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
+    const { login } = useAuth(); // Use AuthContext
+    const showNotification = useNotification();
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         setLoading(true);
-        // Simulate API call
-        setTimeout(() => {
-            console.log('Login values:', values);
+        try {
+            const user = await login(values.email, values.password);
+
+            if (user.role === 'ADMIN') {
+                navigate('/admin/dashboard');
+            } else {
+                navigate('/home');
+            }
+        } catch (error) {
+            showNotification(t('login_failed') || 'Login Failed', 'error');
+        } finally {
             setLoading(false);
-            navigate('/home');
-        }, 1000);
+        }
     };
 
     const handleSocialLogin = (provider) => {

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useNotification } from '../../Context/NotificationContext';
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/auth_background.png';
 
@@ -12,20 +13,22 @@ const Register = () => {
     const navigate = useNavigate();
     const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
+    const showNotification = useNotification();
 
     const onFinish = (values) => {
         setLoading(true);
-        // Simulate API call
+
         setTimeout(() => {
             console.log('Register values:', values);
             setLoading(false);
+            showNotification(t('register_success') || 'Registration Successful', 'success');
             navigate('/home');
         }, 1000);
     };
 
     const handleSocialRegister = (provider) => {
         console.log(`Register with ${provider}`);
-        // Implement social register logic here
+
     };
 
     return (
@@ -148,6 +151,7 @@ const Register = () => {
                         <Form.Item
                             name="agreement"
                             valuePropName="checked"
+                            className="auth-agreement"
                             rules={[
                                 {
                                     validator: (_, value) =>

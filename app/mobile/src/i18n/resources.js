@@ -1,12 +1,11 @@
-
-import { en as webEn, vi as webVi } from '../../web/src/i18n/resources';
+import { en as webEn, vi as webVi } from '../../../../web/src/i18n/resources';
 
 // We can directly export the web resources if the environment supports it.
 // Assuming the relative path is correct and the bundler resolves it.
 // If direct import fails due to structure, we should copy the keys.
 // For now, let's assume we can spread them.
 
-export const enMobile = {
+export const en = {
     ...webEn,
     // Mobile specific overrides if needed
     trust_authentic: "100% Authentic Guarantee",
@@ -16,7 +15,7 @@ export const enMobile = {
     tag_new: "NEW",
 };
 
-export const viMobile = {
+export const vi = {
     ...webVi,
     // Mobile specific overrides if needed
     trust_authentic: "Cam kết chính hãng 100%",

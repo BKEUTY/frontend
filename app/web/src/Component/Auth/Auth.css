@@ -515,6 +515,19 @@
 
 
 
+
+/* Auth Agreement Alignment */
+.auth-agreement {
+    text-align: left !important;
+    margin-bottom: 24px;
+}
+
+.auth-agreement .ant-form-item-control-input-content {
+    display: flex;
+    justify-content: flex-start;
+    text-align: left;
+}
+
 @media print {
 
     .auth-image-side,

@@ -1,5 +1,5 @@
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { NotificationProvider } from "./Context/NotificationContext";
 import { LanguageProvider } from "./i18n/LanguageContext";
 import Home from "./Home/Home";
@@ -24,6 +24,13 @@ import ServerError from "./Component/ErrorPages/ServerError";
 
 import { CartProvider } from "./Context/CartContext";
 import CartDrawer from "./Cart/CartDrawer";
+import { AuthProvider } from "./Context/AuthContext";
+import AdminRoute from "./Component/Auth/AdminRoute";
+import AdminLayout from "./Component/Admin/AdminLayout";
+import Dashboard from "./Component/Admin/Dashboard/Dashboard";
+import ProductList from "./Component/Admin/Products/ProductList";
+import ProductCreate from "./Component/Admin/Products/ProductCreate";
+import Placeholder from "./Component/Admin/Placeholder";
 
 function Layout() {
   const location = useLocation();
@@ -31,14 +38,15 @@ function Layout() {
 
 
   const isAuth = path === "/login" || path === "/register" || path === "/forgot-password";
+  const isAdmin = path.startsWith("/admin");
 
-  const showHeader = !isAuth;
-  const showFooter = !isAuth;
+  const showHeader = !isAuth && !isAdmin;
+  const showFooter = !isAuth && !isAdmin;
 
   return (
     <div className="App">
       {showHeader && <Header />}
-      <main className="main_content">
+      <main className={isAdmin ? "" : "main_content"}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/home" element={<Home />} />
@@ -63,11 +71,26 @@ function Layout() {
 
           <Route path="/terms" element={<Terms />} />
 
+          {/* Admin Routes */}
+          <Route path="/admin" element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }>
+            <Route index element={<Navigate to="dashboard" replace />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="products" element={<ProductList />} />
+            <Route path="products/create" element={<ProductCreate />} />
+            <Route path="users" element={<Placeholder title="Users" />} />
+            <Route path="orders" element={<Placeholder title="Orders" />} />
+          </Route>
+
           <Route path="/500" element={<ServerError />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {showFooter && <Footer />}
+      {showHeader && <CartDrawer />}
     </div>
   );
 }
@@ -78,8 +101,9 @@ function App() {
       <NotificationProvider>
         <CartProvider>
           <Router>
-            <Layout />
-            <CartDrawer />
+            <AuthProvider>
+              <Layout />
+            </AuthProvider>
           </Router>
         </CartProvider>
       </NotificationProvider>

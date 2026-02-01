@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import './../Component/Notification/Notification.css';
+import React, { createContext, useContext, useCallback } from 'react';
+import { notification } from 'antd';
 
 const NotificationContext = createContext();
 
@@ -12,33 +12,23 @@ export const useNotification = () => {
 };
 
 export const NotificationProvider = ({ children }) => {
-    const [notification, setNotification] = useState(null);
-    const [type, setType] = useState('success');
-    const [isFading, setIsFading] = useState(false);
+    // We can configure global notification settings here if needed
+    // notification.config({ ... });
 
-    const showNotification = useCallback((message, notiType = 'success') => {
-        setNotification(message);
-        setType(notiType);
-        setIsFading(false);
-
-        // Auto dismiss after 3 seconds
-        setTimeout(() => {
-            setIsFading(true);
-            setTimeout(() => {
-                setNotification(null);
-                setIsFading(false);
-            }, 500); // Wait for fade out animation
-        }, 3000);
+    const showNotification = useCallback((message, type = 'success', description = '') => {
+        // Types: success,info,warning,error
+        notification[type]({
+            message: message,
+            description: description,
+            placement: 'topRight',
+            duration: 3,
+            // icon: <Icon /> // Antd automatically provides icons based on type
+        });
     }, []);
 
     return (
         <NotificationContext.Provider value={showNotification}>
             {children}
-            {notification && (
-                <div className={`notification-popup ${type} ${isFading ? 'fade-out' : ''}`}>
-                    {notification}
-                </div>
-            )}
         </NotificationContext.Provider>
     );
 };

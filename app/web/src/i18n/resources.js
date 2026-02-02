@@ -388,6 +388,7 @@ export const en = {
     admin_order_id: "Order ID",
     admin_customer: "Customer",
     admin_date: "Date",
+    admin_product_category: "Category",
     admin_total: "Total",
     admin_status: "Status",
 
@@ -447,6 +448,16 @@ export const en = {
     appointments: "Appointments",
     orders: "Orders",
     services: "Services",
+    appointments: "Appointments",
+    staff: "Staff",
+    reports: "Reports",
+    admin_orders: "Orders",
+    admin_services: "Services",
+    admin_appointments: "Appointments",
+    admin_staff: "Staff",
+    admin_reports: "Reports",
+    revenue_overview: "Revenue Overview",
+    admin_top_products: "Top Products",
 };
 
 export const vi = {
@@ -461,6 +472,7 @@ export const vi = {
     admin_order_id: "Mã Đơn",
     admin_customer: "Khách Hàng",
     admin_date: "Ngày Đặt",
+    admin_product_category: "Danh mục",
     admin_total: "Tổng Tiền",
     admin_status: "Trạng Thái",
 
@@ -894,4 +906,11 @@ export const vi = {
     orders: "Đơn hàng",
     services: "Dịch vụ",
     products: "Sản phẩm",
+    revenue_overview: "Biểu đồ doanh thu",
+    admin_top_products: "Sản phẩm bán chạy",
+    admin_orders: "Đơn hàng",
+    admin_services: "Dịch vụ",
+    admin_appointments: "Lịch hẹn (Admin)",
+    admin_staff: "Nhân viên",
+    admin_reports: "Báo cáo",
 };

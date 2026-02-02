@@ -1,179 +1,197 @@
-import React, { useEffect, useState } from 'react';
-import { Row, Col, Card, Table, Tag, Select, Dropdown, Menu, Button } from 'antd';
-import { SyncOutlined, CalendarOutlined, DownOutlined, RiseOutlined, ShoppingOutlined } from '@ant-design/icons';
+import React from 'react';
+import { Row, Col, Table, Tag } from 'antd';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import adminApi from '../../../api/adminApi';
-
-const { Option } = Select;
+import {
+    DollarOutlined,
+    ShoppingOutlined,
+    CalendarOutlined,
+    ArrowUpOutlined,
+    ArrowDownOutlined
+} from '@ant-design/icons';
+import {
+    AreaChart,
+    Area,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    ResponsiveContainer
+} from 'recharts';
+import '../Admin.css';
 
 const Dashboard = () => {
     const { t } = useLanguage();
-    const [stats, setStats] = useState({ revenue: 0, orders: 0, users: 0, products: 0 });
-    const [recentOrders, setRecentOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch stats (Mock if API fails)
-                const data = await adminApi.getStats();
-                setStats(data);
+    const stats = [
+        {
+            title: t('admin_dashboard_sales', 'Doanh thu hôm nay'),
+            value: '40,689,000 đ',
+            icon: <DollarOutlined />,
+            trend: 8.5,
+            iconClass: 'icon-pink',
+            trendType: 'up'
+        },
+        {
+            title: t('admin_dashboard_orders', 'Tổng đơn hàng'),
+            value: '1,250',
+            icon: <ShoppingOutlined />,
+            trend: 5.2,
+            iconClass: 'icon-blue',
+            trendType: 'up'
+        },
+        {
+            title: t('admin_dashboard_appointments', 'Lịch hẹn'),
+            value: '600',
+            icon: <CalendarOutlined />,
+            trend: 12, // example down trend logic could be added
+            iconClass: 'icon-green',
+            trendType: 'down' // Just for demo visuals, though number is +12 here
+        }
+    ];
 
-                // Fetch products for "Hot Product" table
-                // In real app, order by sales. Here just recent products
-                const productRes = await adminApi.getAllProducts(0, 5);
-                setRecentOrders(productRes.data.content || []);
-            } catch (error) {
-                console.error("Dashboard error", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, []);
+    // Smooth Area Chart Data
+    const data = [
+        { name: t('mon', 'Th 2'), value: 15 },
+        { name: t('tue', 'Th 3'), value: 22 },
+        { name: t('wed', 'Th 4'), value: 10 },
+        { name: t('thu', 'Th 5'), value: 25 },
+        { name: t('fri', 'Th 6'), value: 18 },
+        { name: t('sat', 'Th 7'), value: 30 },
+        { name: t('sun', 'CN'), value: 28 },
+    ];
 
-    // Mock Chart Data (Days of week)
-    const chartData = [15, 18, 5, 17, 12, 18, 22]; // Heights out of ~30 scaled
-    const labels = ["Thứ hai", "Thứ ba", "Thứ tư", "Thứ năm", "Thứ sáu", "Thứ bảy", "Chủ nhật"];
-
-    // Simple Bar Chart Component using CSS
-    const MockBarChart = () => (
-        <div style={{ height: '300px', display: 'flex', alignItems: 'flex-end', justifyContent: 'space-around', padding: '20px 0' }}>
-            <div style={{ position: 'absolute', left: 20, top: 60, bottom: 40, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', color: '#999', fontSize: '12px', height: '230px' }}>
-                <span>25</span><span>20</span><span>15</span><span>10</span><span>5</span><span>0</span>
-            </div>
-            {chartData.map((val, idx) => (
-                <div key={idx} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '10%' }}>
-                    <div style={{
-                        height: `${val * 10}px`,
-                        width: '12px',
-                        background: '#001529', // Dark bar color
-                        borderRadius: '2px',
-                        transition: 'height 0.5s ease'
-                    }}></div>
-                    <span style={{ fontSize: '12px', marginTop: '10px', color: '#666' }}>{labels[idx]}</span>
-                </div>
-            ))}
-        </div>
-    );
-
+    // Top Products Table Data
     const columns = [
         {
             title: t('admin_product_name', 'Tên sản phẩm'),
             dataIndex: 'name',
             key: 'name',
-            render: (text) => <b>{text.toUpperCase()}</b>
+            render: (text) => <span style={{ fontWeight: 600 }}>{text}</span>,
         },
         {
-            title: t('price', 'Giá'),
+            title: t('admin_product_category', 'Danh mục'),
+            dataIndex: 'category',
+            key: 'category',
+            render: (tag) => (
+                <Tag color="magenta" style={{ borderRadius: '8px', border: 'none', background: '#fce7f3', color: '#be185d', fontWeight: 600 }}>
+                    {tag.toUpperCase()}
+                </Tag>
+            ),
+        },
+        {
+            title: t('admin_product_price', 'Giá'),
             dataIndex: 'price',
             key: 'price',
-            render: (price) => `${price ? price.toLocaleString() : 0}đ`
+            render: (price) => <span style={{ color: '#1f2937' }}>{price}</span>,
         },
         {
-            title: t('status', 'Trạng thái'),
-            key: 'status',
-            render: () => (
-                <Tag color="lime" style={{ color: '#333', fontWeight: 600 }}>{t('retail_status_open', 'Sẵn hàng')}</Tag>
-            )
-        },
-        {
-            title: t('revenue', 'Doanh thu'),
-            key: 'revenue',
-            render: (text, record) => `${(record.price * 10).toLocaleString()}đ` // Mock revenue
+            title: t('admin_product_sold', 'Đã bán'),
+            dataIndex: 'sold',
+            key: 'sold',
+            align: 'right',
+            render: (sold) => <span style={{ fontWeight: 700, color: '#ec4899' }}>{sold}</span>,
         },
     ];
 
+    const products = [
+        { key: '1', name: 'Anti-Aging Cream', category: 'Skincare', price: '1,200,000 đ', sold: 342 },
+        { key: '2', name: 'Matte Lipstick', category: 'Makeup', price: '450,000 đ', sold: 215 },
+        { key: '3', name: 'Vitamin C Serum', category: 'Skincare', price: '890,000 đ', sold: 189 },
+        { key: '4', name: 'Rose Water Toner', category: 'Toner', price: '320,000 đ', sold: 156 },
+    ];
+
     return (
-        <div className="admin-animate-fade-in">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div className="dashboard-content">
+            <div className="dashboard-header">
                 <h2 className="dashboard-title">{t('dashboard', 'Tổng quan')}</h2>
-                <ButtonWithDropdown label={t('filter_by', 'Lọc theo')} />
             </div>
 
             <Row gutter={[24, 24]}>
-                {/* Left: Revenue Chart */}
+                {/* --- LEFT COLUMN: CHART (Bento Large Block) --- */}
                 <Col xs={24} lg={16}>
-                    <Card className="chart-container-card" bordered={false} style={{ height: '100%' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                            <div>
-                                <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0, color: '#1a1a1a' }}>{t('revenue', 'Doanh thu')}</h3>
-                                <span style={{ color: '#999', fontSize: '13px' }}>{t('unit_million', 'Triệu đồng')}</span>
-                            </div>
-                            <Tag color="blue">{t('this_week', 'Tuần này')}</Tag>
+                    <div className="beauty-card">
+                        <div className="chart-header">
+                            <span className="chart-title">{t('revenue_overview', 'Biểu đồ doanh thu')}</span>
+                            {/* Optional: Filter Dropdown could go here */}
                         </div>
-                        <MockBarChart />
-                    </Card>
+                        <div style={{ height: 350, width: '100%' }}>
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={data}>
+                                    <defs>
+                                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor="#ec4899" stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid vertical={false} strokeDasharray="3 3" stroke="#f0f0f0" />
+                                    <XAxis
+                                        dataKey="name"
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                                        dy={10}
+                                    />
+                                    <YAxis
+                                        axisLine={false}
+                                        tickLine={false}
+                                        tick={{ fill: '#9ca3af', fontSize: 12 }}
+                                    />
+                                    <Tooltip
+                                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    />
+                                    <Area
+                                        type="monotone"
+                                        dataKey="value"
+                                        stroke="#ec4899"
+                                        strokeWidth={3}
+                                        fillOpacity={1}
+                                        fill="url(#colorValue)"
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </div>
                 </Col>
 
-                {/* Right: Summary Cards */}
+                {/* --- RIGHT COLUMN: STAT CARDS (Bento Stack) --- */}
                 <Col xs={24} lg={8}>
-                    {/* Revenue Card */}
-                    <div className="admin-stat-card">
-                        <div className="admin-stat-meta">
-                            <span>{t('revenue_today', 'Doanh thu hôm nay')}</span>
-                            <div className="admin-icon-wrapper" style={{ background: 'rgba(255, 159, 67, 0.1)', color: '#ff9f43' }}>
-                                <SyncOutlined spin />
-                            </div>
-                        </div>
-                        <div className="admin-stat-value">40,689,000 ₫</div>
-                        <div style={{ color: '#2ecc71', fontWeight: 600, fontSize: '13px' }}>
-                            <RiseOutlined /> 8.5% <span style={{ color: '#999', fontWeight: 400 }}>{t('vs_last_period', 'So với cùng kỳ')}</span>
-                        </div>
-                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', height: '100%' }}>
+                        {stats.map((stat, index) => (
+                            <div key={index} className="beauty-card" style={{ padding: '20px' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                    <div>
+                                        <div className={`card-icon-wrapper ${stat.iconClass}`}>
+                                            {stat.icon}
+                                        </div>
+                                        <div className="card-stat-label">{stat.title}</div>
+                                        <div className="card-stat-value">{stat.value}</div>
+                                    </div>
 
-                    {/* Orders Card */}
-                    <div className="admin-stat-card">
-                        <div className="admin-stat-meta">
-                            <span>{t('total_orders', 'Số đơn hàng')}</span>
-                            <div className="admin-icon-wrapper" style={{ background: 'rgba(52, 152, 219, 0.1)', color: '#3498db' }}>
-                                <ShoppingOutlined style={{ fontSize: '20px' }} />
+                                    <div className={`trend-pill ${stat.trend > 0 ? 'trend-up' : 'trend-down'}`}>
+                                        {stat.trend > 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                                        {Math.abs(stat.trend)}%
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div className="admin-stat-value">1,250</div>
-                        <div style={{ color: '#2ecc71', fontWeight: 600, fontSize: '13px' }}>
-                            <RiseOutlined /> 5.2% <span style={{ color: '#999', fontWeight: 400 }}>{t('vs_last_period', 'So với cùng kỳ')}</span>
-                        </div>
-                    </div>
-
-                    {/* Appointments Card */}
-                    <div className="admin-stat-card">
-                        <div className="admin-stat-meta">
-                            <span>{t('appointments', 'Lịch hẹn')}</span>
-                            <div className="admin-icon-wrapper" style={{ background: 'rgba(46, 204, 113, 0.1)', color: '#2ecc71' }}>
-                                <CalendarOutlined />
-                            </div>
-                        </div>
-                        <div className="admin-stat-value">600</div>
-                        <div style={{ color: '#2ecc71', fontWeight: 600, fontSize: '13px' }}>
-                            <RiseOutlined /> 12% <span style={{ color: '#999', fontWeight: 400 }}>{t('vs_last_period', 'So với cùng kỳ')}</span>
-                        </div>
+                        ))}
                     </div>
                 </Col>
             </Row>
 
-            {/* Bottom: Hot Products */}
-            <div className="hot-product-section">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-                    <h3 className="admin-section-title">{t('hot_products', 'Sản phẩm bán chạy')}</h3>
-                    <Button type="link">{t('view_all', 'Xem tất cả')}</Button>
+            {/* --- BOTTOM SECTION: TABLE --- */}
+            <div className="table-card beauty-table">
+                <div className="chart-header">
+                    <span className="chart-title">{t('admin_top_products', 'Sản phẩm bán chạy')}</span>
                 </div>
                 <Table
                     columns={columns}
-                    dataSource={recentOrders}
+                    dataSource={products}
                     pagination={false}
-                    rowKey="id"
-                    className="custom-table"
+                    className="admin-modern-table"
                 />
             </div>
         </div>
     );
 };
-
-const ButtonWithDropdown = ({ label }) => (
-    <div style={{ background: '#fff', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', color: '#636e72', fontWeight: 500, boxShadow: '0 2px 6px rgba(0,0,0,0.05)' }}>
-        {label} <DownOutlined style={{ fontSize: '12px', marginLeft: '5px' }} />
-    </div>
-);
 
 export default Dashboard;

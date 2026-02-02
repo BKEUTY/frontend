@@ -23,9 +23,6 @@ const { Header, Sider, Content } = Layout;
 
 const AdminLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const {
-        token: { borderRadiusLG },
-    } = theme.useToken();
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
@@ -36,17 +33,22 @@ const AdminLayout = () => {
         navigate('/login');
     };
 
-    const userMenu = (
-        <Menu>
-            <Menu.Item key="home" icon={<AppstoreOutlined />} onClick={() => navigate('/')}>
-                {t('home_page', 'Trang chủ')}
-            </Menu.Item>
-            <Menu.Divider />
-            <Menu.Item key="logout" icon={<LogoutOutlined />} onClick={handleLogout} danger>
-                {t('logout', 'Đăng xuất')}
-            </Menu.Item>
-        </Menu>
-    );
+    const userMenuItems = [
+        {
+            key: 'home',
+            icon: <AppstoreOutlined />,
+            label: t('home_page', 'Trang chủ'),
+            onClick: () => navigate('/'),
+        },
+        { type: 'divider' },
+        {
+            key: 'logout',
+            icon: <LogoutOutlined />,
+            label: t('logout', 'Đăng xuất'),
+            onClick: handleLogout,
+            danger: true,
+        },
+    ];
 
     const items = [
         {
@@ -86,12 +88,8 @@ const AdminLayout = () => {
         },
     ];
 
-    const handleMenuClick = ({ key }) => {
-        navigate(key);
-    };
-
     return (
-        <Layout style={{ minHeight: '100vh' }} className="admin-layout-container">
+        <Layout className="admin-layout-container">
             <Sider
                 trigger={null}
                 collapsible
@@ -99,17 +97,28 @@ const AdminLayout = () => {
                 width={260}
                 className="admin-sider"
                 theme="light"
-                breakpoint="lg"
-                collapsedWidth="0"
-                onBreakpoint={(broken) => {
-                    if (broken) setCollapsed(true);
+                style={{
+                    overflow: 'auto',
+                    height: '100vh',
+                    position: 'fixed',
+                    left: 0,
+                    top: 0,
+                    bottom: 0,
                 }}
             >
-                <div className="admin-logo-container">
+                <div className={`admin-logo-container ${collapsed ? 'collapsed' : ''}`}>
                     {collapsed ? (
-                        <div className="admin-logo-text" style={{ fontSize: '20px' }}>B</div>
+                        <img
+                            src={require('../../Assets/Images/logo.svg').default}
+                            alt="B"
+                            className="admin-logo-collapsed"
+                        />
                     ) : (
-                        <h1 className="admin-logo-text">BKEUTY</h1>
+                        <img
+                            src={require('../../Assets/Images/logo.svg').default}
+                            alt="BKEUTY"
+                            className="admin-logo-img"
+                        />
                     )}
                 </div>
 
@@ -117,44 +126,34 @@ const AdminLayout = () => {
                     mode="inline"
                     selectedKeys={[location.pathname]}
                     items={items}
-                    onClick={handleMenuClick}
-                    style={{ borderRight: 'none' }}
+                    onClick={({ key }) => navigate(key)}
                 />
-
-                <div className="admin-logout-area">
-                    <button className="logout-btn" onClick={handleLogout} title={t('logout')}>
-                        <LogoutOutlined />
-                        {!collapsed && <span style={{ marginLeft: '10px' }}>{t('logout', 'Đăng xuất')}</span>}
-                    </button>
-                </div>
             </Sider>
 
-            <Layout style={{ background: 'transparent' }}>
+            <Layout className={`site-layout ${collapsed ? 'site-layout-collapsed' : 'site-layout-expanded'}`}>
                 <Header className="admin-header">
                     <div className="admin-header-left">
                         <Button
                             type="text"
                             icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
                             onClick={() => setCollapsed(!collapsed)}
-                            style={{ fontSize: '16px', width: 40, height: 40 }}
+                            className="trigger-btn"
                         />
                     </div>
 
                     <div className="admin-header-right">
-                        {/* Language Switch */}
                         <Button
                             type="text"
                             icon={<GlobalOutlined />}
                             onClick={() => changeLanguage(language === 'vi' ? 'en' : 'vi')}
-                            style={{ fontWeight: 500 }}
+                            className="lang-btn"
                         >
                             {language === 'vi' ? 'VI' : 'EN'}
                         </Button>
 
-                        {/* User Profile */}
-                        <Dropdown overlay={userMenu} placement="bottomRight" arrow>
+                        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
                             <div className="admin-user-profile">
-                                <Avatar style={{ backgroundColor: 'var(--color_main_title)', verticalAlign: 'middle' }}>
+                                <Avatar style={{ backgroundColor: '#a30251', verticalAlign: 'middle', marginRight: 8 }}>
                                     {user?.name?.[0]?.toUpperCase() || 'A'}
                                 </Avatar>
                                 <span className="admin-username">{user?.name || 'Admin'}</span>
@@ -164,11 +163,11 @@ const AdminLayout = () => {
                 </Header>
 
                 <Content
+                    className="site-layout-background"
                     style={{
-                        margin: '24px',
+                        margin: '24px 16px',
+                        padding: 24,
                         minHeight: 280,
-                        background: 'transparent',
-                        borderRadius: borderRadiusLG,
                     }}
                 >
                     <Outlet />

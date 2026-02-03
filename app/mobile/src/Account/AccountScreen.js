@@ -16,14 +16,14 @@ const AccountScreen = () => {
         email: "phongdeptrai28@gmail.com",
         avatar: null,
         level: "Member Gold",
-        points: 1250
+        points: 1250,
+        role: "ADMIN"
     };
 
     const mainFeatures = [
         { id: 'info', icon: '👤', title: t('account'), route: 'Profile' },
-        { id: 'info', icon: '👤', title: t('account'), route: 'Profile' },
+        ...(user.role === 'ADMIN' ? [{ id: 'dashboard', icon: '📊', title: 'Admin Dashboard', route: 'AdminDashboard' }] : []),
         { id: 'orders', icon: '📦', title: t('my_orders'), route: 'OrderDetail' },
-        { id: 'appointments', icon: '📅', title: t('my_appointments'), route: 'Appointments' },
         { id: 'appointments', icon: '📅', title: t('my_appointments'), route: 'Appointments' },
         { id: 'wallet', icon: '💳', title: t('my_wallet'), route: 'Wallet' },
     ];
@@ -47,7 +47,6 @@ const AccountScreen = () => {
         <View style={styles.container}>
             <Header />
             <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {/* Profile Header Card */}
                 <View style={styles.profileHeader}>
                     <View style={styles.headerContent}>
                         <View style={styles.avatarSection}>
@@ -62,7 +61,6 @@ const AccountScreen = () => {
                         <View style={styles.userInfo}>
                             <Text style={styles.username}>{user.name}</Text>
 
-                            {/* Membership Pill Row */}
                             <View style={styles.membershipContainer}>
                                 <View style={styles.premiumBadge}>
                                     <Text style={styles.premiumBadgeText}>DIAMOND</Text>
@@ -76,7 +74,6 @@ const AccountScreen = () => {
                     </View>
                 </View>
 
-                {/* Main Features Bento Grid */}
                 <Text style={styles.sectionTitle}>Dashboard</Text>
                 <View style={styles.bentoGrid}>
                     {mainFeatures.map((item) => (
@@ -93,7 +90,6 @@ const AccountScreen = () => {
                     ))}
                 </View>
 
-                {/* Support List */}
                 <Text style={styles.sectionTitle}>{t('support_header') || "Support"}</Text>
                 <View style={styles.menuSection}>
                     {supportItems.map(item => (
@@ -176,12 +172,10 @@ const styles = StyleSheet.create({
         fontWeight: '800',
         color: COLORS.mainTitle,
         marginBottom: 8,
-        // Added stroke effect for better visibility/style
         textShadowColor: 'rgba(0, 0, 0, 0.1)',
         textShadowOffset: { width: 1, height: 1 },
         textShadowRadius: 1,
     },
-    /* Mobile Membership Pill Styles */
     membershipContainer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -189,10 +183,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         paddingVertical: 6,
         paddingHorizontal: 10,
-        alignSelf: 'flex-start', // Fit content
+        alignSelf: 'flex-start',
     },
     premiumBadge: {
-        backgroundColor: '#00d2d3', // Teal/Cyan matching web
+        backgroundColor: '#00d2d3',
         borderRadius: 6,
         paddingHorizontal: 6,
         paddingVertical: 2,
@@ -212,7 +206,7 @@ const styles = StyleSheet.create({
     },
     progressBarFill: {
         height: '100%',
-        backgroundColor: '#fbc531', // Gold
+        backgroundColor: '#fbc531',
         borderRadius: 3,
     },
     pointsText: {
@@ -221,9 +215,8 @@ const styles = StyleSheet.create({
         color: '#57606f',
     },
 
-    // Bento Grid
     sectionTitle: {
-        fontSize: 22, // Increased from 18 to match unified header styles
+        fontSize: 22,
         fontWeight: '800',
         color: '#333',
         marginBottom: 15,
@@ -236,7 +229,7 @@ const styles = StyleSheet.create({
         marginBottom: 25,
     },
     bentoCard: {
-        width: (width - 45) / 2, // 2 columns with padding calculation
+        width: (width - 45) / 2,
         backgroundColor: 'white',
         borderRadius: 16,
         padding: 20,
@@ -249,10 +242,11 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         borderWidth: 1,
         borderColor: '#f0f0f0',
+        minHeight: 110,
     },
     cardIconContainer: {
-        width: 45,
-        height: 45,
+        width: 48,
+        height: 48,
         backgroundColor: '#fff0f6',
         borderRadius: 12,
         justifyContent: 'center',
@@ -260,7 +254,7 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     },
     cardIcon: {
-        fontSize: 22,
+        fontSize: 24,
     },
     cardTitle: {
         fontSize: 15,
@@ -268,7 +262,6 @@ const styles = StyleSheet.create({
         color: '#333',
     },
 
-    // Menu Section
     menuSection: {
         backgroundColor: 'white',
         borderRadius: 12,
@@ -286,6 +279,7 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         borderBottomWidth: 1,
         borderBottomColor: '#f5f5f5',
+        minHeight: 56,
     },
     menuItemText: {
         fontSize: 15,

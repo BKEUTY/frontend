@@ -5,7 +5,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 const { width, height } = Dimensions.get('window');
 
-// Mock Data mirroring Web
+
 const mockProducts = [
     { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: '450.000đ', brand: 'BKEUTY', image: null, rating: '4.9', sold: '1k', tag: 'tag_hot' },
     { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: '320.000đ', brand: 'MAC', image: null, rating: '4.7', sold: '500', discount: '10%' },
@@ -31,9 +31,9 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.container}>
             <Header />
             <ScrollView style={styles.scrollContent}>
-                {/* Hero Section */}
+
                 <ImageBackground
-                    // Placeholder image, ensure this asset exists or use a network image for demo
+
                     source={require('../Assets/Images/Banners/banner_home_1.png')}
                     style={styles.heroSection}
                     resizeMode="cover"
@@ -53,7 +53,7 @@ const HomeScreen = ({ navigation }) => {
                     </View>
                 </ImageBackground>
 
-                {/* Best Sellers */}
+
                 <View style={[styles.contentSection, { backgroundColor: '#fff' }]}>
                     <Text style={styles.sectionTitle}>{t('best_sellers')}</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
                     </ScrollView>
                 </View>
 
-                {/* Suggested Products (Grid) */}
+
                 <View style={styles.contentSection}>
                     <Text style={styles.sectionTitle}>{t('section_suggested')}</Text>
                     <View style={styles.gridContainer}>
@@ -101,9 +101,9 @@ const HomeScreen = ({ navigation }) => {
                     </View>
                 </View>
 
-                {/* Brand Story */}
+
                 <View style={styles.brandSection}>
-                    {/* Government Certificate Only */}
+
                     <View style={styles.certContainer}>
                         <Image
                             source={{ uri: 'http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png' }}
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderWidth: 1,
         borderColor: '#eee',
-        // Shadow
+
         shadowColor: "#000",
         shadowOffset: {
             width: 0,
@@ -227,14 +227,14 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
     },
     gridCard: {
-        width: (width - 40) / 2, // 2 columns with spacing (15px padding * 2 = 30 + 10 gap = 40 approx)
+        width: (width - 40) / 2,
         backgroundColor: 'white',
-        borderRadius: 16, // Modern rounded corners
-        padding: 0, // Remove padding to let image fill width if needed, or keep small
+        borderRadius: 16,
+        padding: 0,
         marginBottom: 15,
-        // Remove heavy border
-        // shadow
-        shadowColor: "#000", // Neutral shadow like web
+
+
+        shadowColor: "#000",
         shadowOffset: {
             width: 0,
             height: 2,
@@ -244,7 +244,7 @@ const styles = StyleSheet.create({
         elevation: 3,
         overflow: 'hidden',
     },
-    // ... rest of styles
+
     cardBadges: {
         position: 'absolute',
         top: 10,
@@ -255,20 +255,20 @@ const styles = StyleSheet.create({
     },
     productPlaceHolder: {
         width: '100%',
-        height: 150, // Taller image
+        height: 150,
         backgroundColor: '#f9f9f9',
         marginBottom: 0,
     },
     // ...
     brandSection: {
         padding: 40,
-        backgroundColor: COLORS.mainTitle, // Updated from dark #33001b to brand color
+        backgroundColor: COLORS.mainTitle,
         alignItems: 'center',
         marginTop: 20,
     },
     sectionText: {
         textAlign: 'center',
-        color: '#e0e0e0', // Light text for dark bg
+        color: '#e0e0e0',
         lineHeight: 22,
         marginBottom: 20,
     },
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
         color: 'white',
         fontWeight: '600',
     },
-    // Certificate Styles
+
     certContainer: {
         width: '100%',
         alignItems: 'center',

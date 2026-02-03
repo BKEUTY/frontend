@@ -18,6 +18,7 @@ import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, TermsScreen } from '../StaticPages/StaticScreens';
 import Chatbot from '../Component/Chatbot/Chatbot';
+import AdminDashboard from '../Admin/DashboardScreen';
 
 import NotFoundScreen from '../Component/ErrorPages/NotFoundScreen';
 import ServerErrorScreen from '../Component/ErrorPages/ServerErrorScreen';
@@ -79,6 +80,9 @@ export default function AppNavigator() {
                     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
 
                     <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
+
+                    {/* Admin */}
+                    <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ headerShown: false }} />
 
                     {/* Error Screens */}
                     <Stack.Screen name="NotFound" component={NotFoundScreen} />

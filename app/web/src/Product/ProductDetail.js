@@ -151,7 +151,7 @@ export default function ProductDetail() {
             </div>
 
             <div className="product-top-section">
-                {/* Left: Gallery */}
+
                 <div className="product-gallery">
                     <div className="thumbnail-list">
                         {productData.images.map((img, idx) => (
@@ -166,11 +166,11 @@ export default function ProductDetail() {
                     </div>
                     <div className="main-image">
                         <img src={mainImage} alt={productData.name} />
-                        {/* Optional Tag Overlay */}
+
                     </div>
                 </div>
 
-                {/* Right: Info */}
+
                 <div className="product-info-side">
                     <div className="brand-label">{productData.brand}</div>
                     <h1 className="detail-title">{productData.name}</h1>
@@ -234,7 +234,7 @@ export default function ProductDetail() {
                 </div>
             </div>
 
-            {/* Content Tabs */}
+
             <div className="product-content-tabs">
                 <div className="tab-headers">
                     {tabs.map(tab => (
@@ -326,7 +326,7 @@ export default function ProductDetail() {
                                                 {rev.content}
                                             </div>
 
-                                            {/* Action Buttons: Like & Comment */}
+
                                             <div className="review-actions">
                                                 <button className="action-btn">
                                                     <FaRegHeart className="icon-action" /> {t('like') || 'Like'}
@@ -340,7 +340,7 @@ export default function ProductDetail() {
                                 ))}
                             </div>
 
-                            {/* Pagination Controls */}
+
                             <Pagination
                                 page={reviewPage}
                                 totalPages={totalReviewPages}
@@ -354,7 +354,7 @@ export default function ProductDetail() {
             <div className="recommendations-section">
                 <h2 className="section-title">{t('related_products')}</h2>
                 <div className="product-grid related-products-grid">
-                    {/* Mock 5 items */}
+
                     {[1, 2, 3, 4, 5].map(i => {
                         const relatedProduct = {
                             id: i,

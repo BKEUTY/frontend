@@ -14,7 +14,7 @@ const Login = () => {
     const navigate = useNavigate();
     const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
-    const { login } = useAuth(); // Use AuthContext
+    const { login } = useAuth();
     const showNotification = useNotification();
 
     const onFinish = async (values) => {
@@ -35,13 +35,12 @@ const Login = () => {
     };
 
     const handleSocialLogin = (provider) => {
-        console.log(`Login with ${provider}`);
-        // Implement social login logic here
+        showNotification(`${t('login_with', 'Login with')} ${provider}`, 'info');
     };
 
     return (
         <div className="auth-container">
-            {/* Left Side - Image */}
+
             <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
                 <div className="auth-image-overlay">
                     <div className="auth-brand-section">
@@ -51,7 +50,7 @@ const Login = () => {
                 </div>
             </div>
 
-            {/* Right Side - Form */}
+
             <div className="auth-form-side">
                 <div className="auth-lang-switch">
                     <Button

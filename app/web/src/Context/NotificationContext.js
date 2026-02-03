@@ -12,17 +12,14 @@ export const useNotification = () => {
 };
 
 export const NotificationProvider = ({ children }) => {
-    // We can configure global notification settings here if needed
-    // notification.config({ ... });
+
 
     const showNotification = useCallback((message, type = 'success', description = '') => {
-        // Types: success,info,warning,error
         notification[type]({
             message: message,
             description: description,
             placement: 'topRight',
             duration: 3,
-            // icon: <Icon /> // Antd automatically provides icons based on type
         });
     }, []);
 

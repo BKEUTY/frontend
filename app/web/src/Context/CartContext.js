@@ -9,7 +9,7 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
-    const userId = 1; // Hardcoded for now
+    const userId = 1;
 
     const fetchCart = async () => {
         try {
@@ -18,7 +18,7 @@ export const CartProvider = ({ children }) => {
                 const data = res.data;
                 const mapped = data.map(item => ({
                     ...item,
-                    id: item.productId || item.id, // Ensure unified ID access
+                    id: item.productId || item.id,
                     image: item.image || 'placeholder',
                 }));
                 setCartItems(mapped);
@@ -28,7 +28,7 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // Initial Fetch
+
     useEffect(() => {
         fetchCart();
     }, []);
@@ -38,7 +38,7 @@ export const CartProvider = ({ children }) => {
     const closeCart = () => setIsCartOpen(false);
 
     const addToCart = async (product) => {
-        // Optimistic UI Update (temporary)
+
         setCartItems(prev => {
             const existing = prev.find(item => item.id === product.id);
             if (existing) {
@@ -49,12 +49,12 @@ export const CartProvider = ({ children }) => {
         setIsCartOpen(true);
 
         try {
-            // Call API
+
             await cartApi.add({
                 userId: userId,
                 productId: product.id || product.productId
             });
-            // Refresh to get correct IDs
+
             await fetchCart();
         } catch (error) {
             console.error("Failed to add to cart API", error);
@@ -64,10 +64,10 @@ export const CartProvider = ({ children }) => {
     const updateQuantity = async (cartId, quantity) => {
         if (quantity < 1) return;
 
-        // Local Update Only (Backend missing PUT endpoint)
+
         setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity: quantity } : item));
 
-        // Note: Since backend doesn't support quantity update, we cannot sync this.
+
     };
 
     return (

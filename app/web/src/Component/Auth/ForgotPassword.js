@@ -17,15 +17,13 @@ const ForgotPassword = () => {
     const [email, setEmail] = useState('');
 
 
-    // Mock OTP (in production, this will be sent to email)
     const MOCK_OTP = '123456';
 
-    // Step 1: Request OTP
     const handleRequestOTP = (values) => {
         setLoading(true);
         setEmail(values.email);
 
-        // Simulate API call
+
         setTimeout(() => {
             setLoading(false);
             message.success(`${t('otp_sent')} ${values.email}. ${t('otp_mock')} ${MOCK_OTP}`);
@@ -33,11 +31,10 @@ const ForgotPassword = () => {
         }, 1500);
     };
 
-    // Step 2: Verify OTP
     const handleVerifyOTP = (values) => {
         setLoading(true);
 
-        // Simulate API call
+
         setTimeout(() => {
             setLoading(false);
             if (values.otp === MOCK_OTP) {
@@ -50,11 +47,10 @@ const ForgotPassword = () => {
         }, 1000);
     };
 
-    // Step 3: Reset Password
     const handleResetPassword = (values) => {
         setLoading(true);
 
-        // Simulate API call
+
         setTimeout(() => {
             setLoading(false);
             message.success(t('reset_success'));
@@ -64,7 +60,7 @@ const ForgotPassword = () => {
         }, 1000);
     };
 
-    // Resend OTP
+
     const handleResendOTP = () => {
         message.info(`${t('otp_sent')} ${email}. ${t('otp_mock')} ${MOCK_OTP}`);
     };
@@ -86,7 +82,7 @@ const ForgotPassword = () => {
 
     return (
         <div className="auth-container">
-            {/* Left Side - Image */}
+
             <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
                 <div className="auth-image-overlay">
                     <div className="auth-brand-section">
@@ -96,7 +92,7 @@ const ForgotPassword = () => {
                 </div>
             </div>
 
-            {/* Right Side - Form */}
+
             <div className="auth-form-side">
                 <div className="auth-lang-switch">
                     <Button
@@ -123,14 +119,13 @@ const ForgotPassword = () => {
                         </Text>
                     </div>
 
-                    {/* Progress Steps */}
+
                     <Steps current={currentStep} className="forgot-password-steps">
                         {steps.map((item, index) => (
                             <Step key={index} title={item.title} icon={item.icon} />
                         ))}
                     </Steps>
 
-                    {/* Step 1: Request OTP */}
                     {currentStep === 0 && (
                         <Form
                             name="request-otp"
@@ -174,7 +169,6 @@ const ForgotPassword = () => {
                         </Form>
                     )}
 
-                    {/* Step 2: Verify OTP */}
                     {currentStep === 1 && (
                         <Form
                             name="verify-otp"
@@ -230,7 +224,6 @@ const ForgotPassword = () => {
                         </Form>
                     )}
 
-                    {/* Step 3: Reset Password */}
                     {currentStep === 2 && (
                         <Form
                             name="reset-password"

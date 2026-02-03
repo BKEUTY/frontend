@@ -8,7 +8,7 @@ const AdminRoute = ({ children }) => {
     const { user, isAuthenticated } = useAuth();
     const location = useLocation();
 
-    // In a real app with async auth check, you might want a loading state here
+
     if (!isAuthenticated) {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }

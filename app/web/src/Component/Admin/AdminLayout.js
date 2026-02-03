@@ -1,18 +1,18 @@
-
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown, theme } from 'antd';
+import { Layout, Menu, Button, Avatar, Dropdown } from 'antd';
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    AppstoreOutlined,
+    DashboardOutlined,
     TeamOutlined,
     HeartOutlined,
-    DropboxOutlined,
+    ShoppingOutlined,
     FileTextOutlined,
     CalendarOutlined,
     BarChartOutlined,
     LogoutOutlined,
-    GlobalOutlined
+    GlobalOutlined,
+    HomeOutlined
 } from '@ant-design/icons';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
@@ -22,11 +22,29 @@ import './Admin.css';
 const { Header, Sider, Content } = Layout;
 
 const AdminLayout = () => {
-    const [collapsed, setCollapsed] = useState(false);
+    const [collapsed, setCollapsed] = useState(() => window.innerWidth <= 768);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
     const { t, language, changeLanguage } = useLanguage();
+
+    React.useEffect(() => {
+        const handleResize = () => {
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
+            setCollapsed(mobile);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    React.useEffect(() => {
+        if (isMobile) {
+            setCollapsed(true);
+        }
+    }, [location.pathname, isMobile]);
 
     const handleLogout = () => {
         logout();
@@ -36,9 +54,12 @@ const AdminLayout = () => {
     const userMenuItems = [
         {
             key: 'home',
-            icon: <AppstoreOutlined />,
+            icon: <HomeOutlined />,
             label: t('home_page', 'Trang chủ'),
-            onClick: () => navigate('/'),
+            onClick: () => {
+                navigate('/');
+                window.location.reload();
+            },
         },
         { type: 'divider' },
         {
@@ -53,7 +74,7 @@ const AdminLayout = () => {
     const items = [
         {
             key: '/admin/dashboard',
-            icon: <AppstoreOutlined />,
+            icon: <DashboardOutlined />,
             label: t('dashboard', 'Tổng quan'),
         },
         {
@@ -63,7 +84,7 @@ const AdminLayout = () => {
         },
         {
             key: '/admin/products',
-            icon: <DropboxOutlined />,
+            icon: <ShoppingOutlined />,
             label: t('products', 'Sản phẩm'),
         },
         {
@@ -97,6 +118,8 @@ const AdminLayout = () => {
                 width={260}
                 className="admin-sider"
                 theme="light"
+                breakpoint="md"
+                collapsedWidth={isMobile ? 0 : 80}
                 style={{
                     overflow: 'auto',
                     height: '100vh',
@@ -104,10 +127,11 @@ const AdminLayout = () => {
                     left: 0,
                     top: 0,
                     bottom: 0,
+                    zIndex: isMobile ? 1050 : 1000,
                 }}
             >
                 <div className={`admin-logo-container ${collapsed ? 'collapsed' : ''}`}>
-                    {collapsed ? (
+                    {collapsed && !isMobile ? (
                         <img
                             src={require('../../Assets/Images/logo.svg').default}
                             alt="B"
@@ -130,6 +154,13 @@ const AdminLayout = () => {
                 />
             </Sider>
 
+            {isMobile && !collapsed && (
+                <div
+                    className="admin-sidebar-overlay"
+                    onClick={() => setCollapsed(true)}
+                />
+            )}
+
             <Layout className={`site-layout ${collapsed ? 'site-layout-collapsed' : 'site-layout-expanded'}`}>
                 <Header className="admin-header">
                     <div className="admin-header-left">
@@ -151,9 +182,21 @@ const AdminLayout = () => {
                             {language === 'vi' ? 'VI' : 'EN'}
                         </Button>
 
-                        <Dropdown menu={{ items: userMenuItems }} placement="bottomRight" arrow={{ pointAtCenter: true }}>
+                        <Dropdown
+                            menu={{ items: userMenuItems }}
+                            placement="bottomRight"
+                            trigger={['click']}
+                            overlayClassName="admin-user-dropdown"
+                        >
                             <div className="admin-user-profile">
-                                <Avatar style={{ backgroundColor: '#a30251', verticalAlign: 'middle', marginRight: 8 }}>
+                                <Avatar
+                                    size={28}
+                                    style={{
+                                        backgroundColor: '#c2185b',
+                                        verticalAlign: 'middle',
+                                        fontSize: '14px'
+                                    }}
+                                >
                                     {user?.name?.[0]?.toUpperCase() || 'A'}
                                 </Avatar>
                                 <span className="admin-username">{user?.name || 'Admin'}</span>

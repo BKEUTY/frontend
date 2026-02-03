@@ -1,5 +1,3 @@
-/* StaticPage.css */
-
 .static-page-container {
     padding: 40px var(--general_padding_left_right);
     min-height: 60vh;
@@ -70,8 +68,8 @@
     margin-bottom: 15px;
 }
 
-/* Retail System Specific Styles */
-/* Retail System Specific Styles */
+
+
 .retail-filters {
     display: flex;
     gap: 20px;
@@ -251,8 +249,8 @@
 
 .store-card.disabled-card {
     opacity: 0.5;
+    opacity: 0.5;
     background-color: #f2f2f2;
-    /* Distinct grey */
     pointer-events: none;
     box-shadow: none;
     border: 1px solid #ddd;
@@ -385,7 +383,7 @@
     box-shadow: none;
 }
 
-/* Detail View */
+
 .retail-detail-view {
     padding: 30px;
     background: white;
@@ -437,7 +435,7 @@
     color: #555;
 }
 
-/* Mobile Responsiveness */
+
 @media (max-width: 768px) {
     .static-page-container {
         padding: 20px 15px;
@@ -448,7 +446,7 @@
         margin-bottom: 20px;
     }
 
-    /* Retail System Mobile */
+
     .retail-filters {
         flex-direction: column;
         gap: 15px;
@@ -469,7 +467,7 @@
         padding: 20px;
     }
 
-    /* Retail Detail Mobile */
+
     .detail-row {
         flex-direction: column;
         align-items: flex-start;
@@ -479,7 +477,6 @@
     .detail-label {
         font-size: 0.95rem;
         color: #888;
-        /* Lighter color for label on mobile */
         margin-bottom: 2px;
     }
 

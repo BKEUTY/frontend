@@ -1,19 +1,29 @@
 import React, { createContext, useState, useContext } from 'react';
-import { en, vi } from './resources';
+import locales from './locales';
 
 const LanguageContext = createContext();
 
 export const LanguageProvider = ({ children }) => {
-    const [language, setLanguage] = useState('vi'); // Default to Vietnamese
+    const [language, setLanguage] = useState('vi');
 
-    const t = (key) => {
-        const dict = language === 'vi' ? vi : en;
-        return dict[key] || key;
+    const t = (key, fallback) => {
+        const dict = locales[language] || locales['vi'];
+        return dict[key] || fallback || key;
     };
 
     const changeLanguage = (lang) => {
-        setLanguage(lang);
+        if (locales[lang]) {
+            setLanguage(lang);
+            localStorage.setItem('language', lang);
+        }
     };
+
+    React.useEffect(() => {
+        const savedLang = localStorage.getItem('language');
+        if (savedLang && locales[savedLang]) {
+            setLanguage(savedLang);
+        }
+    }, []);
 
     return (
         <LanguageContext.Provider value={{ language, changeLanguage, t }}>

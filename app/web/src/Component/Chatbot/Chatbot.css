@@ -1,7 +1,7 @@
 .chatbot-overlay {
     position: fixed;
     bottom: 20px;
-    /* Aligned with chat button */
+
     right: 20px;
     width: 350px;
     height: 500px;

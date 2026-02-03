@@ -9,7 +9,6 @@ import banner2 from '../Assets/Images/Banners/banner_home_2.png';
 import about_image from "../Assets/Images/Banners/banner_about_us.svg";
 
 
-// import productApi from '../api/productApi';
 
 const bannerImages = [banner1, banner2];
 
@@ -26,8 +25,7 @@ const Home = () => {
         const fetchHomeData = async () => {
             setIsLoading(true);
             try {
-                // const response = await productApi.getAll({ page: 0, size: 10 });
-                // const fetchedProducts = response.data.content || [];
+
 
                 const mockProducts = [
                     { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: 450000, brand: 'BKEUTY', image: null, rating: 4.9, sold: 1000, tag: 'HOT' },
@@ -44,7 +42,7 @@ const Home = () => {
 
                 const fetchedProducts = mockProducts;
 
-                // Split products for display
+
                 setBestSellers(fetchedProducts.slice(0, 5));
                 setSuggestedProducts(fetchedProducts.slice(5, 10));
 
@@ -61,7 +59,7 @@ const Home = () => {
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
-        }, 30000); // 30 seconds
+        }, 30000);
 
         return () => clearInterval(timer);
     }, []);
@@ -146,7 +144,7 @@ const Home = () => {
             <section className="section-full-width bg-gray animate-slide-up delay-200">
                 <h2 className="home-section-title">{t('section_suggested')}</h2>
                 <div className="suggested-grid">
-                    {/* Displaying exactly 10 items by duplicating mock data if needed or slicing */}
+
                     {suggestedProducts.map((item, index) => (
                         <ProductCard
                             key={`${item.id}-${index}`}

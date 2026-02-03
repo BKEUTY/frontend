@@ -39,7 +39,7 @@
   min-width: 300px;
   border: 1px solid #ddd;
   border-radius: 25px;
-  /* Pill shape for modern look */
+
   padding: 5px 20px;
   background: white;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -113,7 +113,6 @@
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
-  /* Enable horizontal scroll */
   border: 1px solid #eee;
 }
 
@@ -121,10 +120,9 @@
   width: 100%;
   border-collapse: collapse;
   min-width: 1000px;
-  /* Ensure table has minimum width to trigger scroll */
 }
 
-/* ... existing th styles ... */
+
 
 .promotion-table td {
   padding: 16px 20px;
@@ -135,11 +133,10 @@
   white-space: nowrap;
 }
 
-/* Allow name to wrap if needed, but preferably keep single line if space permits */
+
 .promotion-table td:first-child {
   white-space: normal;
   min-width: 200px;
-  /* Minimum width for name to prevent squashing */
 }
 
 .promotion-table th {
@@ -148,13 +145,10 @@
   font-weight: 700;
   text-transform: uppercase;
   font-size: 12px;
-  /* Slightly smaller for single line */
   letter-spacing: 0.5px;
   padding: 16px 15px;
-  /* Tighter padding */
   border-bottom: 2px solid #eee;
   white-space: nowrap;
-  /* Force single line */
 }
 
 .promotion-table td {
@@ -164,7 +158,6 @@
   font-size: 15px;
   color: #333;
   white-space: nowrap;
-  /* Force content on one line */
 }
 
 .promotion-table tbody tr:hover {
@@ -216,7 +209,7 @@
 }
 
 
-/* Copy Pagination from StaticPage.css */
+
 .pagination {
   display: flex;
   justify-content: center;
@@ -262,7 +255,7 @@
   box-shadow: none;
 }
 
-/* Mobile Card View */
+
 .mobile-card-view {
   display: none;
 }
@@ -277,27 +270,23 @@
   transition: transform 0.2s;
 }
 
-/* Disabled State Styles */
+
 .disabled-row,
 .disabled-card {
   opacity: 0.5;
-  /* Reduce visibility */
   background-color: #f2f2f2 !important;
-  /* Darker gray background */
   pointer-events: none;
   filter: grayscale(1);
-  /* Full grayscale */
   color: #999;
-  /* Grey text */
 }
 
-/* Ensure all cells in disabled row have the background */
+
 .disabled-row td {
   background-color: #f2f2f2 !important;
   color: #999 !important;
 }
 
-/* Force badges to look disabled */
+
 .disabled-row .status-badge,
 .disabled-row .applicable-badge {
   background-color: #ccc !important;
@@ -352,10 +341,10 @@
 }
 
 /* Responsive */
-/* Responsive */
+
 @media (max-width: 992px) {
 
-  /* Increased breakpoint for earlier switch to cards */
+
   .promotion-page {
     padding: 20px 15px;
   }
@@ -369,7 +358,7 @@
     display: block;
   }
 
-  /* Scrollable Filter Tabs */
+
   .filter-tabs {
     gap: 8px;
     overflow-x: auto;
@@ -377,7 +366,6 @@
     display: flex;
     flex-wrap: nowrap;
     padding-bottom: 5px;
-    /* Space for scrollbar */
     -webkit-overflow-scrolling: touch;
     width: 100%;
     margin-bottom: 10px;

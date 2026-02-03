@@ -46,11 +46,11 @@ const Chatbot = ({ isOpen, onClose }) => {
         setMessages(prev => [...prev, userMsg]);
         setInputValue('');
 
-        // Mock bot response
+
         setTimeout(() => {
             let botResponses = [];
 
-            // Initial mock logic to match specific request in requirements
+
             if (inputValue.toLowerCase().includes('da khô') || inputValue.toLowerCase().includes('dưỡng ẩm') || inputValue.toLowerCase().includes('dry skin') || inputValue.toLowerCase().includes('moisturizer')) {
                 botResponses.push({
                     id: Date.now() + 1,

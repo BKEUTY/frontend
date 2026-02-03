@@ -19,7 +19,6 @@ const Register = () => {
         setLoading(true);
 
         setTimeout(() => {
-            console.log('Register values:', values);
             setLoading(false);
             showNotification(t('register_success') || 'Registration Successful', 'success');
             navigate('/home');
@@ -27,13 +26,12 @@ const Register = () => {
     };
 
     const handleSocialRegister = (provider) => {
-        console.log(`Register with ${provider}`);
-
+        showNotification(`${t('register_with', 'Register with')} ${provider}`, 'info');
     };
 
     return (
         <div className="auth-container">
-            {/* Left Side - Image */}
+
             <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
                 <div className="auth-image-overlay">
                     <div className="auth-brand-section">
@@ -43,7 +41,7 @@ const Register = () => {
                 </div>
             </div>
 
-            {/* Right Side - Form */}
+
             <div className="auth-form-side">
                 <div className="auth-lang-switch">
                     <Button

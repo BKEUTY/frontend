@@ -13,7 +13,7 @@ const MOCK_PROMOTIONS = [
         targetKey: "vip",
         startDate: "2025-10-01",
         endDate: "2025-10-08",
-        status: "expired", // based on current date assumption or hardcoded for UI match
+        status: "expired",
         applicable: true,
         type: "PERCENTAGE"
     },
@@ -112,7 +112,7 @@ const MOCK_PROMOTIONS = [
 
 export default function Promotion() {
     const { t } = useLanguage();
-    const [filterType, setFilterType] = useState('all'); // all, ongoing, upcoming, expired, applicable
+    const [filterType, setFilterType] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;

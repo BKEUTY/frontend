@@ -1,7 +1,7 @@
 .App {
   text-align: center;
   flex: 1;
-  /* Allow App to grow and push footer down */
+
   display: flex;
   flex-direction: column;
 }
@@ -41,7 +41,7 @@
     transform: rotate(360deg);
   }
 }
+
 .main_content {
   flex: 1;
 }
-

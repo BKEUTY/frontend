@@ -6,18 +6,18 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
-    // Initialize user from localStorage if present
+
     const [user, setUser] = useState(() => {
         const storedUser = localStorage.getItem('user');
         return storedUser ? JSON.parse(storedUser) : null;
     });
 
     const login = async (email, password) => {
-        // Mock Login Logic
+
         return new Promise((resolve) => {
             setTimeout(() => {
                 let role = 'USER';
-                // Mock Admin if email contains 'admin' or is specific admin email
+
                 if (email.toLowerCase().includes('admin') || email === 'admin@gmail.com') {
                     role = 'ADMIN';
                 }
@@ -32,7 +32,7 @@ export const AuthProvider = ({ children }) => {
 
                 setUser(mockUser);
                 localStorage.setItem('user', JSON.stringify(mockUser));
-                localStorage.setItem('token', mockUser.token); // Important for API interceptors
+                localStorage.setItem('token', mockUser.token);
                 resolve(mockUser);
             }, 800);
         });

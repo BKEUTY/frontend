@@ -1,55 +1,31 @@
-/* --- GLOBAL & FONTS --- */
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Oleo+Script&display=swap');
-
 :root {
-    /* Brand Colors */
-    --admin-primary: #ec4899;
-    /* Pink-500 */
-    --admin-primary-dark: #be185d;
-    /* Pink-700 */
+    --admin-primary: #c2185b;
+    --admin-primary-dark: #ad1457;
     --admin-primary-light: #fce7f3;
-    /* Pink-100 */
-    --admin-primary-soft: rgba(236, 72, 153, 0.08);
-    /* Transparent Pink */
+    --admin-primary-soft: rgba(194, 24, 91, 0.08);
 
-    /* Backgrounds */
-    --admin-bg: #f3f4f6;
-    /* Modern Light Gray */
+    --admin-bg: #f8f9fa;
     --admin-card-bg: #ffffff;
 
-    /* Typography */
-    --admin-font: 'Plus Jakarta Sans', sans-serif;
-    --admin-text-main: #1f2937;
-    /* Gray-800 */
-    --admin-text-sub: #6b7280;
-    /* Gray-500 */
+    --admin-font: 'Be Vietnam Pro', sans-serif;
+    --admin-text-main: #2c3e50;
+    --admin-text-sub: #636e72;
 
-    /* Layout */
     --admin-sidebar-width: 260px;
-    --admin-header-height: 72px;
+    --admin-header-height: 64px;
     --admin-card-radius: 24px;
-    /* Rounded-3xl equivalent */
 
-    /* Shadows - Premium Soft */
     --admin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --admin-shadow-card: 0 10px 30px -10px rgba(236, 72, 153, 0.15);
-    /* Pink tinted shadow */
-    --admin-shadow-hover: 0 20px 40px -12px rgba(236, 72, 153, 0.25);
+    --admin-shadow-card: 0 10px 30px -10px rgba(194, 24, 91, 0.15);
+    --admin-shadow-hover: 0 20px 40px -12px rgba(194, 24, 91, 0.25);
 }
 
-body {
-    -webkit-font-smoothing: antialiased;
-    background-color: var(--admin-bg) !important;
-}
-
-/* --- LAYOUT STRUCTURE --- */
 .admin-layout-container {
     font-family: var(--admin-font);
     background: var(--admin-bg) !important;
     min-height: 100vh;
 }
 
-/* Sidebar Styling */
 .admin-sider {
     background: #ffffff !important;
     border-right: 1px solid rgba(0, 0, 0, 0.03);
@@ -82,7 +58,6 @@ body {
     border-radius: 12px;
 }
 
-/* Navigation Menu */
 .admin-sider .ant-menu {
     border: none;
     background: transparent;
@@ -117,7 +92,6 @@ body {
     font-weight: 700;
 }
 
-/* Active "Pill" Indicator */
 .admin-sider .ant-menu-item-selected::before {
     content: '';
     position: absolute;
@@ -136,20 +110,18 @@ body {
     transition: color 0.3s;
 }
 
-/* Header Styling */
 .admin-header {
     background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     height: var(--admin-header-height) !important;
-    padding: 0 32px !important;
+    padding: 0 24px !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
     position: sticky;
     top: 0;
     z-index: 900;
-    /* Lower z-index to avoid issues, but keep sticky */
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
 }
 
@@ -158,51 +130,142 @@ body {
     align-items: center;
     gap: 16px;
     height: 100%;
+    position: relative;
+}
+
+.admin-header-right>* {
+    display: flex;
+    align-items: center;
+}
+
+.lang-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    height: 32px !important;
+    border-radius: 8px !important;
 }
 
 .trigger-btn {
-    font-size: 20px;
-    color: var(--admin-text-sub);
-    transition: color 0.3s;
+    font-size: 18px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    color: var(--admin-text-main);
+    transition: all 0.2s;
+    background: transparent;
 }
 
 .trigger-btn:hover {
+    background: rgba(0, 0, 0, 0.04);
     color: var(--admin-primary);
 }
 
 .admin-user-profile {
     display: flex;
     align-items: center;
-    padding: 6px 16px 6px 6px;
-    background: #ffffff;
-    border: 1px solid rgba(0, 0, 0, 0.05);
-    border-radius: 99px;
-    /* Pill shape */
+    gap: 10px;
+    padding: 4px 12px 4px 4px;
+    border-radius: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
-    box-shadow: var(--admin-shadow-sm);
+    background: rgba(194, 24, 91, 0.05);
+    height: 36px;
 }
 
 .admin-user-profile:hover {
-    border-color: var(--admin-primary-light);
-    box-shadow: 0 4px 12px rgba(236, 72, 153, 0.1);
-    transform: translateY(-1px);
+    background: rgba(194, 24, 91, 0.1);
 }
 
 .admin-username {
-    font-weight: 700;
+    font-weight: 600;
     color: var(--admin-text-main);
-    margin-left: 10px;
-    font-size: 14px;
+    font-size: 15px;
 }
 
-/* --- BENTO GRID & DASHBOARD --- */
+.admin-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.admin-user-dropdown {
+    min-width: 220px !important;
+    padding-top: 8px;
+}
+
+.admin-user-dropdown .ant-dropdown-menu {
+    border-radius: 16px !important;
+    padding: 8px !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.admin-user-dropdown .ant-dropdown-menu-item {
+    border-radius: 10px !important;
+    padding: 10px 16px !important;
+    margin-bottom: 2px !important;
+    font-size: 15px !important;
+    min-height: 44px !important;
+    display: flex !important;
+    align-items: center !important;
+    transition: all 0.2s ease !important;
+    color: var(--admin-text-main) !important;
+}
+
+/* Reset selected state style */
+.admin-user-dropdown .ant-dropdown-menu-item-selected {
+    background-color: transparent !important;
+    color: var(--admin-text-main) !important;
+    font-weight: normal !important;
+}
+
+.admin-user-dropdown .ant-dropdown-menu-item:hover {
+    background-color: rgba(194, 24, 91, 0.08) !important;
+    color: var(--admin-primary) !important;
+    padding-left: 20px !important;
+    /* Slide effect */
+}
+
+.admin-user-dropdown .ant-dropdown-menu-item-danger {
+    color: #ff4d4f !important;
+}
+
+.admin-user-dropdown .ant-dropdown-menu-item-danger:hover {
+    background-color: #fff1f0 !important;
+    color: #ff4d4f !important;
+}
+
+.admin-user-dropdown .ant-dropdown-menu-item .anticon {
+    font-size: 18px !important;
+    margin-right: 12px !important;
+}
+
 .site-layout {
     background: transparent;
     transition: all 0.2s;
 }
 
-/* Layout Offsets */
 .site-layout-expanded {
     margin-left: var(--admin-sidebar-width);
 }
@@ -211,24 +274,33 @@ body {
     margin-left: 80px;
 }
 
+@media (max-width: 768px) {
+
+    .site-layout-expanded,
+    .site-layout-collapsed {
+        margin-left: 0 !important;
+    }
+}
+
 .dashboard-content {
     max-width: 1600px;
     margin: 0 auto;
+    padding: 24px;
 }
 
 .dashboard-header {
-    margin-bottom: 32px;
+    margin-bottom: 24px;
 }
 
 .dashboard-title {
     font-size: 32px;
     font-weight: 800;
     color: var(--admin-text-main);
-    letter-spacing: -0.04em;
+    letter-spacing: -0.02em;
     margin: 0;
+    line-height: 1.2;
 }
 
-/* Summary Cards (Glassmorphism) */
 .beauty-card {
     background: var(--admin-card-bg);
     border-radius: var(--admin-card-radius);
@@ -239,6 +311,7 @@ body {
     position: relative;
     overflow: hidden;
     height: 100%;
+    margin-bottom: 0;
 }
 
 .beauty-card:hover {
@@ -247,30 +320,37 @@ body {
 }
 
 .card-icon-wrapper {
-    width: 56px;
-    height: 56px;
-    border-radius: 20px;
+    width: 64px;
+    height: 64px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 24px;
+    font-size: 28px;
     margin-bottom: 16px;
+    transition: all 0.3s ease;
 }
 
-/* Icon colors */
+.beauty-card:hover .card-icon-wrapper {
+    transform: scale(1.05);
+}
+
 .icon-pink {
-    background: #fdf2f8;
-    color: #db2777;
+    background: linear-gradient(135deg, #fdf2f8 0%, #fce7f3 100%);
+    color: #c2185b;
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.15);
 }
 
 .icon-blue {
-    background: #eff6ff;
-    color: #2563eb;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    color: #3b82f6;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
 }
 
 .icon-green {
-    background: #ecfdf5;
-    color: #059669;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    color: #10b981;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
 .card-stat-value {
@@ -279,13 +359,14 @@ body {
     color: var(--admin-text-main);
     line-height: 1.1;
     margin-bottom: 8px;
-    letter-spacing: -1px;
+    letter-spacing: -0.02em;
 }
 
 .card-stat-label {
     font-size: 15px;
     color: var(--admin-text-sub);
     font-weight: 500;
+    line-height: 1.4;
 }
 
 .trend-pill {
@@ -308,7 +389,6 @@ body {
     color: #dc2626;
 }
 
-/* Chart Card */
 .chart-card {
     background: #ffffff;
     border-radius: var(--admin-card-radius);
@@ -316,6 +396,7 @@ body {
     box-shadow: var(--admin-shadow-card);
     height: 100%;
     border: 1px solid rgba(255, 255, 255, 0.6);
+    margin-bottom: 0;
 }
 
 .chart-header {
@@ -329,21 +410,19 @@ body {
     font-size: 20px;
     font-weight: 700;
     color: var(--admin-text-main);
+    line-height: 1.3;
 }
 
-/* Table Card */
 .table-card {
     background: #ffffff;
     border-radius: var(--admin-card-radius);
     padding: 24px;
     box-shadow: var(--admin-shadow-card);
-    margin-top: 32px;
+    margin-top: 24px;
 }
 
-/* Ant Table Customization for Beauty Theme */
 .beauty-table .ant-table-thead>tr>th {
     background: #fdf2f8 !important;
-    /* Very light pink header */
     color: var(--admin-primary-dark);
     font-weight: 700;
     text-transform: uppercase;
@@ -351,6 +430,7 @@ body {
     letter-spacing: 0.05em;
     border-bottom: none;
     border-radius: 8px;
+    padding: 16px 24px;
 }
 
 .beauty-table .ant-table-tbody>tr>td {
@@ -363,24 +443,470 @@ body {
     border-radius: 12px;
 }
 
-/* Responsive */
+.stat-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    height: 100%;
+}
+
+.stat-card {
+    padding: 24px;
+}
+
+.stat-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.stat-card-left {
+    flex: 1;
+}
+
+.chart-container {
+    height: 350px;
+    width: 100%;
+}
+
+@media (max-width: 992px) {
+    .dashboard-title {
+        font-size: 28px;
+    }
+
+    .card-stat-value {
+        font-size: 32px;
+    }
+
+    .chart-card {
+        padding: 24px;
+    }
+
+    .beauty-table .ant-table-thead>tr>th,
+    .beauty-table .ant-table-tbody>tr>td {
+        font-size: 14px;
+    }
+}
+
 @media (max-width: 768px) {
+    :root {
+        --admin-header-height: 64px;
+        --admin-card-radius: 16px;
+        --admin-sidebar-width: 280px;
+    }
 
     .site-layout-expanded,
     .site-layout-collapsed {
-        margin-left: 0;
+        margin-left: 0 !important;
     }
 
     .admin-sider {
-        transform: translateX(-100%);
-        transition: transform 0.3s;
+        position: fixed;
+        z-index: 1050;
+        height: 100vh;
+        left: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        width: 280px !important;
+        max-width: 280px !important;
+        min-width: 280px !important;
+        flex: 0 0 280px !important;
     }
 
-    .admin-sider.active {
+    .admin-sider.ant-layout-sider-collapsed {
+        transform: translateX(-100%);
+        box-shadow: none;
+    }
+
+    .admin-sider:not(.ant-layout-sider-collapsed) {
         transform: translateX(0);
+        box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .admin-sider .ant-menu-item {
+        height: 52px;
+        font-size: 16px;
+        margin-bottom: 4px !important;
+        min-height: 44px;
+    }
+
+    .admin-sider .ant-menu-item .anticon {
+        font-size: 22px;
+        margin-right: 14px;
+    }
+
+    .admin-logo-container {
+        justify-content: center;
+        padding-left: 0;
+        height: 64px;
+    }
+
+    .admin-logo-img {
+        height: 48px;
+    }
+
+    .admin-header {
+        padding: 0 16px !important;
+        height: 64px !important;
+    }
+
+    .admin-header-right {
+        gap: 12px;
+    }
+
+    .trigger-btn {
+        font-size: 24px;
+        padding: 12px !important;
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .lang-btn {
+        font-size: 14px;
+        padding: 8px 12px !important;
+        min-height: 44px;
+        border-radius: 12px;
+    }
+
+    .admin-user-profile {
+        padding: 6px 12px 6px 6px;
+        min-height: 44px;
+        border-radius: 22px;
+    }
+
+    .admin-username {
+        font-size: 14px;
+        margin-left: 10px;
+    }
+
+    .dashboard-content {
+        padding: 16px;
+    }
+
+    .dashboard-title {
+        font-size: 24px;
+        line-height: 1.3;
+    }
+
+    .dashboard-header {
+        margin-bottom: 16px;
     }
 
     .beauty-card {
+        padding: 16px;
+        border-radius: 16px;
+    }
+
+    /* Stats Cards Responsive Grid */
+    .stat-cards-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 12px;
+    }
+
+    .stat-card {
+        height: 100%;
+        min-height: 140px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .beauty-card:active {
+        transform: scale(0.98);
+    }
+
+    .card-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+
+    .card-stat-value {
+        font-size: 24px;
+        margin-bottom: 4px;
+    }
+
+    .card-stat-label {
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .trend-pill {
+        font-size: 12px;
+        padding: 4px 10px;
+        align-self: flex-start;
+    }
+
+    /* Table Responsive */
+    .table-card {
+        padding: 16px;
+        overflow: hidden;
+    }
+
+    .beauty-table {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .beauty-table table {
+        min-width: 600px;
+    }
+
+    .beauty-table .ant-table-thead>tr>th,
+    .beauty-table .ant-table-tbody>tr>td {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+
+    /* Custom Scrollbar for Charts and Tables */
+    .beauty-table::-webkit-scrollbar,
+    .chart-container::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+    }
+
+    .beauty-table::-webkit-scrollbar-thumb,
+    .chart-container::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 4px;
+    }
+
+    .beauty-table::-webkit-scrollbar-track,
+    .chart-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+
+    .card-stat-label {
+        font-size: 14px;
+        line-height: 1.4;
+    }
+
+    .chart-card {
+        padding: 20px;
+        border-radius: 16px;
+    }
+
+    .chart-title {
+        font-size: 18px;
+        line-height: 1.3;
+    }
+
+    .chart-container {
+        height: 300px;
+    }
+
+    .stat-cards-container {
+        gap: 16px;
+    }
+
+    .table-card {
+        padding: 16px;
+        border-radius: 16px;
+        margin-top: 16px;
+    }
+
+    .beauty-table .ant-table {
+        min-width: 600px;
+    }
+
+    .beauty-table .ant-table-thead>tr>th,
+    .beauty-table .ant-table-tbody>tr>td {
+        padding: 14px 12px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .beauty-table .ant-table-thead>tr>th {
+        font-size: 12px;
+        position: sticky;
+        top: 0;
+        z-index: 10;
+    }
+
+    .beauty-table .ant-table-tbody>tr {
+        min-height: 52px;
+    }
+
+    .ant-btn {
+        min-height: 44px;
+        padding: 10px 20px !important;
+        font-size: 15px !important;
+        touch-action: manipulation;
+    }
+
+    .ant-input,
+    .ant-select-selector {
+        min-height: 44px !important;
+        font-size: 16px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --admin-header-height: 56px;
+        --admin-sidebar-width: 260px;
+    }
+
+    .admin-sider {
+        width: 260px !important;
+        max-width: 260px !important;
+        min-width: 260px !important;
+        flex: 0 0 260px !important;
+    }
+
+    .admin-sider:not(.ant-layout-sider-collapsed)::before {
+        left: 260px;
+    }
+
+    .admin-sider .ant-menu {
+        padding: 16px 12px;
+    }
+
+    .admin-sider .ant-menu-item {
+        height: 48px;
+        font-size: 15px;
+        padding: 0 12px !important;
+    }
+
+    .admin-sider .ant-menu-item .anticon {
+        font-size: 20px;
+        margin-right: 12px;
+    }
+
+    .admin-logo-container {
+        padding-left: 16px;
+        height: 56px;
+    }
+
+    .admin-logo-img {
+        height: 38px;
+    }
+
+    .admin-header {
+        padding: 0 12px !important;
+        height: 56px !important;
+    }
+
+    .admin-header-right {
+        gap: 8px;
+    }
+
+    .trigger-btn {
+        font-size: 22px;
+        padding: 10px !important;
+    }
+
+    .lang-btn {
+        font-size: 13px;
+        padding: 6px 10px !important;
+        min-width: auto;
+    }
+
+    .admin-user-profile {
+        padding: 4px 10px 4px 4px;
+    }
+
+    .admin-username {
+        display: none;
+    }
+
+    .dashboard-title {
+        font-size: 22px;
+    }
+
+    .dashboard-header {
         margin-bottom: 16px;
+    }
+
+    .beauty-card {
+        padding: 16px;
+        margin-bottom: 12px;
+    }
+
+    .card-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+        margin-bottom: 12px;
+    }
+
+    .card-stat-value {
+        font-size: 24px;
+    }
+
+    .card-stat-label {
+        font-size: 13px;
+    }
+
+    .trend-pill {
+        font-size: 11px;
+        padding: 4px 8px;
+    }
+
+    .chart-card,
+    .table-card {
+        padding: 12px;
+    }
+
+    .chart-title {
+        font-size: 16px;
+    }
+
+    .beauty-table .ant-table-thead>tr>th,
+    .beauty-table .ant-table-tbody>tr>td {
+        padding: 12px 10px;
+        font-size: 12px;
+    }
+
+    .beauty-table .ant-table-thead>tr>th {
+        font-size: 11px;
+    }
+
+    .ant-btn {
+        min-height: 44px;
+        padding: 8px 16px !important;
+        font-size: 14px !important;
+    }
+}
+
+@media (max-width: 360px) {
+    .admin-header {
+        padding: 0 8px !important;
+    }
+
+    .admin-header-right {
+        gap: 6px;
+    }
+
+    .trigger-btn {
+        padding: 8px !important;
+    }
+
+    .lang-btn {
+        padding: 6px 8px !important;
+        font-size: 12px;
+    }
+
+    .dashboard-title {
+        font-size: 20px;
+    }
+
+    .beauty-card {
+        padding: 14px;
+    }
+
+    .card-stat-value {
+        font-size: 22px;
     }
 }

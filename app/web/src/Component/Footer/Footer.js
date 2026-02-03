@@ -4,7 +4,7 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import "./Footer.css";
 import Chatbot from "../Chatbot/Chatbot";
 
-// Importing icons
+
 import location_icon from "../../Assets/Images/Icons/icon_location.svg";
 import call_icon from "../../Assets/Images/Icons/icon_phone.svg";
 import instagram_icon from "../../Assets/Images/Icons/social_instagram.svg";
@@ -23,7 +23,7 @@ export default function Footer() {
     <>
       <footer className="footer">
 
-        {/* Government Certificate Only */}
+
         <div className="footer-certificates">
           <a href="http://online.gov.vn/Home/WebDetails/113642" target="_blank" rel="noopener noreferrer" className="cert-link">
             <img src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png" alt="Đã Thông Báo BCT" className="gov-cert-img" />

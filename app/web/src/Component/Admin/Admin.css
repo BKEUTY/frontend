@@ -4,20 +4,24 @@
     --admin-primary-light: #fce7f3;
     --admin-primary-soft: rgba(194, 24, 91, 0.08);
 
-    --admin-bg: #f8f9fa;
+    --admin-bg: #fdf2f8;
+    /* Softer, slightly pinkish background */
     --admin-card-bg: #ffffff;
 
     --admin-font: 'Be Vietnam Pro', sans-serif;
-    --admin-text-main: #2c3e50;
-    --admin-text-sub: #636e72;
+    --admin-text-main: #1a1a1a;
+    --admin-text-sub: #595959;
 
     --admin-sidebar-width: 260px;
     --admin-header-height: 64px;
-    --admin-card-radius: 24px;
+    --admin-card-radius: 20px;
 
-    --admin-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --admin-shadow-card: 0 10px 30px -10px rgba(194, 24, 91, 0.15);
-    --admin-shadow-hover: 0 20px 40px -12px rgba(194, 24, 91, 0.25);
+    --admin-shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --admin-shadow-card: 0 10px 40px rgba(0, 0, 0, 0.04);
+    --admin-shadow-hover: 0 20px 50px rgba(194, 24, 91, 0.12);
+
+    --transition-fast: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-normal: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-layout-container {
@@ -908,5 +912,153 @@
 
     .card-stat-value {
         font-size: 22px;
+    }
+
+    .admin-product-list-container {
+        padding: 0 !important;
+    }
+
+    .course-list-card {
+        border-radius: 0 !important;
+    }
+
+    .course-list-card .ant-card-body {
+        padding: 16px !important;
+    }
+}
+
+/* --- Added Modern & Commercial Classes --- */
+.admin-input-large {
+    border-radius: 14px !important;
+    padding: 12px 18px !important;
+    border: 1.5px solid #f0f0f0 !important;
+    background: #fdfdfd !important;
+    font-size: 15px !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.admin-input-large:hover {
+    border-color: #e2e8f0 !important;
+    background: #fff !important;
+}
+
+.admin-input-large:focus {
+    border-color: var(--admin-primary) !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 4px var(--admin-primary-soft) !important;
+}
+
+.modern-btn-primary {
+    background: linear-gradient(135deg, var(--admin-primary) 0%, #da1b6b 100%) !important;
+    border: none !important;
+    border-radius: 14px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+    padding: 12px 28px !important;
+    box-shadow: 0 10px 25px rgba(194, 24, 91, 0.25) !important;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+    color: white !important;
+}
+
+.modern-btn-primary:hover {
+    transform: translateY(-3px) scale(1.02) !important;
+    box-shadow: 0 15px 30px rgba(194, 24, 91, 0.35) !important;
+}
+
+.modern-btn-primary:active {
+    transform: translateY(-1px) !important;
+}
+
+.modern-step-card {
+    border-radius: 24px !important;
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(20px);
+}
+
+.form-section-card {
+    background: #ffffff !important;
+    border-radius: 20px !important;
+    padding: 28px !important;
+    margin-bottom: 32px !important;
+    border: 1px solid #f1f1f1 !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-section-card:hover {
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04) !important;
+    transform: translateY(-2px);
+    border-color: var(--admin-primary-light) !important;
+}
+
+.custom-steps .ant-steps-item-icon {
+    width: 44px !important;
+    height: 44px !important;
+    line-height: 40px !important;
+    border-radius: 14px !important;
+    margin-right: 12px !important;
+    border: 1.5px solid #eee !important;
+    background: #fff !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.3s ease !important;
+}
+
+.custom-steps .ant-steps-item-active .ant-steps-item-icon {
+    background: var(--admin-primary) !important;
+    border-color: var(--admin-primary) !important;
+    color: white !important;
+    box-shadow: 0 8px 16px rgba(194, 24, 91, 0.2) !important;
+}
+
+.custom-steps .ant-steps-item-finish .ant-steps-item-icon {
+    border-color: var(--admin-primary) !important;
+    color: var(--admin-primary) !important;
+}
+
+/* Custom Table for Admin */
+.beauty-table .ant-table-thead>tr>th {
+    background: #fafafa !important;
+    font-weight: 700 !important;
+    color: #444 !important;
+    border-bottom: 2px solid #f0f0f0 !important;
+}
+
+.beauty-table .ant-table-tbody>tr>td {
+    padding: 16px 20px !important;
+    border-bottom: 1px solid #f5f5f5 !important;
+}
+
+.beauty-table .ant-table-tbody>tr:hover>td {
+    background: #fffcfd !important;
+}
+
+@media (max-width: 768px) {
+    .product-create-container {
+        padding: 0px !important;
+    }
+
+    .modern-step-card {
+        border-radius: 0 !important;
+        border: none !important;
+        box-shadow: none !important;
+    }
+
+    .modern-step-card .ant-card-body {
+        padding: 24px 16px !important;
+    }
+
+    .form-section-card {
+        padding: 20px !important;
+        border-radius: 16px !important;
+    }
+
+    .modern-btn-primary {
+        width: 100% !important;
+        height: 54px !important;
+        margin-top: 16px !important;
     }
 }

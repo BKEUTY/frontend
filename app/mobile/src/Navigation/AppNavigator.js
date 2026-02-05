@@ -19,6 +19,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, TermsScreen } from '../StaticPages/StaticScreens';
 import Chatbot from '../Component/Chatbot/Chatbot';
 import AdminDashboard from '../Admin/DashboardScreen';
+import AdminProductCreate from '../Admin/ProductCreateScreen';
 
 import NotFoundScreen from '../Component/ErrorPages/NotFoundScreen';
 import ServerErrorScreen from '../Component/ErrorPages/ServerErrorScreen';
@@ -83,6 +84,7 @@ export default function AppNavigator() {
 
                     {/* Admin */}
                     <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ headerShown: false }} />
+                    <Stack.Screen name="AdminProductCreate" component={AdminProductCreate} options={{ headerShown: false }} />
 
                     {/* Error Screens */}
                     <Stack.Screen name="NotFound" component={NotFoundScreen} />

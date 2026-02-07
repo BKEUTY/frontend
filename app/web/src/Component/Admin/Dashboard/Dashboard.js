@@ -100,7 +100,7 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard-content">
-            <div className="dashboard-header">
+            <div className="dashboard-header admin-page-header">
                 <h2 className="dashboard-title">{t('dashboard', 'Tổng quan')}</h2>
             </div>
 

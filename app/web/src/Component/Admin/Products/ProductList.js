@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { Table, Button, message, Card, Typography, Tooltip, Tag, Space } from 'antd';
+import { Table, Button, message, Card, Typography, Tooltip, Tag, Space, Empty } from 'antd';
 import {
     PlusOutlined, ReloadOutlined,
     EditOutlined, DeleteOutlined,
@@ -11,7 +11,7 @@ import adminApi from '../../../api/adminApi';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import '../Admin.css';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const ProductList = () => {
     const { t } = useLanguage();
@@ -39,7 +39,7 @@ const ProductList = () => {
                 total: totalElements
             }));
         } catch (error) {
-            message.error(t('error_fetch_products'));
+            message.error({ content: t('error_fetch_products'), key: 'error_fetch_products' });
         } finally {
             setLoading(false);
         }
@@ -116,7 +116,7 @@ const ProductList = () => {
                         <Button
                             type="text"
                             icon={<EditOutlined style={{ color: '#1890ff' }} />}
-                            onClick={() => message.info('Coming soon')}
+                            onClick={() => message.info({ content: 'Coming soon', key: 'coming_soon' })}
                         />
                     </Tooltip>
                     <Tooltip title={t('delete')}>
@@ -124,7 +124,7 @@ const ProductList = () => {
                             type="text"
                             danger
                             icon={<DeleteOutlined />}
-                            onClick={() => message.info('Coming soon')}
+                            onClick={() => message.info({ content: 'Coming soon', key: 'coming_soon' })}
                         />
                     </Tooltip>
                 </Space>
@@ -134,7 +134,7 @@ const ProductList = () => {
 
     return (
         <div className="admin-product-list-container" style={{ paddingBottom: 40 }}>
-            <div style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
+            <div className="admin-page-header" style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
                 <div>
                     <h2 style={{ fontSize: 26, fontWeight: 800, margin: 0, color: '#111', letterSpacing: '-0.5px' }}>
                         {t('admin_product_list')}
@@ -144,12 +144,13 @@ const ProductList = () => {
                     </Text>
                 </div>
 
-                <Space size="middle">
+                <Space size="middle" wrap>
                     <Button
                         icon={<ReloadOutlined />}
                         onClick={() => fetchProducts(pagination.current, pagination.pageSize)}
                         loading={loading}
-                        style={{ borderRadius: 12, height: 44, fontWeight: 600 }}
+                        className="admin-btn-responsive"
+                        style={{ borderRadius: 16, height: 44, fontWeight: 600 }}
                     >
                         {t('refresh')}
                     </Button>
@@ -157,7 +158,7 @@ const ProductList = () => {
                         type="primary"
                         icon={<PlusOutlined />}
                         onClick={() => navigate('/admin/products/create')}
-                        className="modern-btn-primary"
+                        className="modern-btn-primary admin-btn-responsive"
                         style={{ height: 44 }}
                     >
                         {t('admin_product_create')}
@@ -181,6 +182,16 @@ const ProductList = () => {
                     loading={loading}
                     onChange={handleTableChange}
                     scroll={{ x: 1000 }}
+                    locale={{
+                        emptyText: (
+                            <div className="admin-empty-state">
+                                <Empty
+                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                    description={<span className="admin-empty-text">{t('no_products_found')}</span>}
+                                />
+                            </div>
+                        )
+                    }}
                 />
             </Card>
         </div>

@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import {
     Steps, Form, Input, Button, Select, Upload, message, Card,
-    Divider, Table, InputNumber, Row, Col, Alert
+    Divider, Table, InputNumber, Row, Col
 } from 'antd';
 import {
     PlusOutlined, DeleteOutlined,
@@ -61,15 +61,15 @@ const ProductCreate = () => {
                             });
                         }
                     } catch (uploadErr) {
-                        message.warning(t('admin_error_upload_img'));
+                        message.warning({ content: t('admin_error_upload_img'), key: 'admin_error_upload_img' });
                     }
                 }
 
-                message.success(t('admin_msg_create_success'));
+                message.success({ content: t('admin_msg_create_success'), key: 'admin_msg_create_success' });
                 setCurrentStep(1);
             }
         } catch (error) {
-            message.error(t('admin_error_create'));
+            message.error({ content: t('admin_error_create'), key: 'admin_error_create' });
         } finally {
             setLoading(false);
         }
@@ -102,7 +102,7 @@ const ProductCreate = () => {
 
         const validOptions = optionTypes.filter(o => o.name.trim() !== '' && o.values.length > 0);
         if (validOptions.length === 0) {
-            message.error(t("admin_error_at_least_one_option"));
+            message.error({ content: t("admin_error_at_least_one_option"), key: 'admin_error_at_least_one_option' });
             return;
         }
 
@@ -117,11 +117,11 @@ const ProductCreate = () => {
             };
 
             await adminApi.createOption(payload);
-            message.success(t('admin_msg_options_success'));
+            message.success({ content: t('admin_msg_options_success'), key: 'admin_msg_options_success' });
             await fetchVariants(createdProductId);
             setCurrentStep(2);
         } catch (error) {
-            message.error(t('admin_error_options_save'));
+            message.error({ content: t('admin_error_options_save'), key: 'admin_error_options_save' });
         } finally {
             setLoading(false);
         }
@@ -132,7 +132,7 @@ const ProductCreate = () => {
             const res = await adminApi.getVariants(pid);
             setVariants(res.data || []);
         } catch (error) {
-            message.error(t("admin_error_fetch_variants"));
+            message.error({ content: t("admin_error_fetch_variants"), key: 'admin_error_fetch_variants' });
         }
     };
 
@@ -169,10 +169,10 @@ const ProductCreate = () => {
                 })
             ));
 
-            message.success(t('admin_msg_variants_success'));
+            message.success({ content: t('admin_msg_variants_success'), key: 'admin_msg_variants_success' });
             navigate('/admin/products');
         } catch (error) {
-            message.error(t('admin_error_variant_update'));
+            message.error({ content: t('admin_error_variant_update'), key: 'admin_error_variant_update' });
         } finally {
             setLoading(false);
         }
@@ -271,8 +271,8 @@ const ProductCreate = () => {
                             </Col>
                         </Row>
 
-                        <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 32 }}>
-                            <Button type="primary" size="large" htmlType="submit" loading={loading} className="modern-btn-primary" style={{ minWidth: 180, height: 48 }}>
+                        <div className="admin-btn-group">
+                            <Button type="primary" size="large" htmlType="submit" loading={loading} className="modern-btn-primary admin-btn-responsive">
                                 {t('admin_btn_create_continue')} <ArrowRightOutlined />
                             </Button>
                         </div>
@@ -280,8 +280,8 @@ const ProductCreate = () => {
                 )}
 
                 {currentStep === 1 && (
-                    <div style={{ maxWidth: 800, margin: '0 auto' }}>
-                        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+                    <div style={{ maxWidth: 800, margin: '0 0 0 20px', textAlign: 'left' }}>
+                        <div style={{ marginBottom: 40 }}>
                             <h3 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>{t('admin_alert_options')}</h3>
                             <p style={{ color: '#8c8c8c' }}>{t('admin_alert_options_desc')}</p>
                         </div>
@@ -338,9 +338,9 @@ const ProductCreate = () => {
 
                         <Divider style={{ margin: '32px 0' }} />
 
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                            <Button onClick={() => setCurrentStep(0)} size="large" style={{ borderRadius: 12, height: 48, minWidth: 120 }}>{t('back')}</Button>
-                            <Button type="primary" size="large" onClick={handleSubmitOptions} loading={loading} className="modern-btn-primary" style={{ minWidth: 200, height: 48 }}>
+                        <div className="admin-btn-group-between">
+                            <Button onClick={() => setCurrentStep(0)} size="large" className="admin-btn-responsive" style={{ border: '1px solid #d9d9d9' }}>{t('back')}</Button>
+                            <Button type="primary" size="large" onClick={handleSubmitOptions} loading={loading} className="modern-btn-primary admin-btn-responsive">
                                 {t('admin_btn_gen_variants')} <ArrowRightOutlined />
                             </Button>
                         </div>
@@ -349,7 +349,7 @@ const ProductCreate = () => {
 
                 {currentStep === 2 && (
                     <div>
-                        <div style={{ textAlign: 'center', marginBottom: 40 }}>
+                        <div style={{ textAlign: 'left', marginBottom: 40 }}>
                             <h3 style={{ fontSize: 20, fontWeight: 800, margin: 0 }}>{t('admin_alert_variants')}</h3>
                             <p style={{ color: '#8c8c8c' }}>{t('admin_alert_variants_desc')}</p>
                         </div>
@@ -419,9 +419,9 @@ const ProductCreate = () => {
                             ]}
                         />
 
-                        <div style={{ marginTop: 48, display: 'flex', justifyContent: 'flex-end', gap: 16 }}>
-                            <Button size="large" onClick={() => navigate('/admin/products')} style={{ borderRadius: 12, height: 48 }}>{t('admin_btn_finish_later')}</Button>
-                            <Button type="primary" size="large" className="modern-btn-primary" onClick={handleSaveVariants} loading={loading} style={{ minWidth: 200, height: 48 }}>
+                        <div className="admin-btn-group">
+                            <Button size="large" onClick={() => navigate('/admin/products')} className="admin-btn-responsive" style={{ border: '1px solid #d9d9d9' }}>{t('admin_btn_finish_later')}</Button>
+                            <Button type="primary" size="large" className="modern-btn-primary admin-btn-responsive" onClick={handleSaveVariants} loading={loading}>
                                 <CheckCircleOutlined /> {t('admin_btn_save_finish')}
                             </Button>
                         </div>

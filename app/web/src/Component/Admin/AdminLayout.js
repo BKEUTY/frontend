@@ -206,12 +206,7 @@ const AdminLayout = () => {
                 </Header>
 
                 <Content
-                    className="site-layout-background"
-                    style={{
-                        margin: '24px 16px',
-                        padding: 24,
-                        minHeight: 280,
-                    }}
+                    className="site-layout-background admin-content"
                 >
                     <Outlet />
                 </Content>

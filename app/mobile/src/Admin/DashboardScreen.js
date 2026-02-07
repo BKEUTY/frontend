@@ -1,44 +1,54 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Platform, useWindowDimensions } from 'react-native';
 import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { COLORS } from '../../constants/Theme';
-
-const { width } = Dimensions.get('window');
+import { LinearGradient } from 'expo-linear-gradient';
 
 const DashboardScreen = () => {
     const { t } = useLanguage();
+    const { width } = useWindowDimensions();
 
     const stats = [
         {
-            title: t('admin_dashboard_sales', 'Doanh thu hôm nay'),
+            title: t('admin_dashboard_sales'),
             value: '40,689,000 đ',
             icon: 'currency-usd',
             iconLib: MaterialCommunityIcons,
             trend: 8.5,
             trendType: 'up',
-            color: '#c2185b',
-            bg: '#fce7f3'
+            colors: ['#c2185b', '#e91e63'],
+            bgLight: '#fce7f3'
         },
         {
-            title: t('admin_dashboard_orders', 'Tổng đơn hàng'),
+            title: t('admin_dashboard_orders'),
             value: '1,250',
             icon: 'shopping-bag',
             iconLib: FontAwesome5,
             trend: 5.2,
             trendType: 'up',
-            color: '#3b82f6',
-            bg: '#dbeafe'
+            colors: ['#2980b9', '#3498db'],
+            bgLight: '#dbeafe'
         },
         {
-            title: t('admin_dashboard_appointments', 'Lịch hẹn'),
+            title: t('admin_dashboard_appointments'),
             value: '600',
             icon: 'calendar-check',
             iconLib: MaterialCommunityIcons,
             trend: 12,
             trendType: 'up',
-            color: '#10b981',
-            bg: '#d1fae5'
+            colors: ['#059669', '#10b981'],
+            bgLight: '#d1fae5'
+        },
+        {
+            title: t('admin_dashboard_users'),
+            value: '128',
+            icon: 'account-group',
+            iconLib: MaterialCommunityIcons,
+            trend: 2.4,
+            trendType: 'down',
+            colors: ['#d97706', '#f59e0b'],
+            bgLight: '#fef3c7'
         }
     ];
 
@@ -47,67 +57,110 @@ const DashboardScreen = () => {
         { id: '2', name: 'Matte Lipstick', category: 'Makeup', price: '450,000 đ', sold: 215 },
         { id: '3', name: 'Vitamin C Serum', category: 'Skincare', price: '890,000 đ', sold: 189 },
         { id: '4', name: 'Rose Water Toner', category: 'Toner', price: '320,000 đ', sold: 156 },
+        { id: '5', name: 'Sunscreen SPF 50', category: 'Sunscreen', price: '550,000 đ', sold: 120 },
     ];
 
-    const renderStatCard = (item) => {
+    const renderStatCard = (item, index) => {
         const IconLib = item.iconLib;
+        const isTablet = width > 600;
+        const cardWidth = isTablet ? (width - 48) / 4 : (width - 48) / 2;
+
         return (
-            <View key={item.title} style={styles.statCard}>
-                <View style={[styles.iconWrapper, { backgroundColor: item.bg }]}>
-                    <IconLib name={item.icon} size={24} color={item.color} />
+            <TouchableOpacity
+                key={index}
+                style={[styles.statCard, { width: cardWidth }]}
+                activeOpacity={0.9}
+            >
+                <View style={[styles.iconWrapper, { backgroundColor: item.bgLight }]}>
+                    <IconLib name={item.icon} size={24} color={item.colors[0]} />
                 </View>
-                <Text style={styles.statValue}>{item.value}</Text>
+
+                <Text style={styles.statValue} numberOfLines={1} adjustsFontSizeToFit>{item.value}</Text>
                 <Text style={styles.statLabel} numberOfLines={1}>{item.title}</Text>
+
                 <View style={[styles.trendPill, item.trendType === 'up' ? styles.trendUp : styles.trendDown]}>
-                    <IconLib name={item.trendType === 'up' ? 'arrow-up' : 'arrow-down'} size={12} color={item.trendType === 'up' ? '#059669' : '#dc2626'} />
+                    <Ionicons
+                        name={item.trendType === 'up' ? 'trending-up' : 'trending-down'}
+                        size={14}
+                        color={item.trendType === 'up' ? '#059669' : '#dc2626'}
+                    />
                     <Text style={[styles.trendText, { color: item.trendType === 'up' ? '#059669' : '#dc2626' }]}>
                         {Math.abs(item.trend)}%
                     </Text>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 
     const renderProductItem = ({ item }) => (
         <View style={styles.productItem}>
+            <View style={styles.productIcon}>
+                <MaterialCommunityIcons name="package-variant-closed" size={24} color={COLORS.mainTitle} />
+            </View>
             <View style={styles.productInfo}>
-                <Text style={styles.productName}>{item.name}</Text>
+                <Text style={styles.productName} numberOfLines={1}>{item.name}</Text>
                 <View style={styles.categoryPill}>
-                    <Text style={styles.categoryText}>{item.category.toUpperCase()}</Text>
+                    <Text style={styles.categoryText}>{item.category}</Text>
                 </View>
             </View>
             <View style={styles.productMeta}>
                 <Text style={styles.productPrice}>{item.price}</Text>
-                <Text style={styles.productSold}>{t('sold', 'Đã bán')}: {item.sold}</Text>
+                <Text style={styles.productSold}>{t('sold', 'Sold')}: {item.sold}</Text>
             </View>
         </View>
     );
 
     return (
         <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>{t('dashboard', 'Tổng quan')}</Text>
-            </View>
+            <LinearGradient
+                colors={[COLORS.mainTitle, '#e91e63']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+                style={styles.headerGradient}
+            >
+                <View style={styles.headerContent}>
+                    <View>
+                        <Text style={styles.headerSubtitle}>{t('welcome', 'Xin chào')}, Admin</Text>
+                        <Text style={styles.headerTitle}>{t('dashboard', 'Tổng quan')}</Text>
+                    </View>
+                    <TouchableOpacity style={styles.profileBtn}>
+                        <View style={styles.avatarPlaceholder}>
+                            <Text style={styles.avatarText}>A</Text>
+                        </View>
+                    </TouchableOpacity>
+                </View>
+            </LinearGradient>
 
-            <View style={styles.statsGrid}>
-                {stats.map(renderStatCard)}
-            </View>
+            <View style={styles.contentContainer}>
+                <View style={styles.statsGrid}>
+                    {stats.map((item, index) => renderStatCard(item, index))}
+                </View>
 
-            <View style={styles.sectionHeader}>
-                <Text style={styles.sectionTitle}>{t('admin_top_products', 'Sản phẩm bán chạy')}</Text>
-            </View>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>{t('admin_top_products', 'Sản phẩm bán chạy')}</Text>
+                    <TouchableOpacity>
+                        <Text style={styles.seeAllText}>{t('view_all', 'Xem tất cả')}</Text>
+                    </TouchableOpacity>
+                </View>
 
-            <View style={styles.tableCard}>
-                <FlatList
-                    data={products}
-                    renderItem={renderProductItem}
-                    keyExtractor={item => item.id}
-                    scrollEnabled={false}
-                    ItemSeparatorComponent={() => <View style={styles.separator} />}
-                />
+                <View style={styles.tableCard}>
+                    {products.length > 0 ? (
+                        <FlatList
+                            data={products}
+                            renderItem={renderProductItem}
+                            keyExtractor={item => item.id}
+                            scrollEnabled={false}
+                            ItemSeparatorComponent={() => <View style={styles.separator} />}
+                        />
+                    ) : (
+                        <View style={styles.emptyContainer}>
+                            <MaterialCommunityIcons name="package-variant-closed" size={48} color="#e2e8f0" />
+                            <Text style={styles.emptyText}>{t('no_products_found', 'No products found')}</Text>
+                        </View>
+                    )}
+                </View>
             </View>
-
-            <View style={{ height: 30 }} />
+            <View style={{ height: 100 }} />
         </ScrollView>
     );
 };
@@ -116,39 +169,71 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f8f9fa',
-        padding: 16,
     },
-    header: {
-        marginBottom: 20,
-        marginTop: 10,
+    headerGradient: {
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingBottom: 30,
+        paddingHorizontal: 20,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+    },
+    headerContent: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    headerSubtitle: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.8)',
+        fontWeight: '600',
+        marginBottom: 4,
     },
     headerTitle: {
         fontSize: 28,
-        fontWeight: 'bold',
-        color: '#1a1a1a',
+        fontWeight: '800',
+        color: '#ffffff',
+    },
+    avatarPlaceholder: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.4)',
+    },
+    avatarText: {
+        color: 'white',
+        fontWeight: '700',
+        fontSize: 18,
+    },
+    contentContainer: {
+        padding: 16,
+        marginTop: -20,
     },
     statsGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'space-between',
+        gap: 12,
         marginBottom: 24,
     },
     statCard: {
-        width: (width - 44) / 2,
         backgroundColor: 'white',
-        borderRadius: 16,
+        borderRadius: 20,
         padding: 16,
-        marginBottom: 12,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
+        shadowRadius: 10,
+        elevation: 3,
+        marginBottom: 4,
     },
     iconWrapper: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
+        width: 44,
+        height: 44,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 12,
@@ -161,91 +246,128 @@ const styles = StyleSheet.create({
     },
     statLabel: {
         fontSize: 13,
-        color: '#6b7280',
-        marginBottom: 8,
+        color: '#64748b',
+        fontWeight: '500',
+        marginBottom: 10,
     },
     trendPill: {
         flexDirection: 'row',
         alignItems: 'center',
-        alignSelf: 'flex-start',
-        paddingHorizontal: 8,
-        paddingVertical: 4,
-        borderRadius: 12,
+        paddingVertical: 2,
     },
     trendUp: {
-        backgroundColor: '#ecfdf5',
+        // backgroundColor: '#ecfdf5',
     },
     trendDown: {
-        backgroundColor: '#fef2f2',
+        // backgroundColor: '#fef2f2',
     },
     trendText: {
         fontSize: 12,
         fontWeight: '700',
+        marginLeft: 2,
+    },
+    trendLabel: {
+        fontSize: 10,
         marginLeft: 4,
+        color: '#94a3b8',
     },
     sectionHeader: {
-        marginBottom: 12,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 16,
+        paddingHorizontal: 4,
     },
     sectionTitle: {
         fontSize: 18,
-        fontWeight: '700',
+        fontWeight: '800',
         color: '#1a1a1a',
+    },
+    seeAllText: {
+        fontSize: 14,
+        color: COLORS.mainTitle,
+        fontWeight: '600',
     },
     tableCard: {
         backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 6,
+        borderRadius: 24,
+        padding: 8,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
+        shadowRadius: 10,
+        elevation: 3,
     },
     productItem: {
         padding: 16,
         flexDirection: 'row',
-        justifyContent: 'space-between',
         alignItems: 'center',
+    },
+    productIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: '#fce7f3',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
     },
     productInfo: {
         flex: 1,
     },
     productName: {
         fontSize: 15,
-        fontWeight: '600',
-        color: '#1f2937',
-        marginBottom: 6,
+        fontWeight: '700',
+        color: '#1e293b',
+        marginBottom: 4,
     },
     categoryPill: {
-        backgroundColor: '#fce7f3',
+        backgroundColor: '#f1f5f9',
         paddingHorizontal: 8,
         paddingVertical: 2,
         borderRadius: 6,
         alignSelf: 'flex-start',
     },
     categoryText: {
-        color: '#be185d',
-        fontSize: 10,
-        fontWeight: '700',
+        color: '#64748b',
+        fontSize: 11,
+        fontWeight: '600',
     },
     productMeta: {
         alignItems: 'flex-end',
     },
     productPrice: {
         fontSize: 15,
-        fontWeight: '600',
-        color: '#1f2937',
-        marginBottom: 4,
+        fontWeight: '700',
+        color: COLORS.mainTitle,
+        marginBottom: 2,
     },
     productSold: {
         fontSize: 12,
-        color: '#ec4899',
-        fontWeight: '600',
+        color: '#94a3b8',
+        fontWeight: '500',
     },
     separator: {
         height: 1,
-        backgroundColor: '#f3f4f6',
+        backgroundColor: '#f1f5f9',
         marginHorizontal: 16,
+    },
+    emptyContainer: {
+        padding: 40,
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: 220,
+        backgroundColor: '#fafafa',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#f1f5f9',
+        borderStyle: 'dashed',
+    },
+    emptyText: {
+        marginTop: 12,
+        fontSize: 14,
+        color: '#94a3b8',
+        fontWeight: '500',
     },
 });
 

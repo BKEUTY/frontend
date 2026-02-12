@@ -41,8 +41,16 @@ const ProductScreen = ({ navigation }) => {
     };
 
     const renderItem = ({ item }) => (
-        <View style={styles.productItem}>
-            <View style={styles.imagePlaceholder} />
+        <TouchableOpacity
+            style={styles.productItem}
+            onPress={() => navigation.navigate('ProductDetail', { product: item })}
+            activeOpacity={0.9}
+        >
+            {item.image ? (
+                <Image source={{ uri: item.image }} style={styles.imagePlaceholder} resizeMode="cover" />
+            ) : (
+                <View style={styles.imagePlaceholder} />
+            )}
 
             <View style={styles.productInfo}>
                 <Text style={styles.productBrand}>BKEUTY</Text>
@@ -59,7 +67,7 @@ const ProductScreen = ({ navigation }) => {
                     </TouchableOpacity>
                 </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     if (loading) {

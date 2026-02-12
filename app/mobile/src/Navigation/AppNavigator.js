@@ -6,6 +6,7 @@ import { View, Text } from 'react-native';
 
 import HomeScreen from '../Home/HomeScreen';
 import ProductScreen from '../Product/ProductScreen';
+import ProductDetailScreen from '../Product/ProductDetailScreen';
 import CartScreen from '../Cart/CartScreen';
 import CheckoutScreen from '../Cart/CheckoutScreen';
 import AccountScreen from '../Account/AccountScreen';
@@ -65,6 +66,7 @@ export default function AppNavigator() {
             <NavigationContainer>
                 <Stack.Navigator screenOptions={{ headerShown: false }}>
                     <Stack.Screen name="Main" component={TabNavigator} />
+                    <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: true, title: t('checkout') }} />
 
                     {/* Static Pages */}

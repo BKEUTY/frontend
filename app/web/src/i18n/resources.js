@@ -322,7 +322,7 @@ export const en = {
     international_processing: "Processing Internationally",
     international_processing_desc: "[International] Order has left international warehouse: Nanning",
 
-    // Auth & OTP
+
     email_required: "Please enter your email!",
     email_invalid: "Invalid email format!",
     password_required: "Please enter your password!",
@@ -378,7 +378,7 @@ export const en = {
     error_500_desc: "Sorry, something went wrong on our server. Please try again later.",
     back_to_home: "Back to Home",
 
-    // Admin
+
     admin_dashboard_sales: "Total Sales",
     admin_dashboard_orders: "Total Orders",
     admin_dashboard_appointments: "Total Appointments",
@@ -393,7 +393,7 @@ export const en = {
     admin_total: "Total",
     admin_status: "Status",
 
-    // Admin Products
+
     admin_product_list: "Product List",
     admin_product_create: "Create New Product",
     admin_product_id: "ID",
@@ -407,13 +407,13 @@ export const en = {
     admin_product_active: "Active",
     admin_product_inactive: "Inactive",
 
-    // Admin Create
+
     admin_create_title: "Create New Product",
     admin_step_info: "Product Info",
     admin_step_options: "Options & Attributes",
     admin_step_variants: "Configure Variants",
     admin_label_name: "Product Name",
-    admin_label_category: "Categories (ID: 1,2...)",
+    admin_label_category: "Categories",
     admin_label_brand: "Brand",
     admin_label_desc: "Description",
     admin_label_image: "Main Image",
@@ -492,7 +492,11 @@ export const en = {
     admin_error_fetch_variants: "Could not load variants",
     admin_error_variant_update: "Some updates failed. Please try again.",
     admin_error_at_least_one_option: "Please add at least one valid option (e.g. Color: Red)",
-    admin_label_values_press_enter: "Values (Press Enter)"
+    admin_label_values_press_enter: "Values (Press Enter)",
+    admin_error_name_required: "Product name is required",
+    admin_product_color: "Color",
+    admin_values: "Values",
+    admin_placeholder_add_value: "Add value (e.g. Red)"
 };
 
 export const vi = {
@@ -511,7 +515,7 @@ export const vi = {
     admin_total: "Tổng Tiền",
     admin_status: "Trạng Thái",
 
-    // Admin Products
+
     admin_product_list: "Danh sách sản phẩm",
     admin_product_create: "Tạo sản phẩm mới",
     admin_product_id: "ID",
@@ -525,13 +529,13 @@ export const vi = {
     admin_product_active: "Hoạt động",
     admin_product_inactive: "Ngừng KD",
 
-    // Admin Create
+
     admin_create_title: "Tạo sản phẩm mới",
     admin_step_info: "Thông tin sản phẩm",
     admin_step_options: "Tùy chọn & Thuộc tính",
     admin_step_variants: "Cấu hình biến thể",
     admin_label_name: "Tên sản phẩm",
-    admin_label_category: "Danh mục (ID: 1,2...)",
+    admin_label_category: "Danh mục",
     admin_label_brand: "Thương hiệu",
     admin_label_desc: "Mô tả",
     admin_label_image: "Ảnh đại diện",
@@ -981,5 +985,9 @@ export const vi = {
     admin_error_fetch_variants: "Không thể tải danh sách biến thể",
     admin_error_variant_update: "Một số cập nhật thất bại. Vui lòng thử lại.",
     admin_error_at_least_one_option: "Vui lòng thêm ít nhất một tùy chọn hợp lệ (VD: Màu sắc: Đỏ)",
-    admin_label_values_press_enter: "Giá trị (Nhấn Enter)"
+    admin_label_values_press_enter: "Giá trị (Nhấn Enter)",
+    admin_error_name_required: "Vui lòng nhập tên sản phẩm",
+    admin_product_color: "Màu sắc",
+    admin_values: "Giá trị",
+    admin_placeholder_add_value: "Thêm giá trị (VD: Đỏ)"
 };

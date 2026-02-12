@@ -1,5 +1,4 @@
 export default {
-    // Shared
     all: "All",
     home: "Home",
     product: "Product",
@@ -41,7 +40,6 @@ export default {
     shipping_address: "Shipping Address",
     update_info_success: "Update info successfully!",
     add_cart_success: "Added to cart successfully!",
-    loading: "Loading",
     no_orders: "No orders found.",
     order_id: "Order ID",
     order_date: "Order Date",
@@ -191,8 +189,6 @@ export default {
     view_cart: "View Cart",
     checkout_now: "Checkout Now",
     payment_error_try_again: "An error occurred, please try again.",
-
-    // About Us & Contact
     about_us_banner: "[Brand Banner Image - Luxurious pink tone, showing beauty diversity]",
     about_us_story_title: "BKEUTY's Story",
     about_us_story_p1: "Founded in 2024, BKEUTY is not just a cosmetics store, but a journey to find and honor true beauty. We believe that 'Beauty' has no fixed definition. Beauty is confidence, healthy skin, and how you love yourself every day.",
@@ -214,8 +210,6 @@ export default {
     contact_office_title: "Head Office",
     contact_office_address: "Address: Ward 6. Linh Trung Ward, Thu Duc City, Ho Chi Minh City.",
     contact_office_desc: "This is where we work and operate the system. You can come directly to experience products at the 1st floor showroom.",
-
-    // FAQ
     faq_1_title: "1. Ordering & Payment",
     faq_1_q1: "Q: How do I know my order was placed successfully?",
     faq_1_a1: "A: After placing an order, you will receive an automatic confirmation email from the system. You can also check in 'My Orders'.",
@@ -229,8 +223,6 @@ export default {
     faq_3_title: "3. Returns & Warranty",
     faq_3_q1: "Q: What is BKEUTY's return policy?",
     faq_3_a1: "A: Support returns within 7 days if the product has a manufacturing defect, broken due to shipping or wrong model delivered. Products must remain sealed and tagged.",
-
-    // Retail System
     retail_intro: "Experience classy shopping space with thousands of free test products at BKEUTY store system nationwide.",
     retail_store_img: "[Luxurious flagship store facade image]",
     retail_hcm_title: "Ho Chi Minh City Area",
@@ -255,16 +247,12 @@ export default {
     retail_open_date: "Open Date",
     retail_no_result: "No branches found.",
     retail_back_to_list: "Back to list",
-
-    // Terms
     terms_1_title: "1. Information Privacy Policy",
     terms_1_content: "BKEUTY is committed to absolute confidentiality of customer personal information according to Vietnam's personal information protection laws. We only collect necessary information to process orders and take care of customers.",
     terms_2_title: "2. Payment Policy",
     terms_2_content: "Customers can choose flexible payment methods. For online payments, we use secure payment gateways to ensure transaction safety.",
     terms_3_title: "3. Website Usage Terms",
     terms_3_content: "When accessing the BKEUTY website, customers agree to comply with regulations on image copyright, product information and civilized conduct in the review community.",
-
-    // Promo
     promo_list_title: "Promotion List",
     promo_search_placeholder: "Search by name, promo code...",
     promo_tab_all: "All",
@@ -285,8 +273,6 @@ export default {
     yes: "Yes",
     no: "No",
     no_promos_found: "No promotions found matching your criteria.",
-
-    // Appointments
     appointment_list: "Appointment List",
     manage_appointments_desc: "Manage upcoming appointments and booking history",
     search_appointment_placeholder: "Search service, branch...",
@@ -307,8 +293,6 @@ export default {
     nourishing_shampoo: "Nourishing Shampoo",
     upcoming_status: "Upcoming",
     completed_status: "Completed",
-
-    // Admin Dashboard
     admin_dashboard_sales: "Total Sales",
     admin_dashboard_orders: "Total Orders",
     admin_dashboard_appointments: "Total Appointments",
@@ -325,8 +309,6 @@ export default {
     admin_top_products: "Top Products",
     admin_product_price: "Price",
     admin_product_sold: "Sold",
-
-    // Admin Product
     admin_product_list: "Product List",
     admin_product_create: "Create New Product",
     admin_product_id: "ID",
@@ -344,7 +326,7 @@ export default {
     admin_step_options: "Options",
     admin_step_variants: "Variants",
     admin_label_name: "Product Name",
-    admin_label_category: "Categories (ID: 1,2...)",
+    admin_label_category: "Categories",
     admin_label_brand: "Brand",
     admin_label_desc: "Description",
     admin_label_image: "Main Image",
@@ -383,11 +365,17 @@ export default {
     admin_product_color: "Color",
     admin_error_name_required: "Please enter product name",
     admin_error_category_required: "Select at least one category",
-
+    admin_placeholder_option_name: "e.g. Color",
+    admin_placeholder_option_values: "e.g. Red, Blue (Press Enter)",
+    admin_placeholder_price: "Price",
+    admin_placeholder_stock: "Stock",
+    admin_no_variants: "No variants generated",
+    admin_values: "Values",
+    admin_placeholder_add_value: "Add value (e.g. Red)",
+    admin_msg_options_desc: "Add options like Color, Size...",
+    admin_msg_variants_desc: "Manage price and stock for each variant",
     feature_developing_title: "Feature Under Development",
     feature_developing_desc: "We are working hard to bring this feature to you soon. Stay tuned!",
-
-    // Common
     order_id_label: "Order ID: ",
     invoice: "Invoice",
     track_order: "Track Order",
@@ -498,12 +486,19 @@ export default {
     refresh: "Refresh",
     items: "items",
     edit: "Edit",
-    delete: "Delete",
     page: "Page",
     error_fetch_products: "Failed to load products",
     next: "Next",
-    back: "Back",
     loading: "Loading...",
-    success: "Success",
-    error: "Error"
+    error: "Error",
+    scent: "Scent",
+    no_scent: "No Scent",
+    capacity: "Capacity",
+    fast_delivery_2h: "2H Fast Free Delivery",
+    buy_now: "BUY NOW NOWFREE 2H",
+    free_gift_extra: "Late gift 100k",
+    market_price: "Market Price",
+    save: "Save",
+    ends_in: "ENDS IN",
+    preview_product: "Preview as User"
 };

@@ -11,9 +11,10 @@ import Pagination from "../Component/Common/Pagination";
 import ProductCard from "../Component/Common/ProductCard";
 import Skeleton from "../Component/Common/Skeleton";
 import productApi from '../api/productApi';
+import { getImageUrl } from '../api/axiosClient';
 import NotFound from '../Component/ErrorPages/NotFound';
 
-export default function ProductDetail() {
+export default function ProductDetail({ previewProduct }) {
     const { id } = useParams();
     const { t, language } = useLanguage();
     const notify = useNotification();
@@ -33,11 +34,53 @@ export default function ProductDetail() {
     const [quantity, setQuantity] = useState(1);
 
     useEffect(() => {
+        if (previewProduct) {
+            // Transform preview data to match component state structure
+            const mergedData = {
+                id: previewProduct.productId || previewProduct.id,
+                name: previewProduct.name,
+                brand: "BKEUTY",
+                price: previewProduct.price || 0,
+                original_price: (previewProduct.price || 0) * 1.2,
+                rating: 4.8,
+                reviews_count: 124,
+                images: [
+                    previewProduct.image ? getImageUrl(previewProduct.image) : best_selling_image,
+                    best_selling_image,
+                    best_selling_image
+                ],
+                sizes: ["30ml", "50ml", "75ml"],
+                content: {
+                    en: {
+                        description: previewProduct.description || "Product description...",
+                        details: "Full details...",
+                        application: "Apply daily...",
+                        ingredients: "Aqua, Glycerin...",
+                        advance: "Advanced formula...",
+                        benefits_list: ["Revitalizing", "Repairing"]
+                    },
+                    vi: {
+                        description: previewProduct.description || "Mô tả sản phẩm...",
+                        details: "Chi tiết...",
+                        application: "Sử dụng hàng ngày...",
+                        ingredients: "Nước, Glycerin...",
+                        advance: "Công thức tiên tiến...",
+                        benefits_list: ["Tái Tạo", "Phục Hồi"]
+                    }
+                },
+                reviews: []
+            };
+            setProductData(mergedData);
+            setMainImage(mergedData.images[0]);
+            setIsLoading(false);
+            return;
+        }
+
         const fetchProduct = async () => {
             setIsLoading(true);
             setIsError(false);
             try {
-                const response = await productApi.getAll({ page: 0, size: 100 });
+                const response = await productApi.getAll({ page: 0, size: 1000 });
                 const found = response.data.content.find(p => p.productId === id || p.id === id);
 
                 if (found) {
@@ -50,7 +93,7 @@ export default function ProductDetail() {
                         rating: 4.8,
                         reviews_count: 124,
                         images: [
-                            found.image || best_selling_image,
+                            found.image ? getImageUrl(found.image) : best_selling_image,
                             best_selling_image,
                             best_selling_image
                         ],
@@ -88,7 +131,7 @@ export default function ProductDetail() {
             }
         };
         fetchProduct();
-    }, [id]);
+    }, [id, previewProduct]);
 
     const [reviewPage, setReviewPage] = useState(0);
     const reviewsPerPage = 5;
@@ -127,7 +170,7 @@ export default function ProductDetail() {
         addToCart({
             id: productData.id,
             name: productData.name,
-            price: productData.price, // Keep as number
+            price: productData.price,
             image: mainImage,
             quantity: quantity
         });
@@ -183,54 +226,91 @@ export default function ProductDetail() {
                                 mask: `url(${starIcon}) no-repeat center / contain`,
                                 WebkitMask: `url(${starIcon}) no-repeat center / contain`
                             }}></div>
-                            <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')})
+                            <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')}) | <span>SKU: {productData.id}</span>
                         </div>
-                        <span style={{ color: '#ddd' }}>|</span>
-                        <span style={{ fontSize: '0.9rem', color: '#666' }}>{t('sku')}{id}</span>
                     </div>
 
-                    <div className="detail-price">
-                        {productData.price.toLocaleString("vi-VN")}đ
-                        <span className="original-price">{productData.original_price.toLocaleString("vi-VN")}đ</span>
+                    <div className="flash-deal-banner">
+                        <div className="flash-deal-left">
+                            <span className="flash-icon">⚡</span> FLASH DEAL
+                        </div>
+                        <div className="flash-countdown">
+                            {t('ends_in')}: <span>02</span>:<span>04</span>:<span>42</span>
+                        </div>
                     </div>
 
-                    <p className="product-short-desc">
-                        {getLocalContent('description')}
-                    </p>
+                    <div className="price-box">
+                        <div className="current-price">
+                            {productData.price.toLocaleString("vi-VN")}đ
+                            <span className="vat-tag">(Đã bao gồm VAT)</span>
+                        </div>
+                        <div className="old-price-row">
+                            <span className="market-price">{t('market_price')}: {productData.original_price.toLocaleString("vi-VN")}đ</span>
+                            <span className="save-price">{t('save')}: {(productData.original_price - productData.price).toLocaleString("vi-VN")}đ</span>
+                        </div>
+                    </div>
 
-                    <div className="size-selector">
-                        <span className="size-label">{t('sizes')}: <strong>{selectedSize}</strong></span>
-                        <div className="size-options">
-                            {productData.sizes.map(size => (
-                                <button
-                                    key={size}
-                                    className={`size-btn ${selectedSize === size ? 'active' : ''}`}
-                                    onClick={() => setSelectedSize(size)}
-                                >
-                                    {size}
-                                </button>
-                            ))}
+                    <div className="product-options-section">
+                        <div className="option-group">
+                            <span className="option-label">{t('scent', 'Mùi hương')}: <strong>{t('no_scent', 'Không mùi')}</strong></span>
+                            <div className="variant-thumbs">
+                                <div className="variant-thumb active">
+                                    <img src={mainImage} alt="Variant 1" />
+                                </div>
+                                <div className="variant-thumb">
+                                    <img src={best_selling_image} alt="Variant 2" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="option-group">
+                            <span className="option-label">{t('capacity', 'Dung tích')}: <strong>{selectedSize}</strong></span>
+                            <div className="size-options">
+                                {productData.sizes.map(size => (
+                                    <button
+                                        key={size}
+                                        className={`size-btn ${selectedSize === size ? 'active' : ''}`}
+                                        onClick={() => setSelectedSize(size)}
+                                    >
+                                        {size}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="option-group">
+                            <span className="option-label">{t('quantity')}:</span>
+                            <div className="input-quantity-wrapper">
+                                <button className="qty-btn" onClick={() => handleQuantityChange(-1)}>-</button>
+                                <input type="text" className="qty-input" value={quantity} readOnly />
+                                <button className="qty-btn" onClick={() => handleQuantityChange(1)}>+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="shipping-info-box">
+                        <div className="shipping-header">
+                            <span className="now-free-icon">NowFree</span>
+                            <strong>{t('fast_delivery_2h', 'Giao Nhanh Miễn Phí 2H')}</strong>
+                        </div>
+                        <div className="shipping-desc">
+                            {language === 'vi'
+                                ? 'Bạn muốn nhận hàng trước 10h ngày mai. Đặt hàng trước 24h và chọn giao hàng 2H ở bước thanh toán.'
+                                : 'Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout.'
+                            }
+                            <span className="link-text"> {t('view_more', 'Xem thêm')}</span>
                         </div>
                     </div>
 
                     <div className="actions">
-                        <div className="input-quantity-wrapper">
-                            <button className="qty-btn" onClick={() => handleQuantityChange(-1)}>-</button>
-                            <input type="text" className="qty-input" value={quantity} readOnly />
-                            <button className="qty-btn" onClick={() => handleQuantityChange(1)}>+</button>
-                        </div>
-                        <button className="btn-add-bag" onClick={handleAddToCart}>
-                            {t('add_to_bag')} - {(productData.price * quantity).toLocaleString("vi-VN")}đ
+                        <button className="btn-buy-now">
+                            <span className="btn-main-text">{t('buy_now', 'MUA NGAY NOWFREE 2H')}</span>
+                            <span className="btn-sub-text">{t('free_gift_extra', 'Trễ tặng 100k')}</span>
                         </button>
-                        <button className="btn-wishlist">♡</button>
+                        <button className="btn-add-bag" onClick={handleAddToCart}>
+                            {t('add_to_cart', 'THÊM VÀO GIỎ')}
+                        </button>
                     </div>
-
-                    <ul className="features-list">
-                        <li><span>✔</span> {t('formula')}: {t(language === 'vi' ? '92% Thành phần tự nhiên' : '92% Natural Origin Ingredients')}</li>
-                        {getLocalContent('benefits_list').map((benefit, i) => (
-                            <li key={i}><span>✔</span> {benefit}</li>
-                        ))}
-                    </ul>
                 </div>
             </div>
 

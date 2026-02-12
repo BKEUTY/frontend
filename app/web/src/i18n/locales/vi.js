@@ -1,5 +1,4 @@
 export default {
-    // Shared
     all: "Tất Cả",
     home: "Trang Chủ",
     product: "Sản Phẩm",
@@ -41,7 +40,6 @@ export default {
     shipping_address: "Địa chỉ nhận hàng",
     update_info_success: "Cập nhật thông tin thành công!",
     add_cart_success: "Thêm vào giỏ hàng thành công!",
-    loading: "Đang tải",
     no_orders: "Chưa có đơn hàng nào.",
     order_id: "Mã đơn hàng",
     order_date: "Ngày đặt",
@@ -92,8 +90,6 @@ export default {
     no_products_payment: "Không có sản phẩm để thanh toán!",
     order_success: "Đặt hàng thành công!",
     payment_error_try_again: "Có lỗi xảy ra, vui lòng thử lại.",
-
-    // About Us & Contact
     about_us_banner: "[Hình ảnh Banner Thương Hiệu - Tone hồng sang trọng, thể hiện sự đa dạng vẻ đẹp]",
     about_us_story_title: "Câu Chuyện Của BKEUTY",
     about_us_story_p1: "Ra đời vào năm 2024, BKEUTY không chỉ là một cửa hàng mỹ phẩm, mà là một hành trình tìm kiếm và tôn vinh vẻ đẹp đích thực. Chúng tôi tin rằng 'Đẹp' không có một định nghĩa cố định. Đẹp là sự tự tin, là làn da khỏe mạnh, và là cách bạn yêu thương bản thân mình mỗi ngày.",
@@ -115,8 +111,6 @@ export default {
     contact_office_title: "Văn Phòng Chính",
     contact_office_address: "Địa chỉ: Khu phố 6, Phường Linh Trung, Thành phố Thủ Đức, TP. Hồ Chí Minh.",
     contact_office_desc: "Đây là nơi chúng tôi làm việc và vận hành hệ thống. Quý khách có thể đến trực tiếp để trải nghiệm sản phẩm tại showroom tầng 1.",
-
-    // FAQ
     faq_1_title: "1. Đặt Hàng & Thanh Toán",
     faq_1_q1: "Q: Làm sao để tôi biết đơn hàng đã đặt thành công?",
     faq_1_a1: "A: Sau khi đặt hàng, bạn sẽ nhận được email xác nhận tự động từ hệ thống. Ngoài ra, bạn có thể kiểm tra trong mục 'Đơn hàng của tôi'.",
@@ -130,8 +124,6 @@ export default {
     faq_3_title: "3. Đổi Trả & Bảo Hành",
     faq_3_q1: "Q: Quy định đổi trả của BKEUTY?",
     faq_3_a1: "A: Hỗ trợ đổi trả trong 7 ngày nếu sản phẩm bị lỗi sản xuất, bể vỡ do vận chuyển hoặc giao sai mẫu. Sản phẩm phải còn nguyên seal và tem mác.",
-
-    // Retail System
     retail_intro: "Trải nghiệm không gian mua sắm đẳng cấp với hàng nghìn sản phẩm test miễn phí tại hệ thống cửa hàng BKEUTY trên toàn quốc.",
     retail_store_img: "[Hình ảnh mặt tiền cửa hàng flagship sang trọng]",
     retail_hcm_title: "Khu Vực TP. Hồ Chí Minh",
@@ -156,16 +148,12 @@ export default {
     retail_open_date: "Ngày mở cửa",
     retail_no_result: "Không tìm thấy chi nhánh nào.",
     retail_back_to_list: "Quay lại danh sách",
-
-    // Terms
     terms_1_title: "1. Chính Sách Bảo Mật Thông Tin",
     terms_1_content: "BKEUTY cam kết bảo mật tuyệt đối thông tin cá nhân của Quý khách theo chính sách bảo vệ thông tin cá nhân của pháp luật Việt Nam. Chúng tôi chỉ thu thập thông tin cần thiết để xử lý đơn hàng và chăm sóc khách hàng.",
     terms_2_title: "2. Chính Sách Thanh Toán",
     terms_2_content: "Khách hàng có thể lựa chọn các hình thức thanh toán linh hoạt. Đối với thanh toán online, chúng tôi sử dụng cổng thanh toán bảo mật để đảm bảo an toàn giao dịch.",
     terms_3_title: "3. Điều Khoản Sử Dụng Website",
     terms_3_content: "Khi truy cập website BKEUTY, khách hàng đồng ý tuân thủ các quy định về bản quyền hình ảnh, thông tin sản phẩm và ứng xử văn minh trong cộng đồng đánh giá.",
-
-    // Promo
     promo_list_title: "Danh Sách Khuyến Mãi",
     promo_search_placeholder: "Tìm kiếm theo tên, mã khuyến mãi...",
     promo_tab_all: "Tất cả",
@@ -233,7 +221,6 @@ export default {
     contact: "Liên Hệ",
     faq: "Câu Hỏi Thường Gặp",
     about_brand: "Về Thương Hiệu",
-
     makeup: "Trang Điểm",
     skincare: "Chăm Sóc Da",
     gift_sets: "Bộ Quà Tặng",
@@ -283,8 +270,6 @@ export default {
     show_less: "Thu gọn",
     star: "sao",
     stars: "sao",
-
-    // Appointments
     appointment_list: "Danh sách lịch hẹn",
     manage_appointments_desc: "Quản lý các cuộc hẹn sắp tới và lịch sử đặt lịch",
     search_appointment_placeholder: "Tìm kiếm dịch vụ, chi nhánh...",
@@ -382,8 +367,6 @@ export default {
     error_500_title: "Lỗi Máy Chủ",
     error_500_desc: "Xin lỗi, có lỗi xảy ra từ máy chủ. Vui lòng thử lại sau.",
     back_to_home: "Quay Về Trang Chủ",
-
-    // Admin Dashboard
     admin_dashboard_sales: "Tổng Doanh Thu",
     admin_dashboard_orders: "Tổng Đơn Hàng",
     admin_dashboard_appointments: "Tổng Lịch Hẹn",
@@ -400,8 +383,6 @@ export default {
     admin_top_products: "Sản phẩm bán chạy",
     admin_product_price: "Giá",
     admin_product_sold: "Đã bán",
-
-    // Admin Product
     admin_product_list: "Danh sách sản phẩm",
     admin_product_create: "Tạo sản phẩm mới",
     admin_product_id: "ID",
@@ -419,7 +400,7 @@ export default {
     admin_step_options: "Tùy chọn & Thuộc tính",
     admin_step_variants: "Cấu hình biến thể",
     admin_label_name: "Tên sản phẩm",
-    admin_label_category: "Danh mục (ID: 1,2...)",
+    admin_label_category: "Danh mục",
     admin_label_brand: "Thương hiệu",
     admin_label_desc: "Mô tả",
     admin_label_image: "Ảnh đại diện",
@@ -458,7 +439,15 @@ export default {
     admin_product_color: "Màu sắc",
     admin_error_name_required: "Vui lòng nhập tên sản phẩm",
     admin_error_category_required: "Chọn ít nhất một danh mục",
-
+    admin_placeholder_option_name: "VD: Màu sắc",
+    admin_placeholder_option_values: "VD: Đỏ, Xanh (Nhấn Enter)",
+    admin_placeholder_price: "Giá bán",
+    admin_placeholder_stock: "Tồn kho",
+    admin_no_variants: "Chưa có biến thể nào được tạo",
+    admin_values: "Giá trị",
+    admin_placeholder_add_value: "Thêm giá trị (VD: Đỏ)",
+    admin_msg_options_desc: "Thêm các tùy chọn như Màu sắc, Kích thước...",
+    admin_msg_variants_desc: "Quản lý giá và kho cho từng biến thể",
     feature_developing_title: "Tính Năng Đang Phát Triển",
     feature_developing_desc: "Chúng tôi đang nỗ lực để sớm ra mắt tính năng này. Hãy đón chờ nhé!",
     dashboard: "Tổng quan",
@@ -499,5 +488,15 @@ export default {
     error_fetch_products: "Không thể tải danh sách sản phẩm",
     next: "Tiếp theo",
     loading: "Đang tải...",
-    error: "Lỗi"
+    error: "Lỗi",
+    scent: "Mùi hương",
+    no_scent: "Không mùi",
+    capacity: "Dung tích",
+    fast_delivery_2h: "Giao Nhanh Miễn Phí 2H",
+    buy_now: "MUA NGAY NOWFREE 2H",
+    free_gift_extra: "Trễ tặng 100k",
+    market_price: "Giá thị trường",
+    save: "Tiết kiệm",
+    ends_in: "KẾT THÚC TRONG",
+    preview_product: "Xem trước giao diện người dùng"
 };

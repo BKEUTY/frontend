@@ -9,9 +9,7 @@ const cartApi = {
         const url = '/cart';
         return axiosClient.post(url, data);
     },
-    // Backend doesn't support update/delete yet
-    // update: (id, data) => axiosClient.put(`/cart/${id}`, data),
-    // remove: (id) => axiosClient.delete(`/cart/${id}`),
+
 };
 
 export default cartApi;

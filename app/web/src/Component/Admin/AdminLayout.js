@@ -12,7 +12,8 @@ import {
     BarChartOutlined,
     LogoutOutlined,
     GlobalOutlined,
-    HomeOutlined
+    HomeOutlined,
+    CloseOutlined
 } from '@ant-design/icons';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
@@ -130,18 +131,14 @@ const AdminLayout = () => {
                     zIndex: isMobile ? 1050 : 1000,
                 }}
             >
-                <div className={`admin-logo-container ${collapsed ? 'collapsed' : ''}`}>
-                    {collapsed && !isMobile ? (
-                        <img
-                            src={require('../../Assets/Images/logo.svg').default}
-                            alt="B"
-                            className="admin-logo-collapsed"
-                        />
-                    ) : (
-                        <img
-                            src={require('../../Assets/Images/logo.svg').default}
-                            alt="BKEUTY"
-                            className="admin-logo-img"
+                <div className="admin-sider-header">
+                    {!collapsed && <span className="admin-sider-label">{t('admin_menu', 'MENU')}</span>}
+                    {isMobile && !collapsed && (
+                        <Button
+                            type="text"
+                            icon={<CloseOutlined />}
+                            onClick={() => setCollapsed(true)}
+                            className="mobile-sidebar-close"
                         />
                     )}
                 </div>
@@ -170,7 +167,26 @@ const AdminLayout = () => {
                             onClick={() => setCollapsed(!collapsed)}
                             className="trigger-btn"
                         />
+                        {!isMobile && (
+                            <img
+                                src={require('../../Assets/Images/logo.svg').default}
+                                alt="BKEUTY"
+                                className="admin-header-logo"
+                                onClick={() => navigate('/admin')}
+                            />
+                        )}
                     </div>
+
+                    {isMobile && (
+                        <div className="admin-header-center">
+                            <img
+                                src={require('../../Assets/Images/logo.svg').default}
+                                alt="BKEUTY"
+                                className="admin-header-logo-mobile"
+                                onClick={() => navigate('/admin')}
+                            />
+                        </div>
+                    )}
 
                     <div className="admin-header-right">
                         <Button

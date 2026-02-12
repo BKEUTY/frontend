@@ -34,41 +34,40 @@
 .ant-input,
 .ant-input-password,
 .ant-select-selector {
-    border-radius: 8px !important;
-    border-color: #eff2f5 !important;
-    font-size: 16px !important;
-    padding: 12px 15px !important;
-    transition: all 0.3s ease !important;
+    border-radius: 8px;
+    border-color: #eff2f5;
+    font-size: 16px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
 }
 
 .ant-input:hover,
 .ant-input-password:hover,
 .ant-select-selector:hover {
-    border-color: var(--color_main_title) !important;
+    border-color: var(--color_main_title);
 }
 
 .ant-input:focus,
 .ant-input-password:focus,
 .ant-input-focused .ant-input,
 .ant-select-focused .ant-select-selector {
-    border-color: var(--color_main_title) !important;
-    box-shadow: 0 0 0 2px rgba(163, 2, 81, 0.1) !important;
+    border-color: var(--color_main_title);
+    box-shadow: 0 0 0 2px rgba(163, 2, 81, 0.1);
 }
 
 
 .ant-input-affix-wrapper .ant-input {
-    border: none !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    padding: 0 !important;
+    border: none;
+    background: transparent;
+    box-shadow: none;
+    padding: 0;
 }
 
 .ant-input-affix-wrapper {
-    border-radius: 8px !important;
-    border-color: #eff2f5 !important;
-    padding: 8px 11px !important;
-    padding: 8px 11px !important;
-    transition: all 0.3s ease !important;
+    border-radius: 8px;
+    border-color: #eff2f5;
+    padding: 8px 11px;
+    transition: all 0.3s ease;
 }
 
 .ant-input-affix-wrapper:hover,
@@ -511,6 +510,7 @@ a.ant-typography:hover {
     border-color: transparent !important;
     box-shadow: none !important;
 }
+
 .ant-notification {
     z-index: 9999 !important;
 }

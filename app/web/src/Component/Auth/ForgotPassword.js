@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Steps, Typography, Space, message } from 'antd';
+import { Form, Input, Button, Steps, Typography, Space, notification } from 'antd';
 import { MailOutlined, LockOutlined, SafetyOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Auth.css';
@@ -26,7 +26,10 @@ const ForgotPassword = () => {
 
         setTimeout(() => {
             setLoading(false);
-            message.success(`${t('otp_sent')} ${values.email}. ${t('otp_mock')} ${MOCK_OTP}`);
+            notification.success({
+                message: t('success'),
+                description: `${t('otp_sent')} ${values.email}. ${t('otp_mock')} ${MOCK_OTP}`
+            });
             setCurrentStep(1);
         }, 1500);
     };
@@ -38,11 +41,17 @@ const ForgotPassword = () => {
         setTimeout(() => {
             setLoading(false);
             if (values.otp === MOCK_OTP) {
-                message.success(t('otp_success'));
+                notification.success({
+                    message: t('success'),
+                    description: t('otp_success')
+                });
 
                 setCurrentStep(2);
             } else {
-                message.error(t('otp_error'));
+                notification.error({
+                    message: t('error'),
+                    description: t('otp_error')
+                });
             }
         }, 1000);
     };
@@ -53,7 +62,10 @@ const ForgotPassword = () => {
 
         setTimeout(() => {
             setLoading(false);
-            message.success(t('reset_success'));
+            notification.success({
+                message: t('success'),
+                description: t('reset_success')
+            });
             setTimeout(() => {
                 navigate('/login');
             }, 1500);
@@ -62,7 +74,10 @@ const ForgotPassword = () => {
 
 
     const handleResendOTP = () => {
-        message.info(`${t('otp_sent')} ${email}. ${t('otp_mock')} ${MOCK_OTP}`);
+        notification.info({
+            message: t('info', 'Info'),
+            description: `${t('otp_sent')} ${email}. ${t('otp_mock')} ${MOCK_OTP}`
+        });
     };
 
     const steps = [

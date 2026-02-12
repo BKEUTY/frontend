@@ -1,15 +1,17 @@
 
 import React, { useEffect, useState } from 'react';
-import { Table, Button, message, Card, Typography, Tooltip, Tag, Space, Empty } from 'antd';
+import { Table, Button, notification, Card, Typography, Tooltip, Tag, Space, Empty, Modal } from 'antd';
 import {
     PlusOutlined, ReloadOutlined,
     EditOutlined, DeleteOutlined,
-    ShoppingOutlined
+    ShoppingOutlined, EyeOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import adminApi from '../../../api/adminApi';
+import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
-import '../Admin.css';
+import './ProductList.css';
+import ProductDetail from '../../../Product/ProductDetail';
 
 const { Text } = Typography;
 
@@ -23,11 +25,13 @@ const ProductList = () => {
         pageSize: 10,
         total: 0
     });
+    const [previewProduct, setPreviewProduct] = useState(null);
+    const [isPreviewVisible, setIsPreviewVisible] = useState(false);
 
     const fetchProducts = async (page = 1, size = 10) => {
         setLoading(true);
         try {
-            const response = await adminApi.getAllProducts(page - 1, size);
+            const response = await adminApi.getAllProducts(page - 1, size, { skipGlobalErrorHandler: true });
             const content = response.data.content || [];
             const totalElements = response.data.totalElements || 0;
 
@@ -39,7 +43,11 @@ const ProductList = () => {
                 total: totalElements
             }));
         } catch (error) {
-            message.error({ content: t('error_fetch_products'), key: 'error_fetch_products' });
+            notification.error({
+                message: t('error'),
+                description: t('error_fetch_products'),
+                key: 'error_fetch_products'
+            });
         } finally {
             setLoading(false);
         }
@@ -54,26 +62,33 @@ const ProductList = () => {
         fetchProducts(newPagination.current, newPagination.pageSize);
     };
 
+    const handlePreview = (record) => {
+        setPreviewProduct(record);
+        setIsPreviewVisible(true);
+    };
+
     const columns = [
         {
             title: 'ID',
             dataIndex: 'productId',
             key: 'id',
-            width: 80,
-            render: (id) => <Text style={{ color: '#8c8c8c', fontFamily: 'monospace' }}>#{id}</Text>
+            width: 100,
+            align: 'center',
+            render: (id) => <Text style={{ color: '#64748b', fontFamily: 'monospace', fontWeight: 600 }}>#{id}</Text>
         },
         {
             title: t('admin_product_image'),
             dataIndex: 'image',
             key: 'image',
-            width: 100,
+            width: 120,
+            align: 'center',
             render: (src) => (
                 <div style={{
                     width: 48, height: 48, borderRadius: 12, overflow: 'hidden',
                     border: '1px solid #f0f0f0', backgroundColor: '#fafafa'
                 }}>
                     {src ? (
-                        <img src={src} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={getImageUrl(src)} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                     ) : (
                         <ShoppingOutlined style={{ margin: 14, color: '#ccc' }} />
                     )}
@@ -107,16 +122,23 @@ const ProductList = () => {
         {
             title: t('admin_product_action'),
             key: 'action',
-            width: 120,
-            align: 'right',
+            width: 150,
+            align: 'center',
             fixed: 'right',
             render: (_, record) => (
                 <Space size="middle">
+                    <Tooltip title={t('preview_product', 'Xem trước')}>
+                        <Button
+                            type="text"
+                            icon={<EyeOutlined style={{ color: 'var(--admin-secondary)' }} />} // Changed from Green to Secondary (Blue)
+                            onClick={() => handlePreview(record)}
+                        />
+                    </Tooltip>
                     <Tooltip title={t('edit')}>
                         <Button
                             type="text"
-                            icon={<EditOutlined style={{ color: '#1890ff' }} />}
-                            onClick={() => message.info({ content: 'Coming soon', key: 'coming_soon' })}
+                            icon={<EditOutlined style={{ color: 'var(--admin-primary)' }} />} // Changed from Blue to Primary
+                            onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
                         />
                     </Tooltip>
                     <Tooltip title={t('delete')}>
@@ -124,7 +146,7 @@ const ProductList = () => {
                             type="text"
                             danger
                             icon={<DeleteOutlined />}
-                            onClick={() => message.info({ content: 'Coming soon', key: 'coming_soon' })}
+                            onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
                         />
                     </Tooltip>
                 </Space>
@@ -134,23 +156,25 @@ const ProductList = () => {
 
     return (
         <div className="admin-product-list-container" style={{ paddingBottom: 40 }}>
-            <div className="admin-page-header" style={{ marginBottom: 32, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16 }}>
-                <div>
-                    <h2 style={{ fontSize: 26, fontWeight: 800, margin: 0, color: '#111', letterSpacing: '-0.5px' }}>
+            <div className="admin-page-header">
+                <div className="admin-header-title-box">
+                    <h2 className="dashboard-title">
                         {t('admin_product_list')}
                     </h2>
-                    <Text type="secondary" style={{ fontSize: 14 }}>
-                        <Text strong style={{ color: 'var(--admin-primary)' }}>{pagination.total}</Text> {t('items')} • <Text strong style={{ color: '#52c41a' }}>{t('available')}</Text>
-                    </Text>
+                    <div className="admin-subtitle-wrapper">
+                        <Text className="admin-subtitle">
+                            {t('available')} • <Text strong className="admin-subtitle-count">{pagination.total}</Text> {t('items')}
+                        </Text>
+                    </div>
                 </div>
 
-                <Space size="middle" wrap>
+                <Space size="large" wrap>
                     <Button
                         icon={<ReloadOutlined />}
                         onClick={() => fetchProducts(pagination.current, pagination.pageSize)}
                         loading={loading}
-                        className="admin-btn-responsive"
-                        style={{ borderRadius: 16, height: 44, fontWeight: 600 }}
+                        className="admin-btn-responsive admin-btn-secondary"
+                        style={{ height: 52, borderRadius: 16 }}
                     >
                         {t('refresh')}
                     </Button>
@@ -159,14 +183,13 @@ const ProductList = () => {
                         icon={<PlusOutlined />}
                         onClick={() => navigate('/admin/products/create')}
                         className="modern-btn-primary admin-btn-responsive"
-                        style={{ height: 44 }}
                     >
                         {t('admin_product_create')}
                     </Button>
                 </Space>
             </div>
 
-            <Card bordered={false} className="modern-step-card" bodyStyle={{ padding: 0 }}>
+            <Card bordered={false} className="beauty-card" bodyStyle={{ padding: 0 }}>
                 <Table
                     columns={columns}
                     dataSource={data}
@@ -194,7 +217,26 @@ const ProductList = () => {
                     }}
                 />
             </Card>
-        </div>
+
+
+            <Modal
+                title={null}
+                open={isPreviewVisible}
+                onCancel={() => setIsPreviewVisible(false)}
+                footer={null}
+                width={1200}
+                centered
+                bodyStyle={{ padding: 0, overflow: 'hidden', borderRadius: 8 }}
+                style={{ top: 20 }}
+                destroyOnClose
+            >
+                {previewProduct && (
+                    <div style={{ height: '90vh', overflowY: 'auto' }}>
+                        <ProductDetail previewProduct={previewProduct} />
+                    </div>
+                )}
+            </Modal>
+        </div >
     );
 };
 

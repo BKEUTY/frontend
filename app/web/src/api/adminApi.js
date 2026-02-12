@@ -1,40 +1,23 @@
-import axios from 'axios';
-
-const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
-
-const ADMIN_BASE_URL = BASE_URL.endsWith('/api')
-    ? BASE_URL.slice(0, -4)
-    : BASE_URL;
-
-const adminAxios = axios.create({
-    baseURL: ADMIN_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
-});
-
-adminAxios.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-});
+import axiosClient from './axiosClient';
 
 const adminApi = {
     // Dashboard Stats
     getStats: async () => {
         try {
-            const [products] = await Promise.all([
-                adminAxios.get('/admin/api/product?size=1'),
-                axios.get(`${BASE_URL}/user`)
+            // Use skipGlobalErrorHandler to prevent 3 separate notifications on load
+            const config = { skipGlobalErrorHandler: true };
+
+            const [productsRes, usersRes, ordersRes] = await Promise.all([
+                axiosClient.get('/admin/api/product?size=1', config).catch(() => ({ data: { totalElements: 0 } })),
+                axiosClient.get('/admin/api/user?size=1', config).catch(() => ({ data: { totalElements: 0 } })),
+                axiosClient.get('/admin/api/order?size=1', config).catch(() => ({ data: { totalElements: 0 } }))
             ]);
 
             return {
-                products: products.data.totalElements || 0,
-                users: 0,
-                orders: 0,
-                revenue: 0
+                products: productsRes.data?.totalElements || 0,
+                users: usersRes.data?.totalElements || 0,
+                orders: ordersRes.data?.totalElements || 0,
+                revenue: 0 // Fetch revenue separate if needed
             };
         } catch (error) {
             console.error("Failed to fetch admin stats", error);
@@ -43,56 +26,58 @@ const adminApi = {
     },
 
     // --- PRODUCTS ---
-    getAllProducts: (page = 0, size = 10) => {
-        return adminAxios.get(`/admin/api/product?page=${page}&size=${size}`);
+    getAllProducts: (page = 0, size = 10, config = {}) => {
+        return axiosClient.get(`/admin/api/product?page=${page}&size=${size}`, config);
     },
 
-    createProduct: (data) => {
-        return adminAxios.post('/admin/api/product', data);
+    createProduct: (data, config = {}) => {
+        return axiosClient.post('/admin/api/product', data, config);
     },
 
-    updateProduct: (data) => {
-        return adminAxios.put('/admin/api/product', data);
+    updateProduct: (data, config = {}) => {
+        return axiosClient.put('/admin/api/product', data, config);
     },
 
     // --- OPTIONS & VARIANTS ---
-    createOption: (data) => {
-        return adminAxios.post('/admin/api/product/options', data);
+    createOption: (data, config = {}) => {
+        return axiosClient.post('/admin/api/product/options', data, config);
     },
 
-    getVariants: (productId) => {
-        return adminAxios.get(`/admin/api/product/${productId}/variants`);
+    getVariants: (productId, config = {}) => {
+        return axiosClient.get(`/admin/api/product/${productId}/variants`, config);
     },
 
-    updateVariant: (data) => {
-        return adminAxios.put('/admin/api/product/variants', data);
+    updateVariant: (data, config = {}) => {
+        return axiosClient.put('/admin/api/product/variants', data, config);
     },
 
     // --- UPLOAD ---
-    uploadProductImage: (file, productId) => {
+    uploadProductImage: (file, productId, config = {}) => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('productId', productId || 'temp');
-        return axios.post(`${BASE_URL}/files/upload/product`, formData, {
+        return axiosClient.post('/files/upload/product', formData, {
+            ...config,
             headers: { 'Content-Type': 'multipart/form-data' }
         });
     },
 
-    uploadSkuImage: (file, skuId) => {
+    uploadSkuImage: (file, skuId, config = {}) => {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('skuId', skuId || 'temp');
-        return axios.post(`${BASE_URL}/files/upload/sku`, formData, {
+        return axiosClient.post('/files/upload/sku', formData, {
+            ...config,
             headers: { 'Content-Type': 'multipart/form-data' }
         });
     },
 
-    getAllUsers: () => {
-        return axios.get(`${BASE_URL}/user`);
+    getAllUsers: (config = {}) => {
+        return axiosClient.get('/admin/api/user', config);
     },
 
-    getAllOrders: () => {
-        return axios.get(`${BASE_URL}/orders`);
+    getAllOrders: (config = {}) => {
+        return axiosClient.get('/admin/api/orders', config);
     }
 };
 

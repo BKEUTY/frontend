@@ -18,7 +18,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
     const [quantity, setQuantity] = useState(1);
     const [selectedSize, setSelectedSize] = useState('50ml');
 
-    // Mock multiple images if not present
     const images = product.images && product.images.length > 0
         ? product.images
         : [product.image || 'https://via.placeholder.com/400'];
@@ -52,7 +51,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                {/* Image Gallery */}
                 <ScrollView horizontal pagingEnabled showsHorizontalScrollIndicator={false} style={styles.gallery}>
                     {images.map((img, index) => (
                         <Image key={index} source={{ uri: img }} style={styles.mainImage} resizeMode="contain" />
@@ -60,17 +58,14 @@ const ProductDetailScreen = ({ route, navigation }) => {
                 </ScrollView>
 
                 <View style={styles.infoContainer}>
-                    {/* Brand & Title */}
                     <Text style={styles.brand}>BKEUTY</Text>
                     <Text style={styles.name}>{product.name}</Text>
 
-                    {/* Rating */}
                     <View style={styles.ratingRow}>
                         <Ionicons name="star" size={16} color="#ffc107" />
                         <Text style={styles.ratingText}>4.8/5 (124 {t('reviews')})</Text>
                     </View>
 
-                    {/* Flash Deal */}
                     <View style={styles.flashDealBanner}>
                         <View style={styles.flashLeft}>
                             <Ionicons name="flash" size={18} color="white" />
@@ -85,7 +80,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         </View>
                     </View>
 
-                    {/* Price */}
                     <View style={styles.priceBox}>
                         <Text style={styles.currentPrice}>
                             {product.price ? product.price.toLocaleString("vi-VN") : 0}đ
@@ -98,7 +92,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         </View>
                     </View>
 
-                    {/* Options (Size) */}
                     <View style={styles.optionSection}>
                         <Text style={styles.sectionTitle}>{t('capacity')}: {selectedSize}</Text>
                         <View style={styles.optionRow}>
@@ -114,7 +107,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         </View>
                     </View>
 
-                    {/* Quantity */}
                     <View style={styles.optionSection}>
                         <Text style={styles.sectionTitle}>{t('quantity')}</Text>
                         <View style={styles.qtyWrapper}>
@@ -128,7 +120,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         </View>
                     </View>
 
-                    {/* Shipping Info */}
                     <View style={styles.shipBox}>
                         <View style={styles.shipHeader}>
                             <View style={styles.nowFreeBadge}>
@@ -141,7 +132,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         </Text>
                     </View>
 
-                    {/* Details Text */}
                     <View style={styles.descSection}>
                         <Text style={styles.sectionTitle}>{t('product_details')}</Text>
                         <Text style={styles.descText}>
@@ -151,7 +141,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                 </View>
             </ScrollView>
 
-            {/* Bottom Actions */}
             <View style={styles.bottomBar}>
                 <TouchableOpacity style={styles.addCartBtn} onPress={handleAddToCart}>
                     <Ionicons name="cart-outline" size={20} color="#d32f2f" />

@@ -92,11 +92,14 @@ const styles = StyleSheet.create({
         zIndex: 10,
     },
     logoContainer: {
-        marginLeft: 15,
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
         justifyContent: 'center',
-        zIndex: 1, // specific zIndex
-        flex: 1, // Allow taking space
-        alignItems: 'flex-start', // Align left like web
+        alignItems: 'center',
+        zIndex: 1,
     },
     logoText: {
         fontSize: 22,

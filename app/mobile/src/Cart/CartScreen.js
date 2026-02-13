@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl, Alert, Image, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constants/Theme';
-import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
-
 import Header from '../Component/Header';
-
-
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useCart } from '../Context/CartContext';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+const { width } = Dimensions.get('window');
 
 const CartScreen = () => {
     const navigation = useNavigation();
@@ -17,7 +16,6 @@ const CartScreen = () => {
     const { cartItems: products, fetchCart, deleteCartItem } = useCart();
     const [refreshing, setRefreshing] = useState(false);
     const [selectedItems, setSelectedItems] = useState({});
-
 
     const onRefresh = React.useCallback(async () => {
         setRefreshing(true);
@@ -34,12 +32,12 @@ const CartScreen = () => {
 
     const handleDelete = (cartId) => {
         Alert.alert(
-            t('confirm_delete_title') || "Xác nhận xóa",
-            t('confirm_delete_message') || "Bạn có muốn xóa sản phẩm này?",
+            t('confirm_delete_title'),
+            t('confirm_delete_message'),
             [
-                { text: t('cancel') || "Hủy", style: 'cancel' },
+                { text: t('cancel'), style: 'cancel' },
                 {
-                    text: t('delete') || "Xóa",
+                    text: t('delete'),
                     style: 'destructive',
                     onPress: async () => {
                         await deleteCartItem(cartId);
@@ -49,7 +47,6 @@ const CartScreen = () => {
         );
     };
 
-    // Calculate Total
     const totalPrice = products.reduce((sum, item) => {
         if (selectedItems[item.cartId]) {
             return sum + (item.price * item.quantity);
@@ -63,7 +60,7 @@ const CartScreen = () => {
                 style={styles.deleteAction}
                 onPress={() => handleDelete(cartId)}
             >
-                <Text style={styles.deleteActionText}>{t('delete') || "Xóa"}</Text>
+                <Ionicons name="trash-outline" size={24} color="white" />
             </TouchableOpacity>
         );
     };
@@ -72,37 +69,36 @@ const CartScreen = () => {
         const isSelected = !!selectedItems[item.cartId];
         return (
             <Swipeable renderRightActions={(p, d) => renderRightActions(p, d, item.cartId)}>
-                <View style={styles.cartCard}>
-                    {/* Top Row: CheckBox + Image + Name */}
-                    <View style={styles.topRow}>
-                        <TouchableOpacity style={styles.checkboxContainer} onPress={() => toggleSelection(item.cartId)}>
-                            <View style={[styles.checkbox, isSelected && styles.checkedCheckbox]}>
-                                {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                            </View>
-                        </TouchableOpacity>
+                <View style={[styles.cartCard, isSelected && styles.selectedCard]}>
+                    <TouchableOpacity style={styles.contentRow} onPress={() => toggleSelection(item.cartId)} activeOpacity={0.7}>
+                        <View style={[styles.checkbox, isSelected && styles.checkedCheckbox]}>
+                            {isSelected && <Ionicons name="checkmark" size={16} color="white" />}
+                        </View>
 
-                        <View style={styles.imagePlaceholder} />
+                        <Image
+                            source={{ uri: item.image || 'https://via.placeholder.com/100' }}
+                            style={styles.itemImage}
+                        />
 
                         <View style={styles.itemInfo}>
-                            <View style={styles.headerRow}>
-                                <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+                            <Text style={styles.itemName} numberOfLines={2}>{item.name}</Text>
+                            <Text style={styles.itemPrice}>{item.price.toLocaleString("vi-VN")}đ</Text>
+
+                            <View style={styles.quantityPriceRow}>
+                                <Text style={styles.itemTotal}>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</Text>
+
+                                <View style={styles.qtyContainer}>
+                                    <TouchableOpacity style={styles.qtyBtn}>
+                                        <Ionicons name="remove" size={18} color="#555" />
+                                    </TouchableOpacity>
+                                    <Text style={styles.qtyValue}>{item.quantity}</Text>
+                                    <TouchableOpacity style={styles.qtyBtn}>
+                                        <Ionicons name="add" size={18} color="#555" />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
-                    </View>
-
-                    {/* Bottom Row: Price/Total + Qty */}
-                    <View style={styles.bottomRow}>
-                        <View style={styles.priceContainer}>
-                            <Text style={styles.itemPrice}>{item.price.toLocaleString("vi-VN")}đ</Text>
-                            <Text style={styles.itemTotal}>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</Text>
-                        </View>
-
-                        <View style={styles.qtyContainer}>
-                            <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>-</Text></TouchableOpacity>
-                            <Text style={styles.qtyValue}>{item.quantity}</Text>
-                            <TouchableOpacity style={styles.qtyBtn}><Text style={styles.qtyBtnText}>+</Text></TouchableOpacity>
-                        </View>
-                    </View>
+                    </TouchableOpacity>
                 </View>
             </Swipeable>
         );
@@ -117,14 +113,11 @@ const CartScreen = () => {
 
         const selectedProductsList = products.filter(p => selectedItems[p.cartId]);
 
-        // Mock promo logic similar to web
-        const discount = 0; // Or calculate if promo selected
-
         navigation.navigate('Checkout', {
             cartIds: selectedIds,
             selectedProducts: selectedProductsList,
             subTotal: totalPrice,
-            discount: discount
+            discount: 0
         });
     };
 
@@ -137,9 +130,10 @@ const CartScreen = () => {
 
             {products.length === 0 ? (
                 <View style={styles.emptyContainer}>
+                    <Ionicons name="cart-outline" size={80} color="#ddd" />
                     <Text style={styles.emptyText}>{t('cart_empty')}</Text>
-                    <TouchableOpacity onPress={() => navigation.navigate('Main', { screen: 'Product' })}>
-                        <Text style={{ color: COLORS.mainTitle, marginTop: 10 }}>{t('shop_now')}</Text>
+                    <TouchableOpacity style={styles.shopNowBtn} onPress={() => navigation.navigate('Main', { screen: 'Product' })}>
+                        <Text style={styles.shopNowText}>{t('shop_now')}</Text>
                     </TouchableOpacity>
                 </View>
             ) : (
@@ -156,10 +150,12 @@ const CartScreen = () => {
                 <View style={styles.footer}>
                     <View style={styles.totalRow}>
                         <Text style={styles.totalLabel}>{t('total')}:</Text>
-                        <Text style={styles.totalValue}>{totalPrice.toLocaleString("vi-VN")}đ</Text>
+                        <Text style={styles.totalPrice}>{totalPrice.toLocaleString("vi-VN")}đ</Text>
                     </View>
                     <TouchableOpacity style={styles.checkoutBtn} onPress={handleCheckout}>
-                        <Text style={styles.checkoutText}>{t('checkout')} ({Object.values(selectedItems).filter(Boolean).length})</Text>
+                        <Text style={styles.checkoutText}>
+                            {t('checkout')} ({Object.values(selectedItems).filter(Boolean).length})
+                        </Text>
                     </TouchableOpacity>
                 </View>
             )}
@@ -170,159 +166,134 @@ const CartScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#f8f9fa',
     },
     header: {
-        padding: 20,
+        paddingVertical: 15,
         backgroundColor: 'white',
         alignItems: 'center',
-        elevation: 2,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
     },
     headerTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.mainTitle,
+        color: '#111827',
         textTransform: 'uppercase',
     },
     emptyContainer: {
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
+        padding: 40,
     },
     emptyText: {
-        color: '#888',
+        color: '#9ca3af',
         fontSize: 16,
+        marginTop: 15,
+        marginBottom: 25,
+    },
+    shopNowBtn: {
+        backgroundColor: '#c2185b',
+        paddingHorizontal: 30,
+        paddingVertical: 12,
+        borderRadius: 25,
+    },
+    shopNowText: {
+        color: 'white',
+        fontWeight: '700',
     },
     listContent: {
         padding: 15,
-        paddingBottom: 100, // Space for footer
+        paddingBottom: 120,
     },
     cartCard: {
         backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 15,
+        borderRadius: 16,
         marginBottom: 15,
+        padding: 12,
+        borderWidth: 1,
+        borderColor: 'transparent',
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
+        shadowOpacity: 0.05,
         shadowRadius: 4,
-        elevation: 3,
+        elevation: 2,
     },
-    topRow: {
+    selectedCard: {
+        borderColor: '#fce4ec',
+        backgroundColor: '#fffdfd',
+    },
+    contentRow: {
         flexDirection: 'row',
-        alignItems: 'flex-start',
-        marginBottom: 12,
-    },
-    checkboxContainer: {
-        padding: 5,
-        marginRight: 8,
-        justifyContent: 'center',
+        alignItems: 'center',
     },
     checkbox: {
-        width: 24,
-        height: 24,
-        borderRadius: 4,
+        width: 22,
+        height: 22,
+        borderRadius: 6,
         borderWidth: 2,
-        borderColor: '#ccc',
+        borderColor: '#ddd',
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: 'white',
+        marginRight: 12,
     },
     checkedCheckbox: {
-        backgroundColor: COLORS.mainTitle,
-        borderColor: COLORS.mainTitle,
+        backgroundColor: '#c2185b',
+        borderColor: '#c2185b',
     },
-    checkmark: {
-        color: 'white',
-        fontSize: 14,
-        fontWeight: 'bold',
-    },
-    imagePlaceholder: {
+    itemImage: {
         width: 80,
         height: 80,
-        backgroundColor: '#f5f5f5',
-        borderRadius: 8,
+        borderRadius: 10,
+        backgroundColor: '#f9f9f9',
         marginRight: 12,
     },
     itemInfo: {
         flex: 1,
-        minHeight: 80,
-    },
-    headerRow: {
-        flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
+        height: 80,
     },
     itemName: {
-        flex: 1,
-        fontSize: 15,
-        color: '#333',
+        fontSize: 14,
         fontWeight: '600',
-        marginRight: 10,
-        marginBottom: 4,
-    },
-    deleteBtn: {
-        padding: 8,
-        marginTop: -8,
-        marginRight: -8,
-    },
-    deleteIcon: {
-        fontSize: 22,
-        color: '#999',
-    },
-    // Bottom Row for Price, Qty, Total
-    bottomRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginTop: 5,
-        borderTopWidth: 1,
-        borderTopColor: '#f9f9f9',
-        paddingTop: 10,
-    },
-    priceContainer: {
-        flex: 1,
+        color: '#111827',
+        lineHeight: 18,
     },
     itemPrice: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 2,
+        fontSize: 12,
+        color: '#9ca3af',
+    },
+    quantityPriceRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     },
     itemTotal: {
         fontSize: 15,
-        fontWeight: 'bold',
-        color: COLORS.mainTitle,
+        fontWeight: '700',
+        color: '#c2185b',
     },
     qtyContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#eee',
-        borderRadius: 6,
-        backgroundColor: '#fff',
+        backgroundColor: '#f1f2f6',
+        borderRadius: 8,
+        height: 32,
     },
     qtyBtn: {
-        width: 36,
-        height: 36,
+        width: 32,
+        height: 32,
         justifyContent: 'center',
         alignItems: 'center',
     },
-    qtyBtnText: {
-        fontSize: 18,
-        color: '#555',
-        fontWeight: '500',
-    },
     qtyValue: {
-        paddingHorizontal: 15,
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#333',
-        borderLeftWidth: 1,
-        borderRightWidth: 1,
-        borderColor: '#eee',
-        height: 24, // Visual separator height
-        textAlignVertical: 'center', // Android
-        lineHeight: 24, // iOS
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#111827',
+        width: 30,
+        textAlign: 'center',
     },
     footer: {
         position: 'absolute',
@@ -331,40 +302,37 @@ const styles = StyleSheet.create({
         right: 0,
         backgroundColor: 'white',
         padding: 20,
-        borderTopWidth: 1,
-        borderTopColor: '#eee',
-        elevation: 10,
+        paddingBottom: 30,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: -3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
+        shadowOffset: { width: 0, height: -4 },
+        shadowOpacity: 0.06,
+        shadowRadius: 10,
+        elevation: 20,
     },
     totalRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginBottom: 15,
         alignItems: 'center',
+        marginBottom: 15,
     },
     totalLabel: {
-        fontSize: 16,
+        fontSize: 14,
+        color: '#9ca3af',
         fontWeight: '600',
-        color: '#333',
     },
-    totalValue: {
+    totalPrice: {
         fontSize: 20,
-        fontWeight: 'bold',
-        color: COLORS.mainTitle,
+        fontWeight: '800',
+        color: '#c2185b',
     },
     checkoutBtn: {
-        backgroundColor: COLORS.checkoutButton,
-        paddingVertical: 14,
-        borderRadius: 8,
+        backgroundColor: '#c2185b',
+        height: 50,
+        borderRadius: 12,
+        justifyContent: 'center',
         alignItems: 'center',
-        shadowColor: COLORS.mainTitle,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-        elevation: 4,
     },
     checkoutText: {
         color: 'white',
@@ -372,20 +340,14 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     deleteAction: {
-        backgroundColor: '#e53935',
+        backgroundColor: '#ef4444',
         justifyContent: 'center',
         alignItems: 'center',
         width: 80,
-        height: '100%',
-        marginBottom: 15, // Match card margin
-        borderRadius: 12,
+        height: 104,
+        borderRadius: 16,
         marginLeft: 10,
     },
-    deleteActionText: {
-        color: 'white',
-        fontWeight: '600',
-        fontSize: 14,
-    }
 });
 
 export default CartScreen;

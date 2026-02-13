@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert, TextInput } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert, TextInput, Dimensions } from 'react-native';
 import { COLORS } from '../constants/Theme';
 import axiosClient from '../api/axiosClient';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useCart } from '../Context/CartContext';
-
 import Header from '../Component/Header';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+const { width } = Dimensions.get('window');
+const COLUMN_WIDTH = (width - 45) / 2;
 
 const ProductScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -34,10 +37,10 @@ const ProductScreen = ({ navigation }) => {
             id: product.productId || product.id,
             name: product.name,
             price: product.price,
-            image: 'placeholder',
+            image: product.image || 'placeholder',
             quantity: 1
         });
-        Alert.alert(t('success') || "Thành công", t('add_cart_success') || "Đã thêm vào giỏ hàng");
+        Alert.alert(t('success'), t('add_cart_success'));
     };
 
     const renderItem = ({ item }) => (
@@ -46,24 +49,36 @@ const ProductScreen = ({ navigation }) => {
             onPress={() => navigation.navigate('ProductDetail', { product: item })}
             activeOpacity={0.9}
         >
-            {item.image ? (
-                <Image source={{ uri: item.image }} style={styles.imagePlaceholder} resizeMode="cover" />
-            ) : (
-                <View style={styles.imagePlaceholder} />
-            )}
+            <View style={styles.imageContainer}>
+                {item.image ? (
+                    <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
+                ) : (
+                    <View style={styles.imagePlaceholder} />
+                )}
+                {item.discount && (
+                    <View style={styles.discountBadge}>
+                        <Text style={styles.discountText}>-{item.discount}%</Text>
+                    </View>
+                )}
+            </View>
 
             <View style={styles.productInfo}>
                 <Text style={styles.productBrand}>BKEUTY</Text>
                 <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
+
                 <View style={styles.ratingRow}>
-                    <Text style={{ color: '#ffc107', fontSize: 10 }}>⭐⭐⭐⭐⭐</Text>
-                    <Text style={{ fontSize: 10, color: '#999' }}>(100)</Text>
+                    <Ionicons name="star" size={10} color="#ffc107" />
+                    <Ionicons name="star" size={10} color="#ffc107" />
+                    <Ionicons name="star" size={10} color="#ffc107" />
+                    <Ionicons name="star" size={10} color="#ffc107" />
+                    <Ionicons name="star" size={10} color="#ffc107" />
+                    <Text style={styles.ratingCount}>(100)</Text>
                 </View>
 
                 <View style={styles.priceRow}>
                     <Text style={styles.productPrice}>{item.price ? item.price.toLocaleString("vi-VN") : 0}đ</Text>
                     <TouchableOpacity style={styles.addToCartBtn} onPress={() => handleAddToCart(item)}>
-                        <Text style={styles.addToCartText}>+</Text>
+                        <Ionicons name="add" size={20} color="white" />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -81,12 +96,11 @@ const ProductScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Header />
-            <View style={styles.header}>
-                <Text style={styles.headerTitle}>{t('product')}</Text>
+            <View style={styles.searchHeader}>
                 <View style={styles.searchBar}>
-                    <Text style={styles.searchIcon}>🔍</Text>
+                    <Ionicons name="search-outline" size={18} color="#999" />
                     <TextInput
-                        placeholder={t('search_placeholder') || "Tìm kiếm sản phẩm..."}
+                        placeholder={t('search_placeholder')}
                         style={styles.searchInput}
                         value={searchText}
                         onChangeText={setSearchText}
@@ -111,123 +125,135 @@ const ProductScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#f8f9fa',
     },
     center: {
         justifyContent: 'center',
         alignItems: 'center',
     },
-    header: {
-        paddingVertical: 15,
-        paddingHorizontal: 20, /* Match web padding */
+    searchHeader: {
+        paddingVertical: 12,
+        paddingHorizontal: 15,
         backgroundColor: 'white',
         borderBottomWidth: 1,
-        borderBottomColor: '#fce4ec',
-        elevation: 0,
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
-        color: COLORS.mainTitle,
-        marginBottom: 12,
-        textAlign: 'center',
-        textTransform: 'uppercase',
+        borderBottomColor: '#f0f0f0',
     },
     searchBar: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white',
-        borderRadius: 20, // Pill shape
-        paddingHorizontal: 15,
-        height: 40,
-        borderWidth: 1,
-        borderColor: COLORS.lightPink, // Match web border color
-        elevation: 2,
-        shadowColor: COLORS.mainTitle,
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.08,
-        shadowRadius: 4,
-    },
-    searchIcon: {
-        marginRight: 10,
-        fontSize: 16,
-        opacity: 0.6,
+        backgroundColor: '#f1f2f6',
+        borderRadius: 12,
+        paddingHorizontal: 12,
+        height: 44,
     },
     searchInput: {
         flex: 1,
         fontSize: 14,
         color: '#333',
+        marginLeft: 8,
     },
     listContent: {
         padding: 15,
-        paddingBottom: 20,
+        paddingBottom: 30,
     },
     columnWrapper: {
         justifyContent: 'space-between',
     },
     productItem: {
-        width: '48%',
+        width: COLUMN_WIDTH,
         backgroundColor: 'white',
         marginBottom: 15,
-        borderRadius: 16, // Modern rounded corners
+        borderRadius: 12,
         overflow: 'hidden',
-        // No heavy border
-        elevation: 4,
+        borderWidth: 1,
+        borderColor: '#f0f0f0',
+        elevation: 2,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.05,
         shadowRadius: 4,
     },
+    imageContainer: {
+        width: '100%',
+        height: 160,
+        backgroundColor: '#f9f9f9',
+        position: 'relative',
+    },
+    productImage: {
+        width: '100%',
+        height: '100%',
+    },
     imagePlaceholder: {
         width: '100%',
-        height: 140,
-        backgroundColor: '#f9f9f9',
+        height: '100%',
+        backgroundColor: '#f5f5f5',
+    },
+    discountBadge: {
+        position: 'absolute',
+        top: 8,
+        right: 8,
+        backgroundColor: '#ff4081',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 4,
+    },
+    discountText: {
+        color: 'white',
+        fontSize: 10,
+        fontWeight: 'bold',
     },
     productInfo: {
-        padding: 10,
+        padding: 12,
     },
     productBrand: {
         fontSize: 10,
-        color: '#999',
-        marginBottom: 3,
+        color: '#9ca3af',
+        fontWeight: '700',
+        marginBottom: 4,
         textTransform: 'uppercase',
     },
     productName: {
-        fontWeight: '500',
-        fontSize: 13,
-        marginBottom: 6,
-        color: '#333',
-        height: 36,
+        fontWeight: '600',
+        fontSize: 14,
+        marginBottom: 8,
+        color: '#111827',
+        height: 40,
+        lineHeight: 20,
     },
     ratingRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
-        gap: 5,
+        marginBottom: 10,
+        gap: 2,
+    },
+    ratingCount: {
+        fontSize: 10,
+        color: '#9ca3af',
+        marginLeft: 4,
     },
     priceRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
+        marginTop: 'auto',
     },
     productPrice: {
-        fontSize: 15,
-        fontWeight: 'bold',
-        color: COLORS.mainTitle,
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#c2185b',
     },
     addToCartBtn: {
-        backgroundColor: COLORS.mainTitle,
-        width: 28,
-        height: 28,
-        borderRadius: 14,
+        backgroundColor: '#c2185b',
+        width: 30,
+        height: 30,
+        borderRadius: 15,
         justifyContent: 'center',
         alignItems: 'center',
-    },
-    addToCartText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 16,
-        lineHeight: 18,
+        shadowColor: '#c2185b',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 3,
     },
 });
 

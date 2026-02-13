@@ -71,7 +71,7 @@ const Login = () => {
                             {t('welcome_back')}
                         </Title>
                         <Text className="auth-subtitle">
-                            {t('login_subtitle', 'Đăng nhập để tiếp tục mua sắm')}
+                            {t('login_subtitle')}
                         </Text>
                     </div>
 

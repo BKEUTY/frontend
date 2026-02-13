@@ -14,10 +14,6 @@
     overflow: hidden;
 }
 
-/* Main Landing Page Styles */
-/* Slider styles inherited from global.css */
-/* Overlay styles inherited from global.css (glass-*) */
-
 .brand-name {
     font-family: 'Oleo Script', cursive;
     font-weight: 700;
@@ -25,7 +21,6 @@
     font-size: 4rem;
     display: block;
     margin-top: 10px;
-    /* Black border/stroke effect */
     text-shadow:
         -2px -2px 0 #000,
         2px -2px 0 #000,
@@ -37,11 +32,9 @@
         0 3px 0 #000;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
     .landing-page {
         min-height: auto;
-        /* Allow height to collapse to content (banner) on mobile */
     }
 
     .landing-hero {
@@ -77,8 +70,6 @@
     }
 }
 
-/* Slider Controls moved to global.css */
-/* Ensure slider fills the container explicitly */
 .landing-hero .slider-wrapper {
     position: absolute;
     top: 0;

@@ -1,4 +1,4 @@
-import LandingPage from "../LandingPage/LandingPage";
+import LandingPage from "../pages/LandingPage/LandingPage";
 import Login from "../Component/Auth/Login";
 import Register from "../Component/Auth/Register";
 import ForgotPassword from "../Component/Auth/ForgotPassword";

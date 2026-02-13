@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { FiEdit3, FiTrash2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import searchIcon from '../../Assets/Images/Icons/icon_search.svg';
-import Skeleton from '../Common/Skeleton';
+import Skeleton from '../../Component/Common/Skeleton';
 import './AppointmentList.css';
 
 const AppointmentList = () => {

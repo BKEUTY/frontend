@@ -1,32 +1,29 @@
+@import url('https://fonts.googleapis.com/css2?family=Oleo+Script:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+
 :root {
-    --admin-primary: #C13584;
-    --admin-primary-hover: #fa4299;
-    --admin-secondary: #405DE6;
-    --admin-bg: #f8f9fa;
+    --admin-primary: #c2185b;
+    --admin-primary-hover: #d81b60;
+    --admin-primary-dark: #ad1457;
+    --admin-secondary: #ffc107;
+    --admin-bg: #fdfdfd;
     --admin-card-bg: #ffffff;
-    --admin-text-main: #111827;
-    --admin-text-sub: #6b7280;
-    --admin-border-color: #e5e7eb;
-    --admin-font: 'Inter', system-ui, -apple-system, sans-serif;
+    --admin-text-main: #2c3e50;
+    --admin-text-sub: #636e72;
+    --admin-border-color: #eff2f5;
+    --admin-font: 'Be Vietnam Pro', sans-serif;
 
     --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.025);
     --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-    --shadow-hover: 0 20px 40px -5px rgba(193, 53, 132, 0.15);
+    --shadow-hover: 0 20px 40px -5px rgba(194, 24, 91, 0.15);
 
     --radius-md: 14px;
     --radius-lg: 18px;
     --radius-xl: 28px;
 
     --admin-sidebar-width: 260px;
-    --admin-header-height: 72px;
-}
-
-body {
-    font-family: var(--admin-font);
-    color: var(--admin-text-main);
-    background-color: var(--admin-bg);
+    --admin-header-height: 80px;
 }
 
 ::-webkit-scrollbar {
@@ -495,45 +492,41 @@ body {
     flex: 1;
 }
 
-.admin-header-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
 
-.admin-header-logo {
-    height: 40px;
-    cursor: pointer;
-    filter: drop-shadow(0 4px 8px rgba(193, 53, 132, 0.08));
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.admin-header-logo-mobile {
-    height: 36px;
-    cursor: pointer;
-}
-
-.admin-header-logo:hover {
-    transform: scale(1.02);
-}
 
 .admin-sider-header {
     height: var(--admin-header-height);
     display: flex;
     align-items: center;
-    padding: 0 24px;
+    justify-content: center;
+    padding: 0;
     position: relative;
     border-bottom: 1px solid var(--admin-border-color);
+    cursor: pointer;
 }
 
-.admin-sider-label {
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--admin-text-sub);
-    letter-spacing: 0.1em;
+.admin-sider-logo {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(194, 24, 91, 0.1));
+    transition: transform 0.3s ease;
+}
+
+.admin-sider-header:hover .admin-sider-logo {
+    transform: scale(1.05);
+}
+
+.admin-sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1040;
+    transition: opacity 0.3s;
+    backdrop-filter: blur(2px);
 }
 
 .mobile-sidebar-close {

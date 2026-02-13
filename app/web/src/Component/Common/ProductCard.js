@@ -1,74 +1,74 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import starIcon from '../../Assets/Images/Icons/icon_star.svg';
+import { Card, Badge, Rate, Typography, Space } from 'antd';
 import placeHolderImg from '../../Assets/Images/Products/product_placeholder.svg';
 import './ProductCard.css';
+
+const { Meta } = Card;
+const { Text, Title } = Typography;
 
 const ProductCard = ({ product, t, language, onClickData }) => {
     const navigate = useNavigate();
 
-    // Normalizing properties since different parents might pass different structures
     const id = product.id || product.productId;
     const name = product.name;
     const price = typeof product.price === 'number' ? `${product.price.toLocaleString("vi-VN")}đ` : product.price;
     const brand = product.brand || 'BKEUTY';
     const image = product.image || placeHolderImg;
-    const rating = product.rating || '4.8';
+    const rating = parseFloat(product.rating || 4.8);
 
-    // Handle sold count - if it comes as string with text, try to extract number or just use it.
-    // Ideally it should be a number.
     let sold = product.sold || 120;
-    if (typeof sold === 'string' && (sold.includes('sold') || sold.includes('đã bán'))) {
-        sold = parseInt(sold); // Extract number if possible
-        if (isNaN(sold)) sold = 120;
+    if (typeof sold === 'string') {
+        const parsed = parseInt(sold.replace(/\D/g, ''));
+        if (!isNaN(parsed)) sold = parsed;
     }
 
-    // Badges/Discounts (checking if they exist)
-    const discount = product.discount || null;
-    const tag = product.tag || null;
+    const discount = product.discount;
+    const tag = product.tag;
 
     const handleClick = () => {
-        if (onClickData) {
-            navigate(`/product/${id}`, { state: onClickData });
-        } else {
-            navigate(`/product/${id}`);
-        }
+        const path = `/product/${id}`;
+        navigate(path, { state: onClickData });
     };
 
-    return (
-        <div className="product-card" onClick={handleClick}>
-            {(discount || tag) && (
-                <div className="card-badges">
-                    {tag && <span className="badge-red">{tag}</span>}
-                    {discount && <span className="badge-yellow">-{discount}</span>}
+    const CardContent = (
+        <Card
+            hoverable
+            className="product-card-antd"
+            cover={
+                <div className="card-image-wrapper">
+                    <img alt={name} src={image} onError={(e) => { e.target.src = placeHolderImg }} loading="lazy" />
                 </div>
-            )}
-
-            <div className="card-image-wrapper">
-                <img src={image} alt={name} loading="lazy" />
-            </div>
-
+            }
+            onClick={handleClick}
+            bordered={false}
+        >
             <div className="card-info">
-                <p className="card-brand">{brand}</p>
-                <h3 className="card-name">{name}</h3>
-                <div className="card-meta">
-                    <span
-                        className="star-icon"
-                        style={{ maskImage: `url(${starIcon})`, WebkitMaskImage: `url(${starIcon})` }}
-                    ></span>
-                    <span className="rating">{rating}/5</span>
-                    <span className="sold">({sold} {t ? t('sold_count') : 'sold'})</span>
-                </div>
+                <Text type="secondary" className="card-brand">{brand.toUpperCase()}</Text>
+                <Title level={5} className="card-name" ellipsis={{ rows: 2 }}>{name}</Title>
+
+                <Space size="small" align="center" className="card-rating">
+                    <Rate disabled defaultValue={rating} allowHalf style={{ fontSize: 12, color: '#fadb14' }} />
+                    <Text type="secondary" style={{ fontSize: 12 }}>({sold})</Text>
+                </Space>
 
                 <div className="price-row">
-                    {product.oldPrice && <span className="old-price">{product.oldPrice}</span>}
-                    <span className="card-price new-price">{price}</span>
+                    {product.oldPrice && <Text delete className="old-price">{product.oldPrice}</Text>}
+                    <Text className="card-price">{price}</Text>
                 </div>
-
-                {/* Optional Add to Cart Button if needed, but card usually navigates */}
             </div>
-        </div>
+        </Card>
     );
+
+    if (discount || tag) {
+        return (
+            <Badge.Ribbon text={discount ? `-${discount}` : tag} color={discount ? 'gold' : 'pink'}>
+                {CardContent}
+            </Badge.Ribbon>
+        );
+    }
+
+    return CardContent;
 };
 
 export default ProductCard;

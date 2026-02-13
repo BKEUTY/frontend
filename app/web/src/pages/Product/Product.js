@@ -1,12 +1,12 @@
 import "./Product.css";
 import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
-import { useLanguage } from "../i18n/LanguageContext";
-import Skeleton from "../Component/Common/Skeleton";
-import ProductCard from "../Component/Common/ProductCard";
-import Pagination from "../Component/Common/Pagination";
-import search_image from "../Assets/Images/Icons/icon_search.svg";
-import productApi from "../api/productApi";
+import { useLanguage } from "../../i18n/LanguageContext";
+import Skeleton from "../../Component/Common/Skeleton";
+import ProductCard from "../../Component/Common/ProductCard";
+import Pagination from "../../Component/Common/Pagination";
+import search_image from "../../Assets/Images/Icons/icon_search.svg";
+import productApi from "../../api/productApi";
 
 export default function Product() {
   // State

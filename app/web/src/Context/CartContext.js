@@ -63,15 +63,15 @@ export const CartProvider = ({ children }) => {
 
     const updateQuantity = async (cartId, quantity) => {
         if (quantity < 1) return;
-
-
         setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity: quantity } : item));
+    };
 
-
+    const removeFromCart = (cartId) => {
+        setCartItems(prev => prev.filter(item => item.cartId !== cartId));
     };
 
     return (
-        <CartContext.Provider value={{ isCartOpen, toggleCart, openCart, closeCart, cartItems, setCartItems, addToCart, fetchCart, updateQuantity }}>
+        <CartContext.Provider value={{ isCartOpen, toggleCart, openCart, closeCart, cartItems, setCartItems, addToCart, fetchCart, updateQuantity, removeFromCart }}>
             {children}
         </CartContext.Provider>
     );

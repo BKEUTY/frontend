@@ -44,7 +44,7 @@ const ProductCreate = () => {
                 image: ''
             };
 
-            const res = await adminApi.createProduct(payload, { skipGlobalErrorHandler: true });
+            const res = await adminApi.createProduct(payload);
             if (res.status === 201 || res.status === 200) {
                 const newProduct = res.data;
                 const newProductId = newProduct.id;
@@ -52,14 +52,14 @@ const ProductCreate = () => {
 
                 if (values.image && values.image.file) {
                     try {
-                        const uploadRes = await adminApi.uploadProductImage(values.image.file.originFileObj, newProductId, { skipGlobalErrorHandler: true });
+                        const uploadRes = await adminApi.uploadProductImage(values.image.file.originFileObj, newProductId);
                         if (uploadRes.data && uploadRes.data.url) {
                             const imageUrl = uploadRes.data.url;
                             await adminApi.updateProduct({
                                 id: newProductId,
                                 name: values.name,
                                 image: imageUrl
-                            }, { skipGlobalErrorHandler: true });
+                            });
                         }
                     } catch (uploadErr) {
                         notification.warning({
@@ -78,11 +78,7 @@ const ProductCreate = () => {
                 setCurrentStep(1);
             }
         } catch (error) {
-            notification.error({
-                message: t('error'),
-                description: t('admin_error_create'),
-                key: 'admin_error_create'
-            });
+            // Global handler
         } finally {
             setLoading(false);
         }
@@ -133,7 +129,7 @@ const ProductCreate = () => {
                 }))
             };
 
-            await adminApi.createOption(payload, { skipGlobalErrorHandler: true });
+            await adminApi.createOption(payload);
             notification.success({
                 message: t('success'),
                 description: t('admin_msg_options_success'),
@@ -142,11 +138,7 @@ const ProductCreate = () => {
             await fetchVariants(createdProductId);
             setCurrentStep(2);
         } catch (error) {
-            notification.error({
-                message: t('error'),
-                description: t('admin_error_options_save'),
-                key: 'admin_error_options_save'
-            });
+            // Global handler
         } finally {
             setLoading(false);
         }
@@ -154,14 +146,10 @@ const ProductCreate = () => {
 
     const fetchVariants = async (pid) => {
         try {
-            const res = await adminApi.getVariants(pid, { skipGlobalErrorHandler: true });
+            const res = await adminApi.getVariants(pid);
             setVariants(res.data || []);
         } catch (error) {
-            notification.error({
-                message: t('error'),
-                description: t("admin_error_fetch_variants"),
-                key: 'admin_error_fetch_variants'
-            });
+            // Global handler
         }
     };
 
@@ -178,7 +166,7 @@ const ProductCreate = () => {
                 icon: <LoadingOutlined style={{ color: '#1890ff' }} />,
                 duration: 0
             });
-            const res = await adminApi.uploadSkuImage(file, `variant-${id}`, { skipGlobalErrorHandler: true });
+            const res = await adminApi.uploadSkuImage(file, `variant-${id}`);
             const url = res.data.url;
             handleVariantChange(id, 'image', url);
             handleVariantChange(id, 'productImageUrl', url);
@@ -189,11 +177,8 @@ const ProductCreate = () => {
             });
             return false;
         } catch (error) {
-            notification.error({
-                message: t('error'),
-                description: t('error'),
-                key: 'skuUpload'
-            });
+            // Global handler handles showing the error, we just close the loading if it was a sticky notification
+            notification.destroy('skuUpload');
             return false;
         }
     };
@@ -209,7 +194,7 @@ const ProductCreate = () => {
                     stockQuantity: v.stockQuantity || 0,
                     status: 'ACTIVE',
                     productImageUrl: v.image || v.productImageUrl
-                }, { skipGlobalErrorHandler: true })
+                })
             ));
 
             notification.success({
@@ -219,11 +204,7 @@ const ProductCreate = () => {
             });
             navigate('/admin/products');
         } catch (error) {
-            notification.error({
-                message: t('error'),
-                description: t('admin_error_variant_update'),
-                key: 'admin_error_variant_update'
-            });
+            // Global handler
         } finally {
             setLoading(false);
         }

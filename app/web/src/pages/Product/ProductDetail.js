@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { useLanguage } from '../i18n/LanguageContext';
-import { useNotification } from '../Context/NotificationContext';
-import { useCart } from '../Context/CartContext';
+import { useLanguage } from '../../i18n/LanguageContext';
+import { useNotification } from '../../Context/NotificationContext';
+import { useCart } from '../../Context/CartContext';
 import './ProductDetail.css';
 import { FaStar, FaCheckCircle, FaRegHeart, FaRegComment } from 'react-icons/fa';
-import best_selling_image from "../Assets/Images/Products/product_placeholder.svg";
-import starIcon from "../Assets/Images/Icons/icon_star.svg";
-import Pagination from "../Component/Common/Pagination";
-import ProductCard from "../Component/Common/ProductCard";
-import Skeleton from "../Component/Common/Skeleton";
-import productApi from '../api/productApi';
-import { getImageUrl } from '../api/axiosClient';
-import NotFound from '../Component/ErrorPages/NotFound';
+import best_selling_image from "../../Assets/Images/Products/product_placeholder.svg";
+import starIcon from "../../Assets/Images/Icons/icon_star.svg";
+import Pagination from "../../Component/Common/Pagination";
+import ProductCard from "../../Component/Common/ProductCard";
+import Skeleton from "../../Component/Common/Skeleton";
+import productApi from '../../api/productApi';
+import { getImageUrl } from '../../api/axiosClient';
+import NotFound from '../../Component/ErrorPages/NotFound';
 
 export default function ProductDetail({ previewProduct }) {
     const { id } = useParams();
@@ -32,6 +32,12 @@ export default function ProductDetail({ previewProduct }) {
     const [selectedSize, setSelectedSize] = useState("50ml");
     const [mainImage, setMainImage] = useState(best_selling_image);
     const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        if (productData && productData.images && productData.images.length > 0) {
+            setMainImage(productData.images[0]);
+        }
+    }, [productData]);
 
     useEffect(() => {
         if (previewProduct) {
@@ -252,7 +258,7 @@ export default function ProductDetail({ previewProduct }) {
 
                     <div className="product-options-section">
                         <div className="option-group">
-                            <span className="option-label">{t('scent', 'Mùi hương')}: <strong>{t('no_scent', 'Không mùi')}</strong></span>
+                            <span className="option-label">{t('scent')}: <strong>{t('no_scent')}</strong></span>
                             <div className="variant-thumbs">
                                 <div className="variant-thumb active">
                                     <img src={mainImage} alt="Variant 1" />
@@ -264,7 +270,7 @@ export default function ProductDetail({ previewProduct }) {
                         </div>
 
                         <div className="option-group">
-                            <span className="option-label">{t('capacity', 'Dung tích')}: <strong>{selectedSize}</strong></span>
+                            <span className="option-label">{t('capacity')}: <strong>{selectedSize}</strong></span>
                             <div className="size-options">
                                 {productData.sizes.map(size => (
                                     <button
@@ -291,24 +297,24 @@ export default function ProductDetail({ previewProduct }) {
                     <div className="shipping-info-box">
                         <div className="shipping-header">
                             <span className="now-free-icon">NowFree</span>
-                            <strong>{t('fast_delivery_2h', 'Giao Nhanh Miễn Phí 2H')}</strong>
+                            <strong>{t('fast_delivery_2h')}</strong>
                         </div>
                         <div className="shipping-desc">
                             {language === 'vi'
                                 ? 'Bạn muốn nhận hàng trước 10h ngày mai. Đặt hàng trước 24h và chọn giao hàng 2H ở bước thanh toán.'
                                 : 'Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout.'
                             }
-                            <span className="link-text"> {t('view_more', 'Xem thêm')}</span>
+                            <span className="link-text"> {t('view_more')}</span>
                         </div>
                     </div>
 
                     <div className="actions">
                         <button className="btn-buy-now">
-                            <span className="btn-main-text">{t('buy_now', 'MUA NGAY NOWFREE 2H')}</span>
-                            <span className="btn-sub-text">{t('free_gift_extra', 'Trễ tặng 100k')}</span>
+                            <span className="btn-main-text">{t('buy_now')}</span>
+                            <span className="btn-sub-text">{t('free_gift_extra')}</span>
                         </button>
                         <button className="btn-add-bag" onClick={handleAddToCart}>
-                            {t('add_to_cart', 'THÊM VÀO GIỎ')}
+                            {t('add_to_cart')}
                         </button>
                     </div>
                 </div>
@@ -409,10 +415,10 @@ export default function ProductDetail({ previewProduct }) {
 
                                             <div className="review-actions">
                                                 <button className="action-btn">
-                                                    <FaRegHeart className="icon-action" /> {t('like') || 'Like'}
+                                                    <FaRegHeart className="icon-action" /> {t('like')}
                                                 </button>
                                                 <button className="action-btn">
-                                                    <FaRegComment className="icon-action" /> {t('comment') || 'Comment'}
+                                                    <FaRegComment className="icon-action" /> {t('comment')}
                                                 </button>
                                             </div>
                                         </div>

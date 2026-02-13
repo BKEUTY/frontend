@@ -1,11 +1,11 @@
-import Home from "../Home/Home";
-import Product from "../Product/Product";
-import ProductDetail from "../Product/ProductDetail";
-import Service from "../Component/Service/Service";
-import Promotion from "../Promotion/Promotion";
-import Cart from "../Cart/Cart";
-import Account from "../Component/Account/Account";
-import Checkout from "../Checkout/Checkout";
+import Home from "../pages/Home/Home";
+import Product from "../pages/Product/Product";
+import ProductDetail from "../pages/Product/ProductDetail";
+import Service from "../pages/Service/Service";
+import Promotion from "../pages/Promotion/Promotion";
+import Cart from "../pages/Cart/Cart";
+import Account from "../pages/Account/Account";
+import Checkout from "../pages/Checkout/Checkout";
 import { AboutUs, Contact, FAQ, RetailSystem, Terms } from "../Component/StaticPages/FooterPages";
 
 export const userRoutes = [

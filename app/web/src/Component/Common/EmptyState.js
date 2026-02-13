@@ -22,7 +22,7 @@ const EmptyState = ({
                     <div className="empty-state-content">
                         {icon && <div className="empty-state-icon">{icon}</div>}
                         <h3 className="empty-state-title">
-                            {title || t('no_data', 'No data available')}
+                            {title || t('no_data')}
                         </h3>
                         {description && (
                             <p className="empty-state-description">{description}</p>

@@ -1,8 +1,7 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
-import Skeleton from '../Common/Skeleton';
+import Skeleton from '../../Component/Common/Skeleton';
 import { FiEye } from "react-icons/fi";
 
 const MyOrders = () => {
@@ -12,7 +11,7 @@ const MyOrders = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/order/1`) // userId fixed as 1
+        fetch(`${process.env.REACT_APP_API_URL}/order/1`)
             .then(res => {
                 if (res.ok) return res.json();
                 throw new Error("API not available");
@@ -119,3 +118,4 @@ const MyOrders = () => {
 };
 
 export default MyOrders;
+

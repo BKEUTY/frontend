@@ -1,7 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Oleo+Script:wght@700&family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
 
-
-
 .auth-container {
     display: flex;
     min-height: 100vh;
@@ -9,7 +7,6 @@
     position: relative;
     overflow-x: hidden;
 }
-
 
 .auth-lang-switch {
     position: absolute;
@@ -27,7 +24,6 @@
     color: var(--color_main_title);
     background-color: rgba(163, 2, 81, 0.05);
 }
-
 
 .auth-mobile-logo {
     display: none;
@@ -51,8 +47,6 @@
     margin: 0;
 }
 
-
-
 .auth-image-side {
     flex: 1;
     background-size: cover;
@@ -60,10 +54,8 @@
     background-repeat: no-repeat;
     position: relative;
     display: none;
-
     overflow: hidden;
 }
-
 
 .auth-image-overlay {
     position: absolute;
@@ -107,7 +99,6 @@
     font-family: 'Be Vietnam Pro', sans-serif;
 }
 
-
 @media (min-width: 992px) {
     .auth-image-side {
         display: block;
@@ -118,8 +109,6 @@
         width: 50%;
     }
 }
-
-
 
 .auth-form-side {
     flex: 1;
@@ -133,7 +122,6 @@
     overflow-y: auto;
     width: 100%;
 }
-
 
 .auth-form-side::before {
     content: '';
@@ -155,8 +143,6 @@
     margin-top: 20px;
 }
 
-
-
 .auth-header {
     text-align: center;
     margin-bottom: 32px;
@@ -177,12 +163,9 @@
     font-weight: 400;
 }
 
-
-
 .auth-form {
     width: 100%;
 }
-
 
 .auth-options {
     display: flex;
@@ -191,7 +174,6 @@
     width: 100%;
     margin-bottom: 16px;
 }
-
 
 .auth-submit-btn {
     height: 50px !important;
@@ -214,8 +196,6 @@
     font-size: 0.9rem !important;
     color: #888 !important;
 }
-
-
 
 .social-login-container {
     display: flex;
@@ -263,8 +243,6 @@
     box-shadow: 0 4px 12px rgba(24, 119, 242, 0.3) !important;
 }
 
-
-
 .auth-footer {
     text-align: center;
     margin-top: 24px;
@@ -284,8 +262,6 @@
     color: #d81b60 !important;
     text-decoration: underline;
 }
-
-
 
 .forgot-password-steps {
     margin-bottom: 40px;
@@ -345,9 +321,6 @@
     font-size: 14px;
 }
 
-
-
-
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -371,9 +344,6 @@
         transform: translateX(0);
     }
 }
-
-
-
 
 @media (max-width: 991px) {
     .auth-container {
@@ -438,7 +408,6 @@
     }
 }
 
-
 @media (max-width: 480px) {
     .auth-form-side {
         padding: 40px 16px 20px;
@@ -474,8 +443,6 @@
     }
 }
 
-
-
 .auth-form .ant-input:focus,
 .auth-form .ant-input-focused,
 .auth-form .ant-input-password:focus,
@@ -495,14 +462,9 @@
     border-color: var(--color_main_title) !important;
 }
 
-
 .auth-submit-btn.ant-btn-loading {
     opacity: 0.8;
 }
-
-
-
-
 
 .auth-agreement {
     text-align: left !important;

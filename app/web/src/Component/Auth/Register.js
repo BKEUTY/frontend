@@ -62,7 +62,7 @@ const Register = () => {
                             {t('create_account')}
                         </Title>
                         <Text className="auth-subtitle">
-                            {t('register_subtitle', 'Tạo tài khoản để bắt đầu mua sắm')}
+                            {t('register_subtitle')}
                         </Text>
                     </div>
 

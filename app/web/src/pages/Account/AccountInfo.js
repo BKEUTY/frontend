@@ -6,21 +6,17 @@ import default_avatar from '../../Assets/Images/Icons/icon_account.svg';
 const AccountInfo = ({ onUpdate }) => {
     const { t } = useLanguage();
 
-
-    // Mock User Data based on DB Schema
-    // USERS: id, username, join_date, email, password, date_of_birth, phone
-    // CUSTOMERS: membership_level, vip_expire, balance
     const [userData, setUserData] = useState({
         id: 1,
         username: "thanhphong28",
-        name: "Phạm Thanh Phong", // Added 'name' field for display, though DB might use username or separate profile table
+        name: "Phạm Thanh Phong",
         email: "phongdeptrai28@gmail.com",
         phone: "0376929681",
         date_of_birth: "2004-08-28",
-        gender: "Nam", // Note: Gender not in provided DB schema, but good for UI. Keeping it.
-        address: "xã Long Phước, tỉnh Đồng Nai", // Address often in separate table, but keeping for UI
+        gender: "Nam",
+        address: "xã Long Phước, tỉnh Đồng Nai",
         join_date: "2026-10-20",
-        membership_level: "Diamond", // ENUM
+        membership_level: "Diamond",
         balance: 5000000
     });
 
@@ -42,9 +38,7 @@ const AccountInfo = ({ onUpdate }) => {
 
     const handleSave = (e) => {
         e.preventDefault();
-        // Mimic API call
         setTimeout(() => {
-            // Assuming onUpdate is the notification function or triggers it
             if (onUpdate) {
                 onUpdate();
             }
@@ -162,3 +156,4 @@ const AccountInfo = ({ onUpdate }) => {
     );
 };
 export default AccountInfo;
+

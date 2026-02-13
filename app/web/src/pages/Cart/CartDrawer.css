@@ -1,0 +1,113 @@
+.cart-drawer-antd {
+    z-index: 1000 !important;
+}
+
+.cart-drawer-antd .ant-drawer-header {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 20px 24px;
+}
+
+.cart-drawer-antd .ant-drawer-title {
+    font-weight: 700;
+    font-size: 20px;
+    color: #111827;
+    font-family: var(--font-main);
+}
+
+.cart-drawer-antd .ant-drawer-body {
+    padding: 0 !important;
+}
+
+.cart-drawer-footer-content {
+    padding: 24px 0 0;
+    border-top: 1px solid #f0f0f0;
+}
+
+.cart-drawer-footer-content .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.empty-cart-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 40px;
+    text-align: center;
+}
+
+.empty-cart-icon-wrapper {
+    width: 120px;
+    height: 120px;
+    background-color: #f9f9f9;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+}
+
+.empty-cart-icon {
+    font-size: 48px;
+    color: #ccc;
+}
+
+.cart-drawer-antd .ant-list-item {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+}
+
+.cart-drawer-antd .ant-list-item:hover {
+    background-color: #fafafa;
+}
+
+.cart-drawer-antd .ant-list-item-meta-title {
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 15px;
+    color: #111;
+}
+
+.cart-drawer-antd .ant-list-item-action {
+    margin-left: 16px;
+}
+
+.cart-drawer-antd .ant-drawer-body::-webkit-scrollbar {
+    width: 6px;
+}
+
+.cart-drawer-antd .ant-drawer-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.cart-drawer-antd .ant-drawer-body::-webkit-scrollbar-thumb {
+    background-color: #e0e0e0;
+    border-radius: 3px;
+}
+
+.cart-drawer-antd .ant-drawer-body::-webkit-scrollbar-thumb:hover {
+    background-color: #ccc;
+}
+
+@media (max-width: 576px) {
+    .cart-drawer-antd .ant-drawer-content-wrapper {
+        width: 100% !important;
+    }
+
+    .cart-drawer-footer-content {
+        padding: 16px 0 0;
+    }
+
+    .cart-drawer-antd .ant-drawer-header {
+        padding: 16px;
+    }
+
+    .cart-drawer-antd .ant-list-item {
+        padding: 16px;
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { useLanguage } from "../i18n/LanguageContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 import "./Promotion.css";
 import search_icon from "./icon_search.svg";
 

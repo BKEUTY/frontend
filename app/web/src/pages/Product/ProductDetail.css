@@ -1,10 +1,7 @@
 .product-detail-page {
     padding: 20px var(--general_padding_left_right);
     background-color: var(--general_background_color);
-
-    color: var(--color_general_text);
-
-
+    color: #333;
 }
 
 .breadcrumb {
@@ -45,7 +42,6 @@
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
-
 }
 
 .product-gallery {
@@ -105,7 +101,6 @@
     object-fit: contain;
     transition: transform 0.3s ease;
 }
-
 
 .main-image:hover img {
     transform: scale(1.05);
@@ -226,8 +221,6 @@
     margin-top: auto;
 }
 
-
-
 .input-quantity-wrapper {
     display: flex;
     align-items: center;
@@ -325,7 +318,6 @@
     color: #2e7d32;
 }
 
-
 .product-content-tabs {
     background: white;
     padding: 40px 30px;
@@ -374,7 +366,6 @@
     background-color: var(--color_main_title);
 }
 
-
 .tab-content {
     animation: fadeIn 0.4s ease-out;
     line-height: 1.7;
@@ -383,14 +374,10 @@
     text-align: left;
 }
 
-
-
 .product-grid.related-products-grid {
     grid-template-columns: repeat(5, 1fr) !important;
     gap: 20px;
 }
-
-
 
 @media (max-width: 1024px) {
     .product-gallery {
@@ -404,7 +391,6 @@
         background-color: #fff;
     }
 
-
     .product-top-section {
         flex-direction: column;
         padding: 0;
@@ -413,13 +399,11 @@
         margin-bottom: 30px;
     }
 
-
     .product-gallery {
         max-width: 100%;
         flex-direction: column;
         gap: 15px;
     }
-
 
     .main-image {
         width: 100%;
@@ -430,7 +414,6 @@
         order: 1;
         margin-bottom: 10px;
     }
-
 
     .thumbnail-list {
         flex-direction: row;
@@ -447,7 +430,6 @@
         height: 70px;
         flex-shrink: 0;
     }
-
 
     .product-info-side {
         padding: 0;
@@ -466,12 +448,10 @@
         margin-bottom: 20px;
     }
 
-
     .breadcrumb {
         flex-wrap: wrap;
         margin-bottom: 15px;
     }
-
 
     .actions {
         position: fixed;
@@ -489,11 +469,8 @@
 
     .input-quantity-wrapper {
         display: flex;
-
-
         transform: scale(0.9);
     }
-
 
     .product-detail-page {
         padding-bottom: 90px;
@@ -533,12 +510,10 @@
         border-top: 5px solid #f5f5f5;
     }
 
-
     .product-grid.related-products-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 15px !important;
     }
-
 
     .recommendations-section {
         margin-bottom: 40px;
@@ -548,7 +523,6 @@
 .review-tab-content {
     animation: fadeIn 0.5s ease;
 }
-
 
 .review-dashboard {
     display: flex;
@@ -629,7 +603,6 @@
     color: white;
 }
 
-
 .review-filters {
     display: flex;
     gap: 10px;
@@ -657,7 +630,6 @@
     color: var(--color_main_title);
     background: #fff5f8;
 }
-
 
 .review-list-container {
     display: flex;
@@ -767,7 +739,6 @@
     transform: translateY(-1px);
 }
 
-
 .pagination-wrapper {
     margin-top: 30px;
     padding-bottom: 20px;
@@ -855,17 +826,14 @@
         height: 40px;
         font-size: 1rem;
         margin: 0 auto;
-        /* Center avatar in column layout */
     }
 
     .review-content-body {
         text-align: left;
-        /* Keep text left aligned generally */
     }
 
     .review-header-row {
         flex-direction: column;
-        /* Stack name and date */
         align-items: flex-start;
         gap: 5px;
     }
@@ -895,8 +863,6 @@
         padding: 12px;
     }
 }
-
-/* --- New Product Detail Styles (Hasaki Inspired) --- */
 
 .flash-deal-banner {
     display: flex;
@@ -1137,7 +1103,6 @@
     opacity: 0.9;
 }
 
-/* Adjust Add to Bag for new layout */
 .btn-add-bag {
     flex: 1;
     background: white !important;
@@ -1151,7 +1116,6 @@
     background: #ffebee !important;
 }
 
-/* Mobile optimizations for new elements */
 @media (max-width: 768px) {
     .flash-deal-banner {
         flex-direction: column;
@@ -1184,7 +1148,6 @@
     .actions {
         box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.1);
         padding: 10px 15px 25px 15px;
-        /* Extra bottom for safe area */
     }
 
     .btn-main-text {
@@ -1194,7 +1157,6 @@
     .btn-sub-text {
         font-size: 0.75rem;
         display: none;
-        /* Hide subtext on very small screens if needed */
     }
 
     .btn-buy-now {

@@ -1,11 +1,11 @@
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useNotification } from "../Context/NotificationContext";
-import { useLanguage } from "../i18n/LanguageContext";
-import { useCart } from "../Context/CartContext";
-import product_cart_image from "../Assets/Images/Products/product_placeholder_rect.svg";
-import cart_empty_icon from "../Assets/Images/Icons/icon_cart.svg";
+import { useNotification } from "../../Context/NotificationContext";
+import { useLanguage } from "../../i18n/LanguageContext";
+import { useCart } from "../../Context/CartContext";
+import product_cart_image from "../../Assets/Images/Products/product_placeholder_rect.svg";
+import cart_empty_icon from "../../Assets/Images/Icons/icon_cart.svg";
 import { FaTrashAlt } from "react-icons/fa";
 
 export default function Cart() {
@@ -19,8 +19,6 @@ export default function Cart() {
     { id: 'PROMO2', code: 'FREESHIP', discount: 20000, type: 'fixed', label: t('promo_freeship') },
   ];
 
-  // State
-  // const [products, setProducts] = useState([]); // Removed local state
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [selectedPromo, setSelectedPromo] = useState(null);
 
@@ -49,7 +47,6 @@ export default function Cart() {
   const selectedProducts = products.filter(p => selectedIds.has(p.cartId));
   const subTotal = selectedProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
 
-  // Calculate Discount
   let discountAmount = 0;
   if (selectedPromo) {
     if (selectedPromo.type === 'fixed') {
@@ -69,7 +66,7 @@ export default function Cart() {
     navigate("/checkout", {
       state: {
         cartIds: Array.from(selectedIds),
-        selectedProducts: selectedProducts, // Pass full product objects
+        selectedProducts: selectedProducts,
         subTotal: subTotal,
         discount: discountAmount,
         total: total,
@@ -85,8 +82,7 @@ export default function Cart() {
     })
       .then(res => {
         if (res.ok) {
-          // setProducts(prev => prev.filter(p => p.cartId !== cartId)); // No local update
-          fetchCart(); // Sync context
+          fetchCart();
           const newSelected = new Set(selectedIds);
           newSelected.delete(cartId);
           setSelectedIds(newSelected);
@@ -191,7 +187,6 @@ export default function Cart() {
         {products.length > 0 && (
           <div className="cart-summary-section">
             <div className="cart-summary-box">
-              {/* Promotion Section */}
               <div className="promotion-section">
                 <h3>{t('promotion')}</h3>
                 <select
@@ -236,3 +231,4 @@ export default function Cart() {
     </main>
   );
 }
+

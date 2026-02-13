@@ -11,7 +11,7 @@ import adminApi from '../../../api/adminApi';
 import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import './ProductList.css';
-import ProductDetail from '../../../Product/ProductDetail';
+import ProductDetail from '../../../pages/Product/ProductDetail';
 
 const { Text } = Typography;
 
@@ -31,7 +31,7 @@ const ProductList = () => {
     const fetchProducts = async (page = 1, size = 10) => {
         setLoading(true);
         try {
-            const response = await adminApi.getAllProducts(page - 1, size, { skipGlobalErrorHandler: true });
+            const response = await adminApi.getAllProducts(page - 1, size);
             const content = response.data.content || [];
             const totalElements = response.data.totalElements || 0;
 
@@ -43,11 +43,7 @@ const ProductList = () => {
                 total: totalElements
             }));
         } catch (error) {
-            notification.error({
-                message: t('error'),
-                description: t('error_fetch_products'),
-                key: 'error_fetch_products'
-            });
+            // Error is handled globally
         } finally {
             setLoading(false);
         }
@@ -127,7 +123,7 @@ const ProductList = () => {
             fixed: 'right',
             render: (_, record) => (
                 <Space size="middle">
-                    <Tooltip title={t('preview_product', 'Xem trước')}>
+                    <Tooltip title={t('preview_product')}>
                         <Button
                             type="text"
                             icon={<EyeOutlined style={{ color: 'var(--admin-secondary)' }} />} // Changed from Green to Secondary (Blue)

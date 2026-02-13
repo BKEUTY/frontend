@@ -1,11 +1,10 @@
-
 import "./Checkout.css";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useNotification } from "../Context/NotificationContext";
+import { useNotification } from "../../Context/NotificationContext";
 import { useState } from "react";
-import { useLanguage } from "../i18n/LanguageContext";
+import { useLanguage } from "../../i18n/LanguageContext";
 
-import orderApi from '../api/orderApi';
+import orderApi from '../../api/orderApi';
 
 export default function Checkout() {
   const { state } = useLocation();
@@ -22,10 +21,9 @@ export default function Checkout() {
 
   const grandTotal = Math.max(0, subTotal + shippingFee - discount);
 
-  const [paymentMethod, setPaymentMethod] = useState("cod"); // 'cod' or 'banking'
+  const [paymentMethod, setPaymentMethod] = useState("cod");
   const [showQR, setShowQR] = useState(false);
 
-  // Form State
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -39,7 +37,6 @@ export default function Checkout() {
   };
 
   const handleCheckout = async () => {
-    // Basic Validation
     if (!formData.fullName || !formData.phone || !formData.address) {
       notify(t('fill_delivery_info'), "error");
       return;
@@ -55,27 +52,23 @@ export default function Checkout() {
       return;
     }
 
-    // COD Flow
     await processOrder("COD");
   };
 
   const processOrder = async (method) => {
     try {
-      // Use API service
       await orderApi.placeOrder({
-        userId: 1, // Fixed user ID
-        paymentMethod: method, // "COD" or "Banking"
+        userId: 1,
+        paymentMethod: method,
         address: formData.address,
         phone: formData.phone,
         recipientName: formData.fullName,
         note: formData.note,
         orderItems: cartIds.map((id) => ({ cartItemId: id })),
       });
-      // Note: Backend might ignore phone/name/note but we send it anyway just in case backend is updated.
 
       notify(t('order_success'), "success");
 
-      // Redirect to success or home
       setTimeout(() => navigate('/'), 2000);
 
     } catch (error) {
@@ -91,7 +84,6 @@ export default function Checkout() {
           <h2>{t('payment_qr_title')}</h2>
           <p>{t('scan_qr_desc')}</p>
           <div className="qr-code-box">
-            {/* Placeholder QR */}
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=BKEUTY_ORDER_PAYMENT" alt="QR Code" />
           </div>
           <div className="amount-display">
@@ -113,7 +105,6 @@ export default function Checkout() {
       <h1 className="checkout-title">{t('checkout')}</h1>
 
       <div className="checkout-container">
-        {/* Left Column: Information */}
         <div className="checkout-left">
           <div className="checkout-section">
             <h2 className="section-header">{t('delivery_info')}</h2>
@@ -179,7 +170,6 @@ export default function Checkout() {
           </div>
         </div>
 
-        {/* Right Column: Order Summary */}
         <div className="checkout-right">
           <div className="order-summary-box">
             <h2 className="summary-title">{t('order_summary')} ({selectedProducts.length} {t('products_lower')})</h2>
@@ -188,7 +178,7 @@ export default function Checkout() {
               {selectedProducts.map((p, idx) => (
                 <div key={idx} className="summary-item">
                   <div className="summary-item-info">
-                    <div className="summary-item-name">{p.name || `Product #${p.cartId}`}</div>
+                    <div className="summary-item-name">{p.name || `${t('product')} #${p.cartId}`}</div>
                     <div className="summary-item-qty">x{p.quantity}</div>
                   </div>
                   <div className="summary-item-price">{(p.price * p.quantity).toLocaleString("vi-VN")}đ</div>
@@ -236,3 +226,4 @@ export default function Checkout() {
     </main>
   );
 }
+

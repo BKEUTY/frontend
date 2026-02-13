@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLanguage } from '../i18n/LanguageContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 import './LandingPage.css';
-import banner1 from '../Assets/Images/Banners/banner_home_1.png';
-import banner2 from '../Assets/Images/Banners/banner_home_2.png';
+import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
+import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
 
 const images = [banner1, banner2];
 
@@ -22,7 +22,6 @@ const LandingPage = () => {
     return (
         <div className="landing-page">
             <div className="landing-hero">
-                {/* Horizontal Slider Wrapper */}
                 <div
                     className="slider-wrapper"
                     style={{ transform: `translateX(-${currentImageIndex * 100}%)` }}
@@ -36,7 +35,6 @@ const LandingPage = () => {
                     ))}
                 </div>
 
-                {/* Overlay Content (Static) */}
                 <div className="glass-overlay">
                     <h1 className="glass-title">{t('welcome_landing')} <span className="brand-name">BKEUTY</span></h1>
                     <Link to="/login" className="btn-glass-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>{t('login')}</Link>
@@ -55,3 +53,4 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
+

@@ -6,7 +6,6 @@
     font-family: var(--inter_font);
 }
 
-/* Header */
 .appointment-header {
     display: flex;
     justify-content: space-between;
@@ -28,7 +27,6 @@
     color: #6b7280;
 }
 
-/* Search Box - Modern Pill */
 .search-box {
     position: relative;
     display: flex;
@@ -40,7 +38,6 @@
     padding: 10px 40px 10px 16px;
     border: 1px solid #e5e7eb;
     border-radius: 9999px;
-    /* Pill shape */
     font-size: 14px;
     outline: none;
     transition: all 0.2s;
@@ -63,7 +60,6 @@
     font-size: 14px;
 }
 
-/* Table Wrapper */
 .appointment-table-wrapper {
     overflow-x: auto;
     border: 1px solid #f3f4f6;
@@ -75,10 +71,8 @@
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    /* Removed min-width to allow stacking on mobile */
 }
 
-/* Keep header on one line as requested */
 .appointment-table thead th {
     background-color: #f9fafb;
     color: var(--color_main_title) !important;
@@ -90,7 +84,6 @@
     text-align: left;
     border-bottom: 1px solid #e5e7eb;
     white-space: nowrap;
-    /* Fix header text on one line so it doesn't wrap */
 }
 
 .appointment-table tbody tr {
@@ -99,7 +92,6 @@
 
 .appointment-table tbody tr:hover {
     background-color: #fdf8fa;
-    /* Light brand hover */
 }
 
 .appointment-table td {
@@ -114,7 +106,6 @@
     border-bottom: none;
 }
 
-/* Column Specifics */
 .id-badge {
     background-color: #f3f4f6;
     color: #4b5563;
@@ -149,7 +140,6 @@
     color: #f59e0b;
 }
 
-
 .date-time {
     display: flex;
     flex-direction: column;
@@ -180,7 +170,6 @@
     font-weight: 500;
 }
 
-/* Action Buttons - Minimalist */
 .action-cell {
     text-align: center;
     white-space: nowrap;
@@ -213,7 +202,6 @@
     background-color: #fef2f2;
 }
 
-/* Footer & Pagination */
 .appointment-footer {
     display: flex;
     justify-content: space-between;
@@ -279,7 +267,6 @@
     font-style: italic;
 }
 
-/* Responsive Table: Card View on Mobile */
 @media (max-width: 768px) {
     .appointment-list-container {
         padding: 16px;
@@ -302,7 +289,6 @@
         align-items: center;
     }
 
-    /* Table to Card Transition */
     .appointment-table-wrapper {
         border: none;
         background: transparent;
@@ -310,7 +296,6 @@
 
     .appointment-table thead {
         display: none;
-        /* Hide header on mobile */
     }
 
     .appointment-table tbody,
@@ -345,7 +330,6 @@
         padding-top: 15px;
     }
 
-    /* Using data-label for headers */
     .appointment-table td::before {
         content: attr(data-label);
         font-weight: 600;
@@ -356,7 +340,6 @@
         text-align: left;
     }
 
-    /* Specific mobile adjustments for content */
     .action-buttons {
         justify-content: center;
         width: 100%;

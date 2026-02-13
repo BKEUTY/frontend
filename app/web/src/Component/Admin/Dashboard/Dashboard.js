@@ -24,7 +24,7 @@ const Dashboard = () => {
 
     const stats = [
         {
-            title: t('admin_dashboard_sales', 'Doanh thu hôm nay'),
+            title: t('admin_dashboard_sales'),
             value: '40,689,000 đ',
             icon: <DollarOutlined />,
             trend: 8.5,
@@ -32,7 +32,7 @@ const Dashboard = () => {
             trendType: 'up'
         },
         {
-            title: t('admin_dashboard_orders', 'Tổng đơn hàng'),
+            title: t('admin_dashboard_orders'),
             value: '1,250',
             icon: <ShoppingOutlined />,
             trend: 5.2,
@@ -40,7 +40,7 @@ const Dashboard = () => {
             trendType: 'up'
         },
         {
-            title: t('admin_dashboard_appointments', 'Lịch hẹn'),
+            title: t('admin_dashboard_appointments'),
             value: '600',
             icon: <CalendarOutlined />,
             trend: 12,
@@ -50,24 +50,24 @@ const Dashboard = () => {
     ];
 
     const data = [
-        { name: t('mon', 'Th 2'), value: 15 },
-        { name: t('tue', 'Th 3'), value: 22 },
-        { name: t('wed', 'Th 4'), value: 10 },
-        { name: t('thu', 'Th 5'), value: 25 },
-        { name: t('fri', 'Th 6'), value: 18 },
-        { name: t('sat', 'Th 7'), value: 30 },
-        { name: t('sun', 'CN'), value: 28 },
+        { name: t('mon'), value: 15 },
+        { name: t('tue'), value: 22 },
+        { name: t('wed'), value: 10 },
+        { name: t('thu'), value: 25 },
+        { name: t('fri'), value: 18 },
+        { name: t('sat'), value: 30 },
+        { name: t('sun'), value: 28 },
     ];
 
     const columns = [
         {
-            title: t('admin_product_name', 'Tên sản phẩm'),
+            title: t('admin_product_name'),
             dataIndex: 'name',
             key: 'name',
             render: (text) => <span style={{ fontWeight: 600 }}>{text}</span>,
         },
         {
-            title: t('admin_product_category', 'Danh mục'),
+            title: t('admin_product_category'),
             dataIndex: 'category',
             key: 'category',
             render: (tag) => (
@@ -77,13 +77,13 @@ const Dashboard = () => {
             ),
         },
         {
-            title: t('admin_product_price', 'Giá'),
+            title: t('admin_product_price'),
             dataIndex: 'price',
             key: 'price',
             render: (price) => <span style={{ color: '#1f2937' }}>{price}</span>,
         },
         {
-            title: t('admin_product_sold', 'Đã bán'),
+            title: t('admin_product_sold'),
             dataIndex: 'sold',
             key: 'sold',
             align: 'right',
@@ -101,14 +101,14 @@ const Dashboard = () => {
     return (
         <div className="dashboard-content">
             <div className="dashboard-header admin-page-header">
-                <h2 className="dashboard-title">{t('dashboard', 'Tổng quan')}</h2>
+                <h2 className="dashboard-title">{t('dashboard')}</h2>
             </div>
 
             <Row gutter={[24, 24]}>
                 <Col xs={24} lg={16}>
                     <div className="beauty-card chart-card">
                         <div className="chart-header">
-                            <span className="chart-title">{t('revenue_overview', 'Biểu đồ doanh thu')}</span>
+                            <span className="chart-title">{t('revenue_overview')}</span>
                         </div>
                         <div className="chart-container" style={{ marginLeft: -20 }}>
                             <ResponsiveContainer width="100%" height={400}>
@@ -174,7 +174,7 @@ const Dashboard = () => {
 
             <div className="table-card beauty-table">
                 <div className="chart-header">
-                    <span className="chart-title">{t('admin_top_products', 'Sản phẩm bán chạy')}</span>
+                    <span className="chart-title">{t('admin_top_products')}</span>
                 </div>
                 <Table
                     columns={columns}

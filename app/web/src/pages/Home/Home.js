@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useLanguage } from '../i18n/LanguageContext';
+import { useLanguage } from '../../i18n/LanguageContext';
 import './Home.css';
-import Skeleton from '../Component/Common/Skeleton';
-import ProductCard from '../Component/Common/ProductCard';
-import banner1 from '../Assets/Images/Banners/banner_home_1.png';
-import banner2 from '../Assets/Images/Banners/banner_home_2.png';
+import Skeleton from '../../Component/Common/Skeleton';
+import ProductCard from '../../Component/Common/ProductCard';
+import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
+import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
 
-import about_image from "../Assets/Images/Banners/banner_about_us.svg";
+import about_image from "../../Assets/Images/Banners/banner_about_us.svg";
 
 
 

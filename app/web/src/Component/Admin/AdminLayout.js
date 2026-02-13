@@ -17,6 +17,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
+import logo_image from '../../Assets/Images/logo.svg';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Admin.css';
 
@@ -56,7 +57,7 @@ const AdminLayout = () => {
         {
             key: 'home',
             icon: <HomeOutlined />,
-            label: t('home_page', 'Trang chủ'),
+            label: t('home_page'),
             onClick: () => {
                 navigate('/');
                 window.location.reload();
@@ -66,7 +67,7 @@ const AdminLayout = () => {
         {
             key: 'logout',
             icon: <LogoutOutlined />,
-            label: t('logout', 'Đăng xuất'),
+            label: t('logout'),
             onClick: handleLogout,
             danger: true,
         },
@@ -76,37 +77,37 @@ const AdminLayout = () => {
         {
             key: '/admin/dashboard',
             icon: <DashboardOutlined />,
-            label: t('dashboard', 'Tổng quan'),
+            label: t('dashboard'),
         },
         {
             key: '/admin/orders',
             icon: <FileTextOutlined />,
-            label: t('orders', 'Đơn hàng'),
+            label: t('orders'),
         },
         {
             key: '/admin/products',
             icon: <ShoppingOutlined />,
-            label: t('products', 'Sản phẩm'),
+            label: t('products'),
         },
         {
             key: '/admin/services',
             icon: <HeartOutlined />,
-            label: t('services', 'Dịch vụ'),
+            label: t('services'),
         },
         {
             key: '/admin/appointments',
             icon: <CalendarOutlined />,
-            label: t('appointments', 'Lịch hẹn'),
+            label: t('appointments'),
         },
         {
             key: '/admin/staff',
             icon: <TeamOutlined />,
-            label: t('staff', 'Nhân viên'),
+            label: t('staff'),
         },
         {
             key: '/admin/reports',
             icon: <BarChartOutlined />,
-            label: t('reports', 'Báo cáo'),
+            label: t('reports'),
         },
     ];
 
@@ -131,16 +132,12 @@ const AdminLayout = () => {
                     zIndex: isMobile ? 1050 : 1000,
                 }}
             >
-                <div className="admin-sider-header">
-                    {!collapsed && <span className="admin-sider-label">{t('admin_menu', 'MENU')}</span>}
-                    {isMobile && !collapsed && (
-                        <Button
-                            type="text"
-                            icon={<CloseOutlined />}
-                            onClick={() => setCollapsed(true)}
-                            className="mobile-sidebar-close"
-                        />
-                    )}
+                <div className="admin-sider-header" onClick={() => navigate('/admin')}>
+                    <img
+                        src={logo_image}
+                        alt="BKEUTY"
+                        className="admin-sider-logo"
+                    />
                 </div>
 
                 <Menu
@@ -167,26 +164,7 @@ const AdminLayout = () => {
                             onClick={() => setCollapsed(!collapsed)}
                             className="trigger-btn"
                         />
-                        {!isMobile && (
-                            <img
-                                src={require('../../Assets/Images/logo.svg').default}
-                                alt="BKEUTY"
-                                className="admin-header-logo"
-                                onClick={() => navigate('/admin')}
-                            />
-                        )}
                     </div>
-
-                    {isMobile && (
-                        <div className="admin-header-center">
-                            <img
-                                src={require('../../Assets/Images/logo.svg').default}
-                                alt="BKEUTY"
-                                className="admin-header-logo-mobile"
-                                onClick={() => navigate('/admin')}
-                            />
-                        </div>
-                    )}
 
                     <div className="admin-header-right">
                         <Button

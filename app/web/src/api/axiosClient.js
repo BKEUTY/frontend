@@ -1,11 +1,10 @@
 import axios from 'axios';
 import { notification } from 'antd';
 import queryString from 'query-string';
+import { getTranslation } from '../i18n/translate';
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080/api';
 
-// Derive ROOT_URL for axios base (e.g. http://localhost:8080)
-// This allows uniform access to /api/... and /admin/api/...
 const ROOT_URL = API_URL.endsWith('/api') ? API_URL.slice(0, -4) : API_URL;
 
 const axiosClient = axios.create({
@@ -16,7 +15,6 @@ const axiosClient = axios.create({
     paramsSerializer: params => queryString.stringify(params),
 });
 
-// Request Interceptor
 axiosClient.interceptors.request.use(async (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -27,37 +25,35 @@ axiosClient.interceptors.request.use(async (config) => {
     return Promise.reject(error);
 });
 
-// Response Interceptor
 axiosClient.interceptors.response.use((response) => {
-    // We return the full response to allow access to status codes and headers
     return response;
 }, (error) => {
-    // Handle Errors Global
     const status = error.response ? error.response.status : null;
-    let message = 'Có lỗi xảy ra, vui lòng thử lại.';
+    let fallbackKey = 'error_unknown';
 
     if (status === 401) {
-        message = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.';
-        // Optional: Redirect to login
+        fallbackKey = 'error_401';
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        window.location.href = '/login';
+        setTimeout(() => {
+            window.location.href = '/login';
+        }, 1500);
     } else if (status === 403) {
-        message = 'Bạn không có quyền truy cập tài nguyên này.';
+        fallbackKey = 'error_403';
     } else if (status === 404) {
-        message = 'Không tìm thấy tài nguyên yêu cầu.';
+        fallbackKey = 'error_404';
     } else if (status >= 500) {
-        message = 'Lỗi hệ thống máy chủ.';
+        fallbackKey = 'error_500';
     }
 
-    // Show notification for errors (except 401 maybe, to avoid spam if redirecting)
-    // and check for skipGlobalErrorHandler in request config
     if (status !== 401 && !error.config?.skipGlobalErrorHandler) {
-        const description = error.response?.data?.message || message;
+        const apiMessage = error.response?.data?.message;
+        const description = apiMessage || getTranslation(fallbackKey);
+
         notification.error({
-            message: 'Lỗi',
+            message: getTranslation('error'),
             description: description,
-            key: `global_error_${status}_${description}`, // Prevent duplicates
+            key: `global_error_${status}_${description}`,
             duration: 3,
         });
     }

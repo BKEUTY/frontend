@@ -9,7 +9,7 @@ import { useNotification } from '../../Context/NotificationContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
 
-import NotFound from '../ErrorPages/NotFound';
+import NotFound from '../../Component/ErrorPages/NotFound';
 
 export default function Account() {
     const notify = useNotification();

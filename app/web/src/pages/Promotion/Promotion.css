@@ -39,7 +39,6 @@
   min-width: 300px;
   border: 1px solid #ddd;
   border-radius: 25px;
-
   padding: 5px 20px;
   background: white;
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -122,8 +121,6 @@
   min-width: 1000px;
 }
 
-
-
 .promotion-table td {
   padding: 16px 20px;
   text-align: left;
@@ -132,7 +129,6 @@
   color: #333;
   white-space: nowrap;
 }
-
 
 .promotion-table td:first-child {
   white-space: normal;
@@ -148,15 +144,6 @@
   letter-spacing: 0.5px;
   padding: 16px 15px;
   border-bottom: 2px solid #eee;
-  white-space: nowrap;
-}
-
-.promotion-table td {
-  padding: 16px 20px;
-  text-align: left;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 15px;
-  color: #333;
   white-space: nowrap;
 }
 
@@ -187,8 +174,6 @@
   background-color: #6200ea;
 }
 
-
-
 .applicable-badge {
   padding: 4px 12px;
   border-radius: 20px;
@@ -207,8 +192,6 @@
 .app-no {
   background-color: #9e9e9e;
 }
-
-
 
 .pagination {
   display: flex;
@@ -255,7 +238,6 @@
   box-shadow: none;
 }
 
-
 .mobile-card-view {
   display: none;
 }
@@ -270,7 +252,6 @@
   transition: transform 0.2s;
 }
 
-
 .disabled-row,
 .disabled-card {
   opacity: 0.5;
@@ -280,12 +261,10 @@
   color: #999;
 }
 
-
 .disabled-row td {
   background-color: #f2f2f2 !important;
   color: #999 !important;
 }
-
 
 .disabled-row .status-badge,
 .disabled-row .applicable-badge {
@@ -340,11 +319,7 @@
   font-weight: 500;
 }
 
-/* Responsive */
-
 @media (max-width: 992px) {
-
-
   .promotion-page {
     padding: 20px 15px;
   }
@@ -357,7 +332,6 @@
   .mobile-card-view {
     display: block;
   }
-
 
   .filter-tabs {
     gap: 8px;

@@ -75,7 +75,7 @@ const ForgotPassword = () => {
 
     const handleResendOTP = () => {
         notification.info({
-            message: t('info', 'Info'),
+            message: t('info'),
             description: `${t('otp_sent')} ${email}. ${t('otp_mock')} ${MOCK_OTP}`
         });
     };

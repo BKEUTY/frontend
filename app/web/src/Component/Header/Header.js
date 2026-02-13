@@ -1,155 +1,144 @@
-import { useState } from 'react';
-import { NavLink, useLocation } from "react-router-dom";
+import { useState, useEffect } from 'react';
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
-import "./Header.css";
-import logo_image from "../../Assets/Images/logo.svg";
-import home_image from "../../Assets/Images/Icons/icon_home.svg";
-import header_product_image from "../../Assets/Images/Products/icon_product.svg";
-import service_image from "../../Assets/Images/Icons/icon_service.svg";
-import promotion_image from "../../Assets/Images/Icons/icon_voucher.svg";
-import retail_system_image from "../../Assets/Images/Icons/icon_shop.svg";
-import cart_image from "../../Assets/Images/Icons/icon_cart.svg";
-import account_image from "../../Assets/Images/Icons/icon_account.svg";
-import { GlobalOutlined } from '@ant-design/icons';
-
 import { useCart } from "../../Context/CartContext";
+import { Layout, Menu, Drawer, Badge, Button, Dropdown, Avatar, Row, Col, Space } from 'antd';
+import {
+  MenuOutlined,
+  GlobalOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
+  HomeOutlined,
+  AppstoreOutlined,
+  GiftOutlined,
+  ShopOutlined,
+  HeartOutlined
+} from '@ant-design/icons';
+import logo_image from "../../Assets/Images/logo.svg";
+import "./Header.css";
+
+const { Header: AntHeader } = Layout;
 
 export default function Header() {
   const { t, changeLanguage, language } = useLanguage();
   const { cartItems } = useCart();
   const location = useLocation();
-  const isLanding = location.pathname === "/";
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
-  const getNavLinkClass = ({ isActive }) => {
-    return isActive ? "active-link" : "";
-  };
-
-  const closeMobileMenu = () => setIsMobileMenuOpen(false);
-
-
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const cartCount = cartItems.reduce((total, item) => total + (item.quantity || 1), 0);
 
+  const menuItems = [
+    { key: '/home', icon: <HomeOutlined />, label: t('home') },
+    { key: '/product', icon: <AppstoreOutlined />, label: t('product') },
+    { key: '/service', icon: <HeartOutlined />, label: t('service') },
+    { key: '/promotion', icon: <GiftOutlined />, label: t('promotion') },
+    { key: '/retail-system', icon: <ShopOutlined />, label: t('retail_system') },
+  ];
+
+  const toggleLanguage = () => {
+    changeLanguage(language === 'vi' ? 'en' : 'vi');
+  };
+
+  const handleMenuClick = ({ key }) => {
+    navigate(key);
+    setMobileMenuOpen(false);
+  };
+
   return (
-    <header className="header">
-      <div className={`mobile-menu-toggle ${isMobileMenuOpen ? 'open' : ''}`} onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-        <span className="bar"></span>
-        <span className="bar"></span>
-        <span className="bar"></span>
-      </div>
+    <AntHeader className={`app-header ${scrolled ? 'scrolled' : ''}`}>
+      <div className="header-container">
+        <div className="logo-section" onClick={() => navigate('/')}>
+          <img src={logo_image} alt="BKEUTY" className="header-logo" />
+        </div>
 
-      <div className="logo">
-        <img
-          className="brand_image"
-          loading="lazy"
-          decoding="async"
-          src={logo_image}
-          alt="icon"
-        />
-      </div>
-      <ul className={`nav_list ${isMobileMenuOpen ? 'mobile-active' : ''}`}>
-        <li className="nav_item">
-          <NavLink to="/home" className={getNavLinkClass} onClick={closeMobileMenu}>
-            <img
-              className="icon_nav_item"
-              loading="lazy"
-              decoding="async"
-              src={home_image}
-              alt="icon"
-            />
-            {t('home')}
-          </NavLink>
-        </li>
+        <div className="desktop-menu">
+          <Menu
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            onClick={handleMenuClick}
+            items={menuItems}
+            className="main-menu"
+          />
+        </div>
 
-        <li className="nav_item">
-          <NavLink to="/product" className={getNavLinkClass} onClick={closeMobileMenu}>
-            <img
-              className="icon_nav_item header_product_image"
-              loading="lazy"
-              decoding="async"
-              src={header_product_image}
-              alt="product"
-            />
-            {t('product')}
-          </NavLink>
-        </li>
-
-        <li className="nav_item">
-          <NavLink to="/service" className={getNavLinkClass} onClick={closeMobileMenu}>
-            <img
-              className="icon_nav_item"
-              loading="lazy"
-              decoding="async"
-              src={service_image}
-              alt="icon"
-            />
-            {t('service')}
-          </NavLink>
-        </li>
-
-        <li className="nav_item">
-          <NavLink to="/promotion" className={getNavLinkClass} onClick={closeMobileMenu}>
-            <img
-              className="icon_nav_item"
-              loading="lazy"
-              decoding="async"
-              src={promotion_image}
-              alt="icon"
-            />
-            {t('promotion')}
-          </NavLink>
-        </li>
-
-        <li className="nav_item">
-          <NavLink to="/retail-system" className={getNavLinkClass} onClick={closeMobileMenu}>
-            <img
-              className="icon_nav_item"
-              loading="lazy"
-              decoding="async"
-              src={retail_system_image}
-              alt="icon"
-            />
-            {t('retail_system')}
-          </NavLink>
-        </li>
-      </ul>
-      <ul className="nav_list2">
-        <li className="nav_item2">
-          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link" : (isActive ? "nav_item2_link active-link-right" : "nav_item2_link")} to="/cart">
-            <div style={{ position: 'relative' }}>
-              <img
-                className="icon_nav_item2"
-                loading="lazy"
-                decoding="async"
-                src={cart_image}
-                alt="icon"
-              />
-              {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+        <div className="header-actions">
+          <Badge count={cartCount} showZero={false} size="small" offset={[-10, 5]} className="mobile-cart-badge">
+            <div className="action-btn-custom" onClick={() => navigate('/cart')}>
+              <ShoppingCartOutlined className="action-icon" />
+              <span className="action-label">{t('cart')}</span>
             </div>
-            <span className="nav_item2_text">{t('cart')}</span>
-          </NavLink>
-        </li>
+          </Badge>
 
-        <li className="nav_item2">
-          <NavLink className={({ isActive }) => isLanding ? "nav_item2_link" : (isActive ? "nav_item2_link active-link-right" : "nav_item2_link")} to="/account">
-            <img
-              className="icon_nav_item2"
-              loading="lazy"
-              decoding="async"
-              src={account_image}
-              alt="icon"
-            />
-            <span className="nav_item2_text">{isLanding ? t('not_logged_in') : t('account')}</span>
-          </NavLink>
-        </li>
-        <li className="nav_item2">
-          <button className="nav_lang_toggle" onClick={() => changeLanguage(language === 'vi' ? 'en' : 'vi')}>
-            <GlobalOutlined />
-            <span>{language === 'vi' ? 'VI' : 'EN'}</span>
-          </button>
-        </li>
-      </ul>
-    </header>
+          <div className="desktop-actions">
+            <div className="action-btn-custom" onClick={() => navigate('/account')}>
+              <UserOutlined className="action-icon" />
+              <span className="action-label">{t('not_logged_in')}</span>
+            </div>
+
+            <div className="action-btn-custom" onClick={toggleLanguage}>
+              <GlobalOutlined className="action-icon" />
+              <span className="action-label">{language === 'vi' ? 'VN' : 'EN'}</span>
+            </div>
+          </div>
+
+          <Button
+            type="text"
+            icon={<MenuOutlined style={{ fontSize: '24px', color: '#333' }} />}
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(true)}
+          />
+        </div>
+      </div>
+
+      <Drawer
+        placement="right"
+        onClose={() => setMobileMenuOpen(false)}
+        open={mobileMenuOpen}
+        className="mobile-drawer"
+        closeIcon={<MenuOutlined style={{ fontSize: '20px' }} />}
+        extra={
+          <div className="drawer-logo-wrapper">
+            <img src={logo_image} alt="BKEUTY" className="drawer-logo" />
+          </div>
+        }
+      >
+        <Menu
+          mode="vertical"
+          selectedKeys={[location.pathname]}
+          onClick={handleMenuClick}
+          items={menuItems}
+          style={{ border: 'none' }}
+        />
+
+        <div className="mobile-drawer-footer">
+          <Button
+            block
+            icon={<UserOutlined />}
+            onClick={() => { navigate('/account'); setMobileMenuOpen(false); }}
+          >
+            {t('account')}
+          </Button>
+
+          <Button
+            block
+            icon={<GlobalOutlined />}
+            onClick={toggleLanguage}
+          >
+            {language === 'vi' ? 'Tiếng Việt' : 'English'}
+          </Button>
+        </div>
+      </Drawer>
+    </AntHeader>
   );
 }
+

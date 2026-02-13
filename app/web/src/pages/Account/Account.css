@@ -6,7 +6,6 @@
     margin-bottom: 50px;
     min-height: 60vh;
     text-align: left;
-    /* Override global center alignment */
 }
 
 .account-sidebar {
@@ -26,7 +25,6 @@
     padding: 30px 20px;
     border-bottom: 1px solid #eee;
     background-color: white;
-    /* Ensure white background */
 }
 
 .summary-avatar {
@@ -36,9 +34,7 @@
     object-fit: cover;
     margin-bottom: 15px;
     border: 2px solid var(--color_main_title);
-    /* Add border ring */
     padding: 2px;
-    /* Space between image and ring */
 }
 
 .summary-name {
@@ -62,7 +58,6 @@
     text-decoration: none;
     display: block;
     border-left: 4px solid transparent;
-    /* Highlight indicator */
 }
 
 .sidebar-item:hover {
@@ -74,7 +69,6 @@
     background-color: var(--color_main_title);
     color: white;
     border-left-color: #800040;
-    /* Darker accent */
 }
 
 .account-content {
@@ -85,26 +79,19 @@
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
-/* Account Info Specifics */
-/* Account Info Specifics */
 .info-header {
     display: flex;
     align-items: center;
     gap: 15px;
     margin-bottom: 15px;
     flex-wrap: wrap;
-    /* Safe wrap for very small screens */
 }
 
 .info-header h2 {
     margin: 0;
-    /* Remove default margins */
     line-height: 1.2;
-    /* Better alignment */
     font-size: 24px;
-    /* Ensure size consistency */
     display: flex;
-    /* Flex context for text */
     align-items: center;
 }
 
@@ -113,12 +100,9 @@
     align-items: center;
     gap: 12px;
     background: #f1f2f6;
-    /* Lighter cool gray */
     padding: 6px 16px;
     border-radius: 99px;
-    /* Pill shape */
     height: 36px;
-    /* Fixed height for alignment */
     box-sizing: border-box;
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
 }
@@ -130,13 +114,11 @@
     border-radius: 4px;
     overflow: hidden;
     margin: 0 4px;
-    /* Minimal spacing */
 }
 
 .progress-fill {
     height: 100%;
     background: linear-gradient(90deg, #ffd700, #fbc531);
-    /* Gold gradient */
     border-radius: 4px;
 }
 
@@ -150,11 +132,9 @@
 
 .premium-badge {
     background-color: #00d2d3;
-    /* Teal/Cyan-ish Green like screenshot */
     color: white;
     padding: 3px 10px;
     border-radius: 10px;
-    /* Rounded rect inside pill */
     font-size: 11px;
     font-weight: 800;
     text-transform: uppercase;
@@ -182,7 +162,6 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
-    /* Space between label and input */
     width: 100%;
 }
 
@@ -204,7 +183,6 @@
     font-family: var(--inter_font);
     width: 100%;
     box-sizing: border-box;
-    /* Crucial for preventing overlap */
     font-size: 14px;
     color: #333;
     transition: border-color 0.3s;
@@ -267,16 +245,12 @@
     border: none;
     padding: 12px 30px;
     border-radius: 4px;
-    /* Keep slightly squared as per some modern forms, or rounded? User said "bo tròn 1 vài button". */
-    /* Let's make it rounded too to be consistent or just slightly rounded. */
-    border-radius: 4px;
     font-size: 16px;
     cursor: pointer;
     margin-top: 30px;
     font-weight: 700;
 }
 
-/* Orders List */
 .orders-table {
     width: 100%;
     border-collapse: collapse;
@@ -292,11 +266,8 @@
 .orders-table th {
     background-color: #fafafa;
     font-weight: 700 !important;
-    /* Fixed bold header */
     color: var(--color_main_title);
-    /* Brand color header */
     white-space: nowrap;
-    /* Header strictly on one line */
 }
 
 .order-status {
@@ -320,7 +291,6 @@
     color: #721c24;
 }
 
-/* Notification Popup */
 .notification-popup {
     position: fixed;
     top: 20px;
@@ -374,12 +344,10 @@
     border-radius: 50%;
 }
 
-/* Sidebar Footer */
 .sidebar-footer {
     border-top: 1px solid #eee;
     padding: 5px 0;
     margin-top: auto;
-    /* Push to bottom if sidebar has height */
 }
 
 .logout-item {
@@ -410,7 +378,6 @@
 .highlight-username {
     font-weight: 800;
     color: var(--color_main_title);
-    /* Ensure stroke/shadow where needed */
 }
 
 @media (max-width: 768px) {
@@ -426,7 +393,6 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        /* Center avatar in sidebar header if desired */
         flex-wrap: wrap;
     }
 
@@ -437,13 +403,10 @@
         width: 100%;
         border-top: 1px solid #eee;
         border-bottom: 1px solid #eee;
-        /* Add bottom border for scrolling consistency */
         -webkit-overflow-scrolling: touch;
-        /* Smooth scroll on iOS */
         align-items: center;
         justify-content: flex-start;
         padding-bottom: 0;
-        /* Remove padding */
     }
 
     .sidebar-item {
@@ -467,7 +430,6 @@
     .sidebar-footer {
         width: 100%;
         border-top: none;
-        /* Already have border on menu */
         border-bottom: 1px solid #eee;
         display: flex;
         justify-content: center;
@@ -481,10 +443,8 @@
         padding: 12px;
     }
 
-    /* Form Layout on Mobile */
     .info-form-layout {
         flex-direction: column-reverse;
-        /* Avatar on top */
         gap: 30px;
     }
 
@@ -516,7 +476,6 @@
         margin-top: 10px;
     }
 
-    /* Orders Responsive Card View */
     .orders-table thead {
         display: none;
     }

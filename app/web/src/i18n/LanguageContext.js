@@ -6,9 +6,9 @@ const LanguageContext = createContext();
 export const LanguageProvider = ({ children }) => {
     const [language, setLanguage] = useState('vi');
 
-    const t = (key, fallback) => {
+    const t = (key) => {
         const dict = locales[language] || locales['vi'];
-        return dict[key] || fallback || key;
+        return dict[key] || key;
     };
 
     const changeLanguage = (lang) => {

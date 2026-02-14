@@ -36,11 +36,16 @@ const LandingPage = () => {
                 </div>
 
                 <div className="glass-overlay">
-                    <h1 className="glass-title">{t('welcome_landing')} <span className="brand-name">BKEUTY</span></h1>
-                    <Link to="/login" className="btn-glass-primary" style={{ display: 'inline-block', textDecoration: 'none' }}>{t('login')}</Link>
-                    <p className="glass-subtitle" style={{ marginTop: '20px' }}>
-                        {t('no_account')} <Link to="/register" style={{ color: '#fff', fontWeight: 'bold', textDecoration: 'underline' }}>{t('register')}</Link>
-                    </p>
+                    <h1 className="glass-title">
+                        {t('welcome_landing') || 'Chào Mừng Đến Với'}
+                        <span className="brand-name">BKEUTY</span>
+                    </h1>
+
+                    <Link to="/login" className="btn-glass-primary">{t('login') || 'ĐĂNG NHẬP'}</Link>
+
+                    <div className="auth-links">
+                        {t('no_account') || 'Chưa có tài khoản?'} <Link to="/register" className="register-link">{t('register') || 'Đăng Ký'}</Link>
+                    </div>
                 </div>
 
                 <div className="slider-controls">

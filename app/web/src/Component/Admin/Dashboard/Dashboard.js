@@ -18,6 +18,7 @@ import {
     ResponsiveContainer
 } from 'recharts';
 import './Dashboard.css';
+import StatsCard from '../Common/StatsCard';
 
 const Dashboard = () => {
     const { t } = useLanguage();
@@ -152,21 +153,7 @@ const Dashboard = () => {
                 <Col xs={24} lg={8}>
                     <div className="stat-cards-container">
                         {stats.map((stat, index) => (
-                            <div key={index} className="beauty-card stat-card">
-                                <div className="stat-card-content">
-                                    <div className="stat-card-left">
-                                        <div className={`card-icon-wrapper ${stat.iconClass}`}>
-                                            {stat.icon}
-                                        </div>
-                                        <div className="card-stat-label">{stat.title}</div>
-                                        <div className="card-stat-value">{stat.value}</div>
-                                    </div>
-                                    <div className={`trend-pill ${stat.trendType === 'up' ? 'trend-up' : 'trend-down'}`}>
-                                        {stat.trendType === 'up' ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                                        {Math.abs(stat.trend)}%
-                                    </div>
-                                </div>
-                            </div>
+                            <StatsCard key={index} {...stat} />
                         ))}
                     </div>
                 </Col>

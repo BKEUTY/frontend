@@ -329,9 +329,11 @@ const ProductCreateScreen = ({ navigation }) => {
                     onPress={handleNext}
                 >
                     <Text style={styles.btnText}>
-                        {currentStep === 2 ? t('admin_btn_save_finish') : t('next')}
+                        {currentStep === 0 ? t('admin_btn_create_continue') :
+                            currentStep === 1 ? t('admin_btn_gen_variants') :
+                                t('admin_btn_save_finish')}
                     </Text>
-                    <Ionicons name={currentStep === 2 ? "checkmark-circle" : "arrow-forward"} size={20} color="white" />
+                    <Ionicons name={currentStep === 2 ? "checkmark-circle" : "arrow-forward"} size={24} color="white" />
                 </TouchableOpacity>
             </View>
         </KeyboardAvoidingView>
@@ -609,7 +611,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     dashedBtn: {
-        height: 52,
+        height: 56,
         borderWidth: 1.5,
         borderColor: COLORS.mainTitle || '#c2185b',
         borderStyle: 'dashed',
@@ -693,8 +695,8 @@ const styles = StyleSheet.create({
         elevation: 8,
     },
     btn: {
-        height: 52,
-        borderRadius: 26,
+        height: 56,
+        borderRadius: 28,
         justifyContent: 'center',
         alignItems: 'center',
         flexDirection: 'row',
@@ -716,7 +718,7 @@ const styles = StyleSheet.create({
     },
     btnText: {
         color: 'white',
-        fontSize: 15,
+        fontSize: 18,
         fontWeight: '700',
         letterSpacing: 0.5,
     }

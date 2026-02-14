@@ -23,6 +23,7 @@ const bestSellers = mockProducts.slice(0, 5);
 const suggestedProducts = mockProducts.slice(5, 10);
 
 import Header from '../Component/Header';
+import ProductCard from '../Component/Common/ProductCard';
 
 const HomeScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -58,45 +59,28 @@ const HomeScreen = ({ navigation }) => {
                     <Text style={styles.sectionTitle}>{t('best_sellers')}</Text>
                     <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
                         {bestSellers.map(item => (
-                            <View key={item.id} style={styles.productCard}>
-                                <View style={styles.cardBadges}>
-                                    {item.tag && <Text style={styles.badgeRed}>{t(item.tag) || item.tag}</Text>}
-                                </View>
-                                <View style={styles.productPlaceHolder} />
-                                <Text style={styles.productBrand}>{item.brand}</Text>
-                                <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-                                <View style={styles.cardMeta}>
-                                    <Text style={styles.rating}>⭐ {item.rating}</Text>
-                                    <Text style={styles.sold}>({item.sold} {t('sold_count')})</Text>
-                                </View>
-                                <Text style={styles.productPrice}>{item.price}</Text>
-                            </View>
+                            <ProductCard
+                                key={item.id}
+                                item={item}
+                                onPress={() => navigation.navigate('Product', { screen: 'ProductDetail', params: { product: item } })}
+                                layout="horizontal"
+                                showAddToCart={false}
+                            />
                         ))}
                     </ScrollView>
                 </View>
-
 
                 <View style={styles.contentSection}>
                     <Text style={styles.sectionTitle}>{t('section_suggested')}</Text>
                     <View style={styles.gridContainer}>
                         {suggestedProducts.map(item => (
-                            <View key={item.id} style={styles.gridCard}>
-                                <View style={styles.cardBadges}>
-                                    {item.tag && <Text style={styles.badgeRed}>{t(item.tag) || item.tag}</Text>}
-                                    {item.discount && <Text style={styles.badgeYellow}>-{item.discount}</Text>}
-                                </View>
-                                <View style={styles.productPlaceHolder} />
-                                <Text style={styles.productBrand}>{item.brand}</Text>
-                                <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-                                <View style={styles.cardMeta}>
-                                    <Text style={styles.rating}>⭐ {item.rating}</Text>
-                                    <Text style={styles.sold}>({item.sold} {t('sold_count')})</Text>
-                                </View>
-                                <View style={styles.priceRow}>
-                                    {item.oldPrice && <Text style={styles.oldPrice}>{item.oldPrice}</Text>}
-                                    <Text style={styles.productPrice}>{item.price}</Text>
-                                </View>
-                            </View>
+                            <ProductCard
+                                key={item.id}
+                                item={item}
+                                onPress={() => navigation.navigate('Product', { screen: 'ProductDetail', params: { product: item } })}
+                                layout="grid"
+                                showAddToCart={false}
+                            />
                         ))}
                     </View>
                 </View>
@@ -134,51 +118,61 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     heroSection: {
-        height: height * 0.45,
+        height: height * 0.5,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 10,
+        marginBottom: 24,
     },
     heroOverlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.3)',
+        backgroundColor: 'rgba(0,0,0,0.4)', // Slightly darker for better text contrast
     },
     heroContent: {
         zIndex: 1,
         alignItems: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: 40,
+        width: '100%',
     },
     heroTitle: {
-        fontSize: 26,
-        fontWeight: 'bold',
+        fontSize: 32,
+        fontWeight: '800',
         color: 'white',
         textAlign: 'center',
-        marginBottom: 8,
-        textShadowColor: 'rgba(0,0,0,0.5)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 3,
+        marginBottom: 12,
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 4 },
+        textShadowRadius: 10,
+        letterSpacing: -0.5,
     },
     heroSubtitle: {
         fontSize: 16,
-        color: 'white',
+        color: 'rgba(255, 255, 255, 0.9)',
         textAlign: 'center',
-        marginBottom: 20,
-        textShadowColor: 'rgba(0,0,0,0.5)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 3,
+        marginBottom: 32,
+        fontWeight: '500',
+        lineHeight: 24,
     },
     btnPrimary: {
-        backgroundColor: 'rgba(255,255,255,0.2)',
-        paddingVertical: 10,
-        paddingHorizontal: 25,
-        borderRadius: 30,
-        borderWidth: 1,
-        borderColor: 'white',
+        backgroundColor: 'white',
+        paddingVertical: 14,
+        paddingHorizontal: 36,
+        borderRadius: 100,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 4,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 5,
+        transform: [{ scale: 1 }],
     },
     btnTextPrimary: {
-        color: 'white',
+        color: COLORS.mainTitle,
         fontSize: 16,
-        fontWeight: '600',
+        fontWeight: '700',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
     contentSection: {
         paddingVertical: 20,

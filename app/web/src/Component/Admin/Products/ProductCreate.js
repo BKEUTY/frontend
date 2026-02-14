@@ -78,7 +78,7 @@ const ProductCreate = () => {
                 setCurrentStep(1);
             }
         } catch (error) {
-            // Global handler
+
         } finally {
             setLoading(false);
         }
@@ -138,7 +138,7 @@ const ProductCreate = () => {
             await fetchVariants(createdProductId);
             setCurrentStep(2);
         } catch (error) {
-            // Global handler
+
         } finally {
             setLoading(false);
         }
@@ -149,7 +149,7 @@ const ProductCreate = () => {
             const res = await adminApi.getVariants(pid);
             setVariants(res.data || []);
         } catch (error) {
-            // Global handler
+
         }
     };
 
@@ -177,7 +177,6 @@ const ProductCreate = () => {
             });
             return false;
         } catch (error) {
-            // Global handler handles showing the error, we just close the loading if it was a sticky notification
             notification.destroy('skuUpload');
             return false;
         }
@@ -204,7 +203,7 @@ const ProductCreate = () => {
             });
             navigate('/admin/products');
         } catch (error) {
-            // Global handler
+
         } finally {
             setLoading(false);
         }
@@ -212,15 +211,16 @@ const ProductCreate = () => {
 
     return (
         <div className="product-create-container">
-            <div className="admin-page-header">
+            <div className="admin-page-header" style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 20 }}>
                 <Button
-                    icon={<LeftOutlined />}
+                    icon={<ArrowRightOutlined style={{ transform: 'rotate(180deg)' }} />}
                     className="trigger-btn"
                     onClick={() => navigate('/admin/products')}
+                    style={{ background: 'white', border: '1px solid #eff2f5', width: 48, height: 48, borderRadius: 16 }}
                 />
-                <div>
-                    <h2 className="dashboard-title">{t('admin_product_create')}</h2>
-                    <Text type="secondary" className="admin-subtitle">{t('admin_create_desc')}</Text>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <h2 className="dashboard-title" style={{ marginBottom: 0 }}>{t('admin_product_create')}</h2>
+                    <Text type="secondary" className="admin-subtitle" style={{ fontSize: 14 }}>{t('admin_create_desc')}</Text>
                 </div>
             </div>
 
@@ -299,7 +299,7 @@ const ProductCreate = () => {
                                         maxCount={1}
                                         beforeUpload={() => false}
                                         className="admin-upload-dragger"
-                                        showUploadList={false} // Hide default list to avoid "hooks" or weird UI
+                                        showUploadList={false}
                                     >
                                         <div style={{ padding: '40px 20px', textAlign: 'center' }}>
                                             {form.getFieldValue('image') ? (

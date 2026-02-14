@@ -6,6 +6,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import { useCart } from '../Context/CartContext';
 import Header from '../Component/Header';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import ProductCard from '../Component/Common/ProductCard';
 
 const { width } = Dimensions.get('window');
 const COLUMN_WIDTH = (width - 45) / 2;
@@ -44,45 +45,12 @@ const ProductScreen = ({ navigation }) => {
     };
 
     const renderItem = ({ item }) => (
-        <TouchableOpacity
-            style={styles.productItem}
+        <ProductCard
+            item={item}
             onPress={() => navigation.navigate('ProductDetail', { product: item })}
-            activeOpacity={0.9}
-        >
-            <View style={styles.imageContainer}>
-                {item.image ? (
-                    <Image source={{ uri: item.image }} style={styles.productImage} resizeMode="cover" />
-                ) : (
-                    <View style={styles.imagePlaceholder} />
-                )}
-                {item.discount && (
-                    <View style={styles.discountBadge}>
-                        <Text style={styles.discountText}>-{item.discount}%</Text>
-                    </View>
-                )}
-            </View>
-
-            <View style={styles.productInfo}>
-                <Text style={styles.productBrand}>BKEUTY</Text>
-                <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
-
-                <View style={styles.ratingRow}>
-                    <Ionicons name="star" size={10} color="#ffc107" />
-                    <Ionicons name="star" size={10} color="#ffc107" />
-                    <Ionicons name="star" size={10} color="#ffc107" />
-                    <Ionicons name="star" size={10} color="#ffc107" />
-                    <Ionicons name="star" size={10} color="#ffc107" />
-                    <Text style={styles.ratingCount}>(100)</Text>
-                </View>
-
-                <View style={styles.priceRow}>
-                    <Text style={styles.productPrice}>{item.price ? item.price.toLocaleString("vi-VN") : 0}đ</Text>
-                    <TouchableOpacity style={styles.addToCartBtn} onPress={() => handleAddToCart(item)}>
-                        <Ionicons name="add" size={20} color="white" />
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </TouchableOpacity>
+            onAddToCart={handleAddToCart}
+            layout="grid"
+        />
     );
 
     if (loading) {

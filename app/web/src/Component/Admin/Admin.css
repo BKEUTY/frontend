@@ -190,7 +190,6 @@
     letter-spacing: 0.01em;
 }
 
-/* Reduced !important through specificity */
 .admin-layout-container .ant-input.admin-input-large,
 .admin-layout-container .ant-input-number.admin-input-large,
 .admin-layout-container .admin-select-large .ant-select-selector {
@@ -355,38 +354,36 @@
     margin: 0 4px;
 }
 
+.admin-btn-responsive {
+    min-height: 56px;
+    height: auto;
+    font-weight: 600;
+    border-radius: var(--radius-lg);
+    font-size: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-width: 140px;
+}
+
 .modern-btn-primary {
     background: var(--admin-primary);
     border: none;
-    height: 52px;
-    padding: 0 32px;
+    min-height: 56px;
+    height: auto;
     border-radius: var(--radius-lg);
-    font-weight: 600;
-    font-size: 16px;
-    box-shadow: 0 4px 12px rgba(193, 53, 132, 0.25);
+    font-weight: 700;
+    font-size: 18px;
+    box-shadow: 0 6px 16px rgba(193, 53, 132, 0.3);
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
     color: white;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    min-width: 180px;
 
-.modern-btn-primary:hover {
-    background: var(--admin-primary-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(193, 53, 132, 0.35);
-}
-
-.modern-btn-primary:active {
-    transform: translateY(0);
-}
-
-.admin-btn-responsive {
-    height: 52px;
-    font-weight: 600;
-    border-radius: var(--radius-lg);
-    padding: 0 24px;
 }
 
 .admin-btn-group-between {
@@ -469,7 +466,7 @@
     border: none;
     cursor: pointer;
     z-index: 1001;
-    /* Above sidebar overlay if needed */
+
 }
 
 .admin-btn-secondary {
@@ -550,7 +547,7 @@
     color: var(--admin-primary);
 }
 
-/* Cleaned up old logo containers */
+
 .admin-header-right {
     flex: 1;
     display: flex;

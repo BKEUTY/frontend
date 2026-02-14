@@ -25,103 +25,7 @@
     height: 100%;
 }
 
-.stat-card {
-    padding: 32px;
-    border: 1px solid rgba(0, 0, 0, 0.02);
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
 
-.stat-card-content {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: space-between;
-    width: 100%;
-}
-
-.stat-card-left {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex: 1;
-}
-
-.card-icon-wrapper {
-    width: 52px;
-    height: 52px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 22px;
-    margin-bottom: 24px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
-}
-
-.icon-pink {
-    background: #fff1f2;
-    color: #c2185b;
-}
-
-.icon-blue {
-    background: #f0f9ff;
-    color: #0284c7;
-}
-
-.icon-green {
-    background: #f0fdf4;
-    color: #16a34a;
-}
-
-.beauty-card:hover .card-icon-wrapper {
-    transform: rotate(-5deg) scale(1.1);
-    box-shadow: 0 8px 24px rgba(193, 53, 132, 0.12);
-}
-
-.card-stat-label {
-    font-size: 15px;
-    color: #475569;
-    font-weight: 600;
-    margin-bottom: 8px;
-    letter-spacing: 0.02em;
-}
-
-.card-stat-value {
-    font-size: 32px;
-    font-weight: 900;
-    color: #0f172a;
-    letter-spacing: -1px;
-    line-height: 1;
-}
-
-.trend-pill {
-    padding: 8px 16px;
-    border-radius: 12px;
-    font-size: 14px;
-    font-weight: 800;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 4px;
-}
-
-.trend-up {
-    background: #dcfce7;
-    color: #16a34a;
-}
-
-.trend-down {
-    background: #fee2e2;
-    color: #ef4444;
-}
-
-.stat-card:hover .trend-pill {
-    transform: scale(1.05);
-}
 
 .chart-card {
     padding: 32px;
@@ -176,7 +80,5 @@
         min-width: 100%;
     }
 
-    .card-stat-value {
-        font-size: 24px;
-    }
+
 }

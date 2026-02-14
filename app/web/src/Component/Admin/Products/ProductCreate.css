@@ -28,7 +28,7 @@
 
 .modern-steps .ant-steps-item-title {
     font-weight: 600;
-    font-size: 17px;
+    font-size: 16px;
     line-height: 48px;
     height: 48px;
     margin-left: 12px;
@@ -148,7 +148,7 @@
 
 @media (max-width: 992px) {
     .site-layout-collapsed~.admin-content .admin-sticky-footer {
-        left: 0;
+        left: 0 !important;
     }
 
     .admin-sticky-footer {
@@ -161,6 +161,8 @@
     .product-create-container {
         padding: 20px !important;
         margin: 0 !important;
+        padding-bottom: 140px !important;
+        /* Adding more space for fixed footer */
     }
 
     .admin-sticky-footer {

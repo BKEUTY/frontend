@@ -43,7 +43,7 @@ const ProductList = () => {
                 total: totalElements
             }));
         } catch (error) {
-            // Error is handled globally
+
         } finally {
             setLoading(false);
         }
@@ -126,14 +126,14 @@ const ProductList = () => {
                     <Tooltip title={t('preview_product')}>
                         <Button
                             type="text"
-                            icon={<EyeOutlined style={{ color: 'var(--admin-secondary)' }} />} // Changed from Green to Secondary (Blue)
+                            icon={<EyeOutlined style={{ color: 'var(--admin-secondary)' }} />}
                             onClick={() => handlePreview(record)}
                         />
                     </Tooltip>
                     <Tooltip title={t('edit')}>
                         <Button
                             type="text"
-                            icon={<EditOutlined style={{ color: 'var(--admin-primary)' }} />} // Changed from Blue to Primary
+                            icon={<EditOutlined style={{ color: 'var(--admin-primary)' }} />}
                             onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
                         />
                     </Tooltip>
@@ -170,7 +170,6 @@ const ProductList = () => {
                         onClick={() => fetchProducts(pagination.current, pagination.pageSize)}
                         loading={loading}
                         className="admin-btn-responsive admin-btn-secondary"
-                        style={{ height: 52, borderRadius: 16 }}
                     >
                         {t('refresh')}
                     </Button>

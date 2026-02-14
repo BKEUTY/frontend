@@ -1,23 +1,21 @@
-import axiosClient from './axiosClient';
+import { adminAxiosClient, axiosClient } from './axiosClient';
 
 const adminApi = {
-    // Dashboard Stats
     getStats: async () => {
         try {
-            // Use skipGlobalErrorHandler to prevent 3 separate notifications on load
             const config = { skipGlobalErrorHandler: true };
 
             const [productsRes, usersRes, ordersRes] = await Promise.all([
-                axiosClient.get('/admin/api/product?size=1', config).catch(() => ({ data: { totalElements: 0 } })),
-                axiosClient.get('/admin/api/user?size=1', config).catch(() => ({ data: { totalElements: 0 } })),
-                axiosClient.get('/admin/api/order?size=1', config).catch(() => ({ data: { totalElements: 0 } }))
+                adminAxiosClient.get('/product?size=1', config).catch(() => ({ data: { totalElements: 0 } })),
+                adminAxiosClient.get('/user?size=1', config).catch(() => ({ data: { totalElements: 0 } })),
+                adminAxiosClient.get('/order?size=1', config).catch(() => ({ data: { totalElements: 0 } }))
             ]);
 
             return {
                 products: productsRes.data?.totalElements || 0,
                 users: usersRes.data?.totalElements || 0,
                 orders: ordersRes.data?.totalElements || 0,
-                revenue: 0 // Fetch revenue separate if needed
+                revenue: 0
             };
         } catch (error) {
             console.error("Failed to fetch admin stats", error);
@@ -25,33 +23,30 @@ const adminApi = {
         }
     },
 
-    // --- PRODUCTS ---
     getAllProducts: (page = 0, size = 10, config = {}) => {
-        return axiosClient.get(`/admin/api/product?page=${page}&size=${size}`, config);
+        return adminAxiosClient.get(`/product?page=${page}&size=${size}`, config);
     },
 
     createProduct: (data, config = {}) => {
-        return axiosClient.post('/admin/api/product', data, config);
+        return adminAxiosClient.post('/product', data, config);
     },
 
     updateProduct: (data, config = {}) => {
-        return axiosClient.put('/admin/api/product', data, config);
+        return adminAxiosClient.put('/product', data, config);
     },
 
-    // --- OPTIONS & VARIANTS ---
     createOption: (data, config = {}) => {
-        return axiosClient.post('/admin/api/product/options', data, config);
+        return adminAxiosClient.post('/product/options', data, config);
     },
 
     getVariants: (productId, config = {}) => {
-        return axiosClient.get(`/admin/api/product/${productId}/variants`, config);
+        return adminAxiosClient.get(`/product/${productId}/variants`, config);
     },
 
     updateVariant: (data, config = {}) => {
-        return axiosClient.put('/admin/api/product/variants', data, config);
+        return adminAxiosClient.put('/product/variants', data, config);
     },
 
-    // --- UPLOAD ---
     uploadProductImage: (file, productId, config = {}) => {
         const formData = new FormData();
         formData.append('file', file);
@@ -73,11 +68,11 @@ const adminApi = {
     },
 
     getAllUsers: (config = {}) => {
-        return axiosClient.get('/admin/api/user', config);
+        return adminAxiosClient.get('/user', config);
     },
 
     getAllOrders: (config = {}) => {
-        return axiosClient.get('/admin/api/orders', config);
+        return adminAxiosClient.get('/order', config);
     }
 };
 

@@ -36,14 +36,10 @@ export async function registerForPushNotificationsAsync() {
         }
 
         try {
-            // Getting the token
             token = (await Notifications.getExpoPushTokenAsync()).data;
-            console.log("Expo Push Token:", token);
         } catch (e) {
             console.error("Error getting notification token:", e);
         }
-    } else {
-        console.log('Must use physical device for Push Notifications');
     }
 
     return token;

@@ -15,11 +15,11 @@ const App = () => {
         registerForPushNotificationsAsync();
 
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-            console.log("Notification Received:", notification);
+            // handle notification
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            console.log("Notification Response:", response);
+            // handle response
         });
 
         return () => {
@@ -39,5 +39,4 @@ const App = () => {
     );
 };
 
-// Use the Navigator as the root component
 registerRootComponent(App);

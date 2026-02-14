@@ -18,7 +18,6 @@ const Header = () => {
 
     return (
         <View style={styles.headerContainer}>
-            {/* Left: Hamburger Menu */}
             <TouchableOpacity style={styles.menuButton}>
                 <View style={[styles.menuBar, { marginBottom: 4 }]} />
                 <View style={[styles.menuBar, { marginBottom: 4 }]} />
@@ -27,13 +26,11 @@ const Header = () => {
 
             {/* Centered Logo */}
             <View style={styles.logoContainer}>
-                {/* Using Text for logo as placeholder, matching Web Mobile style */}
                 <Text style={styles.logoText}>BKEUTY</Text>
             </View>
 
             {/* Right Icons */}
             <View style={styles.rightContainer}>
-                {/* Cart with Badge */}
                 <TouchableOpacity onPress={() => navigation.navigate('Cart')} style={styles.iconButton}>
                     <Text style={styles.cartIcon}>🛒</Text>
                     {cartCount > 0 && (
@@ -43,12 +40,10 @@ const Header = () => {
                     )}
                 </TouchableOpacity>
 
-                {/* Account Button - Styled like Web Mobile */}
                 <TouchableOpacity onPress={() => navigation.navigate('Account')} style={styles.accountButton}>
                     <Text style={styles.accountIcon}>👤</Text>
                 </TouchableOpacity>
 
-                {/* Language Toggle - Text Only */}
                 <TouchableOpacity onPress={handleToggleLanguage} style={styles.langButton}>
                     <Text style={styles.langText}>{language === 'vi' ? 'VI' : 'EN'}</Text>
                 </TouchableOpacity>
@@ -60,7 +55,7 @@ const Header = () => {
 const styles = StyleSheet.create({
     headerContainer: {
         height: 60,
-        backgroundColor: '#fce4ec', // Matches web light pink bg
+        backgroundColor: '#fce4ec',
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -88,7 +83,7 @@ const styles = StyleSheet.create({
     rightContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 12, // Consistent spacing
+        gap: 12,
         zIndex: 10,
     },
     logoContainer: {
@@ -105,7 +100,6 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: '800',
         color: COLORS.mainTitle,
-        // fontStyle: 'italic', // Removed to match cleaner web look if desired, or keep. Web doesn't seem to be italic in screenshots? Actually image shows styled text. Keep text style but align left.
         fontStyle: 'italic',
         letterSpacing: 0.5,
     },
@@ -139,7 +133,7 @@ const styles = StyleSheet.create({
         width: 34,
         height: 34,
         backgroundColor: COLORS.mainTitle,
-        borderRadius: 10, // Modern rounded square
+        borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: "#000",

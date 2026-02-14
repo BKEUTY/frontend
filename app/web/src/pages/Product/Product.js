@@ -9,7 +9,6 @@ import search_image from "../../Assets/Images/Icons/icon_search.svg";
 import productApi from "../../api/productApi";
 
 export default function Product() {
-  // State
   const [products, setProducts] = useState([]);
   const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -46,19 +45,16 @@ export default function Product() {
       })
       .catch((err) => console.error(err))
       .finally(() => {
-        // Add fake delay for smoothness
         setTimeout(() => setIsLoading(false), 500);
       });
   }, [searchTerm]);
 
-  // Initial Load
   useEffect(() => {
     setPage(0);
     setIsPaginationMode(false);
     fetchProducts(0, false);
   }, [fetchProducts]);
 
-  // Handlers
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
@@ -83,7 +79,6 @@ export default function Product() {
   return (
     <main className="product-page-wrapper">
       <div className="category-bar">
-        {/* Mobile Toggle */}
         <div
           className="prod-mobile-cat-header"
           onClick={() => setIsMobileCatOpen(!isMobileCatOpen)}
@@ -95,7 +90,6 @@ export default function Product() {
         <div className={`category-list ${isMobileCatOpen ? 'mobile-open' : ''}`}>
           <div className="cat-item cancel-hover">
             <span className="cat-trigger">☰ {t('categories')}</span>
-            {/* Mega Menu Dropdown */}
             <div className="mega-menu">
               <div className="mega-column">
                 <h3>{t('makeup')}</h3>
@@ -144,7 +138,6 @@ export default function Product() {
       <div className="product-page">
         <div className="product-container">
 
-          {/* Main Content */}
           <section className="product-main-content">
             <div className="product-header-bar">
               <div className="product-breadcrumb">
@@ -178,12 +171,10 @@ export default function Product() {
                       product={product}
                       t={t}
                       language={language}
-                    // No specific click data needed here mostly, or default
                     />
                   ))}
                 </div>
 
-                {/* Footer Controls */}
                 <div className="pagination-wrapper-container">
                   {!isPaginationMode ? (
                     <div style={{ textAlign: 'center', marginTop: '30px' }}>

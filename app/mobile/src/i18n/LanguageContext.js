@@ -1,6 +1,7 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import locales from './locales';
+import { setLanguage as setGlobalLanguage } from './translate';
 
 const LanguageContext = createContext();
 
@@ -16,6 +17,7 @@ export const LanguageProvider = ({ children }) => {
             const savedLang = await AsyncStorage.getItem('language');
             if (savedLang && locales[savedLang]) {
                 setLanguage(savedLang);
+                setGlobalLanguage(savedLang);
             }
         } catch (error) {
             console.error('Error loading language:', error);
@@ -31,6 +33,7 @@ export const LanguageProvider = ({ children }) => {
         if (locales[lang]) {
             setLanguage(lang);
             try {
+                setGlobalLanguage(lang);
                 await AsyncStorage.setItem('language', lang);
             } catch (error) {
                 console.error('Error saving language:', error);

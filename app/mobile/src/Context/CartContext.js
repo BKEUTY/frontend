@@ -10,7 +10,7 @@ export const CartProvider = ({ children }) => {
 
     const fetchCart = async () => {
         try {
-            const response = await axiosClient.get('/cart/1');
+            const response = await axiosClient.get('/cart/1', { errorMessage: 'api_error_fetch_cart' });
             // Ensure data structure compatibility
             const mapped = response.data.map(item => ({
                 ...item,
@@ -40,7 +40,7 @@ export const CartProvider = ({ children }) => {
             await axiosClient.post('/cart', {
                 productId: product.id,
                 userId: 1,
-            });
+            }, { errorMessage: 'api_error_add_cart' });
             // Re-fetch to confirm and sync (optional, or just rely on optimistic)
             // fetchCart(); 
         } catch (error) {
@@ -50,7 +50,7 @@ export const CartProvider = ({ children }) => {
 
     const deleteCartItem = async (cartId) => {
         try {
-            await axiosClient.delete(`/cart/${cartId}`);
+            await axiosClient.delete(`/cart/${cartId}`, { errorMessage: 'api_error_remove_cart' });
             setCartItems(prev => prev.filter(p => p.cartId !== cartId));
         } catch (error) {
             console.error(error);

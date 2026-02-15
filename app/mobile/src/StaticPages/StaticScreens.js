@@ -95,7 +95,7 @@ export const FAQScreen = () => {
 export const TermsScreen = () => {
     const { t } = useLanguage();
     return (
-        <StaticPageLayout title={t('terms') || "Điều Khoản & Chính Sách"}>
+        <StaticPageLayout title={t('terms_and_policy') || "Điều Khoản & Chính Sách"}>
             <Text style={styles.heading}>{t('terms_1_title')}</Text>
             <Text style={styles.paragraph}>{t('terms_1_content')}</Text>
 
@@ -135,7 +135,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.mainTitle || '#c2185b', // Main brand color
+        color: COLORS.mainTitle || '#c2185b',
         textAlign: 'center',
     },
     heading: {

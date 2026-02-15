@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     },
     heroOverlay: {
         ...StyleSheet.absoluteFillObject,
-        backgroundColor: 'rgba(0,0,0,0.4)', // Slightly darker for better text contrast
+        backgroundColor: 'rgba(0,0,0,0.4)',
     },
     heroContent: {
         zIndex: 1,
@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9',
         marginBottom: 0,
     },
-    // ...
+
     brandSection: {
         padding: 40,
         backgroundColor: COLORS.mainTitle,

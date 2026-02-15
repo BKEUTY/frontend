@@ -128,11 +128,11 @@ const PromotionScreen = ({ navigation }) => {
                     <View style={[
                         styles.appBadge,
                         item.applicable ? styles.appYes : styles.appNo,
-                        isExpired && styles.statusExpired // Force gray for expired rows
+                        isExpired && styles.statusExpired
                     ]}>
                         <Text style={[
                             styles.badgeText,
-                            isExpired && styles.statusTextExpired // Force dark text
+                            isExpired && styles.statusTextExpired
                         ]}>
                             {item.applicable ? t('yes') : t('no')}
                         </Text>
@@ -202,7 +202,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
     },
     headerTitle: {
-        fontSize: 24, // 1.5rem approx
+        fontSize: 24,
         fontWeight: 'bold',
         color: COLORS.mainTitle || '#c2185b',
         marginBottom: 15,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: 'white',
-        borderRadius: 25, // Pill shape
+        borderRadius: 25,
         borderWidth: 1,
         borderColor: '#ddd',
         paddingHorizontal: 15,
@@ -234,7 +234,7 @@ const styles = StyleSheet.create({
     filterChip: {
         paddingVertical: 10,
         paddingHorizontal: 16,
-        borderRadius: 25, // Pill shape
+        borderRadius: 25,
         borderWidth: 1,
         borderColor: '#ddd',
         marginRight: 10,
@@ -329,7 +329,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#6200ea',
     },
     statusExpired: {
-        backgroundColor: '#ccc', // Gray for both expired status and badges in disabled cards
+        backgroundColor: '#ccc',
     },
     statusText: {
         color: 'white',
@@ -337,7 +337,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     statusTextExpired: {
-        color: '#666', // Darker text for readability on gray
+        color: '#666',
     },
     appBadge: {
         paddingHorizontal: 10,

@@ -9,7 +9,7 @@ export const COLORS = {
   inputBorder: '#ddd',
   checked: '#c2185b',
   checkoutButton: '#c2185b',
-  lightPink: '#fce4ec', // Matches web header gradient start
+  lightPink: '#fce4ec',
   secondary: '#f9f9f9',
   gray: '#636e72',
   danger: '#d32f2f'

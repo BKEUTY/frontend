@@ -138,9 +138,7 @@ const RegisterScreen = ({ navigation }) => {
                         </View>
                         <Text style={styles.checkboxText}>
                             {t('agree_terms', 'I agree with')}{' '}
-                            <Text style={styles.link}>{t('terms', 'Terms')}</Text>
-                            {' '}{t('and', '&')}{' '}
-                            <Text style={styles.link}>{t('policy', 'Policy')}</Text>
+                            <Text style={styles.link}>{t('terms_and_policy', 'Terms & Policy')}</Text>
                         </Text>
                     </TouchableOpacity>
 

@@ -33,7 +33,7 @@ const AccountScreen = () => {
         { id: 7, title: t('retail_system'), route: 'RetailSystem' },
         { id: 8, title: t('faq'), route: 'FAQ' },
         { id: 9, title: t('beauty_corner'), route: 'BeautyCorner' },
-        { id: 10, title: t('terms'), route: 'Terms' },
+        { id: 10, title: t('terms_and_policy'), route: 'Terms' },
         { id: 11, title: t('contact'), route: 'Contact' },
     ];
 

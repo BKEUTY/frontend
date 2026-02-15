@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 40,
-        backgroundColor: '#fff0f5', // Light pink
+        backgroundColor: '#fff0f5',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 20,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: COLORS.mainTitle || '#c2185b', // Use generic if COLORS not ready
+        color: COLORS.mainTitle || '#c2185b',
         marginBottom: 10,
         textAlign: 'center',
     },

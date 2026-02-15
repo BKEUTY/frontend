@@ -5,6 +5,7 @@ import * as Notifications from 'expo-notifications';
 import AppNavigator from './src/Navigation/AppNavigator';
 import { LanguageProvider } from './src/i18n/LanguageContext';
 import { CartProvider } from './src/Context/CartContext';
+import { ToastProvider } from './src/Context/ToastContext';
 import { registerForPushNotificationsAsync } from './src/utils/NotificationService';
 
 const App = () => {
@@ -32,7 +33,9 @@ const App = () => {
         <GestureHandlerRootView style={{ flex: 1 }}>
             <LanguageProvider>
                 <CartProvider>
-                    <AppNavigator />
+                    <ToastProvider>
+                        <AppNavigator />
+                    </ToastProvider>
                 </CartProvider>
             </LanguageProvider>
         </GestureHandlerRootView>

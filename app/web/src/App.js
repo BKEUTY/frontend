@@ -9,7 +9,6 @@ import { CartProvider } from "./Context/CartContext";
 import { AuthProvider } from "./Context/AuthContext";
 import AdminRoute from "./Component/Auth/AdminRoute";
 import AdminLayout from "./Component/Admin/AdminLayout";
-
 import { authRoutes, errorRoutes } from "./routes/authRoutes";
 import { userRoutes } from "./routes/userRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
@@ -27,7 +26,8 @@ function Layout() {
   return (
     <div className="App">
       {showHeader && <Header />}
-      <main className={isAdmin ? "" : "main_content"}>
+
+      <main className={isAdmin || isAuth ? "" : "main_content"}>
         <Routes>
           {authRoutes.map((route, index) => (
             <Route key={index} path={route.path} element={route.element} index={route.index} />
@@ -52,6 +52,7 @@ function Layout() {
           ))}
         </Routes>
       </main>
+
       {showFooter && <Footer />}
       {showHeader && <CartDrawer />}
     </div>

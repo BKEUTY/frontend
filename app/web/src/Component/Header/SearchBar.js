@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './SearchBar.css';
-import searchIcon from '../../Assets/Images/Icons/icon_search.svg'; // Assuming this exists or I'll use text 
+import searchIcon from '../../Assets/Images/Icons/icon_search.svg';
 
 const MOCK_SUGGESTIONS = [
     "Sữa Chống Nắng Anessa",

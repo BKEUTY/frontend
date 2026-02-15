@@ -33,6 +33,9 @@ export default function ProductDetail({ previewProduct }) {
     const [mainImage, setMainImage] = useState(best_selling_image);
     const [quantity, setQuantity] = useState(1);
 
+    const [reviewPage, setReviewPage] = useState(0);
+    const reviewsPerPage = 5;
+
     useEffect(() => {
         if (productData && productData.images && productData.images.length > 0) {
             setMainImage(productData.images[0]);
@@ -41,7 +44,6 @@ export default function ProductDetail({ previewProduct }) {
 
     useEffect(() => {
         if (previewProduct) {
-            // Transform preview data to match component state structure
             const mergedData = {
                 id: previewProduct.productId || previewProduct.id,
                 name: previewProduct.name,
@@ -88,7 +90,6 @@ export default function ProductDetail({ previewProduct }) {
             try {
                 const response = await productApi.getAll({ page: 0, size: 1000 });
                 const found = response.data.content.find(p => p.productId === id || p.id === id);
-
                 if (found) {
                     const mergedData = {
                         id: found.id || found.productId,
@@ -136,11 +137,10 @@ export default function ProductDetail({ previewProduct }) {
                 setIsLoading(false);
             }
         };
+
         fetchProduct();
     }, [id, previewProduct]);
 
-    const [reviewPage, setReviewPage] = useState(0);
-    const reviewsPerPage = 5;
     const totalReviewPages = productData ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
     const displayedReviews = productData ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage) : [];
 
@@ -165,7 +165,6 @@ export default function ProductDetail({ previewProduct }) {
             </div>
         </div>
     );
-
 
     const handleQuantityChange = (val) => {
         const newVal = quantity + val;
@@ -200,7 +199,6 @@ export default function ProductDetail({ previewProduct }) {
             </div>
 
             <div className="product-top-section">
-
                 <div className="product-gallery">
                     <div className="thumbnail-list">
                         {productData.images.map((img, idx) => (
@@ -215,10 +213,8 @@ export default function ProductDetail({ previewProduct }) {
                     </div>
                     <div className="main-image">
                         <img src={mainImage} alt={productData.name} />
-
                     </div>
                 </div>
-
 
                 <div className="product-info-side">
                     <div className="brand-label">{productData.brand}</div>
@@ -320,7 +316,6 @@ export default function ProductDetail({ previewProduct }) {
                 </div>
             </div>
 
-
             <div className="product-content-tabs">
                 <div className="tab-headers">
                     {tabs.map(tab => (
@@ -411,8 +406,6 @@ export default function ProductDetail({ previewProduct }) {
                                             <div className="review-text">
                                                 {rev.content}
                                             </div>
-
-
                                             <div className="review-actions">
                                                 <button className="action-btn">
                                                     <FaRegHeart className="icon-action" /> {t('like')}
@@ -425,7 +418,6 @@ export default function ProductDetail({ previewProduct }) {
                                     </div>
                                 ))}
                             </div>
-
 
                             <Pagination
                                 page={reviewPage}
@@ -440,7 +432,6 @@ export default function ProductDetail({ previewProduct }) {
             <div className="recommendations-section">
                 <h2 className="section-title">{t('related_products')}</h2>
                 <div className="product-grid related-products-grid">
-
                     {[1, 2, 3, 4, 5].map(i => {
                         const relatedProduct = {
                             id: i,
@@ -451,12 +442,10 @@ export default function ProductDetail({ previewProduct }) {
                             rating: 4.8,
                             sold: 120
                         };
-
                         const clickState = {
                             category: language === 'vi' ? 'Gợi ý' : 'Related Products',
                             from: location.pathname
                         };
-
                         return (
                             <ProductCard
                                 key={i}

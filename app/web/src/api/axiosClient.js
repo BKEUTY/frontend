@@ -4,7 +4,6 @@ import queryString from 'query-string';
 import { getTranslation } from '../i18n/translate';
 
 const SERVER_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-
 const BASE_API_URL = `${SERVER_URL}/api`;
 const ADMIN_API_URL = process.env.REACT_APP_ADMIN_API_URL || `${SERVER_URL}/admin/api`;
 
@@ -49,8 +48,13 @@ const createClient = (baseURL) => {
         }
 
         if (status !== 401 && !error.config?.skipGlobalErrorHandler) {
+            const customErrorMessage = error.config?.errorMessage;
             const apiMessage = error.response?.data?.message;
-            const description = apiMessage || getTranslation(fallbackKey);
+            let description = apiMessage || getTranslation(fallbackKey);
+
+            if (customErrorMessage) {
+                description = getTranslation(customErrorMessage);
+            }
 
             notification.error({
                 message: getTranslation('error'),
@@ -74,7 +78,6 @@ export const getImageUrl = (imagePath) => {
     if (imagePath.startsWith('http')) return imagePath;
 
     const path = imagePath.startsWith('/') ? imagePath : `/${imagePath}`;
-
     return `${SERVER_URL}${path}`;
 };
 

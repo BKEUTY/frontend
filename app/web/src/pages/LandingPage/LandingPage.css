@@ -7,6 +7,8 @@
     display: flex;
     flex-direction: column;
     font-family: 'Outfit', sans-serif;
+    background-color: #000;
+    justify-content: center;
 }
 
 .landing-hero {
@@ -34,7 +36,7 @@
     height: 100%;
     flex-shrink: 0;
     background-size: cover;
-    background-position: center;
+    background-position: center top;
     position: relative;
 }
 
@@ -63,7 +65,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+    background: radial-gradient(circle, rgba(0, 3, 22, 0.3) 0%, rgba(0, 0, 0, 0.1) 60%, rgba(0, 0, 0, 0) 100%);
+    padding: 0 20px;
 }
 
 .glass-title {
@@ -178,8 +181,21 @@
 }
 
 @media (max-width: 768px) {
+    .landing-page {
+        background-color: #fff;
+        justify-content: flex-start;
+        min-height: auto;
+    }
+
+    .landing-hero {
+        height: 300px;
+        min-height: unset;
+        flex: none;
+    }
+
     .glass-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
+        margin-bottom: 10px;
     }
 
     .brand-name {
@@ -187,37 +203,82 @@
     }
 
     .btn-glass-primary {
-        padding: 12px 36px;
-        font-size: 1rem;
+        padding: 10px 30px;
+        font-size: 0.9rem;
     }
 
     .slider-controls {
-        padding: 0 20px;
+        padding: 0 10px;
     }
 
     .slider-arrow {
-        width: 48px;
-        height: 48px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
     }
 }
 
 @media (max-width: 480px) {
+    .landing-page {
+        background-color: #fff;
+        justify-content: flex-start;
+        min-height: auto;
+    }
+
+    .landing-hero {
+        height: 300px;
+        min-height: unset;
+        flex: none;
+    }
+
+    .hero-slide {
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
     .glass-title {
-        font-size: 1.5rem;
+        font-size: 1.8rem;
     }
 
     .brand-name {
-        font-size: 2.5rem;
+        font-size: 3rem;
+        margin-top: 5px;
+        margin-bottom: 20px;
     }
 
     .btn-glass-primary {
-        padding: 12px 28px;
+        padding: 10px 30px;
         font-size: 0.9rem;
-        width: 100%;
-        text-align: center;
+        width: auto;
+        min-width: 180px;
     }
 
     .slider-controls {
-        display: none;
+        display: flex;
+        padding: 0 5px;
     }
+
+    .slider-arrow {
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+        background: rgba(255, 255, 255, 0.8);
+    }
+}
+
+body:has(.landing-page) .main_content {
+    padding-top: 90px !important;
+    min-height: unset !important;
+    flex: none !important;
+}
+
+@media (max-width: 992px) {
+    body:has(.landing-page) .main_content {
+        padding-top: 70px !important;
+    }
+}
+
+body:has(.landing-page) .App {
+    min-height: auto !important;
 }

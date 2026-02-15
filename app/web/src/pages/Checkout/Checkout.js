@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useNotification } from "../../Context/NotificationContext";
 import { useState } from "react";
 import { useLanguage } from "../../i18n/LanguageContext";
-
 import orderApi from '../../api/orderApi';
 
 export default function Checkout() {
@@ -14,16 +13,13 @@ export default function Checkout() {
 
   const cartIds = state?.cartIds || [];
   const subTotal = state?.subTotal || 0;
-
   const shippingFee = 20000;
   const discount = state?.discount || 0;
   const selectedProducts = state?.selectedProducts || [];
-
   const grandTotal = Math.max(0, subTotal + shippingFee - discount);
 
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [showQR, setShowQR] = useState(false);
-
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
@@ -68,9 +64,7 @@ export default function Checkout() {
       });
 
       notify(t('order_success'), "success");
-
       setTimeout(() => navigate('/'), 2000);
-
     } catch (error) {
       console.error(error);
       notify(t('payment_error_try_again'), "error");
@@ -192,7 +186,6 @@ export default function Checkout() {
               <span>{t('subtotal')}</span>
               <span>{subTotal.toLocaleString("vi-VN")}đ</span>
             </div>
-
             <div className="summary-row">
               <span>{t('shipping_fee')}</span>
               <span>{shippingFee.toLocaleString("vi-VN")}đ</span>
@@ -226,4 +219,3 @@ export default function Checkout() {
     </main>
   );
 }
-

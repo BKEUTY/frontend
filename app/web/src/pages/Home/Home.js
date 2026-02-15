@@ -5,10 +5,7 @@ import Skeleton from '../../Component/Common/Skeleton';
 import ProductCard from '../../Component/Common/ProductCard';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
-
 import about_image from "../../Assets/Images/Banners/banner_about_us.svg";
-
-
 
 const bannerImages = [banner1, banner2];
 
@@ -18,15 +15,12 @@ const Home = () => {
     const [bestSellers, setBestSellers] = useState([]);
     const [suggestedProducts, setSuggestedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
     const [currentBanner, setCurrentBanner] = useState(0);
 
     useEffect(() => {
         const fetchHomeData = async () => {
             setIsLoading(true);
             try {
-
-
                 const mockProducts = [
                     { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: 450000, brand: 'BKEUTY', image: null, rating: 4.9, sold: 1000, tag: 'HOT' },
                     { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: 320000, brand: 'MAC', image: null, rating: 4.7, sold: 500, discount: '10%' },
@@ -39,13 +33,9 @@ const Home = () => {
                     { id: 9, name: 'Sữa Rửa Mặt Tạo Bọt Foaming Cleanser', price: 120000, brand: 'Cerave', image: null, rating: 4.6, sold: 900 },
                     { id: 10, name: 'Dầu Dưỡng Tóc Mềm Mượt Treatment', price: 350000, brand: 'Moroccanoil', image: null, rating: 4.8, sold: 400 }
                 ];
-
                 const fetchedProducts = mockProducts;
-
-
                 setBestSellers(fetchedProducts.slice(0, 5));
                 setSuggestedProducts(fetchedProducts.slice(5, 10));
-
             } catch (error) {
                 console.error("Failed to fetch home data:", error);
             } finally {
@@ -71,8 +61,6 @@ const Home = () => {
     const prevBanner = () => {
         setCurrentBanner((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
     };
-
-
 
     return (
         <div className="home-container">
@@ -144,7 +132,6 @@ const Home = () => {
             <section className="section-full-width bg-gray animate-slide-up delay-200">
                 <h2 className="home-section-title">{t('section_suggested')}</h2>
                 <div className="suggested-grid">
-
                     {suggestedProducts.map((item, index) => (
                         <ProductCard
                             key={`${item.id}-${index}`}

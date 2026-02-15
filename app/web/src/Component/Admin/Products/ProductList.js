@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Table, Button, notification, Card, Typography, Tooltip, Tag, Space, Empty, Modal } from 'antd';
 import {
@@ -18,6 +17,7 @@ const { Text } = Typography;
 const ProductList = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
+
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
     const [pagination, setPagination] = useState({
@@ -43,7 +43,6 @@ const ProductList = () => {
                 total: totalElements
             }));
         } catch (error) {
-
         } finally {
             setLoading(false);
         }
@@ -212,7 +211,6 @@ const ProductList = () => {
                     }}
                 />
             </Card>
-
 
             <Modal
                 title={null}

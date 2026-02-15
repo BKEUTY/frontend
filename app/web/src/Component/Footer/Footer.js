@@ -111,11 +111,7 @@ export default function Footer() {
               <Text className="footer-text-sm">© 2026 Bkeuty. All Rights Reserved.</Text>
             </Col>
             <Col>
-              <Space size="middle">
-                <Link to="/terms" className="footer-link-sm">{t('terms')}</Link>
-                <Text className="footer-text-sm">&</Text>
-                <Link to="/terms" className="footer-link-sm">{t('policy')}</Link>
-              </Space>
+              <Link to="/terms" className="footer-link-sm">{t('terms_and_policy')}</Link>
             </Col>
           </Row>
         </div>

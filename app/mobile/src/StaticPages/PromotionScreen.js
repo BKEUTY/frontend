@@ -119,7 +119,9 @@ const PromotionScreen = ({ navigation }) => {
                     ]}>
                         <Text style={[
                             styles.statusText,
-                            isExpired && styles.statusTextExpired
+                            item.status === 'ongoing' && styles.statusTextOngoing,
+                            item.status === 'upcoming' && styles.statusTextUpcoming,
+                            item.status === 'expired' && styles.statusTextExpired
                         ]}>
                             {t(`promo_status_${item.status}`)}
                         </Text>
@@ -132,6 +134,7 @@ const PromotionScreen = ({ navigation }) => {
                     ]}>
                         <Text style={[
                             styles.badgeText,
+                            item.applicable ? styles.appYesText : styles.appNoText,
                             isExpired && styles.statusTextExpired
                         ]}>
                             {item.applicable ? t('yes') : t('no')}
@@ -141,6 +144,7 @@ const PromotionScreen = ({ navigation }) => {
             </View>
         );
     };
+
 
     return (
         <View style={styles.container}>
@@ -189,177 +193,222 @@ const PromotionScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f8f9fa',
     },
     filters: {
-        padding: 15,
+        padding: 20,
         backgroundColor: 'white',
-        elevation: 2,
+        borderBottomLeftRadius: 30,
+        borderBottomRightRadius: 30,
+        elevation: 10,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
-        paddingBottom: 20,
+        shadowRadius: 10,
+        paddingBottom: 25,
     },
     headerTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: COLORS.mainTitle || '#c2185b',
-        marginBottom: 15,
+        fontSize: 26,
+        fontWeight: '900',
+        color: '#111',
+        marginBottom: 20,
+        textAlign: 'center',
     },
     searchContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'white',
-        borderRadius: 25,
+        backgroundColor: '#f1f5f9',
+        borderRadius: 16,
+        paddingHorizontal: 16,
+        height: 52,
+        marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#ddd',
-        paddingHorizontal: 15,
-        height: 48,
-        marginBottom: 15,
+        borderColor: '#e2e8f0',
     },
     searchIcon: {
         fontSize: 18,
         marginRight: 10,
-        opacity: 0.5,
+        opacity: 0.4,
     },
     searchInput: {
         flex: 1,
         fontSize: 16,
-        color: '#333',
+        color: '#334155',
+        fontWeight: '500',
     },
     chipContainer: {
         flexDirection: 'row',
+        paddingVertical: 5,
     },
     filterChip: {
         paddingVertical: 10,
-        paddingHorizontal: 16,
-        borderRadius: 25,
-        borderWidth: 1,
-        borderColor: '#ddd',
+        paddingHorizontal: 20,
+        borderRadius: 12,
         marginRight: 10,
-        backgroundColor: '#fff',
+        backgroundColor: '#f1f5f9',
+        borderWidth: 1,
+        borderColor: 'transparent',
     },
     filterChipActive: {
         backgroundColor: COLORS.mainTitle || '#c2185b',
-        borderColor: COLORS.mainTitle || '#c2185b',
-        elevation: 4,
+        elevation: 6,
         shadowColor: COLORS.mainTitle || '#c2185b',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
-        shadowRadius: 5,
+        shadowRadius: 8,
     },
     filterChipText: {
-        color: '#666',
-        fontWeight: '600',
+        color: '#64748b',
+        fontWeight: '700',
         fontSize: 14,
     },
     filterChipTextActive: {
         color: 'white',
     },
     listContent: {
-        padding: 15,
-        paddingBottom: 30,
+        padding: 16,
+        paddingTop: 20,
+        paddingBottom: 40,
     },
     card: {
         backgroundColor: 'white',
-        borderRadius: 16,
+        borderRadius: 24,
         padding: 20,
-        marginBottom: 15,
-        elevation: 3,
+        marginBottom: 16,
+        elevation: 4,
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 6,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 12,
+        borderWidth: 1,
+        borderColor: 'rgba(0,0,0,0.02)',
     },
     cardDisabled: {
-        backgroundColor: '#f2f2f2',
-        opacity: 0.6,
+        backgroundColor: '#f8fafc',
+        opacity: 0.7,
     },
     cardHeader: {
-        marginBottom: 12,
+        marginBottom: 16,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
-        paddingBottom: 10,
+        borderBottomColor: '#f1f5f9',
+        paddingBottom: 12,
     },
     cardTitle: {
-        fontSize: 17,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 4,
+        fontSize: 18,
+        fontWeight: '800',
+        color: '#1e293b',
+        marginBottom: 6,
+        lineHeight: 24,
     },
     cardCode: {
-        fontSize: 14,
+        fontSize: 13,
         color: COLORS.mainTitle || '#c2185b',
-        fontWeight: '600',
+        fontWeight: '800',
+        backgroundColor: '#f1f5f9',
+        alignSelf: 'flex-start',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+        borderRadius: 8,
+        overflow: 'hidden',
     },
     infoRow: {
         flexDirection: 'row',
-        marginBottom: 6,
+        marginBottom: 10,
+        alignItems: 'center',
     },
     infoLabel: {
         width: 100,
-        fontWeight: '600',
-        color: '#666',
-        fontSize: 14,
+        fontWeight: '700',
+        color: '#94a3b8',
+        fontSize: 13,
+        textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     infoValue: {
         flex: 1,
-        color: '#333',
+        color: '#334155',
         fontSize: 14,
+        fontWeight: '600',
     },
     textDisabled: {
-        color: '#999',
+        color: '#94a3b8',
     },
     footerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginTop: 10,
+        marginTop: 15,
         alignItems: 'center',
+        paddingTop: 15,
+        borderTopWidth: 1,
+        borderTopColor: '#f8fafc',
     },
     statusBadge: {
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 20,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 100,
+        minWidth: 110,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: 'transparent',
     },
     statusOngoing: {
-        backgroundColor: '#00c853',
+        backgroundColor: '#ecfdf5',
+        borderColor: 'rgba(16, 185, 129, 0.2)',
     },
     statusUpcoming: {
-        backgroundColor: '#6200ea',
+        backgroundColor: '#fdf4ff',
+        borderColor: 'rgba(217, 70, 239, 0.2)',
     },
     statusExpired: {
-        backgroundColor: '#ccc',
+        backgroundColor: '#f8fafc',
+        borderColor: 'rgba(203, 213, 225, 0.2)',
     },
     statusText: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: 'bold',
+        fontSize: 11,
+        fontWeight: '900',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+    },
+    statusTextOngoing: {
+        color: '#059669',
+    },
+    statusTextUpcoming: {
+        color: '#a855f7',
     },
     statusTextExpired: {
-        color: '#666',
+        color: '#64748b',
     },
     appBadge: {
-        paddingHorizontal: 10,
-        paddingVertical: 4,
-        borderRadius: 4,
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 8,
+        minWidth: 70,
+        alignItems: 'center',
     },
     appYes: {
-        backgroundColor: '#00c853',
+        backgroundColor: 'rgba(16, 185, 129, 0.1)',
     },
     appNo: {
-        backgroundColor: '#9e9e9e',
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+    },
+    appYesText: {
+        color: '#059669',
+    },
+    appNoText: {
+        color: '#ef4444',
     },
     badgeText: {
-        color: 'white',
         fontSize: 12,
-        fontWeight: 'bold',
+        fontWeight: '800',
     },
     noResult: {
         textAlign: 'center',
-        marginTop: 50,
-        color: '#999',
+        marginTop: 60,
+        color: '#94a3b8',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });
+
 
 export default PromotionScreen;

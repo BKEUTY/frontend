@@ -131,17 +131,18 @@
 
 .promotion-table th {
   background: #fff;
-  padding: 24px;
+  padding: 16px 20px;
   font-weight: 700;
   text-transform: uppercase;
   font-size: 0.8rem;
   letter-spacing: 1px;
   color: #94a3b8;
   border-bottom: 2px solid #f1f5f9;
+  white-space: nowrap;
 }
 
 .promotion-table td {
-  padding: 24px;
+  padding: 20px;
   border-bottom: 1px solid #f1f5f9;
   color: #334155;
   font-size: 0.95rem;
@@ -156,36 +157,72 @@
   background-color: #f8fafc;
 }
 
+.promotion-table td:nth-child(2),
+.promotion-table td:nth-child(3),
+.promotion-table td:nth-child(5) {
+  white-space: nowrap;
+}
+
+.promotion-table td:nth-child(3) {
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.disabled-row {
+  opacity: 0.6;
+  background-color: #fcfcfc;
+}
+
+.disabled-row td {
+  color: #94a3b8 !important;
+}
+
+
+
 
 .status-badge {
-  padding: 6px 16px;
+  padding: 8px 16px;
   border-radius: 100px;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  white-space: nowrap;
+  display: inline-block;
+  min-width: 130px;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .status-ongoing {
-  background: #dcfce7;
-  color: #15803d;
+  background: #ecfdf5;
+  color: #059669;
+  border: 1px solid rgba(16, 185, 129, 0.2);
 }
 
 .status-expired {
-  background: #f1f5f9;
+  background: #f8fafc;
   color: #64748b;
+  border: 1px solid rgba(203, 213, 225, 0.2);
 }
 
 .status-upcoming {
-  background: #f3e8ff;
-  color: #7e22ce;
+  background: #fdf4ff;
+  color: #a855f7;
+  border: 1px solid rgba(217, 70, 239, 0.2);
 }
 
+
 .applicable-badge {
-  padding: 6px 12px;
+  padding: 8px 16px;
   border-radius: 8px;
   font-size: 0.8rem;
   font-weight: 600;
+  white-space: nowrap;
+  display: inline-block;
+  min-width: 80px;
+  text-align: center;
 }
 
 .app-yes {
@@ -253,12 +290,39 @@
 }
 
 .card-code {
-  background: #f8fafc;
-  color: #475569;
-  border: 1px dashed #cbd5e1;
-  padding: 6px 12px;
+  background: #f1f5f9;
+  color: var(--color_main_title);
+  border: 1px dashed rgba(194, 24, 91, 0.3);
+  padding: 4px 12px;
   font-size: 0.85rem;
+  border-radius: 8px;
+  font-weight: 700;
+  display: inline-block;
+  margin-top: 5px;
+  font-family: inherit;
 }
+
+.card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 15px;
+}
+
+.card-label {
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.card-value {
+  font-size: 0.9rem;
+  color: #1e293b;
+  font-weight: 600;
+  text-align: right;
+}
+
 
 @media (max-width: 992px) {
   .promotion-table-container {
@@ -302,6 +366,12 @@
     font-size: 0.9rem;
   }
 }
+
+.disabled-card {
+  opacity: 0.7;
+  filter: grayscale(0.5);
+}
+
 
 @media (max-width: 576px) {
   .promotion-page {

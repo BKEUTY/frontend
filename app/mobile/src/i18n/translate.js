@@ -8,9 +8,10 @@ export const setLanguage = (lang) => {
     }
 };
 
-export const getTranslation = (key) => {
+export const getTranslation = (key, fallback) => {
     const dict = locales[currentLanguage] || locales['vi'];
-    return dict[key] || key;
+    return dict[key] || fallback || key;
 };
+
 
 export default getTranslation;

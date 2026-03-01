@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Table, Button, notification, Card, Typography, Tooltip, Tag, Space, Empty, Modal } from 'antd';
 import {
-    PlusOutlined, ReloadOutlined,
-    EditOutlined, DeleteOutlined,
+    PlusOutlined, SyncOutlined,
+    FormOutlined, DeleteOutlined,
     ShoppingOutlined, EyeOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import adminApi from '../../../api/adminApi';
 import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
+import usePagination from '../../../hooks/usePagination';
+import PageWrapper from '../../Common/PageWrapper';
+import EmptyState from '../../Common/EmptyState';
 import './ProductList.css';
 import ProductDetail from '../../../pages/Product/ProductDetail';
+
 
 const { Text } = Typography;
 
@@ -18,44 +22,34 @@ const ProductList = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
 
-    const [loading, setLoading] = useState(false);
-    const [data, setData] = useState([]);
-    const [pagination, setPagination] = useState({
-        current: 1,
-        pageSize: 10,
-        total: 0
-    });
     const [previewProduct, setPreviewProduct] = useState(null);
     const [isPreviewVisible, setIsPreviewVisible] = useState(false);
+    const { pagination, setTotal, setCurrent } = usePagination();
+    const [loading, setLoading] = useState(false);
+    const [data, setData] = useState([]);
 
-    const fetchProducts = async (page = 1, size = 10) => {
+    const fetchProducts = useCallback(async (page = 1, size = 10) => {
         setLoading(true);
         try {
             const response = await adminApi.getAllProducts(page - 1, size);
-            const content = response.data.content || [];
-            const totalElements = response.data.totalElements || 0;
-
-            setData(content);
-            setPagination(prev => ({
-                ...prev,
-                current: page,
-                pageSize: size,
-                total: totalElements
-            }));
+            setData(response.data.content || []);
+            setTotal(response.data.totalElements || 0);
+            setCurrent(page, size);
         } catch (error) {
+            console.error('Failed to fetch products', error);
         } finally {
             setLoading(false);
         }
-    };
+    }, [setTotal, setCurrent]);
 
     useEffect(() => {
         fetchProducts(pagination.current, pagination.pageSize);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [fetchProducts, pagination.current, pagination.pageSize]);
 
     const handleTableChange = (newPagination) => {
         fetchProducts(newPagination.current, newPagination.pageSize);
     };
+
 
     const handlePreview = (record) => {
         setPreviewProduct(record);
@@ -132,7 +126,7 @@ const ProductList = () => {
                     <Tooltip title={t('edit')}>
                         <Button
                             type="text"
-                            icon={<EditOutlined style={{ color: 'var(--admin-primary)' }} />}
+                            icon={<FormOutlined style={{ color: 'var(--admin-primary)' }} />}
                             onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
                         />
                     </Tooltip>
@@ -150,40 +144,35 @@ const ProductList = () => {
     ];
 
     return (
-        <div className="admin-product-list-container" style={{ paddingBottom: 40 }}>
-            <div className="admin-page-header">
-                <div className="admin-header-title-box">
-                    <h2 className="dashboard-title">
-                        {t('admin_product_list')}
-                    </h2>
-                    <div className="admin-subtitle-wrapper">
-                        <Text className="admin-subtitle">
-                            {t('available')} • <Text strong className="admin-subtitle-count">{pagination.total}</Text> {t('items')}
-                        </Text>
-                    </div>
-                </div>
-
-                <Space size="large" wrap>
-                    <Button
-                        icon={<ReloadOutlined />}
-                        onClick={() => fetchProducts(pagination.current, pagination.pageSize)}
-                        loading={loading}
-                        className="admin-btn-responsive admin-btn-secondary"
-                    >
-                        {t('refresh')}
-                    </Button>
-                    <Button
-                        type="primary"
-                        icon={<PlusOutlined />}
-                        onClick={() => navigate('/admin/products/create')}
-                        className="modern-btn-primary admin-btn-responsive"
-                    >
-                        {t('admin_product_create')}
-                    </Button>
-                </Space>
-            </div>
-
-            <Card bordered={false} className="beauty-card" bodyStyle={{ padding: 0 }}>
+        <div className="admin-product-list-container">
+            <PageWrapper
+                title={t('admin_product_list')}
+                subtitle={
+                    <>
+                        {t('available')} • <Text strong className="admin-subtitle-count">{pagination.total}</Text> {t('items')}
+                    </>
+                }
+                extra={
+                    <Space size="large" wrap>
+                        <Button
+                            icon={<SyncOutlined />}
+                            onClick={() => fetchProducts(pagination.current, pagination.pageSize)}
+                            loading={loading}
+                            className="admin-btn-responsive admin-btn-secondary"
+                        >
+                            {t('refresh')}
+                        </Button>
+                        <Button
+                            type="primary"
+                            icon={<PlusOutlined />}
+                            onClick={() => navigate('/admin/products/create')}
+                            className="modern-btn-primary admin-btn-responsive"
+                        >
+                            {t('admin_product_create')}
+                        </Button>
+                    </Space>
+                }
+            >
                 <Table
                     columns={columns}
                     dataSource={data}
@@ -201,16 +190,13 @@ const ProductList = () => {
                     scroll={{ x: 1000 }}
                     locale={{
                         emptyText: (
-                            <div className="admin-empty-state">
-                                <Empty
-                                    image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                    description={<span className="admin-empty-text">{t('no_products_found')}</span>}
-                                />
-                            </div>
+                            <EmptyState
+                                description={t('no_products_found')}
+                            />
                         )
                     }}
                 />
-            </Card>
+            </PageWrapper>
 
             <Modal
                 title={null}
@@ -229,7 +215,7 @@ const ProductList = () => {
                     </div>
                 )}
             </Modal>
-        </div >
+        </div>
     );
 };
 

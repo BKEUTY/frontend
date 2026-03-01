@@ -1,52 +1,59 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Button, Avatar, Dropdown } from 'antd';
+import { Layout, Menu, Button, Avatar, Dropdown, Modal, Input } from 'antd';
 import {
-    MenuFoldOutlined,
-    MenuUnfoldOutlined,
-    DashboardOutlined,
-    TeamOutlined,
+    ControlOutlined,
+    UsergroupAddOutlined,
     HeartOutlined,
     ShoppingOutlined,
     FileTextOutlined,
-    CalendarOutlined,
-    BarChartOutlined,
+    ScheduleOutlined,
+    PieChartOutlined,
     LogoutOutlined,
     GlobalOutlined,
     HomeOutlined,
-    CloseOutlined
+    CloseOutlined,
+    ArrowRightOutlined,
+    SearchOutlined
 } from '@ant-design/icons';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../../Context/AuthContext';
 import logo_image from '../../Assets/Images/logo.svg';
 import { useLanguage } from '../../i18n/LanguageContext';
+import LanguageToggle from '../Common/LanguageToggle';
 import './Admin.css';
 
 const { Header, Sider, Content } = Layout;
 
 const AdminLayout = () => {
-    const [collapsed, setCollapsed] = useState(() => window.innerWidth <= 768);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
     const location = useLocation();
     const { user, logout } = useAuth();
     const { t, language, changeLanguage } = useLanguage();
 
     React.useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                setIsSearchOpen(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    React.useEffect(() => {
         const handleResize = () => {
             const mobile = window.innerWidth <= 768;
             setIsMobile(mobile);
-            setCollapsed(mobile);
         };
 
         window.addEventListener('resize', handleResize);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
-
-    React.useEffect(() => {
-        if (isMobile) {
-            setCollapsed(true);
-        }
-    }, [location.pathname, isMobile]);
 
     const handleLogout = () => {
         logout();
@@ -76,135 +83,177 @@ const AdminLayout = () => {
     const items = [
         {
             key: '/admin/dashboard',
-            icon: <DashboardOutlined />,
+            icon: <ControlOutlined />,
             label: t('dashboard'),
+            desc: t('admin_home_dashboard_desc')
         },
         {
             key: '/admin/orders',
             icon: <FileTextOutlined />,
             label: t('orders'),
+            desc: t('admin_home_orders_desc')
         },
         {
             key: '/admin/products',
             icon: <ShoppingOutlined />,
             label: t('products'),
+            desc: t('admin_home_products_desc')
         },
         {
             key: '/admin/services',
             icon: <HeartOutlined />,
             label: t('services'),
+            desc: t('admin_home_services_desc')
         },
         {
             key: '/admin/appointments',
-            icon: <CalendarOutlined />,
+            icon: <ScheduleOutlined />,
             label: t('appointments'),
+            desc: t('admin_home_appointments_desc')
         },
         {
             key: '/admin/staff',
-            icon: <TeamOutlined />,
+            icon: <UsergroupAddOutlined />,
             label: t('staff'),
+            desc: t('admin_home_staff_desc')
         },
         {
             key: '/admin/reports',
-            icon: <BarChartOutlined />,
+            icon: <PieChartOutlined />,
             label: t('reports'),
+            desc: t('admin_home_reports_desc')
         },
     ];
 
+    const filteredItems = items.filter(item =>
+        item.label.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.desc.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <Layout className="admin-layout-container">
-            <Sider
-                trigger={null}
-                collapsible
-                collapsed={collapsed}
-                width={260}
-                className="admin-sider"
-                theme="light"
-                breakpoint="md"
-                collapsedWidth={isMobile ? 0 : 80}
-                style={{
-                    overflow: 'auto',
-                    height: '100vh',
-                    position: 'fixed',
-                    left: 0,
-                    top: 0,
-                    bottom: 0,
-                    zIndex: isMobile ? 1050 : 1000,
-                }}
-            >
-                <div className="admin-sider-header" onClick={() => navigate('/admin')}>
-                    <img
-                        src={logo_image}
-                        alt="BKEUTY"
-                        className="admin-sider-logo"
-                    />
+
+            <Header className="admin-header">
+                <div className="admin-header-left">
+                    <div className="admin-logo-wrapper" onClick={() => navigate('/admin')} style={{ cursor: 'pointer' }}>
+                        <img src={logo_image} alt="BKEUTY" className="admin-sider-logo" />
+                    </div>
                 </div>
 
-                <Menu
-                    mode="inline"
-                    selectedKeys={[location.pathname]}
-                    items={items}
-                    onClick={({ key }) => navigate(key)}
-                />
-            </Sider>
-
-            {isMobile && !collapsed && (
-                <div
-                    className="admin-sidebar-overlay"
-                    onClick={() => setCollapsed(true)}
-                />
-            )}
-
-            <Layout className={`site-layout ${collapsed ? 'site-layout-collapsed' : 'site-layout-expanded'}`}>
-                <Header className="admin-header">
-                    <div className="admin-header-left">
-                        <Button
-                            type="text"
-                            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-                            onClick={() => setCollapsed(!collapsed)}
-                            className="trigger-btn"
-                        />
+                <div className="admin-header-center">
+                    <div
+                        className="admin-search-trigger"
+                        onClick={() => setIsSearchOpen(true)}
+                    >
+                        <span className="search-text">
+                            <SearchOutlined style={{ marginRight: '8px' }} />
+                            {t('admin_search_command')}
+                        </span>
+                        <span className="kbd">Ctrl K</span>
                     </div>
+                </div>
 
-                    <div className="admin-header-right">
-                        <Button
-                            type="text"
-                            icon={<GlobalOutlined />}
-                            onClick={() => changeLanguage(language === 'vi' ? 'en' : 'vi')}
-                            className="lang-btn"
-                        >
-                            {language === 'vi' ? 'VI' : 'EN'}
-                        </Button>
+                <div className="admin-header-right">
+                    <LanguageToggle className="lang-btn" />
+                    <Dropdown
+                        menu={{ items: userMenuItems }}
+                        placement="bottomRight"
+                        trigger={['click']}
+                        overlayClassName="admin-user-dropdown"
+                    >
+                        <div className="admin-user-profile">
+                            <Avatar size={28} style={{ backgroundColor: '#c2185b' }}>
+                                {user?.name?.[0]?.toUpperCase() || 'A'}
+                            </Avatar>
+                            <span className="admin-username">{user?.name || 'Admin'}</span>
+                        </div>
+                    </Dropdown>
+                </div>
+            </Header>
 
-                        <Dropdown
-                            menu={{ items: userMenuItems }}
-                            placement="bottomRight"
-                            trigger={['click']}
-                            overlayClassName="admin-user-dropdown"
-                        >
-                            <div className="admin-user-profile">
-                                <Avatar
-                                    size={28}
-                                    style={{
-                                        backgroundColor: '#c2185b',
-                                        verticalAlign: 'middle',
-                                        fontSize: '14px'
-                                    }}
-                                >
-                                    {user?.name?.[0]?.toUpperCase() || 'A'}
-                                </Avatar>
-                                <span className="admin-username">{user?.name || 'Admin'}</span>
-                            </div>
-                        </Dropdown>
+            <div className="admin-floating-dock">
+                {items.map(item => (
+                    <div
+                        key={item.key}
+                        className={`dock-item ${location.pathname === item.key ? 'active' : ''}`}
+                        onClick={() => navigate(item.key)}
+                    >
+                        {item.icon}
+                        <span className="dock-tooltip">{item.label}</span>
                     </div>
-                </Header>
+                ))}
+            </div>
 
-                <Content
-                    className="site-layout-background admin-content"
-                >
+
+            <Layout className="site-layout">
+                <Content className="site-layout-background admin-content">
                     <Outlet />
                 </Content>
             </Layout>
+
+
+            <Modal
+                open={isSearchOpen}
+                onCancel={() => setIsSearchOpen(false)}
+                footer={null}
+                closable={false}
+                width={600}
+                className="command-palette-modal"
+                centered
+            >
+                <div className="command-search-header">
+                    <SearchOutlined style={{ fontSize: '20px', color: '#c2185b' }} />
+                    <Input
+                        placeholder={t('admin_search_placeholder')}
+                        variant="borderless"
+                        className="command-search-input"
+                        autoFocus
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </div>
+                <div className="command-results">
+                    {filteredItems.length > 0 ? (
+                        filteredItems.map((item) => (
+                            <div
+                                key={item.key}
+                                className="command-item"
+                                onClick={() => {
+                                    navigate(item.key);
+                                    setIsSearchOpen(false);
+                                    setSearchQuery('');
+                                }}
+                            >
+                                <div style={{
+                                    width: '36px',
+                                    height: '36px',
+                                    borderRadius: '10px',
+                                    background: 'rgba(193, 53, 132, 0.1)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    color: '#c2185b'
+                                }}>
+                                    {item.icon}
+                                </div>
+                                <div style={{ flex: 1 }}>
+                                    <h4>{item.label}</h4>
+                                    <p>{item.desc}</p>
+                                </div>
+                                <ArrowRightOutlined style={{ opacity: 0.3 }} />
+                            </div>
+                        ))
+                    ) : (
+                        <div style={{ padding: '40px', textAlign: 'center', color: '#94a3b8' }}>
+                            {t('admin_no_results')} "{searchQuery}"
+                        </div>
+                    )}
+                </div>
+                <div className="command-footer">
+                    <span><span className="kbd">↵</span> {t('admin_select_hint')}</span>
+                    <span><span className="kbd">esc</span> {t('admin_close_hint')}</span>
+                </div>
+            </Modal>
         </Layout>
     );
 };

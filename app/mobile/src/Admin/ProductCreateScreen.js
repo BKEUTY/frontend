@@ -35,6 +35,7 @@ const AdminInput = ({ label, placeholder, value, onChangeText, multiline, keyboa
 const ProductCreateScreen = ({ navigation }) => {
     const { t } = useLanguage();
     const [currentStep, setCurrentStep] = useState(0);
+    const [isPreview, setIsPreview] = useState(false);
 
     const [name, setName] = useState('');
     const [category, setCategory] = useState('');
@@ -131,6 +132,28 @@ const ProductCreateScreen = ({ navigation }) => {
         <View>
             <View style={styles.card}>
                 <Text style={styles.cardTitle}>{t('admin_section_general')}</Text>
+
+                {isPreview && (
+                    <View style={{ marginBottom: 20 }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#ff5722', padding: 10, borderRadius: 8, marginBottom: 15 }}>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
+                                <Ionicons name="flash" size={18} color="white" />
+                                <Text style={{ color: 'white', fontWeight: 'bold', fontStyle: 'italic', fontSize: 16 }}>FLASH DEAL</Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                                <Text style={{ backgroundColor: 'black', color: 'white', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>02</Text>
+                                <Text style={{ color: 'white' }}>:</Text>
+                                <Text style={{ backgroundColor: 'black', color: 'white', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>04</Text>
+                                <Text style={{ color: 'white' }}>:</Text>
+                                <Text style={{ backgroundColor: 'black', color: 'white', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>42</Text>
+                            </View>
+                        </View>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#d32f2f' }}>0đ</Text>
+                            <Text style={{ color: '#999', fontSize: 14 }}>{t('admin_hint_price_step_3')}</Text>
+                        </View>
+                    </View>
+                )}
                 <AdminInput
                     label={t('admin_label_name')}
                     placeholder={t('admin_placeholder_product_name')}
@@ -151,6 +174,20 @@ const ProductCreateScreen = ({ navigation }) => {
                     onChangeText={setDescription}
                     multiline
                 />
+
+                {isPreview && (
+                    <View style={{ backgroundColor: '#f1f8e9', padding: 15, borderRadius: 8, marginTop: 10, borderWidth: 1, borderColor: '#c5e1a5' }}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
+                            <View style={{ backgroundColor: '#ff9800', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, marginRight: 8 }}>
+                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 10, fontStyle: 'italic' }}>NowFree</Text>
+                            </View>
+                            <Text style={{ color: '#2e7d32', fontWeight: 'bold', fontSize: 14 }}>{t('fast_delivery_2h')}</Text>
+                        </View>
+                        <Text style={{ color: '#555', fontSize: 13, lineHeight: 18 }}>
+                            {t('fast_delivery_desc')}
+                        </Text>
+                    </View>
+                )}
             </View>
 
             <View style={styles.card}>
@@ -271,7 +308,9 @@ const ProductCreateScreen = ({ navigation }) => {
                     <Ionicons name="arrow-back" size={22} color="#1e293b" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>{t('admin_product_create')}</Text>
-                <View style={{ width: 40 }} />
+                <TouchableOpacity onPress={() => setIsPreview(!isPreview)} style={styles.backBtn}>
+                    <Ionicons name={isPreview ? "options-outline" : "eye-outline"} size={22} color={isPreview ? (COLORS.mainTitle || '#c2185b') : "#1e293b"} />
+                </TouchableOpacity>
             </View>
 
             <View style={styles.stepperContainer}>
@@ -303,7 +342,7 @@ const ProductCreateScreen = ({ navigation }) => {
                     ))}
                 </View>
                 <Text style={styles.stepLabel}>
-                    {currentStep === 0 ? t('admin_section_general') :
+                    {currentStep === 0 ? t('admin_step_info') :
                         currentStep === 1 ? t('admin_step_options') : t('admin_step_variants')}
                 </Text>
             </View>

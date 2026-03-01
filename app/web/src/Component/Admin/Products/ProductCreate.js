@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import {
-    Steps, Form, Input, Button, Select, Upload, notification, Card,
-    Divider, Table, InputNumber, Row, Col, Typography, Empty
+    Steps, Form, Input, Button, Select, Upload, notification,
+    Table, InputNumber, Row, Col, Typography, Empty
 } from 'antd';
 import {
     PlusOutlined, DeleteOutlined,
     ArrowRightOutlined, CheckCircleOutlined,
     CloudUploadOutlined, ShoppingOutlined,
     SettingOutlined, TableOutlined,
-    LeftOutlined, LoadingOutlined, TagOutlined, FileImageOutlined
+    FileImageOutlined, LoadingOutlined, EyeOutlined, EditOutlined,
+    StarFilled, ThunderboltFilled, ClockCircleOutlined
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import adminApi from '../../../api/adminApi';
 import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
+import product_placeholder from '../../../Assets/Images/Products/product_placeholder.svg';
+import '../../../pages/Product/ProductDetail.css';
 import './ProductCreate.css';
 
 const { Option } = Select;
@@ -27,12 +30,16 @@ const ProductCreate = () => {
     const [form] = Form.useForm();
     const [createdProductId, setCreatedProductId] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isPreview, setIsPreview] = useState(false);
 
     const [optionTypes, setOptionTypes] = useState([
         { name: t('admin_product_color'), values: [] }
     ]);
 
     const [variants, setVariants] = useState([]);
+
+    const imageField = Form.useWatch('image', form);
+    const previewImage = imageField?.file?.originFileObj ? URL.createObjectURL(imageField.file.originFileObj) : product_placeholder;
 
     const handleCreateProduct = async (values) => {
         setLoading(true);
@@ -201,7 +208,7 @@ const ProductCreate = () => {
                 description: t('admin_msg_variants_success'),
                 key: 'admin_msg_variants_success'
             });
-            navigate('/admin/products');
+            navigate(`/product/${createdProductId}`);
         } catch (error) {
 
         } finally {
@@ -210,21 +217,21 @@ const ProductCreate = () => {
     };
 
     return (
-        <div className="product-create-container">
-            <div className="admin-page-header" style={{ justifyContent: 'flex-start', alignItems: 'center', gap: 20 }}>
-                <Button
-                    icon={<ArrowRightOutlined style={{ transform: 'rotate(180deg)' }} />}
-                    className="trigger-btn"
+        <div className="product-create-container" style={{ paddingBottom: 60 }}>
+            <div className="product-header-section">
+                <div
+                    className="admin-back-btn"
                     onClick={() => navigate('/admin/products')}
-                    style={{ background: 'white', border: '1px solid #eff2f5', width: 48, height: 48, borderRadius: 16 }}
-                />
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
-                    <h2 className="dashboard-title" style={{ marginBottom: 0 }}>{t('admin_product_create')}</h2>
-                    <Text type="secondary" className="admin-subtitle" style={{ fontSize: 14 }}>{t('admin_create_desc')}</Text>
+                >
+                    <ArrowRightOutlined style={{ transform: 'rotate(180deg)' }} />
+                </div>
+                <div className="product-header-info">
+                    <h2>{t('admin_product_create')}</h2>
+                    <p>{t('admin_create_desc')}</p>
                 </div>
             </div>
 
-            <div className="steps-wrapper">
+            <div className="steps-wrapper" style={{ marginBottom: 40 }}>
                 <Steps
                     current={currentStep}
                     className="modern-steps"
@@ -238,34 +245,76 @@ const ProductCreate = () => {
                 />
             </div>
 
-            {currentStep === 0 && (
-                <Form form={form} layout="vertical" onFinish={handleCreateProduct} requiredMark={false}>
-                    <Row gutter={[32, 32]}>
-                        <Col xs={24} lg={16} style={{ display: 'flex' }}>
-                            <Card bordered={false} className="beauty-card" title={t('admin_section_general')} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }} bodyStyle={{ flex: 1 }}>
-                                <Row gutter={32}>
-                                    <Col xs={24} md={12}>
-                                        <Form.Item
-                                            name="name"
-                                            label={<span className="admin-label">{t('admin_label_name')}</span>}
-                                            rules={[{ required: true, message: t('admin_error_name_required') }]}
-                                        >
-                                            <Input className="admin-input-large" placeholder={t('admin_placeholder_product_name')} />
-                                        </Form.Item>
-                                    </Col>
-                                    <Col xs={24} md={12}>
-                                        <Form.Item
-                                            name="categories"
-                                            label={<span className="admin-label">{t('admin_label_category')}</span>}
-                                            rules={[{ required: true, message: t('admin_error_category_required') }]}
-                                        >
-                                            <Select
-                                                mode="multiple"
-                                                className="admin-select-large"
-                                                placeholder={t('admin_placeholder_categories')}
-                                                style={{ width: '100%' }}
-                                                dropdownStyle={{ borderRadius: 12, padding: 8 }}
-                                            >
+            <div className="product-detail-page admin-product-create-preview" style={{ padding: 0, background: 'transparent' }}>
+                <div className="product-top-section" style={{ boxShadow: '0 2px 10px rgba(0, 0, 0, 0.03)', borderRadius: '8px' }}>
+                    <div className="product-gallery">
+                        <div className="thumbnail-list">
+                            <div className="thumb-item active"><img src={previewImage} alt="thumb" /></div>
+                            <div className="thumb-item"><img src={product_placeholder} alt="thumb" /></div>
+                            <div className="thumb-item"><img src={product_placeholder} alt="thumb" /></div>
+                        </div>
+                        <div className="main-image" style={{ padding: 0, border: '1px solid #f9f9f9', background: '#fff', overflow: 'hidden', borderRadius: '8px' }}>
+                            {currentStep === 0 ? (
+                                <Form.Item name="image" style={{ margin: 0, width: '100%', height: '100%' }} form={form}>
+                                    <Upload.Dragger maxCount={1} beforeUpload={() => false} showUploadList={false} className="admin-upload-dragger" style={{ minHeight: '100%', border: 'none', background: 'transparent' }}>
+                                        {imageField ? (
+                                            <img src={previewImage} alt="product" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                                        ) : (
+                                            <div style={{ padding: '80px 20px', textAlign: 'center' }}>
+                                                <CloudUploadOutlined style={{ color: 'var(--admin-primary)', fontSize: 48, marginBottom: 16 }} />
+                                                <p style={{ fontSize: 16, fontWeight: 700, color: '#334155' }}>{t('admin_btn_upload')}</p>
+                                                <p style={{ color: '#94a3b8' }}>JPG, PNG, WEBP</p>
+                                            </div>
+                                        )}
+                                    </Upload.Dragger>
+                                </Form.Item>
+                            ) : (
+                                <img src={previewImage} alt="product" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="product-info-side">
+                        <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
+                            <div className="brand-label" style={{ marginBottom: 0 }}>BKEUTY</div>
+                            <Button
+                                type={isPreview ? "primary" : "default"}
+                                icon={isPreview ? <EditOutlined /> : <EyeOutlined />}
+                                onClick={() => setIsPreview(!isPreview)}
+                                style={{ borderRadius: '6px', fontSize: '0.9rem', height: 36, borderColor: '#ddd', fontWeight: 600 }}
+                            >
+                                {isPreview ? t('admin_btn_edit_mode') : t('admin_btn_preview')}
+                            </Button>
+                        </div>
+
+                        {currentStep === 0 ? (
+                            <Form form={form} layout="vertical" onFinish={handleCreateProduct} requiredMark={false} style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                <Form.Item name="name" rules={[{ required: true, message: t('admin_error_name_required') }]} style={{ marginBottom: 16 }}>
+                                    <Input className="preview-title-input" placeholder={t('admin_placeholder_product_name')} style={{ fontSize: '2rem', fontFamily: 'var(--inter_font)', fontWeight: 800, padding: 0, border: 'none', background: 'transparent', boxShadow: 'none' }} />
+                                </Form.Item>
+
+                                {isPreview && (
+                                    <div className="flash-deal-banner">
+                                        <div className="flash-deal-left">
+                                            <span className="flash-icon"><ThunderboltFilled /></span> FLASH DEAL
+                                        </div>
+                                        <div className="flash-countdown">
+                                            <ClockCircleOutlined style={{ marginRight: '5px' }} /> {t('ends_in')}: <span>02</span>:<span>04</span>:<span>42</span>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {isPreview && (
+                                    <div className="detail-price" style={{ marginBottom: 25, fontSize: '1.8rem', fontWeight: 700, color: 'var(--color_main_title)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                                        0đ <span className="vat-tag" style={{ color: '#999', fontSize: '0.9rem', fontWeight: 400 }}>{t('admin_hint_price_step_3')}</span>
+                                    </div>
+                                )}
+
+                                <Row gutter={24} style={{ marginBottom: 20 }}>
+                                    <Col span={24}>
+                                        <div style={{ fontWeight: 600, marginBottom: 10, fontSize: '0.95rem' }}>{t('admin_label_category')}</div>
+                                        <Form.Item name="categories" rules={[{ required: true, message: t('admin_error_category_required') }]} style={{ marginBottom: 0 }}>
+                                            <Select mode="multiple" className="admin-select-large" placeholder={t('admin_placeholder_categories')} style={{ width: '100%', border: '1px solid #ddd' }}>
                                                 <Option value="1">{t('skincare')}</Option>
                                                 <Option value="2">{t('makeup')}</Option>
                                                 <Option value="3">{t('body_care')}</Option>
@@ -275,217 +324,190 @@ const ProductCreate = () => {
                                     </Col>
                                 </Row>
 
-                                <Form.Item
-                                    name="description"
-                                    label={<span className="admin-label">{t('admin_label_desc')}</span>}
-                                    style={{ marginTop: 24 }}
-                                >
-                                    <TextArea
-                                        className="admin-input-textarea"
-                                        rows={6}
-                                        placeholder={t('admin_placeholder_desc')}
-                                        showCount
-                                        maxLength={2000}
-                                        style={{ height: 'auto' }}
-                                    />
+                                <div style={{ fontWeight: 600, marginBottom: 10, fontSize: '0.95rem' }}>{t('admin_label_desc')}</div>
+                                <Form.Item name="description" style={{ marginBottom: 30 }}>
+                                    <TextArea className="admin-input-textarea" rows={4} placeholder={t('admin_placeholder_desc')} style={{ border: '1px solid #ddd', borderRadius: '4px', boxShadow: 'none' }} />
                                 </Form.Item>
-                            </Card>
-                        </Col>
 
-                        <Col xs={24} lg={8} style={{ display: 'flex' }}>
-                            <Card bordered={false} className="beauty-card" title={t('admin_section_media')} style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }} bodyStyle={{ flex: 1 }}>
-                                <Form.Item name="image" style={{ marginBottom: 0 }}>
-                                    <Upload.Dragger
-                                        maxCount={1}
-                                        beforeUpload={() => false}
-                                        className="admin-upload-dragger"
-                                        showUploadList={false}
-                                    >
-                                        <div style={{ padding: '40px 20px', textAlign: 'center' }}>
-                                            {form.getFieldValue('image') ? (
-                                                <img
-                                                    src={typeof form.getFieldValue('image') === 'string' ? form.getFieldValue('image') : URL.createObjectURL(form.getFieldValue('image').file.originFileObj)}
-                                                    alt="product"
-                                                    style={{ maxWidth: '100%', maxHeight: 200, objectFit: 'contain', borderRadius: 8 }}
-                                                />
-                                            ) : (
-                                                <>
-                                                    <p className="ant-upload-drag-icon">
-                                                        <CloudUploadOutlined style={{ color: 'var(--admin-primary)', fontSize: 48, marginBottom: 16 }} />
-                                                    </p>
-                                                    <p className="ant-upload-text" style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, color: '#334155' }}>
-                                                        {t('admin_btn_upload')}
-                                                    </p>
-                                                    <p className="ant-upload-hint" style={{ color: '#94a3b8' }}>
-                                                        JPG, PNG, WEBP
-                                                    </p>
-                                                </>
-                                            )}
+                                {isPreview && (
+                                    <div className="shipping-info-box">
+                                        <div className="shipping-header">
+                                            <span className="now-free-icon">NowFree</span>
+                                            <strong>{t('fast_delivery_2h')}</strong>
                                         </div>
-                                    </Upload.Dragger>
-                                </Form.Item>
-                            </Card>
-                        </Col>
-                    </Row>
+                                        <div className="shipping-desc">
+                                            {t('fast_delivery_desc')}
+                                        </div>
+                                    </div>
+                                )}
 
-                    <div className="admin-sticky-footer">
-                        <Button type="primary" size="large" htmlType="submit" loading={loading} className="modern-btn-primary admin-btn-responsive">
-                            {t('admin_btn_create_continue')} <ArrowRightOutlined />
-                        </Button>
-                    </div>
-                </Form>
-            )}
-
-            {currentStep === 1 && (
-                <div style={{ maxWidth: 900, margin: '0 auto' }}>
-                    <div style={{ textAlign: 'center', marginBottom: 48 }}>
-                        <h3 className="dashboard-title" style={{ fontSize: 24, marginBottom: 16 }}>{t('admin_alert_options')}</h3>
-                        <p style={{ fontSize: 16, color: 'var(--admin-text-sub)' }}>{t('admin_alert_options_desc')}</p>
-                    </div>
-
-                    <Card bordered={false} className="beauty-card" bodyStyle={{ padding: 0 }}>
-                        {optionTypes.map((opt, index) => (
-                            <div key={index} className="option-row" style={{ borderBottom: '1px solid #f8f9fa' }}>
-                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 32 }}>
-                                    <Text strong style={{ fontSize: 20, color: 'var(--admin-primary)', letterSpacing: '0.01em' }}>{t('admin_label_option_name')} {index + 1}</Text>
-                                    {index > 0 && <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleRemoveOptionType(index)}>{t('delete')}</Button>}
+                                <div className="actions" style={{ marginTop: 'auto', display: 'flex', width: '100%' }}>
+                                    <Button type="primary" htmlType="submit" loading={loading} className="btn-add-bag" style={{ width: '100%', borderRadius: '4px' }}>
+                                        {t('admin_btn_create_continue')} <ArrowRightOutlined />
+                                    </Button>
                                 </div>
-                                <Row gutter={32}>
-                                    <Col span={8}>
-                                        <Input
-                                            className="admin-input-large"
-                                            placeholder={t('admin_placeholder_option_name')}
-                                            value={opt.name}
-                                            onChange={(e) => handleOptionNameChange(index, e.target.value)}
-                                        />
-                                    </Col>
-                                    <Col span={16}>
-                                        <Select
-                                            mode="tags"
-                                            className="admin-select-large"
-                                            placeholder={t('admin_placeholder_option_values')}
-                                            style={{ width: '100%' }}
-                                            value={opt.values}
-                                            onChange={(val) => handleOptionValuesChange(index, val)}
-                                            tokenSeparators={[',']}
-                                            open={false}
-                                        />
-                                    </Col>
-                                </Row>
-                            </div>
-                        ))}
-                        <div style={{ padding: 48, textAlign: 'center', background: '#fcfcfc' }}>
-                            <Button
-                                type="dashed"
-                                size="large"
-                                onClick={handleAddOptionType}
-                                icon={<PlusOutlined />}
-                                className="admin-btn-responsive"
-                            >
-                                {t('admin_btn_add_option')}
-                            </Button>
-                        </div>
-                    </Card>
+                            </Form>
+                        ) : (
+                            <div style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: 1 }}>
+                                <h1 className="detail-title" style={{ fontSize: '2rem', marginBottom: 15 }}>{form.getFieldValue('name')}</h1>
 
-                    <div className="admin-btn-group-between" style={{ marginTop: 40 }}>
-                        <Button onClick={() => setCurrentStep(0)} size="large" className="admin-btn-responsive" style={{ border: '1px solid #d9d9d9' }}>{t('back')}</Button>
-                        <Button type="primary" size="large" onClick={handleSubmitOptions} loading={loading} className="modern-btn-primary admin-btn-responsive">
-                            {t('admin_btn_gen_variants')} <ArrowRightOutlined />
-                        </Button>
-                    </div>
-                </div>
-            )}
-
-            {currentStep === 2 && (
-                <div style={{ maxWidth: 1200, margin: '0 auto' }}>
-                    <div style={{ textAlign: 'center', marginBottom: 40 }}>
-                        <h3 className="dashboard-title" style={{ fontSize: 24 }}>{t('admin_alert_variants')}</h3>
-                        <p style={{ color: 'var(--admin-text-sub)' }}>{t('admin_alert_variants_desc')}</p>
-                    </div>
-
-                    <Card bordered={false} className="beauty-card" bodyStyle={{ padding: 0 }}>
-                        <Table
-                            dataSource={variants}
-                            rowKey="id"
-                            pagination={false}
-                            className="beauty-table"
-                            scroll={{ x: 800 }}
-                            columns={[
-                                {
-                                    title: t('admin_label_variant'),
-                                    dataIndex: 'productVariantName',
-                                    key: 'name',
-                                    width: '25%',
-                                    render: (text) => <span style={{ fontWeight: 700, color: 'var(--admin-primary)', fontSize: 16 }}>{text}</span>
-                                },
-                                {
-                                    title: t('admin_label_price'),
-                                    key: 'price',
-                                    width: '25%',
-                                    render: (_, record) => (
-                                        <InputNumber
-                                            className="admin-input-large"
-                                            value={record.price}
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                            formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                            parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                            onChange={(val) => handleVariantChange(record.id, 'price', val)}
-                                            placeholder={t('admin_placeholder_price')}
-                                        />
-                                    )
-                                },
-                                {
-                                    title: t('admin_label_stock'),
-                                    key: 'stock',
-                                    width: '20%',
-                                    render: (_, record) => (
-                                        <InputNumber
-                                            className="admin-input-large"
-                                            value={record.stockQuantity}
-                                            min={0}
-                                            style={{ width: '100%' }}
-                                            onChange={(val) => handleVariantChange(record.id, 'stockQuantity', val)}
-                                            placeholder={t('admin_placeholder_stock')}
-                                        />
-                                    )
-                                },
-                                {
-                                    title: t('admin_product_image'),
-                                    key: 'image',
-                                    render: (_, record) => (
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                                            <div style={{
-                                                width: 64, height: 64, background: '#f8f9fa', borderRadius: 12,
-                                                overflow: 'hidden', border: '1px solid #eee', flexShrink: 0,
-                                                display: 'flex', alignItems: 'center', justifyContent: 'center'
-                                            }}>
-                                                {(record.image || record.productImageUrl) ? (
-                                                    <img src={getImageUrl(record.image || record.productImageUrl)} alt="v" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                                ) : <FileImageOutlined style={{ fontSize: 20, color: '#ccc' }} />}
-                                            </div>
-                                            <Upload showUploadList={false} beforeUpload={(file) => handleVariantImageUpload(record.id, file)}>
-                                                <Button size="large" type="default" className="lang-btn" style={{ height: 44, borderRadius: 12 }}>{t('admin_btn_upload')}</Button>
-                                            </Upload>
+                                {isPreview && (
+                                    <div className="flash-deal-banner">
+                                        <div className="flash-deal-left">
+                                            <span className="flash-icon"><ThunderboltFilled /></span> FLASH DEAL
                                         </div>
-                                    )
-                                }
-                            ]}
-                            locale={{
-                                emptyText: <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={t('admin_no_variants')} />
-                            }}
-                        />
-                    </Card>
+                                        <div className="flash-countdown">
+                                            <ClockCircleOutlined style={{ marginRight: '5px' }} /> {t('ends_in')}: <span>02</span>:<span>04</span>:<span>42</span>
+                                        </div>
+                                    </div>
+                                )}
 
-                    <div className="admin-btn-group-between" style={{ marginTop: 40 }}>
-                        <Button size="large" onClick={() => navigate('/admin/products')} className="admin-btn-responsive" style={{ border: '1px solid #d9d9d9' }}>{t('admin_btn_finish_later')}</Button>
-                        <Button type="primary" size="large" className="modern-btn-primary admin-btn-responsive" onClick={handleSaveVariants} loading={loading}>
-                            <CheckCircleOutlined /> {t('admin_btn_save_finish')}
-                        </Button>
+                                {currentStep === 1 ? (
+                                    <div className="product-options-section" style={{ marginTop: 10 }}>
+                                        <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 600, color: '#333' }}>{t('admin_step_options')}</h3>
+
+                                        {optionTypes.map((opt, index) => (
+                                            <div key={index} className="option-group" style={{ marginBottom: 20, background: '#f9f9f9', padding: '15px', borderRadius: '8px', border: '1px solid #eee' }}>
+                                                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 10, alignItems: 'center' }}>
+                                                    <Input
+                                                        value={opt.name}
+                                                        onChange={(e) => handleOptionNameChange(index, e.target.value)}
+                                                        placeholder={t('admin_placeholder_option_name')}
+                                                        style={{ width: '60%', fontWeight: 600, fontSize: '0.95rem', border: 'none', borderBottom: '1px solid #ddd', borderRadius: 0, paddingLeft: 0, background: 'transparent', boxShadow: 'none' }}
+                                                    />
+                                                    {index > 0 && <Button type="text" danger icon={<DeleteOutlined />} onClick={() => handleRemoveOptionType(index)} />}
+                                                </div>
+                                                <Select
+                                                    mode="tags"
+                                                    className="admin-select-large"
+                                                    placeholder={t('admin_placeholder_option_values')}
+                                                    style={{ width: '100%', border: '1px solid #ddd', borderRadius: '4px' }}
+                                                    value={opt.values}
+                                                    onChange={(val) => handleOptionValuesChange(index, val)}
+                                                    tokenSeparators={[',']}
+                                                    open={false}
+                                                />
+                                            </div>
+                                        ))}
+
+                                        <Button type="dashed" onClick={handleAddOptionType} icon={<PlusOutlined />} style={{ width: '100%', height: 44, borderRadius: '4px', borderColor: '#ddd' }}>
+                                            {t('admin_btn_add_option')}
+                                        </Button>
+
+                                        {isPreview && (
+                                            <div className="shipping-info-box">
+                                                <div className="shipping-header">
+                                                    <span className="now-free-icon">NowFree</span>
+                                                    <strong>{t('fast_delivery_2h')}</strong>
+                                                </div>
+                                                <div className="shipping-desc">
+                                                    {t('fast_delivery_desc')}
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="actions" style={{ marginTop: 30, display: 'flex', gap: 15, width: '100%' }}>
+                                            <Button onClick={() => setCurrentStep(0)} style={{ flex: 1, height: 46, borderRadius: '4px', border: '1px solid #ddd' }}>
+                                                {t('back')}
+                                            </Button>
+                                            <Button type="primary" onClick={handleSubmitOptions} loading={loading} className="btn-add-bag" style={{ flex: 2, margin: 0 }}>
+                                                {t('admin_btn_gen_variants')} <ArrowRightOutlined style={{ marginLeft: 8 }} />
+                                            </Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <div className="product-options-section" style={{ marginTop: 10, marginBottom: 20 }}>
+                                            {optionTypes.map((opt, index) => (
+                                                <div key={index} className="option-group" style={{ marginBottom: 15 }}>
+                                                    <span className="option-label" style={{ fontWeight: 600, fontSize: '0.95rem', marginBottom: 10, display: 'block' }}>{opt.name}:</span>
+                                                    <div className="size-options">
+                                                        {opt.values.map((v, i) => (
+                                                            <button key={i} className="size-btn">{v}</button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        <div className="product-variants-section" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+                                            <h3 style={{ marginBottom: 15, fontSize: '1.05rem', fontWeight: 600 }}>{t('admin_step_variants')}</h3>
+                                            <div style={{ maxHeight: '320px', overflowY: 'auto', paddingRight: 8 }} className="custom-scrollbar">
+                                                {variants.map(record => (
+                                                    <div key={record.id} style={{ display: 'flex', alignItems: 'center', gap: 15, marginBottom: 15, padding: '15px', border: '1px solid #eee', borderRadius: '8px', background: '#fcfcfc' }}>
+                                                        <div style={{ width: 64, height: 64, background: '#fff', borderRadius: '6px', overflow: 'hidden', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #eaeaea' }}>
+                                                            <Upload showUploadList={false} beforeUpload={(file) => handleVariantImageUpload(record.id, file)}>
+                                                                {(record.image || record.productImageUrl) ? (
+                                                                    <img src={getImageUrl(record.image || record.productImageUrl)} alt="v" style={{ width: '100%', height: '100%', objectFit: 'cover', cursor: 'pointer' }} />
+                                                                ) : (
+                                                                    <div style={{ cursor: 'pointer', textAlign: 'center', color: '#ccc' }}>
+                                                                        <FileImageOutlined style={{ fontSize: 20 }} />
+                                                                    </div>
+                                                                )}
+                                                            </Upload>
+                                                        </div>
+                                                        <div style={{ flex: 1, minWidth: 0 }}>
+                                                            <div style={{ fontWeight: 600, color: '#333', marginBottom: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.95rem' }}>
+                                                                {record.productVariantName}
+                                                            </div>
+                                                            <div style={{ display: 'flex', gap: 15 }}>
+                                                                <div style={{ flex: 1 }}>
+                                                                    <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4 }}>{t('admin_label_price')}</div>
+                                                                    <InputNumber
+                                                                        className="admin-input-large"
+                                                                        value={record.price}
+                                                                        min={0}
+                                                                        style={{ width: '100%', height: 40, lineHeight: '40px', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                                                        onChange={(val) => handleVariantChange(record.id, 'price', val)}
+                                                                    />
+                                                                </div>
+                                                                <div style={{ flex: 1 }}>
+                                                                    <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4 }}>{t('admin_label_stock')}</div>
+                                                                    <InputNumber
+                                                                        className="admin-input-large"
+                                                                        value={record.stockQuantity}
+                                                                        min={0}
+                                                                        style={{ width: '100%', height: 40, lineHeight: '40px', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                                        onChange={(val) => handleVariantChange(record.id, 'stockQuantity', val)}
+                                                                    />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+
+                                            {isPreview && (
+                                                <div className="shipping-info-box" style={{ marginTop: 20 }}>
+                                                    <div className="shipping-header">
+                                                        <span className="now-free-icon">NowFree</span>
+                                                        <strong>{t('fast_delivery_2h')}</strong>
+                                                    </div>
+                                                    <div className="shipping-desc">
+                                                        {t('fast_delivery_desc')}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            <div className="actions" style={{ marginTop: 'auto', display: 'flex', gap: 15, width: '100%', paddingTop: 20 }}>
+                                                <Button onClick={() => navigate('/admin/products')} style={{ flex: 1, height: 46, borderRadius: '4px', border: '1px solid #ddd', padding: 0 }}>
+                                                    {t('admin_btn_finish_later')}
+                                                </Button>
+                                                <Button type="primary" className="btn-add-bag" onClick={handleSaveVariants} loading={loading} style={{ flex: 2, margin: 0, padding: 0 }}>
+                                                    <CheckCircleOutlined style={{ marginRight: 8 }} /> {t('admin_btn_save_finish')}
+                                                </Button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
-            )}
-        </div>
+            </div>
+        </div >
     );
 };
 

@@ -2,9 +2,9 @@ import React from 'react';
 import { Row, Col, Table, Tag } from 'antd';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import {
-    DollarOutlined,
+    TransactionOutlined,
     ShoppingOutlined,
-    CalendarOutlined,
+    ScheduleOutlined,
     ArrowUpOutlined,
     ArrowDownOutlined
 } from '@ant-design/icons';
@@ -27,7 +27,7 @@ const Dashboard = () => {
         {
             title: t('admin_dashboard_sales'),
             value: '40,689,000 đ',
-            icon: <DollarOutlined />,
+            icon: <TransactionOutlined />,
             trend: 8.5,
             iconClass: 'icon-pink',
             trendType: 'up'
@@ -43,7 +43,7 @@ const Dashboard = () => {
         {
             title: t('admin_dashboard_appointments'),
             value: '600',
-            icon: <CalendarOutlined />,
+            icon: <ScheduleOutlined />,
             trend: 12,
             iconClass: 'icon-green',
             trendType: 'up'

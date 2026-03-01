@@ -1,0 +1,115 @@
+.admin-home-grid {
+    padding: 20px 0;
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.admin-home-header {
+    margin-bottom: 50px;
+    text-align: left;
+}
+
+.admin-home-header h1 {
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--admin-text-main);
+    margin-bottom: 8px;
+    letter-spacing: -0.03em;
+}
+
+.admin-home-header p {
+    font-size: 18px;
+    color: var(--admin-text-sub);
+}
+
+.app-card {
+    background: white;
+    border-radius: 28px;
+    padding: 32px;
+    height: 100%;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+.app-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
+    border-color: rgba(193, 53, 132, 0.1);
+}
+
+.app-icon-wrapper {
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    margin-bottom: 24px;
+    transition: all 0.3s;
+}
+
+.app-card:hover .app-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.app-info h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--admin-text-main);
+    margin-bottom: 8px;
+}
+
+.app-info p {
+    font-size: 14px;
+    color: var(--admin-text-sub);
+    line-height: 1.5;
+    margin: 0;
+}
+
+.app-arrow {
+    position: absolute;
+    bottom: 32px;
+    right: 32px;
+    font-size: 20px;
+    color: var(--admin-primary);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: all 0.3s;
+}
+
+.app-card:hover .app-arrow {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+@media (max-width: 768px) {
+    .admin-home-header h1 {
+        font-size: 28px;
+    }
+
+    .admin-home-header p {
+        font-size: 16px;
+    }
+
+    .app-card {
+        padding: 24px;
+    }
+}

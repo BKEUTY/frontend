@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { COLORS } from '../../constants/Theme';
 
 const { width } = Dimensions.get('window');
@@ -10,7 +10,7 @@ const ProductCard = ({
     item,
     onPress,
     onAddToCart,
-    layout = 'grid', // 'grid' | 'horizontal'
+    layout = 'grid',
     showRating = true,
     showAddToCart = true
 }) => {
@@ -31,7 +31,6 @@ const ProductCard = ({
                     <View style={styles.imagePlaceholder} />
                 )}
 
-                {/* Badges */}
                 <View style={styles.badgeContainer}>
                     {item.tag && (
                         <View style={styles.tagBadge}>
@@ -79,7 +78,6 @@ const ProductCard = ({
 };
 
 const styles = StyleSheet.create({
-    // Grid Logic
     gridCard: {
         width: GRID_WIDTH,
         backgroundColor: 'white',
@@ -100,8 +98,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#f9f9f9',
         position: 'relative',
     },
-
-    // Horizontal Logic
     horizontalCard: {
         width: 160,
         marginRight: 15,
@@ -109,7 +105,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: '#eee',
-        padding: 0, // Padding handled inside infoContainer
+        padding: 0,
         elevation: 2,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
@@ -123,8 +119,6 @@ const styles = StyleSheet.create({
         backgroundColor: '#f5f5f5',
         position: 'relative',
     },
-
-    // Common
     image: {
         width: '100%',
         height: '100%',
@@ -158,7 +152,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 6,
         paddingVertical: 2,
         borderRadius: 4,
-        marginLeft: 'auto', // Push to right if alone, or right side of flex
+        marginLeft: 'auto',
     },
     discountText: {
         color: 'white',
@@ -179,10 +173,10 @@ const styles = StyleSheet.create({
     },
     nameText: {
         fontWeight: '600',
-        fontSize: 13, // Slightly smaller to fit both
+        fontSize: 13,
         marginBottom: 6,
         color: '#111827',
-        height: 36, // Fixed height for 2 lines
+        height: 36,
         lineHeight: 18,
     },
     ratingRow: {

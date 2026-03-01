@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useCart } from '../Context/CartContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const Header = () => {
     const navigation = useNavigation();
@@ -19,20 +20,15 @@ const Header = () => {
     return (
         <View style={styles.headerContainer}>
             <TouchableOpacity style={styles.menuButton}>
-                <View style={[styles.menuBar, { marginBottom: 4 }]} />
-                <View style={[styles.menuBar, { marginBottom: 4 }]} />
-                <View style={styles.menuBar} />
+                <Ionicons name="menu-outline" size={32} color="#333" />
             </TouchableOpacity>
 
-            {/* Centered Logo */}
-            <View style={styles.logoContainer}>
+            <TouchableOpacity style={styles.logoContainer} onPress={() => navigation.navigate('Home')}>
                 <Text style={styles.logoText}>BKEUTY</Text>
-            </View>
-
-            {/* Right Icons */}
+            </TouchableOpacity>
             <View style={styles.rightContainer}>
                 <TouchableOpacity onPress={() => navigation.navigate('Cart')} style={styles.iconButton}>
-                    <Text style={styles.cartIcon}>🛒</Text>
+                    <Ionicons name="cart-outline" size={26} color="#333" />
                     {cartCount > 0 && (
                         <View style={styles.badge}>
                             <Text style={styles.badgeText}>{cartCount}</Text>
@@ -41,7 +37,7 @@ const Header = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={() => navigation.navigate('Account')} style={styles.accountButton}>
-                    <Text style={styles.accountIcon}>👤</Text>
+                    <Ionicons name="person-outline" size={24} color="#333" />
                 </TouchableOpacity>
 
                 <TouchableOpacity onPress={handleToggleLanguage} style={styles.langButton}>
@@ -64,7 +60,7 @@ const styles = StyleSheet.create({
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 4,
+        shadowRadius: 2,
         zIndex: 100,
         borderBottomWidth: 1,
         borderBottomColor: 'rgba(0,0,0,0.05)',
@@ -73,6 +69,7 @@ const styles = StyleSheet.create({
         padding: 5,
         justifyContent: 'center',
         zIndex: 10,
+        marginLeft: -5,
     },
     menuBar: {
         width: 22,
@@ -95,6 +92,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 1,
+        marginLeft: 15,
     },
     logoText: {
         fontSize: 22,
@@ -105,11 +103,8 @@ const styles = StyleSheet.create({
     },
     iconButton: {
         position: 'relative',
-        padding: 4,
-    },
-    cartIcon: {
-        fontSize: 24,
-        color: COLORS.mainTitle,
+        padding: 5,
+        marginRight: 10,
     },
     badge: {
         position: 'absolute',
@@ -130,21 +125,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
     accountButton: {
-        width: 34,
-        height: 34,
-        backgroundColor: COLORS.mainTitle,
-        borderRadius: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    accountIcon: {
-        fontSize: 20,
-        color: 'white',
+        padding: 5,
+        marginRight: 10,
     },
     langButton: {
         padding: 4,

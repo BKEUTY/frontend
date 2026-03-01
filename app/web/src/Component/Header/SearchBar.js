@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useLanguage } from '../../i18n/LanguageContext';
+import useClickOutside from '../../hooks/useClickOutside';
+import { useDebounce } from '../../hooks/useDebounce';
 import './SearchBar.css';
-import searchIcon from '../../Assets/Images/Icons/icon_search.svg';
 
 const MOCK_SUGGESTIONS = [
     "Sữa Chống Nắng Anessa",
@@ -12,37 +14,30 @@ const MOCK_SUGGESTIONS = [
 ];
 
 const SearchBar = () => {
+    const { t } = useLanguage();
     const [query, setQuery] = useState('');
     const [suggestions, setSuggestions] = useState([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
     const wrapperRef = useRef(null);
 
+    useClickOutside(wrapperRef, () => setShowSuggestions(false));
+
+    const debouncedQuery = useDebounce(query, 500);
+
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-                setShowSuggestions(false);
-            }
-        };
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-
-    const handleInput = (e) => {
-        const val = e.target.value;
-        setQuery(val);
-
-        if (val.length > 0) {
+        if (debouncedQuery.length > 0) {
             const filtered = MOCK_SUGGESTIONS.filter(item =>
-                item.toLowerCase().includes(val.toLowerCase())
+                item.toLowerCase().includes(debouncedQuery.toLowerCase())
             );
             setSuggestions(filtered);
             setShowSuggestions(true);
         } else {
             setShowSuggestions(false);
         }
+    }, [debouncedQuery]);
+
+    const handleInput = (e) => {
+        setQuery(e.target.value);
     };
 
     return (
@@ -50,7 +45,7 @@ const SearchBar = () => {
             <div className="input-group">
                 <input
                     type="text"
-                    placeholder="Tìm kiếm sản phẩm..."
+                    placeholder={t('search_placeholder')}
                     value={query}
                     onChange={handleInput}
                     onFocus={() => query.length > 0 && setShowSuggestions(true)}
@@ -86,3 +81,4 @@ const SearchBar = () => {
 };
 
 export default SearchBar;
+

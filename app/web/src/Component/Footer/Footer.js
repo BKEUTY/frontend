@@ -44,7 +44,7 @@ export default function Footer() {
         <Row gutter={[48, 32]}>
           <Col xs={24} sm={12} md={6}>
             <Title level={4} className="footer-title">{t('support_team')}</Title>
-            <Space direction="vertical" size="middle">
+            <Space orientation="vertical" size="middle">
               <Link to="/retail-system" className="footer-link">{t('retail_system')}</Link>
               <Link to="/contact" className="footer-link">{t('contact')}</Link>
               <Link to="/faq" className="footer-link">{t('faq')}</Link>
@@ -54,7 +54,7 @@ export default function Footer() {
 
           <Col xs={24} sm={12} md={6}>
             <Title level={4} className="footer-title">{t('product_section')}</Title>
-            <Space direction="vertical" size="middle">
+            <Space orientation="vertical" size="middle">
               <Link to="/product" className="footer-link">{t('makeup')}</Link>
               <Link to="/product" className="footer-link">{t('skincare')}</Link>
               <Link to="/product" className="footer-link">{t('gift_sets')}</Link>
@@ -85,11 +85,11 @@ export default function Footer() {
             <Space size="large" wrap>
               <Space>
                 <EnvironmentOutlined className="footer-icon" />
-                <Text className="footer-text">Thủ Đức, TP.HCM</Text>
+                <Text className="footer-text">{t('footer_address_val')}</Text>
               </Space>
               <Space>
                 <PhoneOutlined className="footer-icon" />
-                <Text className="footer-text">1-802-526-2463</Text>
+                <Text className="footer-text">{t('footer_phone_val')}</Text>
               </Space>
             </Space>
           </Col>
@@ -108,7 +108,7 @@ export default function Footer() {
         <div className="footer-copyright">
           <Row justify="space-between">
             <Col>
-              <Text className="footer-text-sm">© 2026 Bkeuty. All Rights Reserved.</Text>
+              <Text className="footer-text-sm">{t('copyright_reserved')}</Text>
             </Col>
             <Col>
               <Link to="/terms" className="footer-link-sm">{t('terms_and_policy')}</Link>

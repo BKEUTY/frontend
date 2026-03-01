@@ -11,7 +11,6 @@ const NotFoundScreen = () => {
 
     return (
         <View style={styles.container}>
-            {/* Background 404 (optional visual) */}
             <Text style={styles.errorCode}>404</Text>
 
             <View style={styles.content}>

@@ -1,17 +1,25 @@
 import { useState, useMemo, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import {
+    SearchOutlined,
+    EnvironmentOutlined,
+    PhoneOutlined,
+    ArrowRightOutlined,
+    ClockCircleOutlined,
+    UserOutlined,
+    LeftOutlined
+} from '@ant-design/icons';
 import './StaticPage.css';
 import Skeleton from '../Common/Skeleton';
-import location_icon from "../../Assets/Images/Icons/icon_location.svg";
-import call_icon from "../../Assets/Images/Icons/icon_phone.svg";
-import search_icon from "../../Assets/Images/Icons/icon_search.svg";
 import contact_map from "../../Assets/Images/contact_google_map.png";
 
 
 const StaticPageLayout = ({ title, children }) => {
     return (
         <div className="static-page-container">
-            <h1 className="static-page-title">{title}</h1>
+            <div className="static-page-header">
+                <h1 className="static-page-title">{title}</h1>
+            </div>
             <div className="static-page-content">
                 {children}
             </div>
@@ -152,15 +160,15 @@ export const RetailSystem = () => {
             <StaticPageLayout title={`${t('retail_detail')}: ${selectedBranch.name}`}>
                 <div className="retail-detail-view">
                     <button className="back-btn" onClick={() => setSelectedBranch(null)}>
-                        {t('retail_back_to_list')}
+                        <LeftOutlined /> {t('retail_back_to_list')}
                     </button>
 
                     <div className="detail-row">
-                        <span className="detail-label">{t('retail_address')}:</span>
+                        <span className="detail-label"><EnvironmentOutlined /> {t('retail_address')}:</span>
                         <span className="detail-value">{selectedBranch.address}</span>
                     </div>
                     <div className="detail-row">
-                        <span className="detail-label">{t('retail_phone')}:</span>
+                        <span className="detail-label"><PhoneOutlined /> {t('retail_phone')}:</span>
                         <span className="detail-value">{selectedBranch.phone}</span>
                     </div>
                     <div className="detail-row">
@@ -170,11 +178,11 @@ export const RetailSystem = () => {
                         </span>
                     </div>
                     <div className="detail-row">
-                        <span className="detail-label">{t('retail_open_date')}:</span>
+                        <span className="detail-label"><ClockCircleOutlined /> {t('retail_open_date')}:</span>
                         <span className="detail-value">{selectedBranch.open_date}</span>
                     </div>
                     <div className="detail-row">
-                        <span className="detail-label">{t('retail_manager')}:</span>
+                        <span className="detail-label"><UserOutlined /> {t('retail_manager')}:</span>
                         <span className="detail-value">{selectedBranch.manager}</span>
                     </div>
                 </div>
@@ -186,7 +194,7 @@ export const RetailSystem = () => {
         <StaticPageLayout title={t('retail_system') || "Hệ Thống Cửa Hàng"}>
             <div className="retail-filters">
                 <div className="retail-search-container">
-                    <img src={search_icon} alt="search" className="search-icon-img" />
+                    <SearchOutlined className="search-icon-img" style={{ fontSize: '18px', left: '22px', position: 'absolute', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
                     <input
                         type="text"
                         placeholder={t('retail_search_placeholder')}
@@ -253,11 +261,11 @@ export const RetailSystem = () => {
                                     </span>
                                 </div>
                                 <div className="store-info-item">
-                                    <img src={location_icon} alt="address" className="store-icon" />
+                                    <EnvironmentOutlined className="store-icon" />
                                     <span>{branch.address}</span>
                                 </div>
                                 <div className="store-info-item">
-                                    <img src={call_icon} alt="phone" className="store-icon" />
+                                    <PhoneOutlined className="store-icon" />
                                     <span>{branch.phone}</span>
                                 </div>
                                 <button

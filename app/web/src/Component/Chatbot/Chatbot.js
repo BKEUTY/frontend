@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Chatbot.css';
 import { CloseOutlined, SendOutlined, RobotOutlined } from '@ant-design/icons';
+import ReactMarkdown from 'react-markdown';
 import productPlaceholder from '../../Assets/Images/Products/product_placeholder.svg';
 
 const Chatbot = ({ isOpen, onClose }) => {
@@ -44,41 +45,55 @@ const Chatbot = ({ isOpen, onClose }) => {
         };
 
         setMessages(prev => [...prev, userMsg]);
+        const currentInput = inputValue;
         setInputValue('');
 
-
         setTimeout(() => {
-            let botResponses = [];
+            const lowInput = currentInput.toLowerCase();
+            const hasProduct = lowInput.includes('da khô') || lowInput.includes('dưỡng ẩm') || lowInput.includes('dry skin') || lowInput.includes('moisturizer');
 
+            const textResponse = hasProduct
+                ? t('chatbot_response_product')
+                : t('chatbot_response_consult');
 
-            if (inputValue.toLowerCase().includes('da khô') || inputValue.toLowerCase().includes('dưỡng ẩm') || inputValue.toLowerCase().includes('dry skin') || inputValue.toLowerCase().includes('moisturizer')) {
-                botResponses.push({
-                    id: Date.now() + 1,
-                    type: 'text',
-                    sender: 'bot',
-                    content: t('chatbot_response_product')
-                });
-                botResponses.push({
-                    id: Date.now() + 2,
-                    type: 'product',
-                    sender: 'bot',
-                    content: {
-                        name: t('chatbot_demo_product_name'),
-                        price: '450.000 ₫',
-                        image: productPlaceholder
+            const botMsgId = Date.now() + 1;
+            setMessages(prev => [...prev, {
+                id: botMsgId,
+                type: 'text',
+                sender: 'bot',
+                content: ''
+            }]);
+
+            let i = 0;
+            const interval = setInterval(() => {
+                i++;
+                setMessages(prev => prev.map(msg =>
+                    msg.id === botMsgId
+                        ? { ...msg, content: textResponse.slice(0, i) }
+                        : msg
+                ));
+                scrollToBottom();
+
+                if (i >= textResponse.length) {
+                    clearInterval(interval);
+                    if (hasProduct) {
+                        setTimeout(() => {
+                            setMessages(prev => [...prev, {
+                                id: Date.now() + 2,
+                                type: 'product',
+                                sender: 'bot',
+                                content: {
+                                    name: t('chatbot_demo_product_name'),
+                                    price: '450.000 ₫',
+                                    image: productPlaceholder
+                                }
+                            }]);
+                            scrollToBottom();
+                        }, 400);
                     }
-                });
-            } else {
-                botResponses.push({
-                    id: Date.now() + 1,
-                    type: 'text',
-                    sender: 'bot',
-                    content: t('chatbot_response_consult')
-                });
-            }
-
-            setMessages(prev => [...prev, ...botResponses]);
-        }, 1000);
+                }
+            }, 20); // 20ms typing effect (Real-time SSE simulation)
+        }, 500);
     };
 
     const handleKeyDown = (e) => {
@@ -108,7 +123,7 @@ const Chatbot = ({ isOpen, onClose }) => {
                         <div className="message-content">
                             {msg.type === 'text' && (
                                 <div className="message-text">
-                                    {msg.content}
+                                    <ReactMarkdown>{msg.content}</ReactMarkdown>
                                 </div>
                             )}
 

@@ -3,7 +3,6 @@ import './Pagination.css';
 
 
 const Pagination = ({ page, totalPages, onPageChange }) => {
-    // If only 1 page, don't show controls (or show disabled if preferred, but usually hide)
     if (totalPages <= 1) return null;
 
     return (
@@ -17,8 +16,6 @@ const Pagination = ({ page, totalPages, onPageChange }) => {
                     ❮
                 </button>
 
-                {/* Simplified Logic: Show all pages if small, or implement complex logic later if needed */}
-                {/* For now, replicating the "numbered" requirement */}
                 {[...Array(totalPages)].map((_, idx) => (
                     <button
                         key={idx}

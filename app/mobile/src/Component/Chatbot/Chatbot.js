@@ -14,6 +14,8 @@ import {
 } from 'react-native';
 import { COLORS } from '../../constants/Theme';
 import { useLanguage } from '../../i18n/LanguageContext';
+import Markdown from 'react-native-markdown-display';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -24,7 +26,6 @@ const Chatbot = () => {
     const [messages, setMessages] = useState([]);
     const flatListRef = useRef(null);
 
-    // Initial greeting
     useEffect(() => {
         if (isOpen && messages.length === 0) {
             setMessages([
@@ -52,39 +53,52 @@ const Chatbot = () => {
         const currentInput = inputValue;
         setInputValue('');
 
-        // Mock response
         setTimeout(() => {
-            let botResponses = [];
             const lowInput = currentInput.toLowerCase();
+            const hasProduct = lowInput.includes('da khô') || lowInput.includes('dưỡng ẩm') || lowInput.includes('dry skin') || lowInput.includes('moisturizer');
 
-            if (lowInput.includes('da khô') || lowInput.includes('dưỡng ẩm') || lowInput.includes('dry skin') || lowInput.includes('moisturizer')) {
-                botResponses.push({
-                    id: (Date.now() + 1).toString(),
-                    type: 'text',
-                    sender: 'bot',
-                    content: t('chatbot_response_product') || 'Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:'
-                });
-                botResponses.push({
-                    id: (Date.now() + 2).toString(),
-                    type: 'product',
-                    sender: 'bot',
-                    content: {
-                        name: 'BKEUTY Hydra-Deep Moisturizing Cream',
-                        price: '450.000 ₫',
-                        image: null // Use placeholder or require
+            const textResponse = hasProduct
+                ? (t('chatbot_response_product') || 'Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:')
+                : (t('chatbot_response_consult') || 'Cảm ơn bạn đã nhắn tin. Nhân viên tư vấn sẽ sớm liên hệ lại với bạn!');
+
+            const botMsgId = (Date.now() + 1).toString();
+            setMessages(prev => [...prev, {
+                id: botMsgId,
+                type: 'text',
+                sender: 'bot',
+                content: ''
+            }]);
+
+            let i = 0;
+            const interval = setInterval(() => {
+                i++;
+                setMessages(prev => prev.map(msg =>
+                    msg.id === botMsgId
+                        ? { ...msg, content: textResponse.slice(0, i) }
+                        : msg
+                ));
+                flatListRef.current?.scrollToEnd({ animated: true });
+
+                if (i >= textResponse.length) {
+                    clearInterval(interval);
+                    if (hasProduct) {
+                        setTimeout(() => {
+                            setMessages(prev => [...prev, {
+                                id: (Date.now() + 2).toString(),
+                                type: 'product',
+                                sender: 'bot',
+                                content: {
+                                    name: 'BKEUTY Hydra-Deep Moisturizing Cream',
+                                    price: '450.000 ₫',
+                                    image: null
+                                }
+                            }]);
+                            flatListRef.current?.scrollToEnd({ animated: true });
+                        }, 400);
                     }
-                });
-            } else {
-                botResponses.push({
-                    id: (Date.now() + 1).toString(),
-                    type: 'text',
-                    sender: 'bot',
-                    content: t('chatbot_response_consult') || 'Cảm ơn bạn đã nhắn tin. Nhân viên tư vấn sẽ sớm liên hệ lại với bạn!'
-                });
-            }
-
-            setMessages(prev => [...prev, ...botResponses]);
-        }, 1000);
+                }
+            }, 25); // 25ms typing effect
+        }, 500);
     };
 
     const renderMessage = ({ item }) => {
@@ -94,7 +108,7 @@ const Chatbot = () => {
             return (
                 <View style={[styles.messageContainer, styles.botMessageContainer]}>
                     <View style={styles.botAvatar}>
-                        <Text style={{ fontSize: 18 }}>🤖</Text>
+                        <Ionicons name="robot-outline" size={20} color={COLORS.mainTitle} />
                     </View>
                     <View style={styles.productCard}>
                         <View style={styles.productImagePlaceholder} />
@@ -115,17 +129,23 @@ const Chatbot = () => {
             ]}>
                 {isBot && (
                     <View style={styles.botAvatar}>
-                        <Text style={{ fontSize: 18 }}>🤖</Text>
+                        <Ionicons name="robot-outline" size={20} color={COLORS.mainTitle} />
                     </View>
                 )}
                 <View style={[
                     styles.messageBubble,
                     isBot ? styles.botBubble : styles.userBubble
                 ]}>
-                    <Text style={[
-                        styles.messageText,
-                        isBot ? styles.botText : styles.userText
-                    ]}>{item.content}</Text>
+                    {isBot ? (
+                        <Markdown style={{ body: { color: '#333', fontSize: 15, lineHeight: 20 } }}>
+                            {item.content}
+                        </Markdown>
+                    ) : (
+                        <Text style={[
+                            styles.messageText,
+                            styles.userText
+                        ]}>{item.content}</Text>
+                    )}
                 </View>
             </View>
         );
@@ -133,19 +153,17 @@ const Chatbot = () => {
 
     return (
         <>
-            {/* Floating Chat Button */}
             {!isOpen && (
                 <TouchableOpacity
                     style={styles.chatButton}
                     onPress={() => setIsOpen(true)}
                     activeOpacity={0.8}
                 >
-                    <Text style={styles.chatIcon}>💬</Text>
+                    <Ionicons name="chatbubbles-outline" size={24} color="#fff" style={styles.chatIcon} />
                     <Text style={styles.chatBtnText}>{t('chat') || 'Trò Chuyện'}</Text>
                 </TouchableOpacity>
             )}
 
-            {/* Chat Modal */}
             <Modal
                 visible={isOpen}
                 animationType="slide"
@@ -157,15 +175,13 @@ const Chatbot = () => {
                     style={styles.modalContainer}
                 >
                     <View style={styles.chatWindow}>
-                        {/* Header */}
                         <View style={styles.header}>
                             <Text style={styles.headerTitle}>{t('chatbot_title') || 'Trợ lý ảo BKEUTY'}</Text>
                             <TouchableOpacity onPress={() => setIsOpen(false)} hitSlop={10}>
-                                <Text style={styles.closeIcon}>✕</Text>
+                                <Ionicons name="close" size={24} color="#fff" />
                             </TouchableOpacity>
                         </View>
 
-                        {/* Messages */}
                         <FlatList
                             ref={flatListRef}
                             data={messages}
@@ -175,7 +191,6 @@ const Chatbot = () => {
                             onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
                         />
 
-                        {/* Input Area */}
                         <View style={styles.footer}>
                             <View style={styles.inputContainer}>
                                 <TextInput
@@ -190,7 +205,7 @@ const Chatbot = () => {
                                     onPress={handleSend}
                                     disabled={!inputValue.trim()}
                                 >
-                                    <Text style={styles.sendIcon}>➤</Text>
+                                    <Ionicons name="send" size={20} color={COLORS.mainTitle} />
                                 </TouchableOpacity>
                             </View>
                         </View>
@@ -204,7 +219,7 @@ const Chatbot = () => {
 const styles = StyleSheet.create({
     chatButton: {
         position: 'absolute',
-        bottom: 80, // Above bottom tabs
+        bottom: 80,
         right: 20,
         backgroundColor: COLORS.mainTitle,
         paddingVertical: 12,
@@ -252,12 +267,6 @@ const styles = StyleSheet.create({
         color: 'white',
         fontSize: 18,
         fontWeight: 'bold',
-    },
-    closeIcon: {
-        color: 'white',
-        fontSize: 20,
-        fontWeight: 'bold',
-        padding: 5,
     },
     messagesList: {
         padding: 15,
@@ -316,7 +325,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.22,
         shadowRadius: 2.22,
         width: 200,
-        marginLeft: 45, // Indent to align with text
+        marginLeft: 45,
         marginTop: -10,
     },
     productImagePlaceholder: {
@@ -373,10 +382,6 @@ const styles = StyleSheet.create({
     },
     sendButtonDisabled: {
         opacity: 0.5,
-    },
-    sendIcon: {
-        fontSize: 20,
-        color: COLORS.mainTitle,
     },
 });
 

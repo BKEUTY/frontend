@@ -9,13 +9,16 @@ import {
     KeyboardAvoidingView,
     Platform,
     Image,
+    Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../i18n/LanguageContext';
 import Loading from '../Component/Common/Loading';
+import { useAuth } from '../Context/AuthContext';
 
 const LoginScreen = ({ navigation }) => {
     const { t } = useLanguage();
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -23,10 +26,19 @@ const LoginScreen = ({ navigation }) => {
 
     const handleLogin = async () => {
         setLoading(true);
-        setTimeout(() => {
+        try {
+            const user = await login(email, password);
+            if (user?.role === 'ADMIN') {
+                navigation.replace('AdminDashboard');
+            } else {
+                navigation.replace('Main');
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert(t('error', 'Error'), t('api_error_login', 'Login failed. Please check your credentials.'));
+        } finally {
             setLoading(false);
-            navigation.replace('Main');
-        }, 1500);
+        }
     };
 
     if (loading) {

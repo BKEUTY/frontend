@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
-import axiosClient from '../api/axiosClient';
+import ScreenWrapper from '../Component/Common/ScreenWrapper';
+import orderApi from '../api/orderApi';
+import { showToast } from '../utils/ToastService';
 
 const CheckoutScreen = () => {
     const navigation = useNavigation();
@@ -16,6 +18,7 @@ const CheckoutScreen = () => {
 
     const [paymentMethod, setPaymentMethod] = useState('cod');
     const [showQR, setShowQR] = useState(false);
+    const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         fullName: "",
         phone: "",
@@ -29,12 +32,12 @@ const CheckoutScreen = () => {
 
     const handleCheckout = async () => {
         if (!formData.fullName || !formData.phone || !formData.address) {
-            Alert.alert("Error", t('fill_delivery_info'));
+            showToast(t('error'), 'error', t('fill_delivery_info'));
             return;
         }
 
         if (!cartIds || cartIds.length === 0) {
-            Alert.alert("Error", t('no_products_payment'));
+            showToast(t('error'), 'error', t('no_products_payment'));
             return;
         }
 
@@ -47,9 +50,10 @@ const CheckoutScreen = () => {
     };
 
     const processOrder = async (method) => {
+        setLoading(true);
         try {
-            await axiosClient.post('/order', {
-                userId: 1, // Fixed user ID
+            await orderApi.placeOrder({
+                userId: 1,
                 paymentMethod: method,
                 address: formData.address,
                 phone: formData.phone,
@@ -58,18 +62,18 @@ const CheckoutScreen = () => {
                 orderItems: cartIds.map((id) => ({ cartItemId: id })),
             });
 
-            Alert.alert("Success", t('order_success'), [
-                { text: "OK", onPress: () => navigation.navigate('Main', { screen: 'Home' }) }
-            ]);
+            showToast(t('success'), 'success', t('order_success'));
+            navigation.navigate('Main', { screen: 'Home' });
         } catch (error) {
             console.error(error);
-            Alert.alert("Error", t('payment_error_try_again'));
+        } finally {
+            setLoading(false);
         }
     };
 
     if (showQR) {
         return (
-            <View style={styles.container}>
+            <ScreenWrapper loading={loading} padding={0}>
                 <View style={styles.qrContainer}>
                     <Text style={styles.qrTitle}>{t('payment_qr_title')}</Text>
                     <Text style={styles.qrDesc}>{t('scan_qr_desc')}</Text>
@@ -79,6 +83,7 @@ const CheckoutScreen = () => {
                             style={styles.qrImage}
                         />
                     </View>
+
                     <Text style={styles.amountDisplay}>
                         {t('amount')}: <Text style={styles.amountValue}>{grandTotal.toLocaleString("vi-VN")}đ</Text>
                     </Text>
@@ -89,12 +94,12 @@ const CheckoutScreen = () => {
                         <Text style={styles.backText}>{t('back')}</Text>
                     </TouchableOpacity>
                 </View>
-            </View>
+            </ScreenWrapper>
         );
     }
 
     return (
-        <View style={styles.container}>
+        <ScreenWrapper loading={loading} padding={0}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backIcon}>
                     <Text style={{ fontSize: 24 }}>←</Text>
@@ -103,7 +108,6 @@ const CheckoutScreen = () => {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                {/* Delivery Info */}
                 <View style={styles.section}>
                     <Text style={styles.sectionHeader}>{t('delivery_info')}</Text>
 
@@ -148,7 +152,6 @@ const CheckoutScreen = () => {
                     </View>
                 </View>
 
-                {/* Payment Method */}
                 <View style={styles.section}>
                     <Text style={styles.sectionHeader}>{t('payment_method')}</Text>
                     <TouchableOpacity
@@ -173,7 +176,6 @@ const CheckoutScreen = () => {
                     </TouchableOpacity>
                 </View>
 
-                {/* Order Summary */}
                 <View style={styles.section}>
                     <Text style={styles.sectionHeader}>{t('order_summary')}</Text>
                     <View style={styles.orderList}>
@@ -218,7 +220,7 @@ const CheckoutScreen = () => {
                     </Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScreenWrapper>
     );
 };
 
@@ -317,7 +319,6 @@ const styles = StyleSheet.create({
         borderColor: COLORS.mainTitle,
         backgroundColor: 'white',
     },
-    // Inner dot for Radio
     radioInner: {
         width: 12,
         height: 12,

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useLanguage } from '../i18n/LanguageContext';
 import { COLORS } from '../constants/Theme';
+import { Ionicons } from '@expo/vector-icons';
 
 const RetailSystemScreen = ({ navigation }) => {
     const { t, language } = useLanguage();
@@ -84,11 +85,11 @@ const RetailSystemScreen = ({ navigation }) => {
                 </View>
 
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoIcon}>📍</Text>
+                    <Ionicons name="location-outline" size={16} color="#555" style={styles.infoIcon} />
                     <Text style={styles.infoText}>{item.address}</Text>
                 </View>
                 <View style={styles.infoRow}>
-                    <Text style={styles.infoIcon}>📞</Text>
+                    <Ionicons name="call-outline" size={16} color="#555" style={styles.infoIcon} />
                     <Text style={styles.infoText}>{item.phone}</Text>
                 </View>
 
@@ -110,7 +111,7 @@ const RetailSystemScreen = ({ navigation }) => {
             <View style={styles.filters}>
                 <Text style={styles.headerTitle}>{t('retail_system')}</Text>
                 <View style={styles.searchContainer}>
-                    <Text style={styles.searchIcon}>🔍</Text>
+                    <Ionicons name="search-outline" size={20} color="#999" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
                         placeholder={t('retail_search_placeholder')}
@@ -182,10 +183,10 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: 26,
-        fontWeight: '800',
-        color: COLORS.mainTitle || '#c2185b',
+        fontWeight: '900',
+        color: '#111',
         marginBottom: 20,
-        letterSpacing: -0.5,
+        textAlign: 'center',
     },
     searchContainer: {
         flexDirection: 'row',
@@ -204,9 +205,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
     },
     searchIcon: {
-        fontSize: 20,
         marginRight: 12,
-        opacity: 0.4,
+        opacity: 0.8,
     },
     searchInput: {
         flex: 1,
@@ -310,7 +310,6 @@ const styles = StyleSheet.create({
     },
     infoIcon: {
         marginRight: 10,
-        fontSize: 16,
         opacity: 0.7,
         marginTop: 2,
     },

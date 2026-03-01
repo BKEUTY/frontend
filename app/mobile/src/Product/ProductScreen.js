@@ -1,15 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity, ActivityIndicator, Alert, TextInput, Dimensions } from 'react-native';
-import { COLORS } from '../constants/Theme';
-import axiosClient from '../api/axiosClient';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, StyleSheet, FlatList, TextInput, ScrollView, TouchableOpacity } from 'react-native';
+import productApi from '../api/productApi';
 import { useLanguage } from '../i18n/LanguageContext';
 import { useCart } from '../Context/CartContext';
-import Header from '../Component/Header';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import ScreenWrapper from '../Component/Common/ScreenWrapper';
+import { Ionicons } from '@expo/vector-icons';
 import ProductCard from '../Component/Common/ProductCard';
-
-const { width } = Dimensions.get('window');
-const COLUMN_WIDTH = (width - 45) / 2;
+import { showToast } from '../utils/ToastService';
 
 const ProductScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -17,21 +14,31 @@ const ProductScreen = ({ navigation }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchText, setSearchText] = useState('');
+    const [activeCategory, setActiveCategory] = useState('all');
+
+    const categories = [
+        { id: 'all', label: t('all_products'), icon: 'apps-outline' },
+        { id: 'makeup', label: t('makeup'), icon: 'brush-outline' },
+        { id: 'skincare', label: t('skincare'), icon: 'sparkles-outline' },
+        { id: 'body', label: t('body_care'), icon: 'body-outline' },
+        { id: 'hair', label: t('hair_care'), icon: 'water-outline' },
+    ];
+
+    const fetchProducts = useCallback(async () => {
+        setLoading(true);
+        try {
+            const response = await productApi.getAll();
+            setProducts(response.data);
+        } catch (err) {
+            console.error("Fetch products error:", err);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
 
     useEffect(() => {
         fetchProducts();
-    }, []);
-
-    const fetchProducts = async () => {
-        try {
-            const response = await axiosClient.get('/product');
-            setProducts(response.data);
-            setLoading(false);
-        } catch (err) {
-            console.error("Fetch products error:", err);
-            setLoading(false);
-        }
-    };
+    }, [fetchProducts]);
 
     const handleAddToCart = async (product) => {
         addToCart({
@@ -41,7 +48,7 @@ const ProductScreen = ({ navigation }) => {
             image: product.image || 'placeholder',
             quantity: 1
         });
-        Alert.alert(t('success'), t('add_cart_success'));
+        showToast(t('success'), 'success', t('add_cart_success'));
     };
 
     const renderItem = ({ item }) => (
@@ -53,17 +60,8 @@ const ProductScreen = ({ navigation }) => {
         />
     );
 
-    if (loading) {
-        return (
-            <View style={[styles.container, styles.center]}>
-                <ActivityIndicator size="large" color={COLORS.mainTitle} />
-            </View>
-        );
-    }
-
     return (
-        <View style={styles.container}>
-            <Header />
+        <ScreenWrapper loading={loading} padding={0}>
             <View style={styles.searchHeader}>
                 <View style={styles.searchBar}>
                     <Ionicons name="search-outline" size={18} color="#999" />
@@ -77,8 +75,45 @@ const ProductScreen = ({ navigation }) => {
                 </View>
             </View>
 
+            <View style={styles.categoriesSection}>
+                <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.categoriesScroll}
+                >
+                    {categories.map((cat) => (
+                        <TouchableOpacity
+                            key={cat.id}
+                            style={[
+                                styles.categoryChip,
+                                activeCategory === cat.id && styles.activeCategoryChip
+                            ]}
+                            onPress={() => setActiveCategory(cat.id)}
+                        >
+                            <Ionicons
+                                name={cat.icon}
+                                size={16}
+                                color={activeCategory === cat.id ? 'white' : '#666'}
+                            />
+                            <Text style={[
+                                styles.categoryText,
+                                activeCategory === cat.id && styles.activeCategoryText
+                            ]}>
+                                {cat.label}
+                            </Text>
+                        </TouchableOpacity>
+                    ))}
+                </ScrollView>
+            </View>
+
             <FlatList
-                data={products}
+                data={products.filter(p => {
+                    const matchesSearch = p.name.toLowerCase().includes(searchText.toLowerCase());
+                    const matchesCategory = activeCategory === 'all' ||
+                        (p.category && p.category.toLowerCase() === activeCategory.toLowerCase()) ||
+                        (p.type && p.type.toLowerCase() === activeCategory.toLowerCase());
+                    return matchesSearch && matchesCategory;
+                })}
                 keyExtractor={(item) => item.productId?.toString() || Math.random().toString()}
                 renderItem={renderItem}
                 numColumns={2}
@@ -86,9 +121,10 @@ const ProductScreen = ({ navigation }) => {
                 columnWrapperStyle={styles.columnWrapper}
                 showsVerticalScrollIndicator={false}
             />
-        </View>
+        </ScreenWrapper>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -113,6 +149,39 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         paddingHorizontal: 12,
         height: 44,
+    },
+    categoriesSection: {
+        backgroundColor: 'white',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f0f0f0',
+    },
+    categoriesScroll: {
+        paddingHorizontal: 15,
+        gap: 10,
+    },
+    categoryChip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        borderRadius: 20,
+        backgroundColor: '#f8f9fa',
+        gap: 6,
+        borderWidth: 1,
+        borderColor: '#eee',
+    },
+    activeCategoryChip: {
+        backgroundColor: '#c2185b',
+        borderColor: '#c2185b',
+    },
+    categoryText: {
+        fontSize: 13,
+        color: '#666',
+        fontWeight: '600',
+    },
+    activeCategoryText: {
+        color: 'white',
     },
     searchInput: {
         flex: 1,

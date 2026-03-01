@@ -4,6 +4,8 @@ import { COLORS } from '../constants/Theme';
 import { useNavigation } from '@react-navigation/native';
 import { useLanguage } from '../i18n/LanguageContext';
 import Header from '../Component/Header';
+import { useAuth } from '../Context/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -11,22 +13,15 @@ const AccountScreen = () => {
     const navigation = useNavigation();
     const { t, toggleLanguage, language } = useLanguage();
 
-    const user = {
-        name: "Thanh Phong",
-        email: "phongdeptrai28@gmail.com",
-        avatar: null,
-        level: "Member Gold",
-        points: 1250,
-        role: "ADMIN"
-    };
+    const { user, logout, isAuthenticated } = useAuth();
 
-    const mainFeatures = [
-        { id: 'info', icon: '👤', title: t('account'), route: 'Profile' },
-        ...(user.role === 'ADMIN' ? [{ id: 'dashboard', icon: '📊', title: 'Admin Dashboard', route: 'AdminDashboard' }] : []),
-        { id: 'orders', icon: '📦', title: t('my_orders'), route: 'OrderDetail' },
-        { id: 'appointments', icon: '📅', title: t('my_appointments'), route: 'Appointments' },
-        { id: 'wallet', icon: '💳', title: t('my_wallet'), route: 'Wallet' },
-    ];
+    const mainFeatures = isAuthenticated ? [
+        { id: 'info', iconName: 'person-outline', title: t('account'), route: 'Profile' },
+        ...(user?.role === 'ADMIN' ? [{ id: 'dashboard', iconName: 'bar-chart-outline', title: t('dashboard', 'Admin Dashboard'), route: 'AdminDashboard' }] : []),
+        { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderDetail' },
+        { id: 'appointments', iconName: 'calendar-outline', title: t('my_appointments'), route: 'Appointments' },
+        { id: 'wallet', iconName: 'wallet-outline', title: t('my_wallet'), route: 'Wallet' },
+    ] : [];
 
     const supportItems = [
         { id: 6, title: t('about_brand'), route: 'AboutUs' },
@@ -43,52 +38,76 @@ const AccountScreen = () => {
         }
     };
 
+    const handleLogout = async () => {
+        await logout();
+        navigation.navigate('Home');
+    };
+
     return (
         <View style={styles.container}>
             <Header />
             <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
-                <View style={styles.profileHeader}>
-                    <View style={styles.headerContent}>
-                        <View style={styles.avatarSection}>
-                            {user.avatar ? (
-                                <Image source={{ uri: user.avatar }} style={styles.avatar} />
-                            ) : (
-                                <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                                    <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
-                                </View>
-                            )}
-                        </View>
-                        <View style={styles.userInfo}>
-                            <Text style={styles.username}>{user.name}</Text>
+                {isAuthenticated && user ? (
+                    <View style={styles.profileHeader}>
+                        <View style={styles.headerContent}>
+                            <View style={styles.avatarSection}>
+                                {user.avatar ? (
+                                    <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                                ) : (
+                                    <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                                        <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
+                                    </View>
+                                )}
+                            </View>
+                            <View style={styles.userInfo}>
+                                <Text style={styles.username}>{user.name}</Text>
 
-                            <View style={styles.membershipContainer}>
-                                <View style={styles.premiumBadge}>
-                                    <Text style={styles.premiumBadgeText}>DIAMOND</Text>
+                                <View style={styles.membershipContainer}>
+                                    <View style={styles.premiumBadge}>
+                                        <Text style={styles.premiumBadgeText}>DIAMOND</Text>
+                                    </View>
+                                    <View style={styles.progressBarBg}>
+                                        <View style={[styles.progressBarFill, { width: '70%' }]} />
+                                    </View>
+                                    <Text style={styles.pointsText}>{user.points} {t('pts')}</Text>
                                 </View>
-                                <View style={styles.progressBarBg}>
-                                    <View style={[styles.progressBarFill, { width: '70%' }]} />
-                                </View>
-                                <Text style={styles.pointsText}>{user.points} {t('pts')}</Text>
                             </View>
                         </View>
                     </View>
-                </View>
+                ) : (
+                    <View style={styles.guestContainer}>
+                        <Text style={styles.guestTitle}>{t('welcome_landing') || 'Welcome'}</Text>
+                        <Text style={styles.guestSubtitle}>{t('login_subtitle') || 'Login to continue'}</Text>
+                        <View style={styles.guestButtons}>
+                            <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate('Login')}>
+                                <Text style={styles.loginBtnText}>{t('login') || 'Login'}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.registerBtn} onPress={() => navigation.navigate('Register')}>
+                                <Text style={styles.registerBtnText}>{t('register') || 'Register'}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
 
-                <Text style={styles.sectionTitle}>Dashboard</Text>
-                <View style={styles.bentoGrid}>
-                    {mainFeatures.map((item) => (
-                        <TouchableOpacity
-                            key={item.id}
-                            style={styles.bentoCard}
-                            onPress={() => handlePress(item)}
-                        >
-                            <View style={styles.cardIconContainer}>
-                                <Text style={styles.cardIcon}>{item.icon}</Text>
-                            </View>
-                            <Text style={styles.cardTitle}>{item.title}</Text>
-                        </TouchableOpacity>
-                    ))}
-                </View>
+                {isAuthenticated && (
+                    <>
+                        <Text style={styles.sectionTitle}>Dashboard</Text>
+                        <View style={styles.bentoGrid}>
+                            {mainFeatures.map((item) => (
+                                <TouchableOpacity
+                                    key={item.id}
+                                    style={styles.bentoCard}
+                                    onPress={() => handlePress(item)}
+                                >
+                                    <View style={styles.cardIconContainer}>
+                                        <Ionicons name={item.iconName} size={24} color={COLORS.mainTitle} />
+                                    </View>
+                                    <Text style={styles.cardTitle}>{item.title}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    </>
+                )}
 
                 <Text style={styles.sectionTitle}>{t('support_header') || "Support"}</Text>
                 <View style={styles.menuSection}>
@@ -106,9 +125,11 @@ const AccountScreen = () => {
                         </Text>
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={[styles.menuItem, styles.logoutItem]}>
-                        <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
-                    </TouchableOpacity>
+                    {isAuthenticated && (
+                        <TouchableOpacity style={[styles.menuItem, styles.logoutItem]} onPress={handleLogout}>
+                            <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 <View style={{ height: 30 }} />
@@ -138,6 +159,61 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 3,
         overflow: 'hidden',
+    },
+    guestContainer: {
+        marginTop: 20,
+        marginBottom: 25,
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 24,
+        alignItems: 'center',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 3,
+    },
+    guestTitle: {
+        fontSize: 22,
+        fontWeight: '800',
+        color: '#333',
+        marginBottom: 8,
+    },
+    guestSubtitle: {
+        fontSize: 15,
+        color: '#666',
+        marginBottom: 24,
+    },
+    guestButtons: {
+        flexDirection: 'row',
+        gap: 12,
+        width: '100%',
+    },
+    loginBtn: {
+        flex: 1,
+        backgroundColor: COLORS.mainTitle,
+        paddingVertical: 14,
+        borderRadius: 12,
+        alignItems: 'center',
+    },
+    loginBtnText: {
+        color: 'white',
+        fontWeight: '700',
+        fontSize: 15,
+    },
+    registerBtn: {
+        flex: 1,
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: COLORS.mainTitle,
+        paddingVertical: 14,
+        borderRadius: 12,
+        alignItems: 'center',
+    },
+    registerBtnText: {
+        color: COLORS.mainTitle,
+        fontWeight: '700',
+        fontSize: 15,
     },
     headerContent: {
         flexDirection: 'row',
@@ -252,9 +328,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 12,
-    },
-    cardIcon: {
-        fontSize: 24,
     },
     cardTitle: {
         fontSize: 15,

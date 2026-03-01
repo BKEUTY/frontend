@@ -8,6 +8,7 @@ import {
     ScrollView,
     KeyboardAvoidingView,
     Platform,
+    Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -23,10 +24,17 @@ const ForgotPasswordScreen = ({ navigation }) => {
     const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
 
+    const MOCK_OTP = '123456';
+
     const handleSendOTP = () => {
+        if (!email) {
+            Alert.alert(t('error', 'Error'), t('email_required', 'Please enter your email!'));
+            return;
+        }
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
+            Alert.alert(t('success', 'Success'), `${t('otp_sent', 'OTP sent to')} ${email}. ${t('otp_mock', 'Mock OTP:')} ${MOCK_OTP}`);
             setStep(2);
         }, 1000);
     };
@@ -35,16 +43,34 @@ const ForgotPasswordScreen = ({ navigation }) => {
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
-            setStep(3);
+            if (otp === MOCK_OTP) {
+                Alert.alert(t('success', 'Success'), t('otp_success', 'OTP verification successful!'));
+                setStep(3);
+            } else {
+                Alert.alert(t('error', 'Error'), t('otp_error', 'Incorrect OTP! Please try again.'));
+            }
         }, 1000);
     };
 
     const handleResetPassword = () => {
+        if (!newPassword || newPassword.length < 6) {
+            Alert.alert(t('error', 'Error'), t('password_min', 'Password must be at least 6 characters!'));
+            return;
+        }
+        if (newPassword !== confirmPassword) {
+            Alert.alert(t('error', 'Error'), t('password_match_error', 'Passwords do not match!'));
+            return;
+        }
         setLoading(true);
         setTimeout(() => {
             setLoading(false);
+            Alert.alert(t('success', 'Success'), t('reset_success', 'Password reset successfully!'));
             navigation.navigate('Login');
         }, 1000);
+    };
+
+    const handleResendOTP = () => {
+        Alert.alert(t('info', 'Information'), `${t('otp_sent', 'OTP sent to')} ${email}. ${t('otp_mock', 'Mock OTP:')} ${MOCK_OTP}`);
     };
 
     if (loading) {

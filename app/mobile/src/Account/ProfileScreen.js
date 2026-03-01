@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image 
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 
-// Mock Data
 const DEFAULT_AVATAR = 'https://via.placeholder.com/150';
 
 const ProfileScreen = () => {
@@ -21,7 +20,6 @@ const ProfileScreen = () => {
     });
 
     const handleUpdate = () => {
-        // Mock update
         alert(t('update_info_success'));
     };
 
@@ -38,7 +36,6 @@ const ProfileScreen = () => {
             </View>
 
             <View style={styles.formContainer}>
-                {/* Name */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('name') || "Họ và tên"}</Text>
                     <TextInput
@@ -48,7 +45,6 @@ const ProfileScreen = () => {
                     />
                 </View>
 
-                {/* Username - Read Only */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('username')}</Text>
                     <TextInput
@@ -58,19 +54,15 @@ const ProfileScreen = () => {
                     />
                 </View>
 
-                {/* Gender */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('gender')}</Text>
-                    {/* Simplified as text input or custom selector for now */}
                     <TextInput
                         style={styles.input}
                         value={userData.gender === 'Nam' ? t('male') : (userData.gender === 'Nu' ? t('female') : t('other'))}
-                        // Simple placeholder interaction
                         onChangeText={(text) => setUserData({ ...userData, gender: text })}
                     />
                 </View>
 
-                {/* Email */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>Email</Text>
                     <TextInput
@@ -81,7 +73,6 @@ const ProfileScreen = () => {
                     />
                 </View>
 
-                {/* Phone */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('phone')}</Text>
                     <TextInput
@@ -92,7 +83,6 @@ const ProfileScreen = () => {
                     />
                 </View>
 
-                {/* DOB */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('dob')}</Text>
                     <TextInput
@@ -102,7 +92,6 @@ const ProfileScreen = () => {
                     />
                 </View>
 
-                {/* Address */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('address')}</Text>
                     <TextInput
@@ -113,7 +102,6 @@ const ProfileScreen = () => {
                     />
                 </View>
 
-                {/* Join Date - Read Only */}
                 <View style={styles.inputGroup}>
                     <Text style={styles.label}>{t('join_date')}</Text>
                     <TextInput

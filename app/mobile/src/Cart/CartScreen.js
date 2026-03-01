@@ -6,9 +6,14 @@ import { useLanguage } from '../i18n/LanguageContext';
 import Header from '../Component/Header';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useCart } from '../Context/CartContext';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
+
+import ScreenWrapper from '../Component/Common/ScreenWrapper';
+import EmptyState from '../Component/Common/EmptyState';
+import { SIZES } from '../constants/Theme';
+import { showToast } from '../utils/ToastService';
 
 const CartScreen = () => {
     const navigation = useNavigation();
@@ -41,6 +46,7 @@ const CartScreen = () => {
                     style: 'destructive',
                     onPress: async () => {
                         await deleteCartItem(cartId);
+                        showToast(t('success'), 'success', t('delete_success'));
                     }
                 }
             ]
@@ -107,7 +113,7 @@ const CartScreen = () => {
     const handleCheckout = () => {
         const selectedIds = Object.keys(selectedItems).filter(id => selectedItems[id]);
         if (selectedIds.length === 0) {
-            Alert.alert("Error", t('select_min_one'));
+            showToast(t('error'), 'error', t('select_min_one'));
             return;
         }
 
@@ -122,20 +128,19 @@ const CartScreen = () => {
     };
 
     return (
-        <View style={styles.container}>
-            <Header />
+        <ScreenWrapper padding={0}>
             <View style={styles.header}>
                 <Text style={styles.headerTitle}>{t('cart')}</Text>
             </View>
 
             {products.length === 0 ? (
-                <View style={styles.emptyContainer}>
-                    <Ionicons name="cart-outline" size={80} color="#ddd" />
-                    <Text style={styles.emptyText}>{t('cart_empty')}</Text>
-                    <TouchableOpacity style={styles.shopNowBtn} onPress={() => navigation.navigate('Main', { screen: 'Product' })}>
-                        <Text style={styles.shopNowText}>{t('shop_now')}</Text>
-                    </TouchableOpacity>
-                </View>
+                <EmptyState
+                    icon="cart-outline"
+                    title={t('cart_empty')}
+                    description={t('cart_empty_desc')}
+                    actionText={t('shop_now')}
+                    onAction={() => navigation.navigate('Main', { screen: 'Product' })}
+                />
             ) : (
                 <FlatList
                     data={products}
@@ -145,6 +150,7 @@ const CartScreen = () => {
                     refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                 />
             )}
+
 
             {products.length > 0 && (
                 <View style={styles.footer}>
@@ -159,9 +165,10 @@ const CartScreen = () => {
                     </TouchableOpacity>
                 </View>
             )}
-        </View>
+        </ScreenWrapper>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -196,12 +203,15 @@ const styles = StyleSheet.create({
     shopNowBtn: {
         backgroundColor: '#c2185b',
         paddingHorizontal: 30,
-        paddingVertical: 12,
-        borderRadius: 25,
+        height: SIZES.buttonHeight,
+        borderRadius: SIZES.buttonRadius,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     shopNowText: {
         color: 'white',
         fontWeight: '700',
+        fontSize: 16,
     },
     listContent: {
         padding: 15,
@@ -329,15 +339,15 @@ const styles = StyleSheet.create({
     },
     checkoutBtn: {
         backgroundColor: '#c2185b',
-        height: 50,
-        borderRadius: 12,
+        height: SIZES.buttonHeight,
+        borderRadius: SIZES.buttonRadius,
         justifyContent: 'center',
         alignItems: 'center',
     },
     checkoutText: {
         color: 'white',
         fontWeight: 'bold',
-        fontSize: 16,
+        fontSize: 18,
     },
     deleteAction: {
         backgroundColor: '#ef4444',

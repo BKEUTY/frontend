@@ -9,13 +9,16 @@ import {
     KeyboardAvoidingView,
     Platform,
     Image,
+    Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useLanguage } from '../i18n/LanguageContext';
 import Loading from '../Component/Common/Loading';
+import { useAuth } from '../Context/AuthContext';
 
 const RegisterScreen = ({ navigation }) => {
     const { t } = useLanguage();
+    const { login } = useAuth();
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,10 +30,16 @@ const RegisterScreen = ({ navigation }) => {
 
     const handleRegister = async () => {
         setLoading(true);
-        setTimeout(() => {
-            setLoading(false);
+        try {
+            await login(email, password);
+            Alert.alert(t('success', 'Success'), t('register_success', 'Registration Successful'));
             navigation.replace('Main');
-        }, 1500);
+        } catch (error) {
+            console.error(error);
+            Alert.alert(t('error', 'Error'), t('api_error_register', 'Registration failed. Email might already exist.'));
+        } finally {
+            setLoading(false);
+        }
     };
 
     if (loading) {

@@ -6,7 +6,7 @@ import {
 import { COLORS } from '../constants/Theme';
 import { useCart } from '../Context/CartContext';
 import { useLanguage } from '../i18n/LanguageContext';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
@@ -128,7 +128,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                             <Text style={styles.shipTitle}>{t('fast_delivery_2h')}</Text>
                         </View>
                         <Text style={styles.shipDesc}>
-                            Order before 24h to receive by 10AM tomorrow.
+                            {t('fast_delivery_desc')}
                         </Text>
                     </View>
 

@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
 import { useLanguage } from '../i18n/LanguageContext';
 import { COLORS } from '../constants/Theme';
+import { Ionicons } from '@expo/vector-icons';
 
 const MOCK_PROMOTIONS = [
     {
@@ -151,7 +152,7 @@ const PromotionScreen = ({ navigation }) => {
             <View style={styles.filters}>
                 <Text style={styles.headerTitle}>{t('promo_list_title')}</Text>
                 <View style={styles.searchContainer}>
-                    <Text style={styles.searchIcon}>🔍</Text>
+                    <Ionicons name="search-outline" size={20} color="#999" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
                         placeholder={t('search_placeholder') || "Search promotions..."}
@@ -226,9 +227,8 @@ const styles = StyleSheet.create({
         borderColor: '#e2e8f0',
     },
     searchIcon: {
-        fontSize: 18,
         marginRight: 10,
-        opacity: 0.4,
+        opacity: 0.8,
     },
     searchInput: {
         flex: 1,

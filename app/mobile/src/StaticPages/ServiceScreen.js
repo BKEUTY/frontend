@@ -1,54 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { useLanguage } from '../i18n/LanguageContext';
 import { COLORS } from '../constants/Theme';
-import Header from '../Component/Header';
+import ProgressBar from '../Component/Common/ProgressBar';
+import ScreenWrapper from '../Component/Common/ScreenWrapper';
+import { Ionicons } from '@expo/vector-icons';
 
 const ServiceScreen = () => {
     const { t } = useLanguage();
-    const progressAnimation = new Animated.Value(0);
-
-    React.useEffect(() => {
-        Animated.loop(
-            Animated.sequence([
-                Animated.timing(progressAnimation, {
-                    toValue: 1,
-                    duration: 2000,
-                    useNativeDriver: false,
-                }),
-                Animated.timing(progressAnimation, {
-                    toValue: 0,
-                    duration: 0,
-                    useNativeDriver: false,
-                })
-            ])
-        ).start();
-    }, []);
-
-    const widthInterpolated = progressAnimation.interpolate({
-        inputRange: [0, 1],
-        outputRange: ['0%', '100%']
-    });
 
     return (
-        <View style={styles.container}>
-            <Header />
+        <ScreenWrapper padding={20}>
             <View style={styles.contentContainer}>
                 <View style={styles.card}>
                     <View style={styles.iconContainer}>
-                        <Text style={styles.icon}>🛠️</Text>
+                        <Ionicons name="construct-outline" size={40} color={COLORS.mainTitle} />
                     </View>
                     <Text style={styles.title}>{t('feature_developing_title')}</Text>
                     <Text style={styles.desc}>{t('feature_developing_desc')}</Text>
 
-                    <View style={styles.progressBarContainer}>
-                        <Animated.View style={[styles.progressBar, { width: widthInterpolated }]} />
-                    </View>
+                    <ProgressBar color={COLORS.mainTitle} height={8} />
                 </View>
             </View>
-        </View>
+        </ScreenWrapper>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -83,13 +60,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 20,
     },
-    icon: {
-        fontSize: 40,
-    },
     title: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        color: COLORS.mainTitle || '#c2185b',
+        fontSize: 26,
+        fontWeight: '900',
+        color: '#111',
         marginBottom: 10,
         textAlign: 'center',
     },
@@ -99,19 +73,8 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 30,
         lineHeight: 24,
-    },
-    progressBarContainer: {
-        width: '100%',
-        height: 6,
-        backgroundColor: '#f0f0f0',
-        borderRadius: 3,
-        overflow: 'hidden',
-    },
-    progressBar: {
-        height: '100%',
-        backgroundColor: COLORS.mainTitle || '#c2185b',
-        borderRadius: 3,
     }
 });
 
 export default ServiceScreen;
+

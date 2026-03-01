@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../../constants/Theme';
+import { COLORS, SIZES } from '../../constants/Theme';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
 
@@ -52,7 +52,6 @@ const OrderDetailScreen = () => {
 
     return (
         <View style={styles.container}>
-            {/* Header / Nav */}
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
                     <Ionicons name="arrow-back" size={24} color="#333" />
@@ -62,7 +61,6 @@ const OrderDetailScreen = () => {
             </View>
 
             <ScrollView style={styles.content} showVerticalScrollIndicator={false}>
-                {/* Order ID & Actions */}
                 <View style={styles.sectionCard}>
                     <View style={styles.orderIdRow}>
                         <Text style={styles.orderIdLabel}>{t('order_id_label') || 'Đơn hàng #'}{orderData.id}</Text>
@@ -79,7 +77,6 @@ const OrderDetailScreen = () => {
                     </View>
                 </View>
 
-                {/* Dates */}
                 <View style={styles.datesCard}>
                     <Text style={styles.dateText}>{t('order_time') || 'Thời gian:'} <Text style={styles.bold}>{orderData.createdAt}</Text></Text>
                     <View style={styles.expectedRow}>
@@ -88,10 +85,8 @@ const OrderDetailScreen = () => {
                     </View>
                 </View>
 
-                {/* Vertical Timeline for Mobile (easier to read than horizontal) */}
                 <View style={styles.sectionCard}>
                     <View style={styles.timelineContainer}>
-                        {/* Connecting Line */}
                         <View style={styles.timelineLine} />
 
                         {renderTimelineStep('check', t('timeline_paid') || 'Đã thanh toán', '10/10/2023', false, true)}
@@ -101,10 +96,8 @@ const OrderDetailScreen = () => {
                     </View>
                 </View>
 
-                {/* Logs */}
                 <View style={styles.sectionCard}>
                     <View style={styles.logsContainer}>
-                        {/* Vertical Line aligned to icon center */}
                         <View style={styles.logsLine} />
 
                         {orderData.status_logs.map((log, index) => (
@@ -126,7 +119,6 @@ const OrderDetailScreen = () => {
                     </View>
                 </View>
 
-                {/* Info Grid */}
                 <View style={styles.infoCard}>
                     <View style={styles.infoSection}>
                         <Text style={styles.infoTitle}>{t('payment_header') || 'Thanh toán'}</Text>
@@ -138,7 +130,6 @@ const OrderDetailScreen = () => {
                     </View>
                 </View>
 
-                {/* Summary */}
                 <View style={[styles.sectionCard, styles.summaryCard]}>
                     <Text style={[styles.infoTitle, { marginBottom: 15 }]}>{t('order_overview') || 'Chi tiết thanh toán'}</Text>
                     <View style={styles.summaryRow}>
@@ -223,8 +214,8 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
-        borderRadius: 8,
+        height: SIZES.buttonHeight - 10,
+        borderRadius: SIZES.buttonRadius - 4,
         borderWidth: 1,
         borderColor: '#ddd',
         backgroundColor: 'white',
@@ -235,14 +226,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 10,
-        borderRadius: 8,
+        height: SIZES.buttonHeight - 10,
+        borderRadius: SIZES.buttonRadius - 4,
         backgroundColor: COLORS.mainTitle,
         gap: 8,
     },
     btnText: {
-        fontSize: 14,
-        fontWeight: '600',
+        fontSize: 15,
+        fontWeight: '700',
         color: '#333',
     },
     datesCard: {
@@ -272,15 +263,13 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
 
-    /* Vertical Timeline Styles */
     timelineContainer: {
         position: 'relative',
         paddingLeft: 10,
     },
     timelineLine: {
         position: 'absolute',
-        left: 30, // Center of 40px icon (20) + paddingLeft(10)? No. paddingLeft is container. Icon container is 40px width. Center is 20px. So line should avail at 20px relative to item.
-        // Let's align relative to the stepIconBox.
+        left: 30,
         top: 20,
         bottom: 20,
         width: 2,
@@ -332,7 +321,6 @@ const styles = StyleSheet.create({
         fontWeight: '700',
     },
 
-    /* Logs Styles */
     logsContainer: {
         position: 'relative',
         paddingLeft: 5,
@@ -341,7 +329,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 20,
         bottom: 20,
-        left: 20, // Center of 40px icon is 20px.
+        left: 20,
         width: 2,
         backgroundColor: '#e9e9e9',
         zIndex: 0,
@@ -352,7 +340,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
     },
     logIconBox: {
-        width: 32, // Smaller detailed logs
+        width: 32,
         height: 32,
         borderRadius: 16,
         backgroundColor: '#f5f5f5',
@@ -362,9 +350,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginRight: 15,
         zIndex: 1,
-        // Centering alignment: 32px width => center 16px. Line is at 20px?
-        // Let's make icon 40px to match line or adjust line.
-        // Web uses 40px icon. Let's use 40px.
         width: 40,
         height: 40,
         borderRadius: 20,
@@ -376,7 +361,7 @@ const styles = StyleSheet.create({
     },
     logContent: {
         flex: 1,
-        paddingTop: 8, // Align text with icon center visually
+        paddingTop: 8,
     },
     logTitle: {
         fontSize: 15,
@@ -395,8 +380,6 @@ const styles = StyleSheet.create({
         marginTop: 6,
         textAlign: 'right',
     },
-
-    /* Info Grid */
     infoCard: {
         backgroundColor: 'white',
         borderRadius: 12,
@@ -425,8 +408,6 @@ const styles = StyleSheet.create({
         fontSize: 10,
         fontWeight: 'bold',
     },
-
-    /* Summary */
     summaryCard: {
         backgroundColor: '#fffbfc',
         borderColor: '#f8e1eb',
@@ -453,7 +434,7 @@ const styles = StyleSheet.create({
         paddingTop: 15,
         borderTopWidth: 1,
         borderTopColor: '#dabac8',
-        borderStyle: 'dashed', // iOS doesn't support 'dashed' well for borderTop? It mostly works or use View.
+        borderStyle: 'dashed',
     },
     totalLabel: {
         fontSize: 16,

@@ -87,15 +87,32 @@ const ProductCreateScreen = ({ navigation }) => {
     const generateVariants = (options) => {
         if (!options || options.length === 0) return;
 
-        const mainOption = options[0];
-        const generated = mainOption.values.map((val, index) => ({
+        const generateCombinations = (opts, index = 0, currentCombo = []) => {
+            if (index === opts.length) {
+                return [currentCombo.join(' - ')];
+            }
+            const currentOptionValues = opts[index].values;
+            let combos = [];
+            for (let val of currentOptionValues) {
+                combos = combos.concat(generateCombinations(opts, index + 1, [...currentCombo, val]));
+            }
+            return combos;
+        };
+
+        const variantSuffixes = generateCombinations(options);
+        const generated = variantSuffixes.map((suffix, index) => ({
             id: Date.now() + index,
-            name: `${name} - ${val}`,
+            name: `${name ? name + ' - ' : ''}${suffix}`,
             price: '0',
             stock: '0',
-            value: val
+            value: suffix
         }));
+
         setVariants(generated);
+    };
+
+    const handleVariantChange = (id, field, value) => {
+        setVariants(prev => prev.map(v => v.id === id ? { ...v, [field]: value } : v));
     };
 
     const addOptionType = () => {
@@ -276,22 +293,45 @@ const ProductCreateScreen = ({ navigation }) => {
                     </View>
                     <View style={styles.variantInfo}>
                         <Text style={styles.variantName}>{variant.name}</Text>
-                        <View style={styles.variantRow}>
-                            <View style={{ flex: 1 }}>
-                                <AdminInput
-                                    placeholder={t('admin_placeholder_price')}
-                                    prefix="$"
-                                    keyboardType="numeric"
-                                />
+                        {isPreview ? (
+                            <View style={{ marginTop: 10, gap: 8 }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#fad1e6', borderStyle: 'dashed' }}>
+                                    <Text style={{ fontSize: 13, color: '#64748b', fontWeight: '500' }}>{t('admin_label_price')}:</Text>
+                                    <Text style={{ fontSize: 16, color: COLORS.mainTitle || '#c2185b', fontWeight: '700' }}>
+                                        {variant.price ? `${variant.price}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0'}₫
+                                    </Text>
+                                </View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#fff', padding: 12, borderRadius: 8, borderWidth: 1, borderColor: '#e2e8f0', borderStyle: 'dashed' }}>
+                                    <Text style={{ fontSize: 13, color: '#64748b', fontWeight: '500' }}>{t('admin_label_stock')}:</Text>
+                                    <Text style={{ fontSize: 16, color: '#334155', fontWeight: '700' }}>
+                                        {variant.stock || 0}
+                                    </Text>
+                                </View>
                             </View>
-                            <View style={{ width: 12 }} />
-                            <View style={{ flex: 1 }}>
-                                <AdminInput
-                                    placeholder={t('admin_placeholder_stock')}
-                                    keyboardType="numeric"
-                                />
+                        ) : (
+                            <View style={styles.variantRow}>
+                                <View style={{ flex: 1 }}>
+                                    <AdminInput
+                                        label={t('admin_label_price')}
+                                        placeholder={t('admin_placeholder_price')}
+                                        prefix="₫"
+                                        keyboardType="numeric"
+                                        value={variant.price}
+                                        onChangeText={(val) => handleVariantChange(variant.id, 'price', val)}
+                                    />
+                                </View>
+                                <View style={{ width: 12 }} />
+                                <View style={{ flex: 1 }}>
+                                    <AdminInput
+                                        label={t('admin_label_stock')}
+                                        placeholder={t('admin_placeholder_stock')}
+                                        keyboardType="numeric"
+                                        value={variant.stock}
+                                        onChangeText={(val) => handleVariantChange(variant.id, 'stock', val)}
+                                    />
+                                </View>
                             </View>
-                        </View>
+                        )}
                     </View>
                 </View>
             ))}

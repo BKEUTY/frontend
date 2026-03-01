@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     View, Text, StyleSheet, Image, ScrollView,
     TouchableOpacity, Dimensions, Alert, SafeAreaView
@@ -17,6 +17,44 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
     const [quantity, setQuantity] = useState(1);
     const [selectedSize, setSelectedSize] = useState('50ml');
+
+    const mockOptions = [
+        { name: "Màu Sắc", values: ["Nâu", "Vàng"] },
+        { name: "Kích Thước", values: ["XL", "XXL", "XXXL"] }
+    ];
+
+    const mockVariants = [
+        { id: 1, optionValues: ["Nâu", "XL"], price: 150000, stockQuantity: 10 },
+        { id: 2, optionValues: ["Nâu", "XXL"], price: 160000, stockQuantity: 0 },
+        { id: 3, optionValues: ["Nâu", "XXXL"], price: 170000, stockQuantity: 5 },
+        { id: 4, optionValues: ["Vàng", "XL"], price: 155000, stockQuantity: 20 },
+        { id: 5, optionValues: ["Vàng", "XXL"], price: 165000, stockQuantity: 15 },
+        { id: 6, optionValues: ["Vàng", "XXXL"], price: 175000, stockQuantity: 2 }
+    ];
+
+    const [selectedOptions, setSelectedOptions] = useState({});
+    const [currentVariant, setCurrentVariant] = useState(null);
+
+    useEffect(() => {
+        const initialOptions = {};
+        mockOptions.forEach(opt => {
+            if (opt.values && opt.values.length > 0) {
+                initialOptions[opt.name] = opt.values[0];
+            }
+        });
+        setSelectedOptions(initialOptions);
+    }, []);
+
+    useEffect(() => {
+        if (Object.keys(selectedOptions).length > 0) {
+            const match = mockVariants.find(v => {
+                return mockOptions.every((opt, index) => {
+                    return v.optionValues[index] === selectedOptions[opt.name];
+                });
+            });
+            setCurrentVariant(match || null);
+        }
+    }, [selectedOptions]);
 
     const images = product.images && product.images.length > 0
         ? product.images
@@ -37,6 +75,8 @@ const ProductDetailScreen = ({ route, navigation }) => {
         });
         Alert.alert(t('success'), t('add_cart_success'));
     };
+
+    const isOutOfStock = currentVariant ? currentVariant.stockQuantity === 0 : false;
 
     return (
         <SafeAreaView style={styles.container}>
@@ -82,29 +122,37 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
                     <View style={styles.priceBox}>
                         <Text style={styles.currentPrice}>
-                            {product.price ? product.price.toLocaleString("vi-VN") : 0}đ
+                            {(currentVariant ? currentVariant.price : (product.price || 0)).toLocaleString("vi-VN")}đ
                         </Text>
                         <View style={styles.oldPriceRow}>
                             <Text style={styles.marketPrice}>
-                                {((product.price || 0) * 1.2).toLocaleString("vi-VN")}đ
+                                {((currentVariant ? currentVariant.price : (product.price || 0)) * 1.2).toLocaleString("vi-VN")}đ
                             </Text>
                             <Text style={styles.discountTag}>-20%</Text>
                         </View>
                     </View>
 
-                    <View style={styles.optionSection}>
-                        <Text style={styles.sectionTitle}>{t('capacity')}: {selectedSize}</Text>
-                        <View style={styles.optionRow}>
-                            {['30ml', '50ml', '75ml'].map(size => (
-                                <TouchableOpacity
-                                    key={size}
-                                    style={[styles.sizeBtn, selectedSize === size && styles.sizeBtnActive]}
-                                    onPress={() => setSelectedSize(size)}
-                                >
-                                    <Text style={[styles.sizeText, selectedSize === size && styles.sizeTextActive]}>{size}</Text>
-                                </TouchableOpacity>
-                            ))}
+                    {mockOptions.map((opt, idx) => (
+                        <View key={idx} style={styles.optionSection}>
+                            <Text style={styles.sectionTitle}>{opt.name}: {selectedOptions[opt.name]}</Text>
+                            <View style={styles.optionRow}>
+                                {opt.values.map(val => (
+                                    <TouchableOpacity
+                                        key={val}
+                                        style={[styles.sizeBtn, selectedOptions[opt.name] === val && styles.sizeBtnActive]}
+                                        onPress={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
+                                    >
+                                        <Text style={[styles.sizeText, selectedOptions[opt.name] === val && styles.sizeTextActive]}>{val}</Text>
+                                    </TouchableOpacity>
+                                ))}
+                            </View>
                         </View>
+                    ))}
+
+                    <View style={{ marginBottom: 15, paddingHorizontal: 5 }}>
+                        <Text style={{ color: '#666', fontSize: 13 }}>
+                            {t('in_stock_label')} <Text style={{ fontWeight: 'bold' }}>{currentVariant ? currentVariant.stockQuantity : 0}</Text> {t('items_available')}
+                        </Text>
                     </View>
 
                     <View style={styles.optionSection}>
@@ -123,12 +171,12 @@ const ProductDetailScreen = ({ route, navigation }) => {
                     <View style={styles.shipBox}>
                         <View style={styles.shipHeader}>
                             <View style={styles.nowFreeBadge}>
-                                <Text style={styles.nowFreeText}>NowFree</Text>
+                                <Text style={styles.nowFreeText}>{t('now_free_badge')}</Text>
                             </View>
                             <Text style={styles.shipTitle}>{t('fast_delivery_2h')}</Text>
                         </View>
                         <Text style={styles.shipDesc}>
-                            {t('fast_delivery_desc')}
+                            {t('fast_delivery_details_ext')}
                         </Text>
                     </View>
 
@@ -142,14 +190,21 @@ const ProductDetailScreen = ({ route, navigation }) => {
             </ScrollView>
 
             <View style={styles.bottomBar}>
-                <TouchableOpacity style={styles.addCartBtn} onPress={handleAddToCart}>
-                    <Ionicons name="cart-outline" size={20} color="#d32f2f" />
-                    <Text style={styles.addCartText}>{t('add_to_cart')}</Text>
+                <TouchableOpacity
+                    style={[styles.addCartBtn, isOutOfStock && styles.disabledBtnOutline]}
+                    onPress={handleAddToCart}
+                    disabled={isOutOfStock}
+                >
+                    <Ionicons name="cart-outline" size={20} color={isOutOfStock ? '#999' : COLORS.mainTitle} />
+                    <Text style={[styles.addCartText, isOutOfStock && { color: '#999' }]}>{isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.buyNowBtn} onPress={() => Alert.alert('Coming Soon')}>
-                    <Text style={styles.buyNowMain}>{t('buy_now')}</Text>
-                    <Text style={styles.buyNowSub}>NowFree 2H</Text>
+                <TouchableOpacity
+                    style={[styles.buyNowBtn, isOutOfStock && styles.disabledBtnSolid]}
+                    onPress={() => Alert.alert('Coming Soon')}
+                    disabled={isOutOfStock}
+                >
+                    <Text style={styles.buyNowMain}>{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</Text>
                 </TouchableOpacity>
             </View>
         </SafeAreaView>
@@ -347,12 +402,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     shipBox: {
-        backgroundColor: '#f1f8e9',
+        backgroundColor: '#fdf2f6',
         padding: 15,
         borderRadius: 8,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: '#c5e1a5'
+        borderColor: COLORS.mainTitle
     },
     shipHeader: {
         flexDirection: 'row',
@@ -360,7 +415,7 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     nowFreeBadge: {
-        backgroundColor: '#ff9800',
+        backgroundColor: COLORS.mainTitle,
         paddingHorizontal: 6,
         paddingVertical: 2,
         borderRadius: 4,
@@ -373,7 +428,7 @@ const styles = StyleSheet.create({
         fontStyle: 'italic'
     },
     shipTitle: {
-        color: '#2e7d32',
+        color: COLORS.mainTitle,
         fontWeight: 'bold',
         fontSize: 14
     },
@@ -410,21 +465,21 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         borderWidth: 1,
-        borderColor: '#d32f2f',
+        borderColor: COLORS.mainTitle,
         borderRadius: 8,
         height: 48,
         backgroundColor: 'white',
         gap: 5
     },
     addCartText: {
-        color: '#d32f2f',
+        color: COLORS.mainTitle,
         fontWeight: 'bold',
         fontSize: 14,
         textTransform: 'uppercase'
     },
     buyNowBtn: {
         flex: 1.5,
-        backgroundColor: '#d32f2f',
+        backgroundColor: COLORS.mainTitle,
         borderRadius: 8,
         height: 48,
         justifyContent: 'center',
@@ -437,8 +492,14 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase'
     },
     buyNowSub: {
-        color: 'rgba(255,255,255,0.9)',
-        fontSize: 11
+        display: 'none'
+    },
+    disabledBtnOutline: {
+        borderColor: '#ccc',
+        backgroundColor: '#f5f5f5'
+    },
+    disabledBtnSolid: {
+        backgroundColor: '#ccc'
     }
 });
 

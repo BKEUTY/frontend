@@ -75,7 +75,7 @@ const CartDrawer = () => {
             placement="right"
             onClose={closeCart}
             open={isCartOpen}
-            width={400}
+            size="default"
             footer={footer}
             className="cart-drawer-antd"
         >

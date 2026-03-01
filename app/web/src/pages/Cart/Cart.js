@@ -5,8 +5,12 @@ import { useNotification } from "../../Context/NotificationContext";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useCart } from "../../Context/CartContext";
 import product_cart_image from "../../Assets/Images/Products/product_placeholder_rect.svg";
-import cart_empty_icon from "../../Assets/Images/Icons/icon_cart.svg";
-import { FaTrashAlt } from "react-icons/fa";
+import {
+  DeleteOutlined,
+  ShoppingOutlined,
+  CheckOutlined,
+  ArrowRightOutlined
+} from '@ant-design/icons';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -120,7 +124,7 @@ export default function Cart() {
           <div className="cart-items-container">
             {products.length === 0 ? (
               <div className="cart-empty-state">
-                <img src={cart_empty_icon} alt="Empty Cart" className="cart-empty-img" />
+                <ShoppingOutlined style={{ fontSize: '100px', color: '#e5e7eb', marginBottom: '24px' }} />
                 <p className="cart-empty-text">{t('cart_empty')}</p>
                 <button className="btn-continue-shopping" onClick={() => navigate('/')}>
                   {t('continue_shopping') || "Continue Shopping"}
@@ -176,7 +180,7 @@ export default function Cart() {
                     onClick={() => handleDelete(product.cartId)}
                     title={t('delete')}
                   >
-                    <FaTrashAlt />
+                    <DeleteOutlined />
                   </button>
                 </div>
               ))

@@ -5,7 +5,16 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import Skeleton from "../../Component/Common/Skeleton";
 import ProductCard from "../../Component/Common/ProductCard";
 import Pagination from "../../Component/Common/Pagination";
-import search_image from "../../Assets/Images/Icons/icon_search.svg";
+import {
+  SearchOutlined,
+  MenuOutlined,
+  DownOutlined,
+  ExperimentOutlined,
+  SmileOutlined,
+  ThunderboltOutlined,
+  SafetyOutlined,
+  ArrowRightOutlined
+} from '@ant-design/icons';
 import productApi from "../../api/productApi";
 
 export default function Product() {
@@ -83,33 +92,43 @@ export default function Product() {
           className="prod-mobile-cat-header"
           onClick={() => setIsMobileCatOpen(!isMobileCatOpen)}
         >
-          <span>☰ {t('categories')}</span>
-          <span className={`arrow ${isMobileCatOpen ? 'open' : ''}`}>▼</span>
+          <span><MenuOutlined /> {t('categories')}</span>
+          <span className={`arrow ${isMobileCatOpen ? 'open' : ''}`}><DownOutlined /></span>
         </div>
 
         <div className={`category-list ${isMobileCatOpen ? 'mobile-open' : ''}`}>
           <div className="cat-item cancel-hover">
-            <span className="cat-trigger">☰ {t('categories')}</span>
+            <span className="cat-trigger"><MenuOutlined /> {t('categories')}</span>
             <div className="mega-menu">
-              <div className="mega-column">
-                <h3>{t('makeup')}</h3>
-                <Link to="/product" onClick={handleResetFilter}>{t('makeup_face')}</Link>
-                <Link to="/product" onClick={handleResetFilter}>{t('makeup_lips')}</Link>
-                <Link to="/product" onClick={handleResetFilter}>{t('makeup_eyes')}</Link>
+              <div className="mega-menu-left">
+                <div className="mega-column">
+                  <h3><ExperimentOutlined style={{ marginRight: '8px' }} />{t('makeup')}</h3>
+                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_face')}</Link>
+                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_lips')}</Link>
+                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_eyes')}</Link>
+                </div>
+                <div className="mega-column">
+                  <h3><SmileOutlined style={{ marginRight: '8px' }} />{t('skincare')}</h3>
+                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('cleanser')}</Link>
+                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('toner')}</Link>
+                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('serum')}</Link>
+                </div>
+                <div className="mega-column">
+                  <h3><ThunderboltOutlined style={{ marginRight: '8px' }} />{t('body_care')}</h3>
+                  <Link to="/product" className="mega-item">{t('shower_gel')}</Link>
+                </div>
+                <div className="mega-column">
+                  <h3><SafetyOutlined style={{ marginRight: '8px' }} />{t('hair_care')}</h3>
+                  <Link to="/product" className="mega-item">{t('shampoo')}</Link>
+                </div>
               </div>
-              <div className="mega-column">
-                <h3>{t('skincare')}</h3>
-                <Link to="/product" onClick={handleResetFilter}>{t('cleanser')}</Link>
-                <Link to="/product" onClick={handleResetFilter}>{t('toner')}</Link>
-                <Link to="/product" onClick={handleResetFilter}>{t('serum')}</Link>
-              </div>
-              <div className="mega-column">
-                <h3>{t('body_care')}</h3>
-                <Link to="/product">{t('shower_gel')}</Link>
-              </div>
-              <div className="mega-column">
-                <h3>{t('hair_care')}</h3>
-                <Link to="/product">{t('shampoo')}</Link>
+              <div className="mega-menu-right">
+                <div className="mega-promo-card">
+                  <div className="promo-tag">MEGA SALE</div>
+                  <h4>{t('mega_promo_title')}</h4>
+                  <p>{t('mega_promo_desc')}</p>
+                  <Link to="/product" className="promo-btn">{t('buy_now')}</Link>
+                </div>
               </div>
             </div>
           </div>
@@ -122,11 +141,11 @@ export default function Product() {
         </div>
         <div className="prod-search-bar-wrapper">
           <button className="prod-search-btn" onClick={handleSearchSubmit}>
-            <img src={search_image} alt="search" style={{ width: '18px' }} />
+            <SearchOutlined style={{ fontSize: '18px', color: '#c2185b' }} />
           </button>
           <input
             type="text"
-            placeholder={t('search_hint') || "Tìm kiếm..."}
+            placeholder={t('search_hint')}
             className="prod-search-input"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -161,7 +180,7 @@ export default function Product() {
                 ))}
               </div>
             ) : products.length === 0 ? (
-              <div className="no-products">{t('no_products_found') || "Không tìm thấy sản phẩm"}</div>
+              <div className="no-products">{t('no_products_found')}</div>
             ) : (
               <>
                 <div className="product-grid">
@@ -179,11 +198,11 @@ export default function Product() {
                   {!isPaginationMode ? (
                     <div style={{ textAlign: 'center', marginTop: '30px' }}>
                       {isLoading && page > 0 ? (
-                        <p>Loading more...</p>
+                        <p>{t('loading')}</p>
                       ) : (
                         page < totalPages - 1 && (
                           <button className="btn-view-more" onClick={handleLoadMore}>
-                            {t('load_more') || "Xem thêm"}
+                            {t('load_more')}
                           </button>
                         )
                       )}

@@ -4,9 +4,17 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { useNotification } from '../../Context/NotificationContext';
 import { useCart } from '../../Context/CartContext';
 import './ProductDetail.css';
-import { FaStar, FaCheckCircle, FaRegHeart, FaRegComment } from 'react-icons/fa';
+import {
+    StarFilled,
+    CheckCircleFilled,
+    HeartOutlined,
+    MessageOutlined,
+    ShoppingOutlined,
+    ThunderboltFilled,
+    ClockCircleOutlined,
+    ArrowRightOutlined
+} from '@ant-design/icons';
 import best_selling_image from "../../Assets/Images/Products/product_placeholder.svg";
-import starIcon from "../../Assets/Images/Icons/icon_star.svg";
 import Pagination from "../../Component/Common/Pagination";
 import ProductCard from "../../Component/Common/ProductCard";
 import Skeleton from "../../Component/Common/Skeleton";
@@ -89,7 +97,7 @@ export default function ProductDetail({ previewProduct }) {
             setIsError(false);
             try {
                 const response = await productApi.getAll({ page: 0, size: 1000 });
-                const found = response.data.content.find(p => p.productId === id || p.id === id);
+                const found = response.data.content.find(p => p.productId === id);
                 if (found) {
                     const mergedData = {
                         id: found.id || found.productId,
@@ -222,22 +230,17 @@ export default function ProductDetail({ previewProduct }) {
 
                     <div className="detail-tags">
                         <div className="rating-container">
-                            <div className="star-icon" style={{
-                                width: '18px', height: '18px',
-                                backgroundColor: '#ffc107',
-                                mask: `url(${starIcon}) no-repeat center / contain`,
-                                WebkitMask: `url(${starIcon}) no-repeat center / contain`
-                            }}></div>
-                            <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')}) | <span>SKU: {productData.id}</span>
+                            <StarFilled style={{ color: '#ffc107', fontSize: '18px' }} />
+                            <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')})
                         </div>
                     </div>
 
                     <div className="flash-deal-banner">
                         <div className="flash-deal-left">
-                            <span className="flash-icon">⚡</span> FLASH DEAL
+                            <span className="flash-icon"><ThunderboltFilled /></span> FLASH DEAL
                         </div>
                         <div className="flash-countdown">
-                            {t('ends_in')}: <span>02</span>:<span>04</span>:<span>42</span>
+                            <ClockCircleOutlined style={{ marginRight: '5px' }} /> {t('ends_in')}: <span>02</span>:<span>04</span>:<span>42</span>
                         </div>
                     </div>
 
@@ -296,10 +299,7 @@ export default function ProductDetail({ previewProduct }) {
                             <strong>{t('fast_delivery_2h')}</strong>
                         </div>
                         <div className="shipping-desc">
-                            {language === 'vi'
-                                ? 'Bạn muốn nhận hàng trước 10h ngày mai. Đặt hàng trước 24h và chọn giao hàng 2H ở bước thanh toán.'
-                                : 'Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout.'
-                            }
+                            {t('fast_delivery_desc')}
                             <span className="link-text"> {t('view_more')}</span>
                         </div>
                     </div>
@@ -310,7 +310,7 @@ export default function ProductDetail({ previewProduct }) {
                             <span className="btn-sub-text">{t('free_gift_extra')}</span>
                         </button>
                         <button className="btn-add-bag" onClick={handleAddToCart}>
-                            {t('add_to_cart')}
+                            <ShoppingOutlined style={{ marginRight: '8px' }} /> {t('add_to_cart')}
                         </button>
                     </div>
                 </div>
@@ -398,20 +398,20 @@ export default function ProductDetail({ previewProduct }) {
                                             <div className="review-stars-row">
                                                 {[...Array(5)].map((_, starIdx) => (
                                                     <span key={starIdx} className={`rv-star ${starIdx < rev.rating ? 'filled' : ''}`}>
-                                                        <FaStar />
+                                                        <StarFilled />
                                                     </span>
                                                 ))}
-                                                {rev.verified && <span className="verified-tag"><FaCheckCircle className="icon-check" /> {t('verified_purchase')}</span>}
+                                                {rev.verified && <span className="verified-tag"><CheckCircleFilled className="icon-check" /> {t('verified_purchase')}</span>}
                                             </div>
                                             <div className="review-text">
                                                 {rev.content}
                                             </div>
                                             <div className="review-actions">
                                                 <button className="action-btn">
-                                                    <FaRegHeart className="icon-action" /> {t('like')}
+                                                    <HeartOutlined className="icon-action" /> {t('like')}
                                                 </button>
                                                 <button className="action-btn">
-                                                    <FaRegComment className="icon-action" /> {t('comment')}
+                                                    <MessageOutlined className="icon-action" /> {t('comment')}
                                                 </button>
                                             </div>
                                         </div>

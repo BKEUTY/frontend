@@ -2,11 +2,11 @@ import axiosClient from "./axiosClient";
 
 const cartApi = {
     getAll: (userId) => {
-        const url = `/cart/${userId}`;
+        const url = `/api/cart/${userId}`;
         return axiosClient.get(url, { errorMessage: 'api_error_fetch_cart' });
     },
     add: (data) => {
-        const url = '/cart';
+        const url = '/api/cart';
         return axiosClient.post(url, data, { errorMessage: 'api_error_add_cart' });
     },
 

@@ -1,10 +1,11 @@
 import axios from 'axios';
-import { notification } from 'antd';
 import queryString from 'query-string';
 import { getTranslation } from '../i18n/translate';
+import { notifyError } from '../utils/NotificationService';
+
 
 const SERVER_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-const BASE_API_URL = `${SERVER_URL}/api`;
+const BASE_API_URL = SERVER_URL;
 const ADMIN_API_URL = process.env.REACT_APP_ADMIN_API_URL || `${SERVER_URL}/admin/api`;
 
 const createClient = (baseURL) => {
@@ -48,20 +49,16 @@ const createClient = (baseURL) => {
         }
 
         if (status !== 401 && !error.config?.skipGlobalErrorHandler) {
-            const customErrorMessage = error.config?.errorMessage;
-            const apiMessage = error.response?.data?.message;
-            let description = apiMessage || getTranslation(fallbackKey);
+            const apiMessage = error.response?.data?.message || error.response?.data?.error;
+            let description = apiMessage || error.message || getTranslation(fallbackKey);
 
-            if (customErrorMessage) {
-                description = getTranslation(customErrorMessage);
+            if (error.message === 'Network Error') {
+                description = getTranslation('api_error_network') || 'Network Error';
             }
 
-            notification.error({
-                message: getTranslation('error'),
-                description: description,
-                key: `global_error_${status}_${description}`,
-                duration: 3,
-            });
+            const titleKey = error.config?.errorMessage || 'error';
+
+            notifyError(titleKey, description);
         }
 
         return Promise.reject(error);

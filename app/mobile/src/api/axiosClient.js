@@ -12,13 +12,6 @@ const axiosClient = axios.create({
 axiosClient.interceptors.response.use(
     (response) => response,
     (error) => {
-        const customErrorMessage = error.config?.errorMessage;
-
-        if (customErrorMessage) {
-            showToast(getTranslation('error'), 'error', getTranslation(customErrorMessage));
-            return Promise.reject(error);
-        }
-
         if (!error.config?.skipGlobalErrorHandler) {
             const status = error.response ? error.response.status : null;
             let fallbackKey = 'api_error_general';
@@ -28,7 +21,16 @@ axiosClient.interceptors.response.use(
             else if (status === 404) fallbackKey = 'error_404';
             else if (status >= 500) fallbackKey = 'error_500';
 
-            showToast(getTranslation('error'), 'error', getTranslation(fallbackKey));
+            const apiMessage = error.response?.data?.message || error.response?.data?.error;
+            let description = apiMessage || error.message || getTranslation(fallbackKey);
+
+            if (error.message === 'Network Error') {
+                description = getTranslation('api_error_network') || 'Network Error';
+            }
+
+            const title = getTranslation(error.config?.errorMessage || 'error');
+
+            showToast(title, 'error', description);
         }
 
         return Promise.reject(error);

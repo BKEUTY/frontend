@@ -10,8 +10,8 @@ export const CartProvider = ({ children }) => {
 
     const fetchCart = async () => {
         try {
-            const response = await axiosClient.get('/cart/1', { errorMessage: 'api_error_fetch_cart' });
-            // Ensure data structure compatibility
+            const response = await axiosClient.get('/api/cart/1', { errorMessage: 'api_error_fetch_cart' });
+
             const mapped = response.data.map(item => ({
                 ...item,
                 id: item.productId || item.id,
@@ -28,7 +28,7 @@ export const CartProvider = ({ children }) => {
     }, []);
 
     const addToCart = async (product) => {
-        // Optimistic update
+
         const existing = cartItems.find(item => item.id === product.id);
         if (existing) {
             setCartItems(prev => prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + (product.quantity || 1) } : item));
@@ -37,12 +37,10 @@ export const CartProvider = ({ children }) => {
         }
 
         try {
-            await axiosClient.post('/cart', {
+            await axiosClient.post('/api/cart', {
                 productId: product.id,
                 userId: 1,
             }, { errorMessage: 'api_error_add_cart' });
-            // Re-fetch to confirm and sync (optional, or just rely on optimistic)
-            // fetchCart(); 
         } catch (error) {
             console.error("Add to cart failed", error);
         }
@@ -50,7 +48,7 @@ export const CartProvider = ({ children }) => {
 
     const deleteCartItem = async (cartId) => {
         try {
-            await axiosClient.delete(`/cart/${cartId}`, { errorMessage: 'api_error_remove_cart' });
+            await axiosClient.delete(`/api/cart/${cartId}`, { errorMessage: 'api_error_remove_cart' });
             setCartItems(prev => prev.filter(p => p.cartId !== cartId));
         } catch (error) {
             console.error(error);

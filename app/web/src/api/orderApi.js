@@ -1,14 +1,19 @@
-import axiosClient from "./axiosClient";
+import BaseApi from './BaseApi';
 
-const orderApi = {
-    getByUser: (userId) => {
-        const url = `/order/${userId}`;
-        return axiosClient.get(url, { errorMessage: 'api_error_order_history' });
-    },
-    placeOrder: (data) => {
-        const url = '/order';
-        return axiosClient.post(url, data, { errorMessage: 'api_error_checkout' });
+class OrderApi extends BaseApi {
+    constructor() {
+        super('/user/api/order');
     }
-};
 
+    getByUser(userId) {
+        return this.client.get(`${this.resource}/${userId}`, { errorMessage: 'api_error_order_history' });
+    }
+
+    placeOrder(data) {
+        return this.client.post(this.resource, data, { errorMessage: 'api_error_checkout' });
+    }
+}
+
+const orderApi = new OrderApi();
 export default orderApi;
+

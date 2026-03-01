@@ -113,11 +113,13 @@ const styles = StyleSheet.create({
         borderLeftWidth: 4,
     },
     iconContainer: {
-        marginRight: 12,
-        marginTop: 2,
+        position: 'absolute',
+        left: 20,
+        top: 22,
     },
     content: {
         flex: 1,
+        marginLeft: 40,
         marginRight: 8,
     },
     title: {

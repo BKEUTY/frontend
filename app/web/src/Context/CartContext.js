@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 
+import { useAuth } from './AuthContext';
 import cartApi from '../api/cartApi';
 
 const CartContext = createContext();
@@ -9,9 +10,12 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
+    const { isAuthenticated, role } = useAuth();
     const userId = 1;
 
     const fetchCart = async () => {
+        if (role === 'ADMIN') return;
+
         try {
             const res = await cartApi.getAll(userId);
             if (res.status === 200) {
@@ -28,10 +32,11 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-
     useEffect(() => {
-        fetchCart();
-    }, []);
+        if (role !== 'ADMIN') {
+            fetchCart();
+        }
+    }, [role]);
 
     const toggleCart = () => setIsCartOpen(!isCartOpen);
     const openCart = () => setIsCartOpen(true);

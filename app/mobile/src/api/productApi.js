@@ -15,4 +15,3 @@ class ProductApi extends BaseApi {
 
 const productApi = new ProductApi();
 export default productApi;
-

@@ -52,31 +52,34 @@
 }
 
 .admin-layout-container .modern-steps .ant-steps-item-process .ant-steps-item-icon {
-    background: var(--admin-primary);
-    border-color: var(--admin-primary);
-    box-shadow: 0 0 0 6px rgba(193, 53, 132, 0.12);
+    background: var(--admin-primary) !important;
+    border-color: var(--admin-primary) !important;
+    box-shadow: 0 0 0 6px rgba(193, 53, 132, 0.12) !important;
 }
 
-.admin-layout-container .modern-steps .ant-steps-item-process .ant-steps-item-icon .anticon {
-    color: #ffffff;
+.admin-layout-container .modern-steps .ant-steps-item-process .ant-steps-item-icon .anticon,
+.admin-layout-container .modern-steps .ant-steps-item-process .ant-steps-item-icon>.ant-steps-icon {
+    color: #ffffff !important;
 }
 
 .modern-steps .ant-steps-item-wait .ant-steps-item-icon {
-    border-color: #e5e7eb;
-    background: white;
+    border-color: #e5e7eb !important;
+    background: #ffffff !important;
 }
 
-.modern-steps .ant-steps-item-wait .ant-steps-item-icon>.ant-steps-icon {
-    color: #9ca3af;
+.modern-steps .ant-steps-item-wait .ant-steps-item-icon>.ant-steps-icon,
+.modern-steps .ant-steps-item-wait .ant-steps-item-icon .anticon {
+    color: #9ca3af !important;
 }
 
 .admin-layout-container .modern-steps .ant-steps-item-finish .ant-steps-item-icon {
-    border-color: var(--admin-primary);
-    background: #ffffff;
+    border-color: var(--admin-primary) !important;
+    background: var(--admin-primary) !important;
 }
 
-.admin-layout-container .modern-steps .ant-steps-item-finish .ant-steps-item-icon .anticon {
-    color: var(--admin-primary);
+.admin-layout-container .modern-steps .ant-steps-item-finish .ant-steps-item-icon .anticon,
+.admin-layout-container .modern-steps .ant-steps-item-finish .ant-steps-item-icon>.ant-steps-icon {
+    color: #ffffff !important;
 }
 
 .admin-layout-container .modern-steps .ant-steps-item-tail::after {

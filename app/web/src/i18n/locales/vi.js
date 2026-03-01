@@ -360,7 +360,7 @@ export default {
     admin_label_brand: "Thương hiệu",
     admin_label_desc: "Mô tả sản phẩm",
     admin_label_image: "Ảnh đại diện",
-    admin_placeholder_product_name: "Nhập tên sản phẩm (VD: Kem dưỡng ẩm BKEUTY)",
+    admin_placeholder_product_name: "Nhập tên sản phẩm",
     admin_placeholder_desc: "Nhập mô tả sản phẩm...",
     admin_placeholder_categories: "Chọn ngành hàng",
     admin_btn_upload: "Tải lên",
@@ -548,5 +548,12 @@ export default {
     admin_search_placeholder: "Nhập tên trang, mã đơn hàng hoặc sản phẩm...",
     admin_no_results: "Không tìm thấy kết quả cho",
     admin_select_hint: "chọn",
-    admin_close_hint: "đóng"
+    admin_close_hint: "đóng",
+
+    out_of_stock_btn: "Tạm Hết Hàng",
+    in_stock_label: "Kho:",
+    items_available: "sản phẩm",
+    vat_included: "(Đã bao gồm VAT)",
+    now_free_badge: "NOWFREE",
+    fast_delivery_details_ext: "Cần gấp lúc 10h sáng mai? Đặt hàng trước nửa đêm và chọn Giao hàng 2H khi thanh toán."
 };

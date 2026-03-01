@@ -874,27 +874,25 @@
 }
 
 @media (max-width: 768px) {
-
-
     .admin-content {
         padding: 16px 16px 100px 16px;
     }
 
-    .admin-header {
-        padding: 0 12px;
-        height: 60px;
+    .admin-layout-container .admin-header {
+        padding: 0 16px;
+        height: 64px;
+        gap: 12px;
     }
 
     .admin-header-left {
-        flex: 1;
-        width: 0;
+        width: auto;
+        flex: 0 0 auto;
         display: flex;
         justify-content: flex-start;
-        gap: 8px;
     }
 
     .admin-sider-logo {
-        height: 28px;
+        height: 32px;
     }
 
     .admin-floating-dock {
@@ -921,61 +919,30 @@
     }
 
     .dock-item {
-        width: 42px;
-        height: 42px;
-    }
-
-    .admin-header-left,
-    .admin-header-right {
-        width: 140px;
-    }
-
-    .admin-search-trigger {
-        width: 240px;
-        padding: 0 15px;
-    }
-
-    .admin-search-trigger .kbd {
-        display: none;
-    }
-
-    .admin-layout-container .admin-header .lang-btn.ant-btn {
-        min-width: 100px !important;
-        padding: 0 16px !important;
-    }
-}
-
-@media (max-width: 768px) {
-    .admin-layout-container .admin-header {
-        padding: 0 16px;
-        height: 64px;
-        gap: 8px;
-    }
-
-    .admin-header-left {
-        width: auto;
-        flex: 0 0 auto;
-    }
-
-    .admin-header-left img {
-        height: 32px;
+        width: 44px;
+        height: 44px;
     }
 
     .admin-header-center {
         flex: 1;
         display: flex;
-        justify-content: center;
+        justify-content: flex-end;
         min-width: 48px;
     }
 
     .admin-search-trigger {
-        width: 48px !important;
-        height: 48px !important;
+        width: 44px !important;
+        height: 44px !important;
         padding: 0 !important;
         border-radius: 50% !important;
         justify-content: center !important;
-        background: #f8fafc !important;
-        border-color: #e2e8f0 !important;
+        background: rgba(0, 0, 0, 0.04) !important;
+        border-color: transparent !important;
+        flex-shrink: 0;
+    }
+
+    .admin-search-trigger:active {
+        background: rgba(0, 0, 0, 0.08) !important;
     }
 
     .admin-search-trigger .search-text {
@@ -986,6 +953,7 @@
     .admin-search-trigger .search-text .anticon {
         font-size: 20px !important;
         margin: 0 !important;
+        color: #475569 !important;
     }
 
     .admin-search-trigger .kbd {
@@ -996,13 +964,15 @@
         width: auto;
         flex: 0 0 auto;
         gap: 8px;
+        display: flex;
+        align-items: center;
     }
 
     .admin-layout-container .admin-header .admin-header-right .lang-btn.ant-btn {
         min-width: 80px !important;
-        height: 42px !important;
+        height: 44px !important;
         padding: 0 12px !important;
-        border-radius: 21px !important;
+        border-radius: 22px !important;
         font-size: 14px !important;
         gap: 6px !important;
     }
@@ -1012,8 +982,8 @@
     }
 
     .admin-layout-container .admin-header .admin-header-right .admin-user-profile {
-        width: 42px !important;
-        height: 42px !important;
+        width: 44px !important;
+        height: 44px !important;
         padding: 0 !important;
         border-radius: 50% !important;
         justify-content: center !important;
@@ -1025,9 +995,9 @@
     }
 
     .admin-user-profile .ant-avatar {
-        width: 32px !important;
-        height: 32px !important;
-        line-height: 32px !important;
+        width: 34px !important;
+        height: 34px !important;
+        line-height: 34px !important;
         margin: 0 !important;
     }
 
@@ -1072,8 +1042,13 @@
     }
 
     .command-palette-modal {
-        width: 95vw;
-        top: 10px;
+        width: 90vw !important;
+        max-width: 400px !important;
+        margin: 0 auto;
+    }
+
+    .command-palette-modal .ant-modal-content {
+        padding: 0 !important;
     }
 
     .command-search-header {
@@ -1082,6 +1057,19 @@
 
     .command-search-input {
         font-size: 16px;
+    }
+
+    .command-item {
+        padding: 10px 12px;
+        gap: 12px;
+    }
+
+    .command-item h4 {
+        font-size: 14px;
+    }
+
+    .command-footer {
+        display: none;
     }
 
     .beauty-table .ant-table-thead>tr>th {

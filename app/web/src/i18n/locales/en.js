@@ -360,7 +360,7 @@ export default {
     admin_label_brand: "Brand",
     admin_label_desc: "Product Description",
     admin_label_image: "Main Image",
-    admin_placeholder_product_name: "Enter product name (e.g. BKEUTY Moisture Cream)",
+    admin_placeholder_product_name: "Enter product name",
     admin_placeholder_desc: "Enter product description...",
     admin_placeholder_categories: "Choose Category",
     admin_btn_upload: "Upload",
@@ -548,6 +548,12 @@ export default {
     admin_search_placeholder: "Enter page, order ID or product name...",
     admin_no_results: "No results found for",
     admin_select_hint: "select",
-    admin_close_hint: "close"
-};
+    admin_close_hint: "close",
 
+    out_of_stock_btn: "Out of Stock",
+    in_stock_label: "Stock:",
+    items_available: "items",
+    vat_included: "(VAT included)",
+    now_free_badge: "NOWFREE",
+    fast_delivery_details_ext: "Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout. "
+};

@@ -38,6 +38,8 @@ export default function ProductDetail({ previewProduct }) {
 
     const [activeTab, setActiveTab] = useState('details');
     const [selectedSize, setSelectedSize] = useState("50ml");
+    const [selectedOptions, setSelectedOptions] = useState({});
+    const [currentVariant, setCurrentVariant] = useState(null);
     const [mainImage, setMainImage] = useState(best_selling_image);
     const [quantity, setQuantity] = useState(1);
 
@@ -52,6 +54,20 @@ export default function ProductDetail({ previewProduct }) {
 
     useEffect(() => {
         if (previewProduct) {
+            const mockOptions = [
+                { name: "Màu Sắc", values: ["Nâu", "Vàng"] },
+                { name: "Kích Thước", values: ["XL", "XXL", "XXXL"] }
+            ];
+
+            const mockVariants = [
+                { id: 1, optionValues: ["Nâu", "XL"], price: 150000, stockQuantity: 10 },
+                { id: 2, optionValues: ["Nâu", "XXL"], price: 160000, stockQuantity: 0 },
+                { id: 3, optionValues: ["Nâu", "XXXL"], price: 170000, stockQuantity: 5 },
+                { id: 4, optionValues: ["Vàng", "XL"], price: 155000, stockQuantity: 20 },
+                { id: 5, optionValues: ["Vàng", "XXL"], price: 165000, stockQuantity: 15 },
+                { id: 6, optionValues: ["Vàng", "XXXL"], price: 175000, stockQuantity: 2 }
+            ];
+
             const mergedData = {
                 id: previewProduct.productId || previewProduct.id,
                 name: previewProduct.name,
@@ -66,6 +82,8 @@ export default function ProductDetail({ previewProduct }) {
                     best_selling_image
                 ],
                 sizes: ["30ml", "50ml", "75ml"],
+                options: mockOptions,
+                variants: mockVariants,
                 content: {
                     en: {
                         description: previewProduct.description || "Product description...",
@@ -96,9 +114,32 @@ export default function ProductDetail({ previewProduct }) {
             setIsLoading(true);
             setIsError(false);
             try {
-                const response = await productApi.getAll({ page: 0, size: 1000 });
-                const found = response.data.content.find(p => p.productId === id);
+                // const response = await productApi.getAll({ page: 0, size: 1000 });
+                // const found = response.data.content.find(p => p.productId === id);
+
+                const found = {
+                    productId: id,
+                    id: id,
+                    name: "Sản phẩm BKEUTY " + id,
+                    price: 1500000,
+                    description: "Đây là dữ liệu chi tiết sản phẩm mẫu (hardcoded) do API chưa sẵn sàng.",
+                    image: null
+                };
                 if (found) {
+                    const mockOptions = [
+                        { name: "Màu Sắc", values: ["Nâu", "Vàng"] },
+                        { name: "Kích Thước", values: ["XL", "XXL", "XXXL"] }
+                    ];
+
+                    const mockVariants = [
+                        { id: 1, optionValues: ["Nâu", "XL"], price: 150000, stockQuantity: 10 },
+                        { id: 2, optionValues: ["Nâu", "XXL"], price: 160000, stockQuantity: 0 },
+                        { id: 3, optionValues: ["Nâu", "XXXL"], price: 170000, stockQuantity: 5 },
+                        { id: 4, optionValues: ["Vàng", "XL"], price: 155000, stockQuantity: 20 },
+                        { id: 5, optionValues: ["Vàng", "XXL"], price: 165000, stockQuantity: 15 },
+                        { id: 6, optionValues: ["Vàng", "XXXL"], price: 175000, stockQuantity: 2 }
+                    ];
+
                     const mergedData = {
                         id: found.id || found.productId,
                         name: found.name,
@@ -113,6 +154,8 @@ export default function ProductDetail({ previewProduct }) {
                             best_selling_image
                         ],
                         sizes: ["30ml", "50ml", "75ml"],
+                        options: mockOptions,
+                        variants: mockVariants,
                         content: {
                             en: {
                                 description: found.description || "Product description...",
@@ -148,6 +191,29 @@ export default function ProductDetail({ previewProduct }) {
 
         fetchProduct();
     }, [id, previewProduct]);
+
+    useEffect(() => {
+        if (productData && productData.options) {
+            const initialOptions = {};
+            productData.options.forEach(opt => {
+                if (opt.values && opt.values.length > 0) {
+                    initialOptions[opt.name] = opt.values[0];
+                }
+            });
+            setSelectedOptions(initialOptions);
+        }
+    }, [productData]);
+
+    useEffect(() => {
+        if (productData && productData.variants && Object.keys(selectedOptions).length > 0) {
+            const match = productData.variants.find(v => {
+                return productData.options.every((opt, index) => {
+                    return v.optionValues[index] === selectedOptions[opt.name];
+                });
+            });
+            setCurrentVariant(match || null);
+        }
+    }, [selectedOptions, productData]);
 
     const totalReviewPages = productData ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
     const displayedReviews = productData ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage) : [];
@@ -197,6 +263,7 @@ export default function ProductDetail({ previewProduct }) {
         { id: 'advance', label: t('what_makes_it_advance') },
         { id: 'reviews', label: `${t('reviews')} (${productData.reviews_count})` },
     ];
+    const isOutOfStock = currentVariant ? currentVariant.stockQuantity === 0 : false;
 
     return (
         <div className="product-detail-page">
@@ -246,41 +313,38 @@ export default function ProductDetail({ previewProduct }) {
 
                     <div className="price-box">
                         <div className="current-price">
-                            {productData.price.toLocaleString("vi-VN")}đ
-                            <span className="vat-tag">(Đã bao gồm VAT)</span>
+                            {(currentVariant ? currentVariant.price : productData.price).toLocaleString("vi-VN")}đ
+                            <span className="vat-tag">{t('vat_included')}</span>
                         </div>
                         <div className="old-price-row">
-                            <span className="market-price">{t('market_price')}: {productData.original_price.toLocaleString("vi-VN")}đ</span>
-                            <span className="save-price">{t('save')}: {(productData.original_price - productData.price).toLocaleString("vi-VN")}đ</span>
+                            <span className="market-price">{t('market_price')}: {(currentVariant ? currentVariant.price * 1.2 : productData.original_price).toLocaleString("vi-VN")}đ</span>
+                            <span className="save-price">{t('save')}: {((currentVariant ? currentVariant.price * 1.2 : productData.original_price) - (currentVariant ? currentVariant.price : productData.price)).toLocaleString("vi-VN")}đ</span>
                         </div>
                     </div>
 
                     <div className="product-options-section">
-                        <div className="option-group">
-                            <span className="option-label">{t('scent')}: <strong>{t('no_scent')}</strong></span>
-                            <div className="variant-thumbs">
-                                <div className="variant-thumb active">
-                                    <img src={mainImage} alt="Variant 1" />
-                                </div>
-                                <div className="variant-thumb">
-                                    <img src={best_selling_image} alt="Variant 2" />
+                        {productData.options && productData.options.map((opt, idx) => (
+                            <div key={idx} className="option-group">
+                                <span className="option-label">{opt.name}: <strong>{selectedOptions[opt.name]}</strong></span>
+                                <div className="size-options">
+                                    {opt.values.map(val => {
+                                        // check if variant exists for this choice if want to disable, but simple approach is fine
+                                        return (
+                                            <button
+                                                key={val}
+                                                className={`size-btn ${selectedOptions[opt.name] === val ? 'active' : ''}`}
+                                                onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
+                                            >
+                                                {val}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
-                        </div>
+                        ))}
 
-                        <div className="option-group">
-                            <span className="option-label">{t('capacity')}: <strong>{selectedSize}</strong></span>
-                            <div className="size-options">
-                                {productData.sizes.map(size => (
-                                    <button
-                                        key={size}
-                                        className={`size-btn ${selectedSize === size ? 'active' : ''}`}
-                                        onClick={() => setSelectedSize(size)}
-                                    >
-                                        {size}
-                                    </button>
-                                ))}
-                            </div>
+                        <div className="stock-info" style={{ marginTop: 10, color: '#666', fontSize: '0.95rem' }}>
+                            {t('in_stock_label')} <strong>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
                         </div>
 
                         <div className="option-group">
@@ -295,22 +359,21 @@ export default function ProductDetail({ previewProduct }) {
 
                     <div className="shipping-info-box">
                         <div className="shipping-header">
-                            <span className="now-free-icon">NowFree</span>
+                            <span className="now-free-icon">{t('now_free_badge')}</span>
                             <strong>{t('fast_delivery_2h')}</strong>
                         </div>
                         <div className="shipping-desc">
-                            {t('fast_delivery_desc')}
-                            <span className="link-text"> {t('view_more')}</span>
+                            {t('fast_delivery_details_ext')}
+                            <span className="link-text">{t('view_more')}</span>
                         </div>
                     </div>
 
                     <div className="actions">
-                        <button className="btn-buy-now">
-                            <span className="btn-main-text">{t('buy_now')}</span>
-                            <span className="btn-sub-text">{t('free_gift_extra')}</span>
+                        <button className={`btn-buy-now ${isOutOfStock ? 'disabled' : ''}`} disabled={isOutOfStock}>
+                            <span className="btn-main-text">{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
                         </button>
-                        <button className="btn-add-bag" onClick={handleAddToCart}>
-                            <ShoppingOutlined style={{ marginRight: '8px' }} /> {t('add_to_cart')}
+                        <button className={`btn-add-bag ${isOutOfStock ? 'disabled' : ''}`} onClick={handleAddToCart} disabled={isOutOfStock}>
+                            <ShoppingOutlined style={{ marginRight: '8px' }} /> {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
                         </button>
                     </div>
                 </div>

@@ -154,7 +154,34 @@ const ProductCreate = () => {
     const fetchVariants = async (pid) => {
         try {
             const res = await adminApi.getVariants(pid);
-            setVariants(res.data || []);
+            let fetchedVariants = res.data || [];
+
+            const validOptions = optionTypes.filter(o => o.name.trim() !== '' && o.values.length > 0);
+            if (validOptions.length > 0) {
+                const suffixes = [];
+                const generateCombinations = (opts, index = 0, currentCombo = []) => {
+                    if (index === opts.length) {
+                        suffixes.push(currentCombo.join(' - '));
+                        return;
+                    }
+                    for (let val of opts[index].values) {
+                        generateCombinations(opts, index + 1, [...currentCombo, val]);
+                    }
+                };
+                generateCombinations(validOptions);
+
+                fetchedVariants = fetchedVariants.map((v, idx) => {
+                    const baseName = v.productName || v.productVariantName || '';
+                    if (suffixes[idx] && !baseName.includes(suffixes[idx])) {
+                        return { ...v, displayVariantName: `${baseName} - ${suffixes[idx]}` };
+                    }
+                    return { ...v, displayVariantName: baseName };
+                });
+            } else {
+                fetchedVariants = fetchedVariants.map(v => ({ ...v, displayVariantName: v.productName || v.productVariantName }));
+            }
+
+            setVariants(fetchedVariants);
         } catch (error) {
 
         }
@@ -195,7 +222,7 @@ const ProductCreate = () => {
             await Promise.all(variants.map(v =>
                 adminApi.updateVariant({
                     id: v.id,
-                    productVariantName: v.productVariantName,
+                    productVariantName: v.displayVariantName || v.productVariantName,
                     price: v.price || 0,
                     stockQuantity: v.stockQuantity || 0,
                     status: 'ACTIVE',
@@ -397,11 +424,11 @@ const ProductCreate = () => {
                                         {isPreview && (
                                             <div className="shipping-info-box">
                                                 <div className="shipping-header">
-                                                    <span className="now-free-icon">NowFree</span>
+                                                    <span className="now-free-icon">{t('now_free_badge')}</span>
                                                     <strong>{t('fast_delivery_2h')}</strong>
                                                 </div>
                                                 <div className="shipping-desc">
-                                                    {t('fast_delivery_desc')}
+                                                    {t('fast_delivery_details_ext')}
                                                 </div>
                                             </div>
                                         )}
@@ -448,31 +475,50 @@ const ProductCreate = () => {
                                                         </div>
                                                         <div style={{ flex: 1, minWidth: 0 }}>
                                                             <div style={{ fontWeight: 600, color: '#333', marginBottom: 10, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', fontSize: '0.95rem' }}>
-                                                                {record.productVariantName}
+                                                                {record.displayVariantName || record.productName || record.productVariantName}
                                                             </div>
                                                             <div style={{ display: 'flex', gap: 15 }}>
-                                                                <div style={{ flex: 1 }}>
-                                                                    <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4 }}>{t('admin_label_price')}</div>
-                                                                    <InputNumber
-                                                                        className="admin-input-large"
-                                                                        value={record.price}
-                                                                        min={0}
-                                                                        style={{ width: '100%', height: 40, lineHeight: '40px', borderRadius: '4px', border: '1px solid #ddd' }}
-                                                                        formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-                                                                        parser={value => value.replace(/\$\s?|(,*)/g, '')}
-                                                                        onChange={(val) => handleVariantChange(record.id, 'price', val)}
-                                                                    />
-                                                                </div>
-                                                                <div style={{ flex: 1 }}>
-                                                                    <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4 }}>{t('admin_label_stock')}</div>
-                                                                    <InputNumber
-                                                                        className="admin-input-large"
-                                                                        value={record.stockQuantity}
-                                                                        min={0}
-                                                                        style={{ width: '100%', height: 40, lineHeight: '40px', borderRadius: '4px', border: '1px solid #ddd' }}
-                                                                        onChange={(val) => handleVariantChange(record.id, 'stockQuantity', val)}
-                                                                    />
-                                                                </div>
+                                                                {isPreview ? (
+                                                                    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', padding: '10px 15px', borderRadius: '8px', border: '1px dashed #fad1e6' }}>
+                                                                            <span style={{ fontSize: '0.85rem', color: '#666', fontWeight: 500 }}>{t('admin_label_price')}:</span>
+                                                                            <span style={{ fontSize: '1.05rem', color: 'var(--admin-primary)', fontWeight: 700 }}>
+                                                                                {record.price ? `${record.price}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',') : '0'}₫
+                                                                            </span>
+                                                                        </div>
+                                                                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', padding: '10px 15px', borderRadius: '8px', border: '1px dashed #e2e8f0' }}>
+                                                                            <span style={{ fontSize: '0.85rem', color: '#666', fontWeight: 500 }}>{t('admin_label_stock')}:</span>
+                                                                            <span style={{ fontSize: '1.05rem', color: '#334155', fontWeight: 700 }}>
+                                                                                {record.stockQuantity || 0}
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                ) : (
+                                                                    <>
+                                                                        <div style={{ flex: 1 }}>
+                                                                            <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4 }}>{t('admin_label_price')}</div>
+                                                                            <InputNumber
+                                                                                className="admin-input-large"
+                                                                                value={record.price}
+                                                                                min={0}
+                                                                                style={{ width: '100%', height: 40, lineHeight: '40px', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                                                formatter={value => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                                                                                parser={value => value.replace(/\$\s?|(,*)/g, '')}
+                                                                                onChange={(val) => handleVariantChange(record.id, 'price', val)}
+                                                                            />
+                                                                        </div>
+                                                                        <div style={{ flex: 1 }}>
+                                                                            <div style={{ fontSize: '0.8rem', color: '#666', marginBottom: 4 }}>{t('admin_label_stock')}</div>
+                                                                            <InputNumber
+                                                                                className="admin-input-large"
+                                                                                value={record.stockQuantity}
+                                                                                min={0}
+                                                                                style={{ width: '100%', height: 40, lineHeight: '40px', borderRadius: '4px', border: '1px solid #ddd' }}
+                                                                                onChange={(val) => handleVariantChange(record.id, 'stockQuantity', val)}
+                                                                            />
+                                                                        </div>
+                                                                    </>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
@@ -482,11 +528,11 @@ const ProductCreate = () => {
                                             {isPreview && (
                                                 <div className="shipping-info-box" style={{ marginTop: 20 }}>
                                                     <div className="shipping-header">
-                                                        <span className="now-free-icon">NowFree</span>
+                                                        <span className="now-free-icon">{t('now_free_badge')}</span>
                                                         <strong>{t('fast_delivery_2h')}</strong>
                                                     </div>
                                                     <div className="shipping-desc">
-                                                        {t('fast_delivery_desc')}
+                                                        {t('fast_delivery_details_ext')}
                                                     </div>
                                                 </div>
                                             )}

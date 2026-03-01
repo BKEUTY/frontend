@@ -24,6 +24,11 @@ import AdminProductCreate from '../Admin/ProductCreateScreen';
 
 import NotFoundScreen from '../Component/ErrorPages/NotFoundScreen';
 import ServerErrorScreen from '../Component/ErrorPages/ServerErrorScreen';
+import { Ionicons } from '@expo/vector-icons';
+
+import LoginScreen from '../Auth/LoginScreen';
+import RegisterScreen from '../Auth/RegisterScreen';
+import ForgotPasswordScreen from '../Auth/ForgotPasswordScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -39,13 +44,13 @@ function TabNavigator() {
                 tabBarStyle: { paddingBottom: 5, height: 60 },
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName;
-                    if (route.name === 'Home') iconName = '🏠';
-                    else if (route.name === 'Product') iconName = '🛍️';
-                    else if (route.name === 'Service') iconName = '🛠️';
-                    else if (route.name === 'Cart') iconName = '🛒';
-                    else if (route.name === 'Account') iconName = '👤';
+                    if (route.name === 'Home') iconName = focused ? 'home' : 'home-outline';
+                    else if (route.name === 'Product') iconName = focused ? 'bag-handle' : 'bag-handle-outline';
+                    else if (route.name === 'Service') iconName = focused ? 'sparkles' : 'sparkles-outline';
+                    else if (route.name === 'Cart') iconName = focused ? 'cart' : 'cart-outline';
+                    else if (route.name === 'Account') iconName = focused ? 'person' : 'person-outline';
 
-                    return <Text style={{ fontSize: 24, color: color }}>{iconName}</Text>;
+                    return <Ionicons name={iconName} size={24} color={color} />;
                 },
                 tabBarLabelStyle: { fontSize: 12, paddingBottom: 5 }
             })}
@@ -69,26 +74,24 @@ export default function AppNavigator() {
                     <Stack.Screen name="ProductDetail" component={ProductDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="Checkout" component={CheckoutScreen} options={{ headerShown: true, title: t('checkout') }} />
 
-                    {/* Static Pages */}
+                    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: true, title: t('forgot_password') || 'Forgot Password' }} />
+
                     <Stack.Screen name="AboutUs" component={AboutUsScreen} options={{ headerShown: true, title: t('about_brand') }} />
                     <Stack.Screen name="Contact" component={ContactScreen} options={{ headerShown: true, title: t('contact') }} />
                     <Stack.Screen name="FAQ" component={FAQScreen} options={{ headerShown: true, title: t('faq') }} />
                     <Stack.Screen name="RetailSystem" component={RetailSystemScreen} options={{ headerShown: true, title: t('retail_system') }} />
                     <Stack.Screen name="Promotions" component={PromotionScreen} options={{ headerShown: true, title: t('promotions') }} />
-
                     <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
 
-                    {/* Profile Screen */}
                     <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
                     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
-
                     <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
 
-                    {/* Admin */}
                     <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ headerShown: false }} />
                     <Stack.Screen name="AdminProductCreate" component={AdminProductCreate} options={{ headerShown: false }} />
 
-                    {/* Error Screens */}
                     <Stack.Screen name="NotFound" component={NotFoundScreen} />
                     <Stack.Screen name="ServerError" component={ServerErrorScreen} />
                 </Stack.Navigator>

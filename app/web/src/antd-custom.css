@@ -511,9 +511,14 @@ a.ant-typography:hover {
     box-shadow: none !important;
 }
 
-/* Modern Notification Styles */
 .ant-notification {
     z-index: 9999 !important;
+}
+
+.ant-notification-notice-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
 }
 
 .ant-notification-notice {
@@ -535,7 +540,7 @@ a.ant-typography:hover {
     font-weight: 700 !important;
     color: #1a1a1a !important;
     margin-bottom: 6px !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Inter', sans-serif, 'Be Vietnam Pro' !important;
     line-height: 1.4 !important;
 }
 
@@ -543,15 +548,25 @@ a.ant-typography:hover {
     font-size: 14px !important;
     color: #666 !important;
     line-height: 1.5 !important;
-    font-family: 'Inter', sans-serif !important;
+    font-family: 'Inter', sans-serif, 'Be Vietnam Pro' !important;
 }
 
 .ant-notification-notice-icon {
     font-size: 24px !important;
     margin-top: 4px !important;
+    position: absolute !important;
+    left: 24px !important;
 }
 
-/* Base styles for all variants */
+.ant-notification-notice-with-icon .ant-notification-notice-message,
+.ant-notification-notice-with-icon .ant-notification-notice-description {
+    margin-left: 36px !important;
+}
+
+.ant-notification-notice-content {
+    display: block !important;
+}
+
 .ant-notification-notice-success,
 .ant-notification-notice-error,
 .ant-notification-notice-warning,
@@ -561,7 +576,6 @@ a.ant-typography:hover {
     border-left-style: solid !important;
 }
 
-/* Success */
 .ant-notification-notice-success {
     border-left-color: #4caf50 !important;
 }
@@ -570,7 +584,6 @@ a.ant-typography:hover {
     color: #4caf50 !important;
 }
 
-/* Error */
 .ant-notification-notice-error {
     border-left-color: #ff4d4f !important;
 }
@@ -579,7 +592,6 @@ a.ant-typography:hover {
     color: #ff4d4f !important;
 }
 
-/* Warning */
 .ant-notification-notice-warning {
     border-left-color: #faad14 !important;
 }
@@ -588,7 +600,6 @@ a.ant-typography:hover {
     color: #faad14 !important;
 }
 
-/* Info */
 .ant-notification-notice-info {
     border-left-color: #1890ff !important;
 }
@@ -597,7 +608,6 @@ a.ant-typography:hover {
     color: #1890ff !important;
 }
 
-/* Close Icon */
 .ant-notification-notice-close {
     top: 18px !important;
     right: 18px !important;

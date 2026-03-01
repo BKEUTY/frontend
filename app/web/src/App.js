@@ -12,6 +12,9 @@ import AdminLayout from "./Component/Admin/AdminLayout";
 import { authRoutes, errorRoutes } from "./routes/authRoutes";
 import { userRoutes } from "./routes/userRoutes";
 import { adminRoutes } from "./routes/adminRoutes";
+import ErrorBoundary from "./Component/ErrorBoundary/ErrorBoundary";
+import React, { Suspense } from 'react';
+import Skeleton from "./Component/Common/Skeleton";
 
 function Layout() {
   const location = useLocation();
@@ -28,29 +31,33 @@ function Layout() {
       {showHeader && <Header />}
 
       <main className={isAdmin || isAuth ? "" : "main_content"}>
-        <Routes>
-          {authRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} index={route.index} />
-          ))}
+        <ErrorBoundary>
+          <Suspense fallback={<div style={{ padding: '20px' }}><Skeleton width="100%" height="400px" /></div>}>
+            <Routes>
+              {authRoutes.map((route, index) => (
+                <Route key={index} path={route.path} element={route.element} index={route.index} />
+              ))}
 
-          {userRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
+              {userRoutes.map((route, index) => (
+                <Route key={index} path={route.path} element={route.element} />
+              ))}
 
-          <Route path="/admin" element={
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          }>
-            {adminRoutes.map((route, index) => (
-              <Route key={index} path={route.path} element={route.element} index={route.index} />
-            ))}
-          </Route>
+              <Route path="/admin" element={
+                <AdminRoute>
+                  <AdminLayout />
+                </AdminRoute>
+              }>
+                {adminRoutes.map((route, index) => (
+                  <Route key={index} path={route.path} element={route.element} index={route.index} />
+                ))}
+              </Route>
 
-          {errorRoutes.map((route, index) => (
-            <Route key={index} path={route.path} element={route.element} />
-          ))}
-        </Routes>
+              {errorRoutes.map((route, index) => (
+                <Route key={index} path={route.path} element={route.element} />
+              ))}
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
       </main>
 
       {showFooter && <Footer />}
@@ -63,13 +70,13 @@ function App() {
   return (
     <LanguageProvider>
       <NotificationProvider>
-        <CartProvider>
-          <Router>
-            <AuthProvider>
+        <Router>
+          <AuthProvider>
+            <CartProvider>
               <Layout />
-            </AuthProvider>
-          </Router>
-        </CartProvider>
+            </CartProvider>
+          </AuthProvider>
+        </Router>
       </NotificationProvider>
     </LanguageProvider>
   );

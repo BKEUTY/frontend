@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Notifications from 'expo-notifications';
 import AppNavigator from './src/Navigation/AppNavigator';
 import { LanguageProvider } from './src/i18n/LanguageContext';
+import { AuthProvider } from './src/Context/AuthContext';
 import { CartProvider } from './src/Context/CartContext';
 import { ToastProvider } from './src/Context/ToastContext';
 import { registerForPushNotificationsAsync } from './src/utils/NotificationService';
@@ -16,11 +17,9 @@ const App = () => {
         registerForPushNotificationsAsync();
 
         notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
-            // handle notification
         });
 
         responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
-            // handle response
         });
 
         return () => {
@@ -32,11 +31,13 @@ const App = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <LanguageProvider>
-                <CartProvider>
-                    <ToastProvider>
-                        <AppNavigator />
-                    </ToastProvider>
-                </CartProvider>
+                <AuthProvider>
+                    <CartProvider>
+                        <ToastProvider>
+                            <AppNavigator />
+                        </ToastProvider>
+                    </CartProvider>
+                </AuthProvider>
             </LanguageProvider>
         </GestureHandlerRootView>
     );

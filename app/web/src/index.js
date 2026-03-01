@@ -1,24 +1,45 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-// CSS Import Order (DO NOT CHANGE):
-// 1. Base styles
+import "@fontsource/be-vietnam-pro/400.css";
+import "@fontsource/be-vietnam-pro/500.css";
+import "@fontsource/be-vietnam-pro/600.css";
+import "@fontsource/be-vietnam-pro/700.css";
+import "@fontsource/be-vietnam-pro/800.css";
 import "./index.css";
-// 2. Global design system
 import "./global.css";
-// 3. Ant Design core styles
 import "antd/dist/reset.css";
-// 4. Ant Design custom theme (overrides)
 import "./antd-custom.css";
-// 5. Component-specific CSS will be imported in components
 
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 5 * 60 * 1000,
+    },
+  },
+});
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </React.StrictMode>
 );
 
 reportWebVitals();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}

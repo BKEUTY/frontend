@@ -1,13 +1,16 @@
+import React, { lazy } from 'react';
 import { Navigate } from "react-router-dom";
-import Dashboard from "../Component/Admin/Dashboard/Dashboard";
-import ProductList from "../Component/Admin/Products/ProductList";
-import ProductCreate from "../Component/Admin/Products/ProductCreate";
-import Placeholder from "../Component/Admin/Placeholder";
+
+const Dashboard = lazy(() => import('../Component/Admin/Dashboard/Dashboard'));
+const ProductList = lazy(() => import('../Component/Admin/Products/ProductList'));
+const ProductCreate = lazy(() => import('../Component/Admin/Products/ProductCreate'));
+const AdminHome = lazy(() => import('../Component/Admin/AdminHome'));
+const DevelopingState = lazy(() => import('../Component/Common/DevelopingState'));
 
 export const adminRoutes = [
     {
         index: true,
-        element: <Navigate to="dashboard" replace />
+        element: <AdminHome />
     },
     {
         path: "dashboard",
@@ -23,22 +26,23 @@ export const adminRoutes = [
     },
     {
         path: "orders",
-        element: <Placeholder title="Orders" />
+        element: <DevelopingState title="Orders Management" />
     },
     {
         path: "services",
-        element: <Placeholder title="Services" />
+        element: <DevelopingState title="Services Management" />
     },
     {
         path: "appointments",
-        element: <Placeholder title="Appointments" />
+        element: <DevelopingState title="Appointments Management" />
     },
     {
         path: "staff",
-        element: <Placeholder title="Staff" />
+        element: <DevelopingState title="Staff Management" />
     },
     {
         path: "reports",
-        element: <Placeholder title="Reports" />
+        element: <DevelopingState title="Reports & Analytics" />
     }
 ];
+

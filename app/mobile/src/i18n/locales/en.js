@@ -554,6 +554,25 @@ export default {
     items_available: "items",
     vat_included: "(VAT included)",
     now_free_badge: "NOWFREE",
-    fast_delivery_details_ext: "Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout. "
+    fast_delivery_details_ext: "Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout. ",
+    variant_selection_label: "Select variation",
+    variant_selected_label: "Selected variation",
+    in_stock_label: "Stock",
+    items_available: "items available",
+    vat_included: "(VAT included)",
+    market_price: "Market price",
+    save: "Save",
+    add_to_bag: "Add to bag",
+    add_to_cart: "Add to cart",
+    how_to_apply: "How to apply",
+    ingredients: "Ingredients",
+    product_details: "Product details",
+    verified_purchase: "Verified purchase",
+    write_review: "Write review",
+    like: "Like",
+    comment: "Comment",
+    related_products: "Related products",
+    add_cart_success: "Added to cart!",
+    buy_now: "Buy now"
 };
 

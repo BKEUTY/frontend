@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
     View, Text, StyleSheet, Image, ScrollView,
-    TouchableOpacity, Dimensions, Alert, SafeAreaView
+    TouchableOpacity, Dimensions, Alert, SafeAreaView,
+    ActivityIndicator
 } from 'react-native';
+import productApi from '../api/productApi';
 import { COLORS } from '../constants/Theme';
 import { useCart } from '../Context/CartContext';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -15,46 +17,53 @@ const ProductDetailScreen = ({ route, navigation }) => {
     const { t } = useLanguage();
     const { addToCart } = useCart();
 
-    const [quantity, setQuantity] = useState(1);
-    const [selectedSize, setSelectedSize] = useState('50ml');
-
-    const mockOptions = [
-        { name: "Màu Sắc", values: ["Nâu", "Vàng"] },
-        { name: "Kích Thước", values: ["XL", "XXL", "XXXL"] }
-    ];
-
-    const mockVariants = [
-        { id: 1, optionValues: ["Nâu", "XL"], price: 150000, stockQuantity: 10 },
-        { id: 2, optionValues: ["Nâu", "XXL"], price: 160000, stockQuantity: 0 },
-        { id: 3, optionValues: ["Nâu", "XXXL"], price: 170000, stockQuantity: 5 },
-        { id: 4, optionValues: ["Vàng", "XL"], price: 155000, stockQuantity: 20 },
-        { id: 5, optionValues: ["Vàng", "XXL"], price: 165000, stockQuantity: 15 },
-        { id: 6, optionValues: ["Vàng", "XXXL"], price: 175000, stockQuantity: 2 }
-    ];
-
+    const [variants, setVariants] = useState([]);
+    const [isLoadingVariants, setIsLoadingVariants] = useState(true);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [currentVariant, setCurrentVariant] = useState(null);
+    const [quantity, setQuantity] = useState(1);
+
+    const productOptions = product.options || [];
 
     useEffect(() => {
-        const initialOptions = {};
-        mockOptions.forEach(opt => {
-            if (opt.values && opt.values.length > 0) {
-                initialOptions[opt.name] = opt.values[0];
+        const fetchVariants = async () => {
+            try {
+                const res = await productApi.getVariants(product.productId || product.id);
+                setVariants(res.data || []);
+            } catch (err) {
+                // Silently handle error for better UX
+            } finally {
+                setIsLoadingVariants(false);
             }
-        });
-        setSelectedOptions(initialOptions);
-    }, []);
+        };
+        fetchVariants();
+    }, [product]);
 
     useEffect(() => {
-        if (Object.keys(selectedOptions).length > 0) {
-            const match = mockVariants.find(v => {
-                return mockOptions.every((opt, index) => {
-                    return v.optionValues[index] === selectedOptions[opt.name];
+        if (productOptions.length > 0) {
+            const initialOptions = {};
+            productOptions.forEach(opt => {
+                if (opt.optionValues && opt.optionValues.length > 0) {
+                    initialOptions[opt.optionName] = opt.optionValues[0];
+                }
+            });
+            setSelectedOptions(initialOptions);
+        }
+    }, [product]);
+
+    useEffect(() => {
+        if (variants.length > 0 && Object.keys(selectedOptions).length > 0) {
+            const match = variants.find(v => {
+                if (!v.optionValues || v.optionValues.length === 0) return false;
+                return productOptions.every(opt => {
+                    const selectedVal = selectedOptions[opt.optionName]?.toString().toLowerCase().trim();
+                    if (!selectedVal) return true;
+                    return v.optionValues.some(vOpt => vOpt?.toString().toLowerCase().trim() === selectedVal);
                 });
             });
             setCurrentVariant(match || null);
         }
-    }, [selectedOptions]);
+    }, [selectedOptions, variants]);
 
     const images = product.images && product.images.length > 0
         ? product.images
@@ -66,13 +75,15 @@ const ProductDetailScreen = ({ route, navigation }) => {
     };
 
     const handleAddToCart = () => {
-        addToCart({
-            id: product.productId || product.id,
-            name: product.name,
-            price: product.price,
-            image: images[0],
-            quantity: quantity
-        });
+        const itemToCart = {
+            id: currentVariant ? currentVariant.id : (product.productId || product.id),
+            name: currentVariant ? `${product.name} - ${currentVariant.productVariantName || currentVariant.displayVariantName}` : product.name,
+            price: currentVariant ? currentVariant.price : (product.price || 0),
+            image: (currentVariant && currentVariant.productImageUrl) ? currentVariant.productImageUrl : images[0],
+            quantity: quantity,
+            isVariant: !!currentVariant
+        };
+        addToCart(itemToCart);
         Alert.alert(t('success'), t('add_cart_success'));
     };
 
@@ -106,52 +117,52 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         <Text style={styles.ratingText}>4.8/5 (124 {t('reviews')})</Text>
                     </View>
 
-                    <View style={styles.flashDealBanner}>
-                        <View style={styles.flashLeft}>
-                            <Ionicons name="flash" size={18} color="white" />
-                            <Text style={styles.flashText}>FLASH DEAL</Text>
-                        </View>
-                        <View style={styles.flashTimer}>
-                            <Text style={styles.timerBox}>02</Text>
-                            <Text style={{ color: 'white' }}>:</Text>
-                            <Text style={styles.timerBox}>45</Text>
-                            <Text style={{ color: 'white' }}>:</Text>
-                            <Text style={styles.timerBox}>12</Text>
-                        </View>
-                    </View>
 
                     <View style={styles.priceBox}>
                         <Text style={styles.currentPrice}>
                             {(currentVariant ? currentVariant.price : (product.price || 0)).toLocaleString("vi-VN")}đ
                         </Text>
-                        <View style={styles.oldPriceRow}>
-                            <Text style={styles.marketPrice}>
-                                {((currentVariant ? currentVariant.price : (product.price || 0)) * 1.2).toLocaleString("vi-VN")}đ
-                            </Text>
-                            <Text style={styles.discountTag}>-20%</Text>
-                        </View>
+                        {isLoadingVariants && <ActivityIndicator size="small" color={COLORS.mainTitle} style={{ alignSelf: 'flex-start', marginTop: 5 }} />}
                     </View>
 
-                    {mockOptions.map((opt, idx) => (
+                    {productOptions.map((opt, idx) => (
                         <View key={idx} style={styles.optionSection}>
-                            <Text style={styles.sectionTitle}>{opt.name}: {selectedOptions[opt.name]}</Text>
+                            <View style={styles.optionLabelRow}>
+                                <Text style={styles.sectionTitle}>{opt.optionName}</Text>
+                                <Text style={styles.selectedOptionText}>: {selectedOptions[opt.optionName]}</Text>
+                            </View>
                             <View style={styles.optionRow}>
-                                {opt.values.map(val => (
+                                {opt.optionValues.map(val => (
                                     <TouchableOpacity
                                         key={val}
-                                        style={[styles.sizeBtn, selectedOptions[opt.name] === val && styles.sizeBtnActive]}
-                                        onPress={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
+                                        style={[
+                                            styles.sizeBtn,
+                                            selectedOptions[opt.optionName]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() && styles.sizeBtnActive
+                                        ]}
+                                        onPress={() => setSelectedOptions(prev => ({ ...prev, [opt.optionName]: val }))}
                                     >
-                                        <Text style={[styles.sizeText, selectedOptions[opt.name] === val && styles.sizeTextActive]}>{val}</Text>
+                                        <Text style={[
+                                            styles.sizeText,
+                                            selectedOptions[opt.optionName]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() && styles.sizeTextActive
+                                        ]}>{val}</Text>
                                     </TouchableOpacity>
                                 ))}
                             </View>
                         </View>
                     ))}
 
+                    {currentVariant && (
+                        <View style={styles.selectedVariantBox}>
+                            <Text style={styles.selectedVariantLabel}>{t('variant_selected_label')}: </Text>
+                            <Text style={styles.selectedVariantValue}>
+                                {currentVariant.optionValues ? currentVariant.optionValues.join(' - ') : currentVariant.productVariantName}
+                            </Text>
+                        </View>
+                    )}
+
                     <View style={{ marginBottom: 15, paddingHorizontal: 5 }}>
                         <Text style={{ color: '#666', fontSize: 13 }}>
-                            {t('in_stock_label')} <Text style={{ fontWeight: 'bold' }}>{currentVariant ? currentVariant.stockQuantity : 0}</Text> {t('items_available')}
+                            {t('in_stock_label')}: <Text style={{ fontWeight: 'bold', color: '#333' }}>{currentVariant ? currentVariant.stockQuantity : 0}</Text> {t('items_available')}
                         </Text>
                     </View>
 
@@ -286,58 +297,14 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         marginBottom: 20
     },
-    flashLeft: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 5
-    },
-    flashText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontStyle: 'italic',
-        fontSize: 16
-    },
-    flashTimer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 3
-    },
-    timerBox: {
-        backgroundColor: 'black',
-        color: 'white',
-        paddingHorizontal: 5,
-        paddingVertical: 2,
-        borderRadius: 4,
-        fontSize: 12,
-        fontWeight: 'bold'
-    },
     priceBox: {
         marginBottom: 20
     },
     currentPrice: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#d32f2f',
+        color: COLORS.mainTitle,
         marginBottom: 5
-    },
-    oldPriceRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    marketPrice: {
-        textDecorationLine: 'line-through',
-        color: '#999',
-        marginRight: 10,
-        fontSize: 14
-    },
-    discountTag: {
-        color: '#d32f2f',
-        fontWeight: 'bold',
-        fontSize: 14,
-        backgroundColor: '#ffebee',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 4
     },
     optionSection: {
         marginBottom: 20,
@@ -347,9 +314,37 @@ const styles = StyleSheet.create({
     },
     sectionTitle: {
         fontSize: 14,
-        fontWeight: '600',
-        marginBottom: 10,
+        fontWeight: '700',
         color: '#333'
+    },
+    optionLabelRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10
+    },
+    selectedOptionText: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: COLORS.mainTitle
+    },
+    selectedVariantBox: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f8fafc',
+        padding: 12,
+        borderRadius: 8,
+        marginBottom: 20,
+        borderWidth: 1,
+        borderColor: '#e2e8f0'
+    },
+    selectedVariantLabel: {
+        fontSize: 14,
+        color: '#64748b'
+    },
+    selectedVariantValue: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: COLORS.mainTitle
     },
     optionRow: {
         flexDirection: 'row',
@@ -365,8 +360,8 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     sizeBtnActive: {
-        borderColor: '#d32f2f',
-        backgroundColor: '#d32f2f'
+        borderColor: COLORS.mainTitle,
+        backgroundColor: COLORS.mainTitle
     },
     sizeText: {
         color: '#333'

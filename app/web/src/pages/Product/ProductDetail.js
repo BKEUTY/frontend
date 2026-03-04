@@ -276,10 +276,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                             {(currentVariant ? currentVariant.price : productData.price).toLocaleString("vi-VN")}đ
                             <span className="vat-tag">{t('vat_included')}</span>
                         </div>
-                        <div className="old-price-row">
-                            <span className="market-price">{t('market_price')}: {(currentVariant ? currentVariant.price * 1.2 : productData.original_price).toLocaleString("vi-VN")}đ</span>
-                            <span className="save-price">{t('save')}: {((currentVariant ? currentVariant.price * 1.2 : productData.original_price) - (currentVariant ? currentVariant.price : productData.price)).toLocaleString("vi-VN")}đ</span>
-                        </div>
                     </div>
 
                     <div className="product-options-section">

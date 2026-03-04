@@ -936,65 +936,6 @@
     }
 }
 
-.flash-deal-banner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background: var(--color_main_title);
-    color: white;
-    padding: 12px 16px;
-    border-radius: 6px;
-    margin-bottom: 25px;
-    font-weight: 600;
-}
-
-.flash-deal-left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 1.05rem;
-    text-transform: uppercase;
-}
-
-.flash-icon {
-    font-size: 1.2rem;
-    animation: pulse 1.5s infinite;
-}
-
-.flash-countdown {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.9rem;
-    font-weight: 500;
-}
-
-.flash-countdown span {
-    background: rgba(0, 0, 0, 0.65);
-    color: white;
-    padding: 3px 6px;
-    border-radius: 4px;
-    font-family: var(--inter_font);
-    font-size: 1rem;
-    font-weight: 700;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-        opacity: 1;
-    }
-
-    50% {
-        transform: scale(1.2);
-        opacity: 0.8;
-    }
-
-    100% {
-        transform: scale(1);
-        opacity: 1;
-    }
-}
 
 .price-box {
     margin-bottom: 25px;
@@ -1015,21 +956,6 @@
     font-weight: 400;
 }
 
-.old-price-row {
-    font-size: 0.95rem;
-    color: #666;
-    margin-top: 5px;
-}
-
-.market-price {
-    text-decoration: line-through;
-    margin-right: 15px;
-}
-
-.save-price {
-    color: var(--color_main_title);
-    font-weight: 600;
-}
 
 .product-options-section {
     display: flex;
@@ -1096,48 +1022,6 @@
     object-fit: contain;
 }
 
-.shipping-info-box {
-    background-color: #fdf2f6;
-    border: 1px solid var(--color_main_title);
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 25px;
-    text-align: left;
-}
-
-.shipping-header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 8px;
-    color: var(--color_main_title);
-    font-size: 1.05rem;
-    font-weight: 600;
-}
-
-.now-free-icon {
-    background: var(--color_main_title);
-    color: white;
-    font-weight: 700;
-    font-style: italic;
-    padding: 3px 8px;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    text-transform: uppercase;
-}
-
-.shipping-desc {
-    font-size: 0.95rem;
-    color: #555;
-    line-height: 1.5;
-}
-
-.link-text {
-    color: #1890ff;
-    cursor: pointer;
-    font-weight: 500;
-    text-decoration: underline;
-}
 
 .actions {
     display: flex;
@@ -1197,12 +1081,6 @@
 }
 
 @media (max-width: 768px) {
-    .flash-deal-banner {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        padding: 12px;
-    }
 
     .current-price {
         font-size: 1.8rem;

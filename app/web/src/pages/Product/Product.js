@@ -102,23 +102,23 @@ export default function Product() {
             <div className="mega-menu">
               <div className="mega-menu-left">
                 <div className="mega-column">
-                  <h3><ExperimentOutlined style={{ marginRight: '8px' }} />{t('makeup')}</h3>
+                  <h3>{t('makeup')}</h3>
                   <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_face')}</Link>
                   <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_lips')}</Link>
                   <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_eyes')}</Link>
                 </div>
                 <div className="mega-column">
-                  <h3><SmileOutlined style={{ marginRight: '8px' }} />{t('skincare')}</h3>
+                  <h3>{t('skincare')}</h3>
                   <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('cleanser')}</Link>
                   <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('toner')}</Link>
                   <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('serum')}</Link>
                 </div>
                 <div className="mega-column">
-                  <h3><ThunderboltOutlined style={{ marginRight: '8px' }} />{t('body_care')}</h3>
+                  <h3>{t('body_care')}</h3>
                   <Link to="/product" className="mega-item">{t('shower_gel')}</Link>
                 </div>
                 <div className="mega-column">
-                  <h3><SafetyOutlined style={{ marginRight: '8px' }} />{t('hair_care')}</h3>
+                  <h3>{t('hair_care')}</h3>
                   <Link to="/product" className="mega-item">{t('shampoo')}</Link>
                 </div>
               </div>
@@ -132,11 +132,8 @@ export default function Product() {
               </div>
             </div>
           </div>
-          <span className="cat-divider">|</span>
           <span className="cat-item">{t('brands')}</span>
-          <span className="cat-divider">|</span>
           <span className="cat-item">{t('best_sellers')}</span>
-          <span className="cat-divider">|</span>
           <span className="cat-item">{t('hot_deals')}</span>
         </div>
         <div className="prod-search-bar-wrapper">

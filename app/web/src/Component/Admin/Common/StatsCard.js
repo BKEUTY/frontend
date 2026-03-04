@@ -2,12 +2,12 @@ import React from 'react';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import './StatsCard.css';
 
-const StatsCard = ({ title, value, icon, trend, trendType, iconClass }) => {
+const StatsCard = ({ title, value, icon, trend, trendType }) => {
     return (
         <div className="beauty-card stat-card">
             <div className="stat-card-content">
                 <div className="stat-card-left">
-                    <div className={`card-icon-wrapper ${iconClass}`}>
+                    <div className="card-icon-wrapper">
                         {icon}
                     </div>
                     <div className="card-stat-label">{title}</div>

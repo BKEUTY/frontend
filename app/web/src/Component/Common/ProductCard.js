@@ -12,7 +12,8 @@ const ProductCard = ({ product, t, language, onClickData }) => {
 
     const id = product.id || product.productId;
     const name = product.name;
-    const price = typeof product.price === 'number' ? `${product.price.toLocaleString("vi-VN")}đ` : product.price;
+    const rawPrice = product.price || 500000;
+    const price = typeof rawPrice === 'number' ? `${rawPrice.toLocaleString("vi-VN")}đ` : rawPrice;
     const brand = product.brand || 'BKEUTY';
     const image = product.image || placeHolderImg;
     const rating = parseFloat(product.rating || 4.8);

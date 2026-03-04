@@ -28,7 +28,7 @@ const Login = () => {
                 navigate('/home');
             }
         } catch (error) {
-            showNotification(t('login_failed') || 'Login Failed', 'error');
+            showNotification(error.message || t('login_failed') || 'Login Failed', 'error');
         } finally {
             setLoading(false);
         }

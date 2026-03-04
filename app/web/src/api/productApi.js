@@ -2,14 +2,10 @@ import BaseApi from './BaseApi';
 
 class ProductApi extends BaseApi {
     constructor() {
-        super('/admin/api/product');
+        super('/api/product');
     }
-
-    // Backend missing getById, keeping hardcode
-    getById(id) {
-        return new Promise((resolve) => {
-            setTimeout(() => resolve({ data: { id, name: "Product " + id } }), 500);
-        });
+    getVariants(id) {
+        return this.client.get(`${this.resource}/${id}/variants`);
     }
 }
 

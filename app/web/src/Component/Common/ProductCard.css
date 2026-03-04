@@ -1,10 +1,10 @@
 .product-card {
     background: white;
-    border-radius: var(--radius-md);
+    border-radius: 12px;
     overflow: hidden;
-    border: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    transition: var(--transition-smooth);
+    border: 1px solid #f1f5f9;
+    box-shadow: none;
+    transition: all 0.2s ease;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -21,14 +21,15 @@
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+    box-shadow: none;
+    border-color: #e2e8f0;
 }
 
 .card-image-wrapper {
     position: relative;
     padding-top: 100%;
-    background: radial-gradient(circle at center, #ffffff 0%, #f9f9f9 100%);
+    background: #f8fafc;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -47,7 +48,7 @@
 }
 
 .product-card:hover .card-image-wrapper img {
-    transform: translate(-50%, -50%) scale(1.1);
+    transform: translate(-50%, -50%) scale(1.05);
 }
 
 .card-badges {
@@ -60,26 +61,7 @@
     z-index: 2;
 }
 
-.badge-red,
-.badge-yellow {
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 800;
-    text-transform: uppercase;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    letter-spacing: 0.5px;
-}
 
-.badge-red {
-    background: linear-gradient(45deg, #ff4757, #ff6b81);
-    color: white;
-}
-
-.badge-yellow {
-    background: linear-gradient(45deg, #ffa502, #ffbc06);
-    color: white;
-}
 
 .card-info {
     padding: 16px;
@@ -186,11 +168,5 @@
     .card-badges {
         top: 8px;
         left: 8px;
-    }
-
-    .badge-red,
-    .badge-yellow {
-        padding: 3px 8px;
-        font-size: 0.65rem;
     }
 }

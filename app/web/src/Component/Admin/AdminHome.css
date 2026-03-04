@@ -35,13 +35,13 @@
 
 .app-card {
     background: white;
-    border-radius: 28px;
-    padding: 32px;
+    border-radius: 16px;
+    padding: 24px;
     height: 100%;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid rgba(0, 0, 0, 0.03);
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
     display: flex;
     flex-direction: column;
     position: relative;
@@ -49,25 +49,27 @@
 }
 
 .app-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.06);
-    border-color: rgba(193, 53, 132, 0.1);
+    border-color: var(--admin-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .app-icon-wrapper {
-    width: 64px;
-    height: 64px;
-    border-radius: 20px;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 32px;
-    margin-bottom: 24px;
-    transition: all 0.3s;
+    font-size: 24px;
+    margin-bottom: 16px;
+    background: #f8fafc;
+    color: #475569;
+    transition: all 0.2s ease;
 }
 
 .app-card:hover .app-icon-wrapper {
-    transform: scale(1.1) rotate(5deg);
+    background: var(--admin-primary);
+    color: white;
 }
 
 .app-info h3 {

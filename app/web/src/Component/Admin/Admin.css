@@ -12,11 +12,11 @@
     --admin-border-color: #eff2f5;
     --admin-font: 'Be Vietnam Pro', sans-serif;
 
-    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.025);
-    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-    --shadow-hover: 0 20px 40px -5px rgba(194, 24, 91, 0.15);
+    --shadow-xs: none;
+    --shadow-sm: none;
+    --shadow-md: none;
+    --shadow-lg: none;
+    --shadow-hover: none;
 
     --radius-md: 14px;
     --radius-lg: 18px;
@@ -28,7 +28,7 @@
     --dock-bg: rgba(255, 255, 255, 0.72);
     --glass-blur: 16px;
     --glass-border: rgba(255, 255, 255, 0.3);
-    --glass-shadow: 0 8px 32px 0 rgba(194, 24, 91, 0.15);
+    --glass-shadow: none;
 }
 
 ::-webkit-scrollbar {
@@ -376,18 +376,17 @@
 
 .beauty-card {
     background: var(--admin-card-bg);
-    border-radius: var(--radius-xl);
-    border: 1px solid rgba(0, 0, 0, 0.02);
-    box-shadow: var(--shadow-sm);
-    transition: all 0.3s ease;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
+    transition: all 0.2s ease;
     margin-bottom: 24px;
     overflow: hidden;
 }
 
 .beauty-card:hover {
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-    border-color: rgba(193, 53, 132, 0.1);
+    border-color: var(--admin-primary);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .admin-layout-container .beauty-card .ant-card-head {
@@ -411,9 +410,9 @@
 
 .admin-label {
     font-weight: 600;
-    color: #374151;
-    font-size: 15px;
-    margin-bottom: 12px;
+    color: #4b5563;
+    font-size: 14px;
+    margin-bottom: 8px;
     display: block;
     letter-spacing: 0.01em;
 }
@@ -421,33 +420,32 @@
 .admin-layout-container .ant-input.admin-input-large,
 .admin-layout-container .ant-input-number.admin-input-large,
 .admin-layout-container .admin-select-large:not(.ant-select-multiple) .ant-select-selector {
-    height: 52px;
-    min-height: 52px;
-    max-height: 52px;
+    height: 50px;
+    min-height: 50px;
+    max-height: 50px;
     line-height: normal;
     font-size: 15px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--admin-border-color);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
     background: #fff;
-    box-shadow: var(--shadow-xs);
+    box-shadow: none;
     padding: 0 16px;
     display: flex;
     align-items: center;
     width: 100%;
     margin: 0;
     box-sizing: border-box;
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .admin-layout-container .ant-select-multiple.admin-select-large .ant-select-selector {
-    min-height: 52px;
+    min-height: 50px;
     height: auto;
     font-size: 15px;
-    border-radius: var(--radius-lg);
-    border: 1px solid var(--admin-border-color);
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
     background: #fff;
-    box-shadow: var(--shadow-xs);
-    padding: 8px 16px;
+    padding: 6px 16px;
     width: 100%;
     margin: 0;
     box-sizing: border-box;
@@ -472,7 +470,8 @@
 .admin-layout-container .ant-input.admin-input-large:focus-within,
 .admin-layout-container .admin-select-large.ant-select-focused .ant-select-selector {
     border-color: var(--admin-primary);
-    box-shadow: 0 0 0 4px rgba(193, 53, 132, 0.1);
+    box-shadow: 0 0 0 4px rgba(194, 24, 91, 0.08);
+    /* Improved brand glow */
     outline: none;
 }
 
@@ -526,14 +525,15 @@
 }
 
 .ant-select-multiple.admin-select-large .ant-select-selection-item {
-    height: 32px;
-    line-height: 30px;
-    background: rgba(193, 53, 132, 0.06);
-    border: 1px solid rgba(193, 53, 132, 0.15);
-    border-radius: 6px;
-    margin: 0 6px 0 0;
-    padding: 0 8px;
-    color: var(--admin-primary);
+    height: 30px;
+    line-height: 28px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin: 2px 6px 2px 0;
+    padding: 0 10px;
+    color: #475569;
+    font-weight: 600;
 }
 
 .ant-select-multiple.admin-select-large .ant-select-selection-overflow {
@@ -603,13 +603,13 @@
 .admin-layout-container .modern-btn-primary {
     background: var(--admin-primary) !important;
     border: none !important;
-    height: 54px !important;
-    padding: 0 44px !important;
-    border-radius: 16px !important;
-    font-weight: 700 !important;
-    font-size: 16px !important;
+    height: 48px !important;
+    padding: 0 32px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    font-size: 15px !important;
     color: white !important;
-    box-shadow: 0 6px 16px rgba(193, 53, 132, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.15) !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -663,13 +663,13 @@
 
 .admin-layout-container .beauty-table .ant-table-thead>tr>th {
     background: #f8fafc;
-    color: #334155;
-    font-weight: 700;
-    padding: 20px 24px;
-    border-bottom: 1px solid var(--admin-border-color);
-    text-transform: uppercase;
-    font-size: 12px;
-    letter-spacing: 0.06em;
+    color: #475569;
+    font-weight: 600;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e2e8f0;
+    text-transform: none;
+    font-size: 14px;
+    letter-spacing: normal;
     vertical-align: middle;
     white-space: nowrap;
 }
@@ -763,12 +763,12 @@
 .admin-layout-container .admin-btn-secondary {
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    height: 54px !important;
-    padding: 0 44px !important;
-    border-radius: 16px !important;
+    height: 48px !important;
+    padding: 0 32px !important;
+    border-radius: 12px !important;
     color: #475569 !important;
     font-weight: 600 !important;
-    font-size: 16px !important;
+    font-size: 15px !important;
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -912,15 +912,24 @@
         background: rgba(255, 255, 255, 0.98);
         box-shadow: 0 12px 36px rgba(0, 0, 0, 0.25);
         border: 1px solid rgba(194, 24, 91, 0.15);
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         white-space: nowrap;
         z-index: 1000;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .admin-floating-dock::-webkit-scrollbar {
+        display: none;
     }
 
     .dock-item {
         width: 44px;
         height: 44px;
+        flex-shrink: 0;
     }
 
     .admin-header-center {
@@ -1104,6 +1113,7 @@
     .dock-item {
         width: 38px;
         height: 38px;
+        flex-shrink: 0;
     }
 
     .admin-layout-container .admin-header .admin-header-right .lang-btn.ant-btn {

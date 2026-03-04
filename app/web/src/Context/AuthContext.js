@@ -13,27 +13,35 @@ export const AuthProvider = ({ children }) => {
     });
 
     const login = async (email, password) => {
-
-        return new Promise((resolve) => {
+        return new Promise((resolve, reject) => {
             setTimeout(() => {
-                let role = 'USER';
-
-                if (email.toLowerCase().includes('admin') || email === 'admin@gmail.com') {
-                    role = 'ADMIN';
+                if (email === 'admin@bkeuty.com' && password === 'admin123') {
+                    const mockUser = {
+                        id: 'admin-001',
+                        email: 'admin@bkeuty.com',
+                        name: 'Admin Bkeuty',
+                        role: 'ADMIN',
+                        token: 'mock-jwt-token-admin'
+                    };
+                    setUser(mockUser);
+                    localStorage.setItem('user', JSON.stringify(mockUser));
+                    localStorage.setItem('token', mockUser.token);
+                    resolve(mockUser);
+                } else if (email === 'user@gmail.com' && password === 'user123') {
+                    const mockUser = {
+                        id: 'user-001',
+                        email: 'user@gmail.com',
+                        name: 'Nguyễn Văn Khách',
+                        role: 'USER',
+                        token: 'mock-jwt-token-user'
+                    };
+                    setUser(mockUser);
+                    localStorage.setItem('user', JSON.stringify(mockUser));
+                    localStorage.setItem('token', mockUser.token);
+                    resolve(mockUser);
+                } else {
+                    reject(new Error('Invalid email or password'));
                 }
-
-                const mockUser = {
-                    id: role === 'ADMIN' ? 'admin-01' : 'user-01',
-                    email: email,
-                    name: role === 'ADMIN' ? 'Admin Bkeuty' : 'Khách tánh',
-                    role: role,
-                    token: 'mock-jwt-token-123456'
-                };
-
-                setUser(mockUser);
-                localStorage.setItem('user', JSON.stringify(mockUser));
-                localStorage.setItem('token', mockUser.token);
-                resolve(mockUser);
             }, 800);
         });
     };

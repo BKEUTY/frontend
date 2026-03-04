@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Button, notification, Card, Typography, Tooltip, Tag, Space, Empty, Modal } from 'antd';
+import { Table, Button, notification, Card, Typography, Tooltip, Tag, Space, Empty } from 'antd';
 import {
     PlusOutlined, SyncOutlined,
     FormOutlined, DeleteOutlined,
@@ -22,8 +22,6 @@ const ProductList = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
 
-    const [previewProduct, setPreviewProduct] = useState(null);
-    const [isPreviewVisible, setIsPreviewVisible] = useState(false);
     const { pagination, setTotal, setCurrent } = usePagination();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
@@ -52,8 +50,8 @@ const ProductList = () => {
 
 
     const handlePreview = (record) => {
-        setPreviewProduct(record);
-        setIsPreviewVisible(true);
+        const id = record.productId || record.id;
+        navigate(`/admin/products/${id}`);
     };
 
     const columns = [
@@ -63,7 +61,7 @@ const ProductList = () => {
             key: 'id',
             width: 100,
             align: 'center',
-            render: (id) => <Text style={{ color: '#64748b', fontFamily: 'monospace', fontWeight: 600 }}>#{id}</Text>
+            render: (id) => <span className="admin-table-id">#{id}</span>
         },
         {
             title: t('admin_product_image'),
@@ -72,14 +70,11 @@ const ProductList = () => {
             width: 120,
             align: 'center',
             render: (src) => (
-                <div style={{
-                    width: 48, height: 48, borderRadius: 12, overflow: 'hidden',
-                    border: '1px solid #f0f0f0', backgroundColor: '#fafafa'
-                }}>
+                <div className="admin-table-image-wrapper">
                     {src ? (
-                        <img src={getImageUrl(src)} alt="p" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        <img src={getImageUrl(src)} alt="p" className="admin-table-image" />
                     ) : (
-                        <ShoppingOutlined style={{ margin: 14, color: '#ccc' }} />
+                        <ShoppingOutlined className="admin-table-image-placeholder" />
                     )}
                 </div>
             )
@@ -88,11 +83,7 @@ const ProductList = () => {
             title: t('admin_product_name'),
             dataIndex: 'name',
             key: 'name',
-            render: (text) => (
-                <Text style={{ fontWeight: 700, color: '#111', fontSize: 15 }}>
-                    {text}
-                </Text>
-            )
+            render: (text) => <span className="admin-table-product-name">{text}</span>
         },
         {
             title: t('admin_product_category'),
@@ -101,7 +92,7 @@ const ProductList = () => {
             render: (cats) => (
                 <Space size={[0, 4]} wrap>
                     {Array.isArray(cats) && cats.map((c, i) => (
-                        <Tag key={i} style={{ borderRadius: 6, border: 'none', background: '#f5f5f5', color: '#666', fontWeight: 600 }}>
+                        <Tag key={i} className="admin-table-tag">
                             {c}
                         </Tag>
                     ))}
@@ -114,32 +105,38 @@ const ProductList = () => {
             width: 150,
             align: 'center',
             fixed: 'right',
-            render: (_, record) => (
-                <Space size="middle">
-                    <Tooltip title={t('preview_product')}>
-                        <Button
-                            type="text"
-                            icon={<EyeOutlined style={{ color: 'var(--admin-secondary)' }} />}
-                            onClick={() => handlePreview(record)}
-                        />
-                    </Tooltip>
-                    <Tooltip title={t('edit')}>
-                        <Button
-                            type="text"
-                            icon={<FormOutlined style={{ color: 'var(--admin-primary)' }} />}
-                            onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
-                        />
-                    </Tooltip>
-                    <Tooltip title={t('delete')}>
-                        <Button
-                            type="text"
-                            danger
-                            icon={<DeleteOutlined />}
-                            onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
-                        />
-                    </Tooltip>
-                </Space>
-            )
+            render: (_, record) => {
+                const id = record.productId || record.id;
+                return (
+                    <Space size="middle">
+                        <Tooltip title={t('preview_product')}>
+                            <Button
+                                type="text"
+                                className="admin-action-btn view-btn"
+                                icon={<EyeOutlined />}
+                                onClick={() => handlePreview(record)}
+                            />
+                        </Tooltip>
+                        <Tooltip title={t('edit')}>
+                            <Button
+                                type="text"
+                                className="admin-action-btn edit-btn"
+                                icon={<FormOutlined />}
+                                onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
+                            />
+                        </Tooltip>
+                        <Tooltip title={t('delete')}>
+                            <Button
+                                type="text"
+                                className="admin-action-btn delete-btn"
+                                danger
+                                icon={<DeleteOutlined />}
+                                onClick={() => notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' })}
+                            />
+                        </Tooltip>
+                    </Space>
+                );
+            }
         },
     ];
 
@@ -198,23 +195,6 @@ const ProductList = () => {
                 />
             </PageWrapper>
 
-            <Modal
-                title={null}
-                open={isPreviewVisible}
-                onCancel={() => setIsPreviewVisible(false)}
-                footer={null}
-                width={1200}
-                centered
-                bodyStyle={{ padding: 0, overflow: 'hidden', borderRadius: 8 }}
-                style={{ top: 20 }}
-                destroyOnClose
-            >
-                {previewProduct && (
-                    <div style={{ height: '90vh', overflowY: 'auto' }}>
-                        <ProductDetail previewProduct={previewProduct} />
-                    </div>
-                )}
-            </Modal>
         </div>
     );
 };

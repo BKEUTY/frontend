@@ -21,52 +21,45 @@ const AdminHome = () => {
     const apps = [
         {
             key: 'dashboard',
-            title: t('dashboard'),
+            title: t('admin_home_dashboard_title'),
             desc: t('admin_home_dashboard_desc'),
-            icon: <ControlOutlined />,
-            color: '#c2185b'
+            icon: <ControlOutlined />
         },
         {
             key: 'orders',
-            title: t('orders'),
+            title: t('admin_home_orders_title'),
             desc: t('admin_home_orders_desc'),
-            icon: <FileTextOutlined />,
-            color: '#1e88e5'
+            icon: <FileTextOutlined />
         },
         {
             key: 'products',
-            title: t('products'),
+            title: t('admin_home_products_title'),
             desc: t('admin_home_products_desc'),
-            icon: <ShoppingOutlined />,
-            color: '#43a047'
+            icon: <ShoppingOutlined />
         },
         {
             key: 'services',
-            title: t('services'),
+            title: t('admin_home_services_title'),
             desc: t('admin_home_services_desc'),
-            icon: <HeartOutlined />,
-            color: '#f4511e'
+            icon: <HeartOutlined />
         },
         {
             key: 'appointments',
-            title: t('appointments'),
+            title: t('admin_home_appointments_title'),
             desc: t('admin_home_appointments_desc'),
-            icon: <ScheduleOutlined />,
-            color: '#8e24aa'
+            icon: <ScheduleOutlined />
         },
         {
             key: 'staff',
-            title: t('staff'),
+            title: t('admin_home_staff_title'),
             desc: t('admin_home_staff_desc'),
-            icon: <UsergroupAddOutlined />,
-            color: '#3949ab'
+            icon: <UsergroupAddOutlined />
         },
         {
             key: 'reports',
-            title: t('reports'),
+            title: t('admin_home_reports_title'),
             desc: t('admin_home_reports_desc'),
-            icon: <PieChartOutlined />,
-            color: '#00897b'
+            icon: <PieChartOutlined />
         }
     ];
 
@@ -81,7 +74,7 @@ const AdminHome = () => {
                 {apps.map((app) => (
                     <Col xs={24} sm={12} md={8} xl={6} key={app.key}>
                         <div className="app-card" onClick={() => navigate(`/admin/${app.key}`)}>
-                            <div className="app-icon-wrapper" style={{ backgroundColor: `${app.color}15`, color: app.color }}>
+                            <div className="app-icon-wrapper">
                                 {app.icon}
                             </div>
                             <div className="app-info">

@@ -22,15 +22,15 @@ import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
 
-export default function ProductDetail({ previewProduct }) {
+export default function ProductDetail({ previewProduct, isAdminView = false }) {
     const { id } = useParams();
     const { t, language } = useLanguage();
     const notify = useNotification();
     const { addToCart } = useCart();
     const location = useLocation();
 
-    const categoryName = location.state?.category || t('all_products');
-    const categoryLink = location.state?.from || '/product';
+    const categoryName = isAdminView ? t('admin_home_products_title') : (location.state?.category || t('all_products'));
+    const categoryLink = isAdminView ? '/admin/products' : (location.state?.from || '/product');
 
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -54,58 +54,8 @@ export default function ProductDetail({ previewProduct }) {
 
     useEffect(() => {
         if (previewProduct) {
-            const mockOptions = [
-                { name: "Màu Sắc", values: ["Nâu", "Vàng"] },
-                { name: "Kích Thước", values: ["XL", "XXL", "XXXL"] }
-            ];
-
-            const mockVariants = [
-                { id: 1, optionValues: ["Nâu", "XL"], price: 150000, stockQuantity: 10 },
-                { id: 2, optionValues: ["Nâu", "XXL"], price: 160000, stockQuantity: 0 },
-                { id: 3, optionValues: ["Nâu", "XXXL"], price: 170000, stockQuantity: 5 },
-                { id: 4, optionValues: ["Vàng", "XL"], price: 155000, stockQuantity: 20 },
-                { id: 5, optionValues: ["Vàng", "XXL"], price: 165000, stockQuantity: 15 },
-                { id: 6, optionValues: ["Vàng", "XXXL"], price: 175000, stockQuantity: 2 }
-            ];
-
-            const mergedData = {
-                id: previewProduct.productId || previewProduct.id,
-                name: previewProduct.name,
-                brand: "BKEUTY",
-                price: previewProduct.price || 0,
-                original_price: (previewProduct.price || 0) * 1.2,
-                rating: 4.8,
-                reviews_count: 124,
-                images: [
-                    previewProduct.image ? getImageUrl(previewProduct.image) : best_selling_image,
-                    best_selling_image,
-                    best_selling_image
-                ],
-                sizes: ["30ml", "50ml", "75ml"],
-                options: mockOptions,
-                variants: mockVariants,
-                content: {
-                    en: {
-                        description: previewProduct.description || "Product description...",
-                        details: "Full details...",
-                        application: "Apply daily...",
-                        ingredients: "Aqua, Glycerin...",
-                        advance: "Advanced formula...",
-                        benefits_list: ["Revitalizing", "Repairing"]
-                    },
-                    vi: {
-                        description: previewProduct.description || "Mô tả sản phẩm...",
-                        details: "Chi tiết...",
-                        application: "Sử dụng hàng ngày...",
-                        ingredients: "Nước, Glycerin...",
-                        advance: "Công thức tiên tiến...",
-                        benefits_list: ["Tái Tạo", "Phục Hồi"]
-                    }
-                },
-                reviews: []
-            };
-            setProductData(mergedData);
-            setMainImage(mergedData.images[0]);
+            setProductData(previewProduct);
+            setMainImage(previewProduct.images?.[0] || best_selling_image);
             setIsLoading(false);
             return;
         }
@@ -114,38 +64,50 @@ export default function ProductDetail({ previewProduct }) {
             setIsLoading(true);
             setIsError(false);
             try {
-                // const response = await productApi.getAll({ page: 0, size: 1000 });
-                // const found = response.data.content.find(p => p.productId === id);
+                const response = await productApi.getById(id);
+                const found = response.data;
+                const variantsResponse = await productApi.getVariants(id);
+                const fetchedVariants = variantsResponse.data || [];
 
-                const found = {
-                    productId: id,
-                    id: id,
-                    name: "Sản phẩm BKEUTY " + id,
-                    price: 1500000,
-                    description: "Đây là dữ liệu chi tiết sản phẩm mẫu (hardcoded) do API chưa sẵn sàng.",
-                    image: null
-                };
                 if (found) {
-                    const mockOptions = [
-                        { name: "Màu Sắc", values: ["Nâu", "Vàng"] },
-                        { name: "Kích Thước", values: ["XL", "XXL", "XXXL"] }
-                    ];
+                    let productOptions = [];
+                    if (found.options && found.options.length > 0) {
+                        productOptions = found.options.map(opt => ({
+                            name: opt.optionName,
+                            values: opt.optionValues || []
+                        }));
+                    } else if (fetchedVariants.length > 0) {
+                        const uniqueCleanedVariants = [...new Set(fetchedVariants.map(v => {
+                            let displayName = v.productVariantName || '';
+                            if (found.name && displayName.startsWith(found.name)) {
+                                displayName = displayName.replace(found.name, '').replace(/^\s*-\s*/, '').trim();
+                            }
+                            if (!displayName || displayName === found.name) {
+                                displayName = (v.optionValues && v.optionValues.length > 0) ? v.optionValues.join(' - ') : v.productVariantName;
+                            }
+                            return displayName;
+                        }))];
 
-                    const mockVariants = [
-                        { id: 1, optionValues: ["Nâu", "XL"], price: 150000, stockQuantity: 10 },
-                        { id: 2, optionValues: ["Nâu", "XXL"], price: 160000, stockQuantity: 0 },
-                        { id: 3, optionValues: ["Nâu", "XXXL"], price: 170000, stockQuantity: 5 },
-                        { id: 4, optionValues: ["Vàng", "XL"], price: 155000, stockQuantity: 20 },
-                        { id: 5, optionValues: ["Vàng", "XXL"], price: 165000, stockQuantity: 15 },
-                        { id: 6, optionValues: ["Vàng", "XXXL"], price: 175000, stockQuantity: 2 }
-                    ];
+                        productOptions = [
+                            { name: t('variant_selection_label') || "Phân loại", values: uniqueCleanedVariants }
+                        ];
+                    }
+
+                    const mappedVariants = fetchedVariants.map(v => ({
+                        id: v.id,
+                        optionValues: (found.options && found.options.length > 0) ? (v.optionValues || []) : [
+                            v.productVariantName.replace(found.name, '').replace(/^\s*-\s*/, '').trim() || v.productVariantName
+                        ],
+                        price: parseFloat(v.price) || 0,
+                        stockQuantity: v.stockQuantity || 0
+                    }));
 
                     const mergedData = {
                         id: found.id || found.productId,
                         name: found.name,
-                        brand: "BKEUTY",
-                        price: found.price,
-                        original_price: found.price * 1.1,
+                        brand: found.brand || "BKEUTY",
+                        price: mappedVariants.length > 0 ? mappedVariants[0].price : 0,
+                        original_price: mappedVariants.length > 0 ? mappedVariants[0].price * 1.1 : 0,
                         rating: 4.8,
                         reviews_count: 124,
                         images: [
@@ -153,9 +115,9 @@ export default function ProductDetail({ previewProduct }) {
                             best_selling_image,
                             best_selling_image
                         ],
-                        sizes: ["30ml", "50ml", "75ml"],
-                        options: mockOptions,
-                        variants: mockVariants,
+                        sizes: ["Default"],
+                        options: productOptions,
+                        variants: mappedVariants,
                         content: {
                             en: {
                                 description: found.description || "Product description...",
@@ -207,8 +169,15 @@ export default function ProductDetail({ previewProduct }) {
     useEffect(() => {
         if (productData && productData.variants && Object.keys(selectedOptions).length > 0) {
             const match = productData.variants.find(v => {
-                return productData.options.every((opt, index) => {
-                    return v.optionValues[index] === selectedOptions[opt.name];
+                if (!v.optionValues || v.optionValues.length === 0) return false;
+
+                return productData.options.every(opt => {
+                    const selectedVal = selectedOptions[opt.name]?.toString().toLowerCase().trim();
+                    if (!selectedVal) return true;
+
+                    return v.optionValues.some(vOpt =>
+                        vOpt?.toString().toLowerCase().trim() === selectedVal
+                    );
                 });
             });
             setCurrentVariant(match || null);
@@ -260,7 +229,6 @@ export default function ProductDetail({ previewProduct }) {
         { id: 'details', label: t('product_details') },
         { id: 'application', label: t('how_to_apply') },
         { id: 'ingredients', label: t('ingredients') },
-        { id: 'advance', label: t('what_makes_it_advance') },
         { id: 'reviews', label: `${t('reviews')} (${productData.reviews_count})` },
     ];
     const isOutOfStock = currentVariant ? currentVariant.stockQuantity === 0 : false;
@@ -302,14 +270,6 @@ export default function ProductDetail({ previewProduct }) {
                         </div>
                     </div>
 
-                    <div className="flash-deal-banner">
-                        <div className="flash-deal-left">
-                            <span className="flash-icon"><ThunderboltFilled /></span> FLASH DEAL
-                        </div>
-                        <div className="flash-countdown">
-                            <ClockCircleOutlined style={{ marginRight: '5px' }} /> {t('ends_in')}: <span>02</span>:<span>04</span>:<span>42</span>
-                        </div>
-                    </div>
 
                     <div className="price-box">
                         <div className="current-price">
@@ -325,26 +285,32 @@ export default function ProductDetail({ previewProduct }) {
                     <div className="product-options-section">
                         {productData.options && productData.options.map((opt, idx) => (
                             <div key={idx} className="option-group">
-                                <span className="option-label">{opt.name}: <strong>{selectedOptions[opt.name]}</strong></span>
+                                <span className="option-label">{opt.name}:</span>
                                 <div className="size-options">
-                                    {opt.values.map(val => {
-                                        // check if variant exists for this choice if want to disable, but simple approach is fine
-                                        return (
-                                            <button
-                                                key={val}
-                                                className={`size-btn ${selectedOptions[opt.name] === val ? 'active' : ''}`}
-                                                onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
-                                            >
-                                                {val}
-                                            </button>
-                                        );
-                                    })}
+                                    {opt.values.map(val => (
+                                        <button
+                                            key={val}
+                                            className={`size-btn ${selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? 'active' : ''}`}
+                                            onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
+                                        >
+                                            {val}
+                                        </button>
+                                    ))}
                                 </div>
                             </div>
                         ))}
 
-                        <div className="stock-info" style={{ marginTop: 10, color: '#666', fontSize: '0.95rem' }}>
-                            {t('in_stock_label')} <strong>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
+                        {currentVariant && (
+                            <div className="selected-variant-info" style={{ marginTop: 10, marginBottom: 25, paddingTop: 15, borderTop: '1px solid #f1f5f9' }}>
+                                <span style={{ fontSize: '0.95rem', color: '#64748b' }}>{t('variant_selected_label')}: </span>
+                                <strong style={{ fontSize: '1.15rem', color: 'var(--color_main_title)' }}>
+                                    {currentVariant.optionValues ? currentVariant.optionValues.join(' - ') : currentVariant.productVariantName}
+                                </strong>
+                            </div>
+                        )}
+
+                        <div className="stock-info" style={{ marginBottom: 20, color: '#334155', fontSize: '0.95rem', fontWeight: 500 }}>
+                            {t('in_stock_label')} <strong style={{ color: 'var(--color_main_title)' }}>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
                         </div>
 
                         <div className="option-group">
@@ -357,25 +323,17 @@ export default function ProductDetail({ previewProduct }) {
                         </div>
                     </div>
 
-                    <div className="shipping-info-box">
-                        <div className="shipping-header">
-                            <span className="now-free-icon">{t('now_free_badge')}</span>
-                            <strong>{t('fast_delivery_2h')}</strong>
-                        </div>
-                        <div className="shipping-desc">
-                            {t('fast_delivery_details_ext')}
-                            <span className="link-text">{t('view_more')}</span>
-                        </div>
-                    </div>
 
-                    <div className="actions">
-                        <button className={`btn-buy-now ${isOutOfStock ? 'disabled' : ''}`} disabled={isOutOfStock}>
-                            <span className="btn-main-text">{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
-                        </button>
-                        <button className={`btn-add-bag ${isOutOfStock ? 'disabled' : ''}`} onClick={handleAddToCart} disabled={isOutOfStock}>
-                            <ShoppingOutlined style={{ marginRight: '8px' }} /> {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
-                        </button>
-                    </div>
+                    {!isAdminView && (
+                        <div className="actions">
+                            <button className={`btn-buy-now ${isOutOfStock ? 'disabled' : ''}`} disabled={isOutOfStock}>
+                                <span className="btn-main-text">{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
+                            </button>
+                            <button className={`btn-add-bag ${isOutOfStock ? 'disabled' : ''}`} onClick={handleAddToCart} disabled={isOutOfStock}>
+                                <ShoppingOutlined style={{ marginRight: '8px' }} /> {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
@@ -410,12 +368,6 @@ export default function ProductDetail({ previewProduct }) {
                         <div className="tab-content">
                             <h3>{t('ingredients')}</h3>
                             <p>{getLocalContent('ingredients')}</p>
-                        </div>
-                    )}
-                    {activeTab === 'advance' && (
-                        <div className="tab-content">
-                            <h3>{t('what_makes_it_advance')}</h3>
-                            <p>{getLocalContent('advance')}</p>
                         </div>
                     )}
                     {activeTab === 'reviews' && (
@@ -492,35 +444,37 @@ export default function ProductDetail({ previewProduct }) {
                 </div>
             </div>
 
-            <div className="recommendations-section">
-                <h2 className="section-title">{t('related_products')}</h2>
-                <div className="product-grid related-products-grid">
-                    {[1, 2, 3, 4, 5].map(i => {
-                        const relatedProduct = {
-                            id: i,
-                            name: "Capture Totale Cell Energy",
-                            brand: "Dior",
-                            price: 3500000,
-                            image: best_selling_image,
-                            rating: 4.8,
-                            sold: 120
-                        };
-                        const clickState = {
-                            category: language === 'vi' ? 'Gợi ý' : 'Related Products',
-                            from: location.pathname
-                        };
-                        return (
-                            <ProductCard
-                                key={i}
-                                product={relatedProduct}
-                                t={t}
-                                language={language}
-                                onClickData={clickState}
-                            />
-                        );
-                    })}
+            {!isAdminView && (
+                <div className="recommendations-section">
+                    <h2 className="section-title">{t('related_products')}</h2>
+                    <div className="product-grid related-products-grid">
+                        {[1, 2, 3, 4, 5].map(i => {
+                            const relatedProduct = {
+                                id: i,
+                                name: "Capture Totale Cell Energy",
+                                brand: "Dior",
+                                price: 3500000,
+                                image: best_selling_image,
+                                rating: 4.8,
+                                sold: 120
+                            };
+                            const clickState = {
+                                category: language === 'vi' ? 'Gợi ý' : 'Related Products',
+                                from: location.pathname
+                            };
+                            return (
+                                <ProductCard
+                                    key={i}
+                                    product={relatedProduct}
+                                    t={t}
+                                    language={language}
+                                    onClickData={clickState}
+                                />
+                            );
+                        })}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

@@ -29,7 +29,6 @@ const Dashboard = () => {
             value: '40,689,000 đ',
             icon: <TransactionOutlined />,
             trend: 8.5,
-            iconClass: 'icon-pink',
             trendType: 'up'
         },
         {
@@ -37,7 +36,6 @@ const Dashboard = () => {
             value: '1,250',
             icon: <ShoppingOutlined />,
             trend: 5.2,
-            iconClass: 'icon-blue',
             trendType: 'up'
         },
         {
@@ -45,7 +43,6 @@ const Dashboard = () => {
             value: '600',
             icon: <ScheduleOutlined />,
             trend: 12,
-            iconClass: 'icon-green',
             trendType: 'up'
         }
     ];
@@ -72,7 +69,7 @@ const Dashboard = () => {
             dataIndex: 'category',
             key: 'category',
             render: (tag) => (
-                <Tag color="magenta" style={{ borderRadius: '8px', border: 'none', background: '#fce7f3', color: '#be185d', fontWeight: 600 }}>
+                <Tag color="magenta" style={{ borderRadius: '6px', border: 'none', fontWeight: 600, padding: '2px 10px' }}>
                     {tag.toUpperCase()}
                 </Tag>
             ),
@@ -88,7 +85,7 @@ const Dashboard = () => {
             dataIndex: 'sold',
             key: 'sold',
             align: 'right',
-            render: (sold) => <span style={{ fontWeight: 700, color: '#ec4899' }}>{sold}</span>,
+            render: (sold) => <span style={{ fontWeight: 700, color: 'var(--admin-primary)' }}>{sold}</span>,
         },
     ];
 
@@ -168,6 +165,7 @@ const Dashboard = () => {
                     dataSource={products}
                     pagination={false}
                     className="admin-modern-table"
+                    scroll={{ x: 'max-content' }}
                 />
             </div>
         </div>

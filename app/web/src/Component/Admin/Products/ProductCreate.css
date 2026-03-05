@@ -286,9 +286,8 @@
 
 @media (max-width: 768px) {
     .admin-layout-container .product-create-container {
-        padding: 20px;
+        padding: 20px 10px 140px 10px;
         margin: 0;
-        padding-bottom: 120px;
     }
 
     .admin-layout-container .product-header-section {
@@ -299,82 +298,62 @@
 
     .admin-layout-container .admin-sticky-footer {
         left: 0;
-        /* Full width on mobile */
-        padding: 16px 20px;
-        flex-direction: row;
-        /* Keep buttons side by side if possible or stack gracefully */
+        padding: 16px;
+        flex-direction: column;
         gap: 12px;
         background: #ffffff;
     }
 
-    .admin-layout-container .admin-sticky-footer .ant-btn,
     .admin-layout-container .admin-sticky-footer button {
         width: 100% !important;
         margin: 0 !important;
     }
 
+    .admin-layout-container .steps-wrapper,
+    .admin-layout-container .modern-steps {
+        padding: 0;
+        margin-bottom: 30px;
+    }
+
     .admin-layout-container .modern-steps .ant-steps-item-title {
         display: none;
     }
-}
 
-@media (max-width: 768px) {
-    .product-create-container {
-        padding: 20px !important;
-        margin: 0 !important;
-        padding-bottom: 140px !important;
+    .admin-layout-container .modern-steps .ant-steps-item-icon {
+        margin: 0 auto;
+        width: 32px;
+        height: 32px;
+        line-height: 32px;
     }
 
-    .admin-sticky-footer {
+    .admin-product-create-preview .product-top-section {
         flex-direction: column;
-        gap: 16px;
-        padding: 24px 20px;
+        padding: 16px !important;
     }
 
-    .admin-sticky-footer .ant-btn {
-        width: 100%;
-    }
-
-    .steps-wrapper {
-        padding: 0 !important;
-        margin-bottom: 40px !important;
-    }
-
-    .modern-steps {
-        padding: 0 !important;
-        margin-bottom: 40px !important;
-    }
-
-    .modern-steps .ant-steps-item-title {
-        display: none;
-    }
-
-    .modern-steps .ant-steps-item-icon {
-        margin: 0 auto !important;
-        width: 32px !important;
-        height: 32px !important;
-        line-height: 32px !important;
-        font-size: 14px !important;
+    .admin-product-create-preview .product-gallery {
+        width: 100% !important;
+        padding-right: 0;
+        margin-bottom: 24px;
     }
 
     .admin-product-create-preview .actions {
-        flex-direction: column !important;
-        gap: 12px !important;
+        flex-direction: column;
+        gap: 12px;
     }
 
-    .admin-product-create-preview .actions button,
-    .admin-product-create-preview .actions .ant-btn {
+    .admin-product-create-preview .actions button {
         width: 100% !important;
         margin: 0 !important;
     }
 
     .admin-product-create-preview .preview-title-input {
-        font-size: 1.5rem !important;
+        font-size: 1.4rem !important;
     }
 
     .admin-product-create-preview .product-info-side {
-        padding: 16px !important;
-        margin-top: 20px;
+        padding: 16px;
+        margin-top: 10px;
     }
 }
 

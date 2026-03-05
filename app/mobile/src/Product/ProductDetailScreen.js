@@ -29,7 +29,29 @@ const ProductDetailScreen = ({ route, navigation }) => {
         const fetchVariants = async () => {
             try {
                 const res = await productApi.getVariants(product.productId || product.id);
-                setVariants(res.data || []);
+                const fetchedVariants = (res.data || []).map(v => {
+                    let sortedOptionValues = [];
+                    if (productOptions && productOptions.length > 0) {
+                        if (v.optionValues && v.optionValues.length > 0) {
+                            sortedOptionValues = productOptions.map(opt => {
+                                return v.optionValues.find(vVal =>
+                                    opt.optionValues.some(optVal =>
+                                        optVal.toString().toLowerCase().trim() === vVal.toString().toLowerCase().trim()
+                                    )
+                                );
+                            }).filter(Boolean);
+                        }
+                    } else {
+                        sortedOptionValues = [
+                            v.productVariantName.replace(product.name, '').replace(/^\s*-\s*/, '').trim() || v.productVariantName
+                        ];
+                    }
+                    return {
+                        ...v,
+                        optionValues: sortedOptionValues.length > 0 ? sortedOptionValues : (v.optionValues || [])
+                    };
+                });
+                setVariants(fetchedVariants);
             } catch (err) {
                 // Silently handle error for better UX
             } finally {

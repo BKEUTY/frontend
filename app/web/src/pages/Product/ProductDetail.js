@@ -93,14 +93,32 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                         ];
                     }
 
-                    const mappedVariants = fetchedVariants.map(v => ({
-                        id: v.id,
-                        optionValues: (found.options && found.options.length > 0) ? (v.optionValues || []) : [
-                            v.productVariantName.replace(found.name, '').replace(/^\s*-\s*/, '').trim() || v.productVariantName
-                        ],
-                        price: parseFloat(v.price) || 0,
-                        stockQuantity: v.stockQuantity || 0
-                    }));
+                    const mappedVariants = fetchedVariants.map(v => {
+                        let sortedOptionValues = [];
+                        if (found.options && found.options.length > 0) {
+                            if (v.optionValues && v.optionValues.length > 0) {
+                                sortedOptionValues = found.options.map(opt => {
+                                    return v.optionValues.find(vVal =>
+                                        opt.optionValues.some(optVal =>
+                                            optVal.toString().toLowerCase().trim() === vVal.toString().toLowerCase().trim()
+                                        )
+                                    );
+                                }).filter(Boolean);
+                            }
+                        } else {
+                            sortedOptionValues = [
+                                v.productVariantName.replace(found.name, '').replace(/^\s*-\s*/, '').trim() || v.productVariantName
+                            ];
+                        }
+
+                        return {
+                            id: v.id,
+                            optionValues: sortedOptionValues.length > 0 ? sortedOptionValues : (v.optionValues || []),
+                            price: parseFloat(v.price) || 0,
+                            stockQuantity: v.stockQuantity || 0
+                        };
+                    });
+
 
                     const mergedData = {
                         id: found.id || found.productId,

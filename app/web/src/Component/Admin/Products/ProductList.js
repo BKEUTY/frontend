@@ -1,5 +1,5 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Button, notification, Card, Typography, Tooltip, Tag, Space, Empty } from 'antd';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { Table, Button, notification, Typography, Tooltip, Tag, Space, Modal } from 'antd';
 import {
     PlusOutlined, SyncOutlined,
     FormOutlined, DeleteOutlined,
@@ -10,8 +10,8 @@ import adminApi from '../../../api/adminApi';
 import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import usePagination from '../../../hooks/usePagination';
-import PageWrapper from '../../Common/PageWrapper';
 import EmptyState from '../../Common/EmptyState';
+import PageWrapper from '../../Common/PageWrapper';
 import './ProductList.css';
 import ProductDetail from '../../../pages/Product/ProductDetail';
 
@@ -54,12 +54,48 @@ const ProductList = () => {
         navigate(`/admin/products/${id}`);
     };
 
+    const touchTimer = useRef(null);
+    const isLongPressing = useRef(false);
+    const [actionModalVisible, setActionModalVisible] = useState(false);
+    const [selectedRecord, setSelectedRecord] = useState(null);
+
+    const handleTouchStart = (record) => {
+        isLongPressing.current = false;
+        touchTimer.current = setTimeout(() => {
+            isLongPressing.current = true;
+            setSelectedRecord(record);
+            setActionModalVisible(true);
+        }, 500); // 500ms long press
+    };
+
+    const handleTouchEnd = () => {
+        if (touchTimer.current) {
+            clearTimeout(touchTimer.current);
+        }
+    };
+
+    const handleClickRow = (record) => {
+        if (!isLongPressing.current) {
+            handlePreview(record);
+        }
+    };
+
+    const handleEdit = (record) => {
+        notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' });
+        setActionModalVisible(false);
+    };
+
+    const handleDelete = (record) => {
+        notification.info({ message: 'Info', description: 'Coming soon', key: 'coming_soon' });
+        setActionModalVisible(false);
+    };
+
     const columns = [
         {
             title: 'ID',
             dataIndex: 'productId',
             key: 'id',
-            width: 100,
+            width: 80,
             align: 'center',
             render: (id) => <span className="admin-table-id">#{id}</span>
         },
@@ -83,12 +119,15 @@ const ProductList = () => {
             title: t('admin_product_name'),
             dataIndex: 'name',
             key: 'name',
+            width: 280,
             render: (text) => <span className="admin-table-product-name">{text}</span>
         },
         {
             title: t('admin_product_category'),
             dataIndex: 'categories',
             key: 'categories',
+            width: 200,
+            responsive: ['md'],
             render: (cats) => (
                 <Space size={[0, 4]} wrap>
                     {Array.isArray(cats) && cats.map((c, i) => (
@@ -102,21 +141,14 @@ const ProductList = () => {
         {
             title: t('admin_product_action'),
             key: 'action',
-            width: 150,
+            width: 120,
             align: 'center',
             fixed: 'right',
+            responsive: ['md'],
             render: (_, record) => {
                 const id = record.productId || record.id;
                 return (
                     <Space size="middle">
-                        <Tooltip title={t('preview_product')}>
-                            <Button
-                                type="text"
-                                className="admin-action-btn view-btn"
-                                icon={<EyeOutlined />}
-                                onClick={() => handlePreview(record)}
-                            />
-                        </Tooltip>
                         <Tooltip title={t('edit')}>
                             <Button
                                 type="text"
@@ -184,7 +216,7 @@ const ProductList = () => {
                     }}
                     loading={loading}
                     onChange={handleTableChange}
-                    scroll={{ x: 1000 }}
+                    scroll={{ x: 'max-content' }}
                     locale={{
                         emptyText: (
                             <EmptyState
@@ -192,9 +224,34 @@ const ProductList = () => {
                             />
                         )
                     }}
+                    onRow={(record) => ({
+                        onClick: () => handleClickRow(record),
+                        onTouchStart: () => handleTouchStart(record),
+                        onTouchEnd: handleTouchEnd,
+                        onTouchMove: handleTouchEnd,
+                        onTouchCancel: handleTouchEnd,
+                        style: { cursor: 'pointer' }
+                    })}
                 />
             </PageWrapper>
 
+            <Modal
+                open={actionModalVisible}
+                onCancel={() => setActionModalVisible(false)}
+                footer={null}
+                title={selectedRecord ? `#${selectedRecord.productId || selectedRecord.id} - ${selectedRecord.name}` : t('admin_product_action')}
+                centered
+                width={320}
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: 20 }}>
+                    <Button type="primary" size="large" icon={<FormOutlined />} onClick={() => handleEdit(selectedRecord)}>
+                        {t('edit')}
+                    </Button>
+                    <Button danger size="large" icon={<DeleteOutlined />} onClick={() => handleDelete(selectedRecord)}>
+                        {t('delete')}
+                    </Button>
+                </div>
+            </Modal>
         </div>
     );
 };

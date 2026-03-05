@@ -310,7 +310,7 @@ const ProductCreateScreen = ({ navigation }) => {
                             </View>
                         ) : (
                             <View style={styles.variantRow}>
-                                <View style={{ flex: 1 }}>
+                                <View style={{ flexBasis: '46%', minWidth: 100, flexGrow: 1 }}>
                                     <AdminInput
                                         label={t('admin_label_price')}
                                         placeholder={t('admin_placeholder_price')}
@@ -320,8 +320,7 @@ const ProductCreateScreen = ({ navigation }) => {
                                         onChangeText={(val) => handleVariantChange(variant.id, 'price', val)}
                                     />
                                 </View>
-                                <View style={{ width: 12 }} />
-                                <View style={{ flex: 1 }}>
+                                <View style={{ flexBasis: '46%', minWidth: 100, flexGrow: 1 }}>
                                     <AdminInput
                                         label={t('admin_label_stock')}
                                         placeholder={t('admin_placeholder_stock')}
@@ -744,7 +743,10 @@ const styles = StyleSheet.create({
     },
     variantRow: {
         flexDirection: 'row',
-        gap: 10,
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        rowGap: 8,
+        columnGap: 12,
     },
     smallInput: {
         flex: 1,

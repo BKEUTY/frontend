@@ -130,15 +130,15 @@ const ProductCreate = () => {
 
         setLoading(true);
         try {
-            const payload = {
+            await adminApi.createOption({
                 productId: createdProductId,
                 productOptionValues: validOptions.map(opt => ({
                     optionName: opt.name,
                     optionValues: opt.values
                 }))
-            };
+            });
 
-            await adminApi.createOption(payload);
+
             notification.success({
                 message: t('success'),
                 description: t('admin_msg_options_success'),
@@ -476,7 +476,7 @@ const ProductCreate = () => {
                                             <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 700, color: '#1e293b' }}>{t('admin_step_variants')}</h3>
                                             <div className="custom-scrollbar" style={{ maxHeight: '460px', overflowY: 'auto', paddingRight: 8 }}>
                                                 {variants.map(record => (
-                                                    <div key={record.id} className="variant-row">
+                                                    <div key={record.id} className="variant-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
                                                         <div className="variant-image-upload">
                                                             <Upload showUploadList={false} beforeUpload={(file) => handleVariantImageUpload(record.id, file)}>
                                                                 {(record.image || record.productImageUrl) ? (
@@ -488,12 +488,12 @@ const ProductCreate = () => {
                                                                 )}
                                                             </Upload>
                                                         </div>
-                                                        <div style={{ flex: 1, minWidth: 0, display: 'flex', alignItems: 'center', gap: 20 }}>
-                                                            <div style={{ flex: 1, minWidth: 120, fontWeight: 600, color: '#333', fontSize: '0.9rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                                        <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+                                                            <div style={{ fontWeight: 600, color: '#333', fontSize: '0.9rem', whiteSpace: 'normal', wordBreak: 'break-word' }}>
                                                                 {record.displayVariantName || record.productVariantName}
                                                             </div>
-                                                            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                                                                <div style={{ width: 140 }}>
+                                                            <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
+                                                                <div style={{ flex: '1 1 120px' }}>
                                                                     <InputNumber
                                                                         placeholder={t('admin_placeholder_price')}
                                                                         value={record.price}
@@ -504,7 +504,7 @@ const ProductCreate = () => {
                                                                         onChange={(val) => handleVariantChange(record.id, 'price', val)}
                                                                     />
                                                                 </div>
-                                                                <div style={{ width: 120 }}>
+                                                                <div style={{ flex: '1 1 100px' }}>
                                                                     <InputNumber
                                                                         placeholder={t('admin_placeholder_stock')}
                                                                         value={record.stockQuantity}

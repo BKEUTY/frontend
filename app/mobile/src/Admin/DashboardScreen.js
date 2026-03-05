@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Platform, useWindowDimensions } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, FlatList, TouchableOpacity, Platform, useWindowDimensions, Modal } from 'react-native';
 import { MaterialCommunityIcons, Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { COLORS } from '../../constants/Theme';
@@ -92,8 +92,31 @@ const DashboardScreen = () => {
         );
     };
 
+    const [actionModalVisible, setActionModalVisible] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+
+    const handleLongPressProduct = (product) => {
+        setSelectedProduct(product);
+        setActionModalVisible(true);
+    };
+
+    const handleEditProduct = () => {
+        setActionModalVisible(false);
+        // navigation.navigate('AdminProductCreate', { productId: selectedProduct.id });
+    };
+
+    const handleDeleteProduct = () => {
+        setActionModalVisible(false);
+        // Handle delete logic
+    };
+
     const renderProductItem = ({ item }) => (
-        <View style={styles.productItem}>
+        <TouchableOpacity
+            style={styles.productItem}
+            activeOpacity={0.7}
+            onLongPress={() => handleLongPressProduct(item)}
+            delayLongPress={500}
+        >
             <View style={styles.productIcon}>
                 <MaterialCommunityIcons name="package-variant-closed" size={24} color={COLORS.mainTitle} />
             </View>
@@ -105,9 +128,9 @@ const DashboardScreen = () => {
             </View>
             <View style={styles.productMeta}>
                 <Text style={styles.productPrice}>{item.price}</Text>
-                <Text style={styles.productSold}>{t('sold', 'Sold')}: {item.sold}</Text>
+                <Text style={styles.productSold}>{t('sold', 'Đã bán')}: {item.sold}</Text>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     return (
@@ -161,6 +184,46 @@ const DashboardScreen = () => {
                 </View>
             </View>
             <View style={{ height: 100 }} />
+
+            <Modal
+                visible={actionModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setActionModalVisible(false)}
+            >
+                <TouchableOpacity
+                    style={styles.modalOverlay}
+                    activeOpacity={1}
+                    onPress={() => setActionModalVisible(false)}
+                >
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>
+                                {selectedProduct ? `${t('admin_product_action')}: ${selectedProduct.name}` : t('admin_product_action')}
+                            </Text>
+                            <TouchableOpacity onPress={() => setActionModalVisible(false)}>
+                                <Ionicons name="close" size={24} color="#64748b" />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.modalBody}>
+                            <TouchableOpacity style={styles.modalActionBtn} onPress={handleEditProduct}>
+                                <View style={[styles.modalActionIcon, { backgroundColor: '#eff6ff' }]}>
+                                    <FontAwesome5 name="edit" size={18} color="#3b82f6" />
+                                </View>
+                                <Text style={styles.modalActionText}>{t('edit', 'Chỉnh sửa')}</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={[styles.modalActionBtn, styles.modalActionBtnDanger]} onPress={handleDeleteProduct}>
+                                <View style={[styles.modalActionIcon, { backgroundColor: '#fef2f2' }]}>
+                                    <MaterialCommunityIcons name="delete-outline" size={20} color="#ef4444" />
+                                </View>
+                                <Text style={[styles.modalActionText, { color: '#ef4444' }]}>{t('delete', 'Xóa')}</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
         </ScrollView>
     );
 };
@@ -372,6 +435,70 @@ const styles = StyleSheet.create({
         fontSize: 14,
         color: '#94a3b8',
         fontWeight: '500',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        borderRadius: 24,
+        width: '100%',
+        maxWidth: 340,
+        padding: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+        elevation: 10,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 20,
+        paddingBottom: 16,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f1f5f9',
+    },
+    modalTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1e293b',
+        flex: 1,
+        marginRight: 12,
+    },
+    modalBody: {
+        gap: 12,
+    },
+    modalActionBtn: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        backgroundColor: '#f8fafc',
+        borderRadius: 16,
+    },
+    modalActionBtnDanger: {
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#fee2e2',
+    },
+    modalActionIcon: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    modalActionText: {
+        fontSize: 15,
+        fontWeight: '600',
+        color: '#334155',
     },
 });
 

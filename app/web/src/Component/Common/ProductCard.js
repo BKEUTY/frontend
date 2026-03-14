@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Badge, Rate, Typography, Space } from 'antd';
 import placeHolderImg from '../../Assets/Images/Products/product_placeholder.svg';
+import { getImageUrl } from '../../api/axiosClient';
 import './ProductCard.css';
 
 const { Meta } = Card;
@@ -10,12 +11,12 @@ const { Text, Title } = Typography;
 const ProductCard = ({ product, t, language, onClickData }) => {
     const navigate = useNavigate();
 
-    const id = product.id || product.productId;
+    const idForDetail = product.id;
     const name = product.name;
-    const rawPrice = product.price || 500000;
+    const rawPrice = product.minPrice || 0;
     const price = typeof rawPrice === 'number' ? `${rawPrice.toLocaleString("vi-VN")}đ` : rawPrice;
     const brand = product.brand || 'BKEUTY';
-    const image = product.image || placeHolderImg;
+    const image = product.image ? getImageUrl(product.image) : placeHolderImg;
     const rating = parseFloat(product.rating || 4.8);
 
     let sold = product.sold || 120;
@@ -28,7 +29,7 @@ const ProductCard = ({ product, t, language, onClickData }) => {
     const tag = product.tag;
 
     const handleClick = () => {
-        const path = `/product/${id}`;
+        const path = `/product/${idForDetail}`;
         navigate(path, { state: onClickData });
     };
 

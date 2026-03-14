@@ -17,6 +17,7 @@ import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
 import product_placeholder from '../../../Assets/Images/Products/product_placeholder.svg';
 import '../../../pages/Product/ProductDetail.css';
+import { CButton, CInput } from '../../Common';
 import './ProductCreate.css';
 
 const { Option } = Select;
@@ -56,29 +57,7 @@ const ProductCreate = () => {
             const res = await adminApi.createProduct(payload);
             if (res.status === 201 || res.status === 200) {
                 const newProduct = res.data;
-                const newProductId = newProduct.id;
-                setCreatedProductId(newProductId);
-
-                if (values.image && values.image.file) {
-                    try {
-                        const uploadRes = await adminApi.uploadProductImage(values.image.file.originFileObj, newProductId);
-                        if (uploadRes.data && uploadRes.data.url) {
-                            const imageUrl = uploadRes.data.url;
-                            await adminApi.updateProduct({
-                                id: newProductId,
-                                name: values.name,
-                                image: imageUrl
-                            });
-                        }
-                    } catch (uploadErr) {
-                        notification.warning({
-                            message: t('warning'),
-                            description: t('admin_error_upload_img'),
-                            key: 'admin_error_upload_img'
-                        });
-                    }
-                }
-
+                setCreatedProductId(newProduct.id);
                 notification.success({
                     message: t('success'),
                     description: t('admin_msg_create_success'),
@@ -87,7 +66,46 @@ const ProductCreate = () => {
                 setCurrentStep(1);
             }
         } catch (error) {
+            notification.error({
+                message: t('error'),
+                description: t('admin_error_create'),
+                key: 'admin_error_create'
+            });
+        } finally {
+            setLoading(false);
+        }
+    };
 
+    const handleUploadProductImage = async () => {
+        if (!createdProductId || !imageField?.file) {
+            setCurrentStep(2);
+            return;
+        }
+
+        setLoading(true);
+        try {
+            const uploadRes = await adminApi.uploadProductImage(imageField.file.originFileObj, createdProductId);
+            if (uploadRes.data && uploadRes.data.url) {
+                const imageUrl = uploadRes.data.url;
+                await adminApi.updateProduct({
+                    id: createdProductId,
+                    name: form.getFieldValue('name'),
+                    image: imageUrl
+                });
+
+                notification.success({
+                    message: t('success'),
+                    description: t('admin_msg_upload_success'),
+                    key: 'admin_msg_upload_success'
+                });
+                setCurrentStep(2);
+            }
+        } catch (error) {
+            notification.error({
+                message: t('error'),
+                description: t('admin_error_upload_img'),
+                key: 'admin_error_upload_img'
+            });
         } finally {
             setLoading(false);
         }
@@ -138,16 +156,19 @@ const ProductCreate = () => {
                 }))
             });
 
-
             notification.success({
                 message: t('success'),
                 description: t('admin_msg_options_success'),
                 key: 'admin_msg_options_success'
             });
             await fetchVariants(createdProductId);
-            setCurrentStep(2);
+            setCurrentStep(3);
         } catch (error) {
-
+            notification.error({
+                message: t('error'),
+                description: t('admin_error_options_save'),
+                key: 'admin_error_options_save'
+            });
         } finally {
             setLoading(false);
         }
@@ -174,13 +195,11 @@ const ProductCreate = () => {
 
                 fetchedVariants = fetchedVariants.map((v, idx) => {
                     const comboValues = suffixes[idx] ? suffixes[idx].split(' - ') : [];
-                    // Only show the attributes (suffixes) in the variant list
                     const shortName = suffixes[idx] || v.productVariantName || '';
                     return {
                         ...v,
                         displayVariantName: shortName,
                         optionValues: comboValues,
-                        // Keep a full name for the backend if needed, or rely on logic during save
                         fullVariantNameForBackend: `${v.productName || ''} - ${shortName}`
                     };
                 });
@@ -195,6 +214,30 @@ const ProductCreate = () => {
             }
 
             setVariants(fetchedVariants);
+
+            // Reconstruct optionTypes from variants if current state is empty/default
+            const isDefault = optionTypes.length === 1 && optionTypes[0].values.length === 0;
+            if (isDefault && fetchedVariants.length > 0) {
+                const map = {};
+                fetchedVariants.forEach(v => {
+                    if (v.variantOptions) {
+                        Object.entries(v.variantOptions).forEach(([name, val]) => {
+                            if (!map[name]) map[name] = new Set();
+                            map[name].add(val);
+                        });
+                    }
+                });
+                const derived = Object.entries(map).map(([name, values]) => ({
+                    name, 
+                    values: Array.from(values)
+                }));
+                if (derived.length > 0) {
+                    setOptionTypes(derived);
+                    const initial = {};
+                    derived.forEach(d => { if(d.values.length > 0) initial[d.name] = d.values[0]; });
+                    setSelectedOptions(initial);
+                }
+            }
         } catch (error) {
 
         }
@@ -295,7 +338,8 @@ const ProductCreate = () => {
                     items={[
                         { title: t('admin_step_1') },
                         { title: t('admin_step_2') },
-                        { title: t('admin_step_3') }
+                        { title: t('admin_step_3') },
+                        { title: t('admin_step_4') }
                     ]}
                 />
             </div>
@@ -309,7 +353,7 @@ const ProductCreate = () => {
                             <div className="thumb-item"><img src={product_placeholder} alt="thumb" /></div>
                         </div>
                         <div className="main-image" style={{ padding: 0, border: '1px solid #f9f9f9', background: '#fff', overflow: 'hidden', borderRadius: '8px' }}>
-                            {currentStep === 0 ? (
+                            {currentStep === 1 ? (
                                 <Form.Item name="image" style={{ margin: 0, width: '100%', height: '100%' }} form={form}>
                                     <Upload.Dragger maxCount={1} beforeUpload={() => false} showUploadList={false} className="admin-upload-dragger" style={{ minHeight: '100%', border: 'none', background: 'transparent' }}>
                                         {imageField ? (
@@ -332,14 +376,15 @@ const ProductCreate = () => {
                     <div className="product-info-side">
                         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 15 }}>
                             <div className="brand-label" style={{ marginBottom: 0 }}>BKEUTY</div>
-                            <Button
-                                type={isPreview ? "primary" : "default"}
+                            <CButton
+                                type={isPreview ? "primary" : "outline"}
                                 icon={isPreview ? <EditOutlined /> : <EyeOutlined />}
                                 onClick={() => setIsPreview(!isPreview)}
-                                style={{ borderRadius: '6px', fontSize: '0.9rem', height: 36, borderColor: '#ddd', fontWeight: 600 }}
+                                size="small"
+                                style={{ borderRadius: '6px', fontSize: '0.85rem', height: 34, minWidth: 100 }}
                             >
                                 {isPreview ? t('admin_btn_edit_mode') : t('admin_btn_preview')}
-                            </Button>
+                            </CButton>
                         </div>
 
                         {isPreview ? (
@@ -357,13 +402,23 @@ const ProductCreate = () => {
                                 <div className="product-options-section" style={{ borderTop: '1px solid #f1f5f9', paddingTop: 20 }}>
                                     {optionTypes.filter(opt => opt.name && opt.values.length > 0).map((opt, index) => (
                                         <div key={index} className="option-group" style={{ marginBottom: 15 }}>
-                                            <span className="option-label">{opt.name}:</span>
-                                            <div className="size-options">
+                                            <span className="option-label" style={{ fontWeight: 600, color: '#475569' }}>{opt.name}:</span>
+                                            <div className="size-options" style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                                                 {opt.values.map((v, i) => (
                                                     <button
                                                         key={i}
                                                         className={`size-btn ${selectedOptions[opt.name]?.toString().toLowerCase().trim() === v?.toString().toLowerCase().trim() ? 'active' : ''}`}
                                                         onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: v }))}
+                                                        style={{ 
+                                                            padding: '8px 16px', 
+                                                            borderRadius: '8px', 
+                                                            border: '1px solid #e2e8f0', 
+                                                            background: selectedOptions[opt.name] === v ? 'var(--color_main_title)' : '#fff',
+                                                            color: selectedOptions[opt.name] === v ? '#fff' : '#475569',
+                                                            cursor: 'pointer',
+                                                            fontWeight: 600,
+                                                            transition: 'all 0.2s'
+                                                        }}
                                                     >
                                                         {v}
                                                     </button>
@@ -388,9 +443,20 @@ const ProductCreate = () => {
 
 
                                 <div className="actions" style={{ marginTop: 25 }}>
-                                    <Button type="primary" className="btn-add-bag" style={{ width: '100%', height: 50, borderRadius: '8px', fontSize: '1rem', fontWeight: 700 }}>
-                                        {t('add_to_bag')}
-                                    </Button>
+                                    <CButton 
+                                        type="primary" 
+                                        block 
+                                        size="large"
+                                        onClick={() => {
+                                            notification.info({
+                                                message: t('info'),
+                                                description: t('admin_preview_mode_msg'),
+                                                key: 'preview-mode-msg'
+                                            });
+                                        }}
+                                    >
+                                        {t('add_to_cart')}
+                                    </CButton>
                                 </div>
                             </div>
                         ) : (
@@ -421,16 +487,32 @@ const ProductCreate = () => {
                                         </Form.Item>
 
                                         <div className="actions" style={{ marginTop: 'auto' }}>
-                                            <Button type="primary" htmlType="submit" loading={loading} className="btn-add-bag" style={{ width: '100%' }}>
-                                                {t('admin_btn_create_continue')} <ArrowRightOutlined />
-                                            </Button>
-                                        </div>
+                                             <CButton type="primary" htmlType="submit" loading={loading} block size="large" className="admin-btn">
+                                                 {t('admin_btn_create_continue')} <ArrowRightOutlined style={{ marginLeft: 8 }} />
+                                             </CButton>
+                                         </div>
                                     </Form>
                                 )}
 
                                 {currentStep === 1 && (
+                                    <div className="image-upload-step">
+                                        <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 600, color: '#333' }}>{t('admin_step_2')}</h3>
+                                        <p style={{ color: '#64748b', marginBottom: 25 }}>{t('admin_label_image')}</p>
+
+                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%' }}>
+                                            <CButton type="secondary" onClick={() => setCurrentStep(0)} style={{ flex: 1 }}>
+                                                {t('back')}
+                                            </CButton>
+                                            <CButton type="primary" onClick={handleUploadProductImage} loading={loading} style={{ flex: 2 }} className="admin-btn">
+                                                 {t('admin_btn_upload_continue')} <ArrowRightOutlined style={{ marginLeft: 8 }} />
+                                             </CButton>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {currentStep === 2 && (
                                     <div className="product-options-section" style={{ marginTop: 10 }}>
-                                        <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 600, color: '#333' }}>{t('admin_step_options')}</h3>
+                                        <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 600, color: '#333' }}>{t('admin_step_3')}</h3>
                                         {optionTypes.map((opt, index) => (
                                             <div key={index} className="option-group">
                                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 12, alignItems: 'center', width: '100%' }}>
@@ -446,7 +528,7 @@ const ProductCreate = () => {
                                                 <Select
                                                     mode="tags"
                                                     className="admin-select-large"
-                                                    placeholder={t('admin_placeholder_option_values')}
+                                                    placeholder={t('admin_placeholder_option_values_short')}
                                                     style={{ width: '100%' }}
                                                     value={opt.values}
                                                     onChange={(val) => handleOptionValuesChange(index, val)}
@@ -455,25 +537,25 @@ const ProductCreate = () => {
                                                 />
                                             </div>
                                         ))}
-                                        <Button type="dashed" onClick={handleAddOptionType} icon={<PlusOutlined />} style={{ width: '100%', height: 44, borderRadius: '4px', borderColor: '#ddd', marginTop: 15 }}>
+                                        <CButton type="dashed" onClick={handleAddOptionType} icon={<PlusOutlined />} style={{ width: '100%' }}>
                                             {t('admin_btn_add_option')}
-                                        </Button>
+                                        </CButton>
 
-                                        <div className="actions" style={{ marginTop: 30, display: 'flex', gap: 15, width: '100%' }}>
-                                            <Button onClick={() => setCurrentStep(0)} style={{ flex: 1, height: 46, borderRadius: '4px', border: '1px solid #ddd' }}>
+                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%' }}>
+                                            <CButton type="secondary" onClick={() => setCurrentStep(1)} style={{ flex: 1 }}>
                                                 {t('back')}
-                                            </Button>
-                                            <Button type="primary" onClick={handleSubmitOptions} loading={loading} className="btn-add-bag" style={{ flex: 2, margin: 0 }}>
-                                                {t('admin_btn_gen_variants')} <ArrowRightOutlined style={{ marginLeft: 8 }} />
-                                            </Button>
+                                            </CButton>
+                                            <CButton type="primary" onClick={handleSubmitOptions} loading={loading} style={{ flex: 2 }} className="admin-btn">
+                                                 {t('admin_btn_gen_variants')} <ArrowRightOutlined style={{ marginLeft: 8 }} />
+                                             </CButton>
                                         </div>
                                     </div>
                                 )}
 
-                                {currentStep === 2 && (
+                                {currentStep === 3 && (
                                     <div className="product-variants-edit-section">
                                         <div className="product-variants-section" style={{ marginTop: 10 }}>
-                                            <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 700, color: '#1e293b' }}>{t('admin_step_variants')}</h3>
+                                            <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 700, color: '#1e293b' }}>{t('admin_step_4')}</h3>
                                             <div className="custom-scrollbar" style={{ maxHeight: '460px', overflowY: 'auto', paddingRight: 8 }}>
                                                 {variants.map(record => (
                                                     <div key={record.id} className="variant-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
@@ -494,6 +576,7 @@ const ProductCreate = () => {
                                                             </div>
                                                             <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
                                                                 <div style={{ flex: '1 1 120px' }}>
+                                                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: 4 }}>{t('admin_label_price')}</div>
                                                                     <InputNumber
                                                                         placeholder={t('admin_placeholder_price')}
                                                                         value={record.price}
@@ -505,6 +588,7 @@ const ProductCreate = () => {
                                                                     />
                                                                 </div>
                                                                 <div style={{ flex: '1 1 100px' }}>
+                                                                    <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginBottom: 4 }}>{t('admin_label_stock')}</div>
                                                                     <InputNumber
                                                                         placeholder={t('admin_placeholder_stock')}
                                                                         value={record.stockQuantity}
@@ -520,13 +604,13 @@ const ProductCreate = () => {
                                             </div>
                                         </div>
 
-                                        <div className="actions" style={{ marginTop: 30, display: 'flex', gap: 15, width: '100%', paddingTop: 20 }}>
-                                            <Button onClick={() => setCurrentStep(1)} style={{ flex: 1, height: 46, borderRadius: '4px', border: '1px solid #ddd' }}>
+                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%', paddingTop: 20 }}>
+                                            <CButton type="secondary" onClick={() => setCurrentStep(2)} style={{ flex: 1 }}>
                                                 {t('back')}
-                                            </Button>
-                                            <Button type="primary" className="btn-add-bag" onClick={handleSaveVariants} loading={loading} style={{ flex: 2, margin: 0 }}>
-                                                <CheckCircleOutlined style={{ marginRight: 8 }} /> {t('admin_btn_save_finish')}
-                                            </Button>
+                                            </CButton>
+                                            <CButton type="primary" onClick={handleSaveVariants} loading={loading} style={{ flex: 2 }} className="admin-btn">
+                                                 <CheckCircleOutlined style={{ marginRight: 8 }} /> {t('admin_btn_save_finish')}
+                                             </CButton>
                                         </div>
                                     </div>
                                 )}

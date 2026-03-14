@@ -21,6 +21,9 @@ self.addEventListener('install', event => {
 
 // Cache and return requests
 self.addEventListener('fetch', event => {
+    // Skip non-HTTP(S) requests (like chrome-extension://)
+    if (!(event.request.url.indexOf('http') === 0)) return;
+
     if (event.request.mode === 'navigate') {
         event.respondWith(
             fetch(event.request).catch(() => {
@@ -31,11 +34,13 @@ self.addEventListener('fetch', event => {
         event.respondWith(
             caches.match(event.request)
                 .then(response => {
-                    // Cache hit - return response
                     if (response) {
                         return response;
                     }
-                    return fetch(event.request);
+                    return fetch(event.request).catch(err => {
+                        // Silent fail for static assets or log if needed
+                        console.debug('Fetch failed inside SW:', event.request.url);
+                    });
                 })
         );
     }

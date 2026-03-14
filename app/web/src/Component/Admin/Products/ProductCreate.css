@@ -177,7 +177,7 @@
     align-items: center !important;
     gap: 10px !important;
     box-shadow: none !important;
-    margin-bottom: 12px !important;
+    margin-bottom: 24px !important;
 }
 
 .admin-product-create-preview .option-group .option-label {
@@ -215,6 +215,15 @@
     gap: 16px;
     z-index: 1000;
     box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.04);
+}
+
+.admin-product-create-preview .actions {
+    margin-top: 48px !important;
+}
+
+.admin-product-create-preview .ant-btn-dashed {
+    margin-top: 24px !important;
+    margin-bottom: 8px !important;
 }
 
 .admin-product-create-preview .product-variants-section {
@@ -298,15 +307,19 @@
 
     .admin-layout-container .admin-sticky-footer {
         left: 0;
-        padding: 16px;
-        flex-direction: column;
+        padding: 12px 20px;
+        flex-direction: row;
+        justify-content: space-between;
         gap: 12px;
-        background: #ffffff;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
     }
 
     .admin-layout-container .admin-sticky-footer button {
-        width: 100% !important;
+        flex: 1;
+        height: 48px !important;
         margin: 0 !important;
+        font-size: 14px;
     }
 
     .admin-layout-container .steps-wrapper,
@@ -315,15 +328,27 @@
         margin-bottom: 30px;
     }
 
-    .admin-layout-container .modern-steps .ant-steps-item-title {
-        display: none;
-    }
-
     .admin-layout-container .modern-steps .ant-steps-item-icon {
         margin: 0 auto;
-        width: 32px;
-        height: 32px;
-        line-height: 32px;
+        width: 36px;
+        height: 36px;
+        line-height: 36px;
+        font-size: 16px;
+    }
+
+    .admin-layout-container .modern-steps .ant-steps-item-title {
+        display: block;
+        font-size: 10px;
+        line-height: 1.2 !important;
+        margin-top: 4px;
+        text-align: center;
+        width: 100%;
+        color: #64748b !important;
+    }
+
+    .admin-layout-container .modern-steps .ant-steps-item-process .ant-steps-item-title {
+        font-weight: 800;
+        color: var(--admin-primary) !important;
     }
 
     .admin-product-create-preview .product-top-section {
@@ -339,7 +364,8 @@
 
     .admin-product-create-preview .actions {
         flex-direction: column;
-        gap: 12px;
+        gap: 16px;
+        margin-top: 40px !important;
     }
 
     .admin-product-create-preview .actions button {

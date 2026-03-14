@@ -4,7 +4,7 @@ import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd'
 import { MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useAuth } from '../../Context/AuthContext';
-import { useNotification } from '../../Context/NotificationContext';
+import { notifyError, notifySuccess } from '../../utils/NotificationService';
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/auth_background.png';
 
@@ -15,32 +15,42 @@ const Login = () => {
     const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
     const { login } = useAuth();
-    const showNotification = useNotification();
 
     const onFinish = async (values) => {
         setLoading(true);
         try {
             const user = await login(values.email, values.password);
 
-            if (user.role === 'ADMIN') {
-                navigate('/admin/dashboard');
+            notifySuccess('success', t('login_success'));
+
+            if (user?.role === 'ADMIN') {
+                navigate('/admin');
             } else {
                 navigate('/home');
             }
         } catch (error) {
-            showNotification(error.message || t('login_failed') || 'Login Failed', 'error');
+            const errorRaw = error.response?.data;
+            let descriptionKey = 'api_error_login';
+
+            if (errorRaw === 'Wrong credentials') {
+                descriptionKey = 'api_error_wrong_credentials';
+            } else if (error.response?.status === 401) {
+                descriptionKey = 'api_error_invalid_credentials';
+            }
+
+            notifyError('error', descriptionKey);
         } finally {
             setLoading(false);
         }
     };
 
     const handleSocialLogin = (provider) => {
-        showNotification(`${t('login_with', 'Login with')} ${provider}`, 'info');
+        // Fix: Đã sửa lỗi gọi hàm showNotification không tồn tại
+        notifySuccess('info', `${t('login_with', 'Tính năng đăng nhập')} ${provider} ${t('coming_soon', 'đang được phát triển!')}`);
     };
 
     return (
         <div className="auth-container">
-
             <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
                 <div className="auth-image-overlay">
                     <div className="auth-brand-section">
@@ -49,7 +59,6 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-
 
             <div className="auth-form-side">
                 <div className="auth-lang-switch">

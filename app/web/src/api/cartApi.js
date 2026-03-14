@@ -1,8 +1,8 @@
 import axiosClient from "./axiosClient";
 
 const cartApi = {
-    getAll: (userId) => {
-        const url = `/api/cart/${userId}`;
+    getAll: () => {
+        const url = '/api/cart';
         return axiosClient.get(url, { errorMessage: 'api_error_fetch_cart' });
     },
     add: (data) => {

@@ -5,6 +5,7 @@ import { useNotification } from "../../Context/NotificationContext";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useCart } from "../../Context/CartContext";
 import product_cart_image from "../../Assets/Images/Products/product_placeholder_rect.svg";
+import { getImageUrl } from "../../api/axiosClient";
 import {
   DeleteOutlined,
   ShoppingOutlined,
@@ -147,8 +148,9 @@ export default function Cart() {
                       <img
                         className="cart-product-img"
                         loading="lazy"
-                        src={product_cart_image}
+                        src={product.image ? getImageUrl(product.image) : product_cart_image}
                         alt="product"
+                        onError={(e) => { e.target.src = product_cart_image }}
                       />
                     </div>
                     <div className="cart-product-details">

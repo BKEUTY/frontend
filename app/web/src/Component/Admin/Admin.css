@@ -603,9 +603,9 @@
 .admin-layout-container .modern-btn-primary {
     background: var(--admin-primary) !important;
     border: none !important;
-    height: 48px !important;
-    padding: 0 32px !important;
-    border-radius: 12px !important;
+    height: 54px !important;
+    padding: 0 40px !important;
+    border-radius: 14px !important;
     font-weight: 600 !important;
     font-size: 15px !important;
     color: white !important;
@@ -763,9 +763,9 @@
 .admin-layout-container .admin-btn-secondary {
     background: #ffffff !important;
     border: 1px solid #e2e8f0 !important;
-    height: 48px !important;
-    padding: 0 32px !important;
-    border-radius: 12px !important;
+    height: 54px !important;
+    padding: 0 40px !important;
+    border-radius: 14px !important;
     color: #475569 !important;
     font-weight: 600 !important;
     font-size: 15px !important;

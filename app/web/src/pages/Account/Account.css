@@ -98,51 +98,70 @@
 .membership-container {
     display: inline-flex;
     align-items: center;
-    gap: 12px;
-    background: #f1f2f6;
-    padding: 6px 16px;
-    border-radius: 99px;
-    height: 36px;
-    box-sizing: border-box;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02);
+    gap: 20px;
+    background: #f8fafc;
+    padding: 12px 24px;
+    border-radius: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    border: 1px solid #f1f2f6;
+    margin-left: auto;
 }
 
-.points-progress-bar {
-    width: 80px;
-    height: 8px;
-    background-color: #e0e0e0;
-    border-radius: 4px;
-    overflow: hidden;
-    margin: 0 4px;
+.membership-badge-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
 }
 
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #ffd700, #fbc531);
-    border-radius: 4px;
+.spending-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 200px;
 }
 
-.points-text {
-    font-size: 13px;
+.spending-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
     font-weight: 700;
-    color: #57606f;
-    line-height: 1;
-    white-space: nowrap;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.spending-current {
+    color: var(--color_main_title);
+}
+
+.vip-progress {
+    width: 100% !important;
+    height: 10px !important;
+    background-color: #f1f5f9 !important;
+    margin: 0 !important;
+}
+
+.vip-fill {
+    background: linear-gradient(90deg, #ffd700, #ff8c00, var(--color_main_title)) !important;
+    border-radius: 5px;
+}
+
+.next-level-text {
+    font-size: 11px;
+    color: #94a3b8;
+    font-weight: 500;
 }
 
 .premium-badge {
-    background-color: #00d2d3;
+    background: linear-gradient(135deg, #00d2d3 0%, #00a8a8 100%);
     color: white;
-    padding: 3px 10px;
-    border-radius: 10px;
-    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
     font-weight: 800;
     text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 20px;
-    line-height: 1;
+    box-shadow: 0 4px 10px rgba(0, 210, 211, 0.2);
 }
 
 .info-form-layout {
@@ -386,6 +405,21 @@
         padding: 0 15px;
         margin-top: 20px;
         gap: 20px;
+    }
+
+    .membership-container {
+        width: 100%;
+        margin-top: 15px;
+        justify-content: center;
+        padding: 15px;
+        box-sizing: border-box;
+        margin-left: 0;
+        flex-direction: row;
+    }
+
+    .spending-info {
+        min-width: 0;
+        flex: 1;
     }
 
     .account-sidebar {

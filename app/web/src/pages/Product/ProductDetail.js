@@ -14,6 +14,7 @@ import {
     ClockCircleOutlined,
     ArrowRightOutlined
 } from '@ant-design/icons';
+import { CButton } from '../../Component/Common';
 import best_selling_image from "../../Assets/Images/Products/product_placeholder.svg";
 import Pagination from "../../Component/Common/Pagination";
 import ProductCard from "../../Component/Common/ProductCard";
@@ -66,92 +67,71 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
             try {
                 const response = await productApi.getById(id);
                 const found = response.data;
-                const variantsResponse = await productApi.getVariants(id);
-                const fetchedVariants = variantsResponse.data || [];
 
                 if (found) {
-                    let productOptions = [];
-                    if (found.options && found.options.length > 0) {
-                        productOptions = found.options.map(opt => ({
-                            name: opt.optionName,
-                            values: opt.optionValues || []
-                        }));
-                    } else if (fetchedVariants.length > 0) {
-                        const uniqueCleanedVariants = [...new Set(fetchedVariants.map(v => {
-                            let displayName = v.productVariantName || '';
-                            if (found.name && displayName.startsWith(found.name)) {
-                                displayName = displayName.replace(found.name, '').replace(/^\s*-\s*/, '').trim();
-                            }
-                            if (!displayName || displayName === found.name) {
-                                displayName = (v.optionValues && v.optionValues.length > 0) ? v.optionValues.join(' - ') : v.productVariantName;
-                            }
-                            return displayName;
-                        }))];
+                    const mappedVariants = (found.variants || []).map(v => ({
+                        id: v.id,
+                        variantOptions: v.variantOptions || {},
+                        price: parseFloat(v.price) || 0,
+                        stockQuantity: v.stockQuantity || 0,
+                        image: v.productImageUrl ? getImageUrl(v.productImageUrl) : null,
+                        productVariantName: v.productVariantName
+                    }));
 
-                        productOptions = [
-                            { name: t('variant_selection_label') || "Phân loại", values: uniqueCleanedVariants }
-                        ];
+                    const variantImages = mappedVariants
+                        .map(v => v.image)
+                        .filter(img => img !== null && img !== "");
+
+                    let options = found.options || [];
+                    if (options.length === 0) {
+                        const optionsMap = {};
+                        mappedVariants.forEach(v => {
+                            if (v.variantOptions) {
+                                Object.entries(v.variantOptions).forEach(([name, val]) => {
+                                    if (!optionsMap[name]) optionsMap[name] = new Set();
+                                    optionsMap[name].add(val);
+                                });
+                            }
+                        });
+
+                        options = Object.entries(optionsMap).map(([name, valuesSet]) => ({
+                            name: name,
+                            values: Array.from(valuesSet)
+                        }));
                     }
 
-                    const mappedVariants = fetchedVariants.map(v => {
-                        let sortedOptionValues = [];
-                        if (found.options && found.options.length > 0) {
-                            if (v.optionValues && v.optionValues.length > 0) {
-                                sortedOptionValues = found.options.map(opt => {
-                                    return v.optionValues.find(vVal =>
-                                        opt.optionValues.some(optVal =>
-                                            optVal.toString().toLowerCase().trim() === vVal.toString().toLowerCase().trim()
-                                        )
-                                    );
-                                }).filter(Boolean);
-                            }
-                        } else {
-                            sortedOptionValues = [
-                                v.productVariantName.replace(found.name, '').replace(/^\s*-\s*/, '').trim() || v.productVariantName
-                            ];
-                        }
-
-                        return {
-                            id: v.id,
-                            optionValues: sortedOptionValues.length > 0 ? sortedOptionValues : (v.optionValues || []),
-                            price: parseFloat(v.price) || 0,
-                            stockQuantity: v.stockQuantity || 0
-                        };
-                    });
-
-
                     const mergedData = {
-                        id: found.id || found.productId,
-                        name: found.name,
-                        brand: found.brand || "BKEUTY",
+                        id: found.id,
+                        productId: found.id,
+                        name: found.name || "Sản phẩm BKEUTY",
+                        brand: "BKEUTY",
                         price: mappedVariants.length > 0 ? mappedVariants[0].price : 0,
                         original_price: mappedVariants.length > 0 ? mappedVariants[0].price * 1.1 : 0,
                         rating: 4.8,
                         reviews_count: 124,
                         images: [
                             found.image ? getImageUrl(found.image) : best_selling_image,
-                            best_selling_image,
+                            ...variantImages,
                             best_selling_image
-                        ],
-                        sizes: ["Default"],
-                        options: productOptions,
+                        ].filter(Boolean).slice(0, 5),
+                        options: options,
                         variants: mappedVariants,
                         content: {
                             en: {
-                                description: found.description || "Product description...",
-                                details: "Full details...",
-                                application: "Apply daily...",
-                                ingredients: "Aqua, Glycerin...",
-                                advance: "Advanced formula...",
-                                benefits_list: ["Revitalizing", "Repairing"]
+                                description: found.description || "High-quality BKEUTY skincare product.",
+                                details: "This product is formulated with natural ingredients to provide the best results for your skin health and beauty.",
+                                application: "1. Cleanse your skin.\n2. Apply a proper amount to the targeted area.\n3. Massage gently until absorbed.",
+                                ingredients: "Aqua, Glycerin, Botanical Extracts, Vitamins, Natural Oils.",
+                                advance: "Advanced dermatological technology.",
+                                benefits_list: ["Revitalizing", "Repairing", "Moisturizing"]
                             },
                             vi: {
-                                description: found.description || "Mô tả sản phẩm...",
-                                details: "Chi tiết...",
-                                application: "Sử dụng hàng ngày...",
-                                ingredients: "Nước, Glycerin...",
-                                advance: "Công thức tiên tiến...",
-                                benefits_list: ["Tái Tạo", "Phục Hồi"]
+                                description: found.description || "Sản phẩm chăm sóc da cao cấp từ BKEUTY.",
+                                details: "Sản phẩm được chiết xuất từ thành phần tự nhiên, giúp nuôi dưỡng làn da khỏe mạnh và rạng rỡ từ bên trong.",
+                                application: "1. Làm sạch da.\n2. Thoa một lượng vừa đủ lên vùng da cần chăm sóc.\n3. Massage nhẹ nhàng để dưỡng chất thấm sâu.",
+                                ingredients: "Nước khoáng, Glycerin, Chiết xuất thảo mộc, Vitamin, Tinh dầu tự nhiên.",
+                                advance: "Công nghệ da liễu tiên tiến.",
+                                benefits_list: ["Tái Tạo", "Phục Hồi", "Dưỡng Ẩm"]
                             }
                         },
                         reviews: []
@@ -187,20 +167,24 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
     useEffect(() => {
         if (productData && productData.variants && Object.keys(selectedOptions).length > 0) {
             const match = productData.variants.find(v => {
-                if (!v.optionValues || v.optionValues.length === 0) return false;
-
-                return productData.options.every(opt => {
-                    const selectedVal = selectedOptions[opt.name]?.toString().toLowerCase().trim();
-                    if (!selectedVal) return true;
-
-                    return v.optionValues.some(vOpt =>
-                        vOpt?.toString().toLowerCase().trim() === selectedVal
-                    );
+                if (!v.variantOptions || Object.keys(v.variantOptions).length === 0) return false;
+                
+                // Compare all selected options with variant options
+                return Object.entries(selectedOptions).every(([optName, selectedVal]) => {
+                    const vVal = v.variantOptions[optName];
+                    if (!vVal || !selectedVal) return false;
+                    return vVal.toString().toLowerCase().trim() === selectedVal.toString().toLowerCase().trim();
                 });
             });
             setCurrentVariant(match || null);
         }
     }, [selectedOptions, productData]);
+
+    useEffect(() => {
+        if (currentVariant && currentVariant.image) {
+            setMainImage(currentVariant.image);
+        }
+    }, [currentVariant]);
 
     const totalReviewPages = productData ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
     const displayedReviews = productData ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage) : [];
@@ -235,10 +219,13 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
     const handleAddToCart = () => {
         addToCart({
             id: productData.id,
+            productId: productData.id,
+            variantId: currentVariant?.id,
             name: productData.name,
-            price: productData.price,
+            price: currentVariant ? currentVariant.price : productData.price,
             image: mainImage,
-            quantity: quantity
+            quantity: quantity,
+            variantDisplay: currentVariant?.variantOptions ? Object.values(currentVariant.variantOptions).join(' - ') : (currentVariant?.productVariantName || '')
         });
         notify(t('add_cart_success'), "success");
     };
@@ -273,7 +260,11 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                         ))}
                     </div>
                     <div className="main-image">
-                        <img src={mainImage} alt={productData.name} />
+                        <img 
+                            src={mainImage} 
+                            alt={productData.name} 
+                            onError={(e) => { e.target.src = best_selling_image }}
+                        />
                     </div>
                 </div>
 
@@ -296,16 +287,31 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                         </div>
                     </div>
 
-                    <div className="product-options-section">
+                    <div className="product-options-section" style={{ borderTop: '2px solid #f8fafc', borderBottom: '2px solid #f8fafc', padding: '30px 0', margin: '30px 0' }}>
                         {productData.options && productData.options.map((opt, idx) => (
-                            <div key={idx} className="option-group">
-                                <span className="option-label">{opt.name}:</span>
-                                <div className="size-options">
+                            <div key={idx} className="option-group" style={{ marginBottom: 25 }}>
+                                <span className="option-label" style={{ fontWeight: 800, color: '#0f172a', marginBottom: 15, display: 'block', fontSize: '1.05rem', letterSpacing: '0.5px' }}>{opt.name.toUpperCase()}:</span>
+                                <div className="size-options" style={{ display: 'flex', flexWrap: 'wrap', gap: 15 }}>
                                     {opt.values.map(val => (
                                         <button
                                             key={val}
                                             className={`size-btn ${selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? 'active' : ''}`}
                                             onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
+                                            style={{
+                                                padding: '14px 28px',
+                                                borderRadius: '14px',
+                                                border: selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? '2px solid var(--color_main_title)' : '2px solid #f1f5f9',
+                                                background: selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? 'var(--color_main_title)' : '#fff',
+                                                color: selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? '#fff' : '#475569',
+                                                fontWeight: 800,
+                                                fontSize: '1rem',
+                                                transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
+                                                cursor: 'pointer',
+                                                boxShadow: selectedOptions[opt.name] === val ? '0 10px 20px rgba(194, 24, 91, 0.2)' : 'none',
+                                                minWidth: '90px',
+                                                textAlign: 'center',
+                                                transform: selectedOptions[opt.name] === val ? 'translateY(-2px)' : 'none'
+                                            }}
                                         >
                                             {val}
                                         </button>
@@ -318,7 +324,9 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                             <div className="selected-variant-info" style={{ marginTop: 10, marginBottom: 25, paddingTop: 15, borderTop: '1px solid #f1f5f9' }}>
                                 <span style={{ fontSize: '0.95rem', color: '#64748b' }}>{t('variant_selected_label')}: </span>
                                 <strong style={{ fontSize: '1.15rem', color: 'var(--color_main_title)' }}>
-                                    {currentVariant.optionValues ? currentVariant.optionValues.join(' - ') : currentVariant.productVariantName}
+                                    {currentVariant.variantOptions && Object.keys(currentVariant.variantOptions).length > 0
+                                        ? Object.values(currentVariant.variantOptions).join(' - ')
+                                        : currentVariant.productVariantName}
                                 </strong>
                             </div>
                         )}
@@ -338,16 +346,37 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                     </div>
 
 
-                    {!isAdminView && (
-                        <div className="actions">
-                            <button className={`btn-buy-now ${isOutOfStock ? 'disabled' : ''}`} disabled={isOutOfStock}>
-                                <span className="btn-main-text">{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
-                            </button>
-                            <button className={`btn-add-bag ${isOutOfStock ? 'disabled' : ''}`} onClick={handleAddToCart} disabled={isOutOfStock}>
-                                <ShoppingOutlined style={{ marginRight: '8px' }} /> {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
-                            </button>
-                        </div>
-                    )}
+                    <div className="actions" style={{ width: '100%', maxWidth: '550px' }}>
+                        <CButton
+                            type="primary"
+                            disabled={!isAdminView && isOutOfStock}
+                            onClick={() => {
+                                if (isAdminView) {
+                                    notify(t('admin_preview_mode_msg'), "info");
+                                } else {
+                                    notify(t('feature_developing_title'), "info");
+                                }
+                            }}
+                            style={{ flex: 1, minWidth: '140px', height: 52 }}
+                        >
+                            <span className="btn-main-text">{(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('buy_now')}</span>
+                        </CButton>
+                        <CButton
+                            type="outline"
+                            disabled={!isAdminView && isOutOfStock}
+                            onClick={() => {
+                                if (isAdminView) {
+                                    notify(t('admin_preview_mode_msg'), "info");
+                                } else {
+                                    handleAddToCart();
+                                }
+                            }}
+                            style={{ flex: 1.5, minWidth: '220px', height: 52 }}
+                            icon={<ShoppingOutlined />}
+                        >
+                            {(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('add_to_cart')}
+                        </CButton>
+                    </div>
                 </div>
             </div>
 

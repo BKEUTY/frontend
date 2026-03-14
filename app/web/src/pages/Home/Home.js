@@ -8,6 +8,8 @@ import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
 import about_image from "../../Assets/Images/Banners/banner_about_us.svg";
 
+import productApi from '../../api/productApi';
+
 const bannerImages = [banner1, banner2];
 
 const Home = () => {
@@ -16,29 +18,19 @@ const Home = () => {
     const [currentBanner, setCurrentBanner] = useState(0);
 
     const fetchHomeData = async () => {
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                const mockProducts = [
-                    { id: 1, name: 'Kem Dưỡng Ẩm BKEUTY Hydra-Deep', price: 450000, brand: 'BKEUTY', image: null, rating: 4.9, sold: 1000, tag: 'HOT' },
-                    { id: 2, name: 'Son Môi Lì Mịn Môi Matte Lipstick', price: 320000, brand: 'MAC', image: null, rating: 4.7, sold: 500, discount: '10%' },
-                    { id: 3, name: 'Nước Hoa Hồng Dịu Nhẹ Toner', price: 150000, brand: 'Laroche Posay', image: null, rating: 4.5, sold: 200 },
-                    { id: 4, name: 'Serum Vitamin C Sáng Da Clinical', price: 550000, brand: 'Obagi', image: null, rating: 4.8, sold: 300, tag: 'NEW' },
-                    { id: 5, name: 'Kem Chống Nắng Phổ Rộng Perfect UV', price: 420000, brand: 'Anessa', image: null, rating: 4.6, sold: 850 },
-                    { id: 6, name: 'Mặt Nạ Giấy Cấp Ẩm Tea Tree', price: 25000, brand: 'Innisfree', image: null, rating: 4.9, sold: 5000 },
-                    { id: 7, name: 'Tẩy Trang Cho Da Nhạy Cảm Sensibio', price: 180000, brand: 'Bioderma', image: null, rating: 4.7, sold: 1200 },
-                    { id: 8, name: 'Xịt Khoáng Cấp Nước Mineral 89', price: 280000, brand: 'Vichy', image: null, rating: 4.5, sold: 600 },
-                    { id: 9, name: 'Sữa Rửa Mặt Tạo Bọt Foaming Cleanser', price: 120000, brand: 'Cerave', image: null, rating: 4.6, sold: 900 },
-                    { id: 10, name: 'Dầu Dưỡng Tóc Mềm Mượt Treatment', price: 350000, brand: 'Moroccanoil', image: null, rating: 4.8, sold: 400 }
-                ];
-                resolve(mockProducts);
-            }, 800);
-        });
+        try {
+            const response = await productApi.getAll({ page: 0, size: 10 });
+            return response.data.content || [];
+        } catch (error) {
+            console.error("Failed to fetch home products", error);
+            return [];
+        }
     };
 
     const { data: products = [], isLoading } = useQuery({
         queryKey: ['homeProducts'],
         queryFn: fetchHomeData,
-        staleTime: 5 * 60 * 1000, // 5 minutes cache
+        staleTime: 5 * 60 * 1000,
     });
 
     const bestSellers = products.slice(0, 5);

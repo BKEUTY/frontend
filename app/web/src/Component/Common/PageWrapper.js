@@ -27,7 +27,7 @@ const PageWrapper = ({
 
             <div className="page-content">
                 {noCard ? children : (
-                    <Card bordered={false} className="beauty-card" loading={loading} bodyStyle={{ padding: 0 }}>
+                    <Card variant="borderless" className="beauty-card" loading={loading} styles={{ body: { padding: 0 } }}>
                         {children}
                     </Card>
                 )}

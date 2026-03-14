@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { CButton, CInput } from '../../Component/Common';
 import './Account.css';
 import default_avatar from '../../Assets/Images/Icons/icon_account.svg';
 
@@ -17,7 +18,10 @@ const AccountInfo = ({ onUpdate }) => {
         address: "xã Long Phước, tỉnh Đồng Nai",
         join_date: "2026-10-20",
         membership_level: "Diamond",
-        balance: 5000000
+        balance: 5000000,
+        total_spent: 85000000,
+        target_spent: 100000000,
+        next_level: "VIP"
     });
 
     const [avatar, setAvatar] = useState(default_avatar);
@@ -50,96 +54,92 @@ const AccountInfo = ({ onUpdate }) => {
             <div className="info-header">
                 <h2>{t('account')}</h2>
                 <div className="membership-container">
-                    <span className="premium-badge">{userData.membership_level}</span>
-                    <div className="points-progress-bar">
-                        <div className="progress-fill" style={{ width: '70%' }}></div>
+                    <div className="membership-badge-group">
+                        <span className="premium-badge">{userData.membership_level}</span>
                     </div>
-                    <span className="points-text">1,250 {t('pts')}</span>
+                    <div className="spending-info">
+                        <div className="spending-labels">
+                            <span className="spending-current">{new Intl.NumberFormat('vi-VN').format(userData.total_spent)}đ</span>
+                            <span className="spending-target">{new Intl.NumberFormat('vi-VN').format(userData.target_spent)}đ</span>
+                        </div>
+                        <div className="points-progress-bar vip-progress">
+                            <div
+                                className="progress-fill vip-fill"
+                                style={{ width: `${(userData.total_spent / userData.target_spent) * 100}%` }}
+                            ></div>
+                        </div>
+                        <span className="next-level-text">
+                            {t('next_level_condition')
+                                .replace('{amount}', new Intl.NumberFormat('vi-VN').format(userData.target_spent - userData.total_spent) + 'đ')
+                                .replace('{level}', userData.next_level)}
+                        </span>
+                    </div>
                 </div>
             </div>
             <p className="greeting-text">{t('welcome')} <span className="highlight-username">{userData.name}</span>,</p>
 
             <div className="info-form-layout">
                 <div className="form-fields">
-                    <div className="form-group">
-                        <label>{t('name')}</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            name="name"
-                            value={userData.name}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>{t('username')}</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            value={userData.username}
-                            readOnly
-                            disabled
-                            style={{ backgroundColor: '#f5f5f5' }}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>{t('gender')}</label>
+                    <CInput
+                        label={t('name')}
+                        name="name"
+                        value={userData.name}
+                        onChange={handleInputChange}
+                    />
+                    <CInput
+                        label={t('username')}
+                        value={userData.username}
+                        disabled
+                    />
+                    <div className="form-group" style={{ marginBottom: 24 }}>
+                        <label className="c-input-label" style={{ fontWeight: 600 }}>{t('gender')}</label>
                         <select
                             className="form-select"
                             name="gender"
                             value={userData.gender}
                             onChange={handleInputChange}
+                            style={{ width: '100%', height: 46, borderRadius: 8, border: '1.5px solid #e2e8f0', padding: '0 12px' }}
                         >
                             <option value="Nam">{t('male')}</option>
                             <option value="Nu">{t('female')}</option>
                             <option value="Khac">{t('other')}</option>
                         </select>
                     </div>
-                    <div className="form-group">
-                        <label>Email</label>
-                        <input
-                            type="email"
-                            className="form-input"
-                            name="email"
-                            value={userData.email}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>{t('phone')}</label>
-                        <input
-                            type="tel"
-                            className="form-input"
-                            name="phone"
-                            value={userData.phone}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <label>{t('dob')}</label>
-                        <input
-                            type="date"
-                            className="form-input"
-                            name="date_of_birth"
-                            value={userData.date_of_birth}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="form-group full-width">
-                        <label>{t('address')}</label>
-                        <input
-                            type="text"
-                            className="form-input"
-                            name="address"
-                            value={userData.address}
-                            onChange={handleInputChange}
-                        />
-                    </div>
-                    <div className="form-group full-width">
-                        <label>{t('join_date')}: {new Date(userData.join_date).toLocaleDateString("vi-VN")}</label>
+                    <CInput
+                        label="Email"
+                        type="email"
+                        name="email"
+                        value={userData.email}
+                        onChange={handleInputChange}
+                    />
+                    <CInput
+                        label={t('phone')}
+                        type="tel"
+                        name="phone"
+                        value={userData.phone}
+                        onChange={handleInputChange}
+                    />
+                    <CInput
+                        label={t('dob')}
+                        type="date"
+                        name="date_of_birth"
+                        value={userData.date_of_birth}
+                        onChange={handleInputChange}
+                    />
+                    <CInput
+                        className="full-width"
+                        label={t('address')}
+                        name="address"
+                        value={userData.address}
+                        onChange={handleInputChange}
+                    />
+                    <div className="form-group full-width" style={{ marginBottom: 20 }}>
+                        <span style={{ color: '#64748b' }}>{t('join_date')}: {new Date(userData.join_date).toLocaleDateString("vi-VN")}</span>
                     </div>
 
-                    <button className="button update-info-btn" onClick={handleSave}>{t('update')}</button>
+                    <CButton type="primary" onClick={handleSave} style={{ width: '100%', maxWidth: 200 }}>
+                        {t('update')}
+                    </CButton>
                 </div>
 
                 <div className="avatar-section">

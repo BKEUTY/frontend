@@ -9,12 +9,11 @@ import { useNavigate } from 'react-router-dom';
 import adminApi from '../../../api/adminApi';
 import { getImageUrl } from '../../../api/axiosClient';
 import { useLanguage } from '../../../i18n/LanguageContext';
+import { useAuth } from '../../../Context/AuthContext';
 import usePagination from '../../../hooks/usePagination';
-import EmptyState from '../../Common/EmptyState';
-import PageWrapper from '../../Common/PageWrapper';
+import { EmptyState, PageWrapper, CButton } from '../../Common';
 import './ProductList.css';
-import ProductDetail from '../../../pages/Product/ProductDetail';
-
+import productPlaceholder from '../../../Assets/Images/Products/product_placeholder.svg';
 
 const { Text } = Typography;
 
@@ -22,11 +21,13 @@ const ProductList = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
 
+    const { user, isAuthenticated } = useAuth();
     const { pagination, setTotal, setCurrent } = usePagination();
     const [loading, setLoading] = useState(false);
     const [data, setData] = useState([]);
 
     const fetchProducts = useCallback(async (page = 1, size = 10) => {
+        if (!isAuthenticated) return;
         setLoading(true);
         try {
             const response = await adminApi.getAllProducts(page - 1, size);
@@ -38,11 +39,13 @@ const ProductList = () => {
         } finally {
             setLoading(false);
         }
-    }, [setTotal, setCurrent]);
+    }, [setTotal, setCurrent, isAuthenticated]);
 
     useEffect(() => {
-        fetchProducts(pagination.current, pagination.pageSize);
-    }, [fetchProducts, pagination.current, pagination.pageSize]);
+        if (isAuthenticated) {
+            fetchProducts(pagination.current, pagination.pageSize);
+        }
+    }, [fetchProducts, pagination.current, pagination.pageSize, isAuthenticated]);
 
     const handleTableChange = (newPagination) => {
         fetchProducts(newPagination.current, newPagination.pageSize);
@@ -107,11 +110,12 @@ const ProductList = () => {
             align: 'center',
             render: (src) => (
                 <div className="admin-table-image-wrapper">
-                    {src ? (
-                        <img src={getImageUrl(src)} alt="p" className="admin-table-image" />
-                    ) : (
-                        <ShoppingOutlined className="admin-table-image-placeholder" />
-                    )}
+                    <img 
+                        src={src ? getImageUrl(src) : productPlaceholder} 
+                        alt="p" 
+                        className="admin-table-image" 
+                        onError={(e) => { e.target.src = productPlaceholder }}
+                    />
                 </div>
             )
         },
@@ -183,22 +187,23 @@ const ProductList = () => {
                 }
                 extra={
                     <Space size="large" wrap>
-                        <Button
+                        <CButton
+                            type="secondary"
                             icon={<SyncOutlined />}
                             onClick={() => fetchProducts(pagination.current, pagination.pageSize)}
                             loading={loading}
-                            className="admin-btn-responsive admin-btn-secondary"
+                            className="admin-btn-responsive"
                         >
                             {t('refresh')}
-                        </Button>
-                        <Button
+                        </CButton>
+                        <CButton
                             type="primary"
                             icon={<PlusOutlined />}
                             onClick={() => navigate('/admin/products/create')}
-                            className="modern-btn-primary admin-btn-responsive"
+                            className="admin-btn-responsive"
                         >
                             {t('admin_product_create')}
-                        </Button>
+                        </CButton>
                     </Space>
                 }
             >

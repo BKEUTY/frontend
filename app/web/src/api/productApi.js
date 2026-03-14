@@ -4,8 +4,16 @@ class ProductApi extends BaseApi {
     constructor() {
         super('/api/product');
     }
-    getVariants(id) {
-        return this.client.get(`${this.resource}/${id}/variants`);
+    getAll(params) {
+        return this.client.get(this.resource, { params });
+    }
+
+    getCategories() {
+        return this.client.get(`${this.resource}/categories`);
+    }
+
+    getById(id) {
+        return this.client.get(`${this.resource}/${id}`);
     }
 }
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import authApi from '../../api/authApi';
 import { Link, useNavigate } from 'react-router-dom';
 import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd';
 import { UserOutlined, MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { useNotification } from '../../Context/NotificationContext';
+import { notifyError, notifySuccess } from '../../utils/NotificationService';
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/auth_background.png';
 
@@ -13,16 +14,39 @@ const Register = () => {
     const navigate = useNavigate();
     const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
-    const showNotification = useNotification();
 
-    const onFinish = (values) => {
+    const onFinish = async (values) => {
         setLoading(true);
+        try {
+            const nameParts = values.name.split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : firstName;
 
-        setTimeout(() => {
+            const data = {
+                username: values.email,
+                email: values.email,
+                password: values.password,
+                firstName: firstName,
+                lastName: lastName,
+                phoneNumber: '0123456789',
+                mainAddress: 'Vietnam'
+            };
+
+            await authApi.register(data);
+            
+            notifySuccess(t('success'), t('register_success') || 'Registration Successful');
+            navigate('/login');
+        } catch (error) {
+            console.error('Registration error:', error);
+            const errorData = error.response?.data;
+            const message = typeof errorData === 'string' 
+                ? errorData 
+                : (errorData?.message || error.message || t('register_failed') || 'Registration Failed');
+            
+            notifyError(t('error'), message);
+        } finally {
             setLoading(false);
-            showNotification(t('register_success') || 'Registration Successful', 'success');
-            navigate('/home');
-        }, 1000);
+        }
     };
 
     const handleSocialRegister = (provider) => {

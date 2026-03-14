@@ -19,7 +19,7 @@ export const showNotification = (type, messageKey, descriptionKey, duration = 3)
 
     notification[type]({
         key: notificationKey,
-        message: message,
+        title: message,
         description: description,
         duration: duration,
         placement: 'topRight',

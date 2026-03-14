@@ -17,7 +17,7 @@ const EmptyState = ({
         <div className="empty-state-container">
             <Empty
                 image={image || Empty.PRESENTED_IMAGE_SIMPLE}
-                imageStyle={{ height: 120 }}
+                styles={{ image: { height: 120 } }}
                 description={
                     <div className="empty-state-content">
                         {icon && <div className="empty-state-icon">{icon}</div>}

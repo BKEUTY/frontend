@@ -9,13 +9,16 @@ const AdminRoute = ({ children }) => {
     const location = useLocation();
 
 
+
     if (!isAuthenticated) {
         return <Navigate to="/login" state={{ from: location }} replace />;
     }
 
+    /*
     if (user?.role !== 'ADMIN') {
         return <Navigate to="/home" replace />;
     }
+    */
 
     return children;
 };

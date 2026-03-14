@@ -21,6 +21,7 @@ export default function Product() {
   const [products, setProducts] = useState([]);
   const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
@@ -32,18 +33,32 @@ export default function Product() {
   const { t, language } = useLanguage();
 
 
-  const fetchProducts = useCallback((pageIndex, append) => {
+  const [categories, setCategories] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(null);
+
+  const fetchCategories = useCallback(async () => {
+    try {
+      const res = await productApi.getCategories();
+      if (res.data) {
+        setCategories(res.data);
+      }
+    } catch (err) {
+      console.error("Fetch categories error:", err);
+      setError(true);
+    }
+  }, []);
+
+  const fetchProducts = useCallback((pageIndex, append, catId = activeCategory) => {
     setIsLoading(true);
-    productApi.getAll({ page: pageIndex, size: pageSize })
+    setError(null);
+    const params = { page: pageIndex, size: pageSize };
+    if (searchTerm) params.name = searchTerm;
+    if (catId) params.categoryId = catId;
+
+    productApi.getAll(params)
       .then((res) => {
         const data = res.data;
         let newContent = data.content || [];
-
-        if (searchTerm) {
-          newContent = newContent.filter(p => {
-            return p.name.toLowerCase().includes(searchTerm.toLowerCase());
-          });
-        }
 
         if (append) {
           setProducts(prev => [...prev, ...newContent]);
@@ -52,17 +67,33 @@ export default function Product() {
         }
         setTotalPages(data.totalPages);
       })
-      .catch((err) => console.error(err))
+      .catch((err) => {
+        console.error(err);
+        setError(true);
+      })
       .finally(() => {
         setTimeout(() => setIsLoading(false), 500);
       });
-  }, [searchTerm]);
+  }, [searchTerm, activeCategory]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, [fetchCategories]);
 
   useEffect(() => {
     setPage(0);
     setIsPaginationMode(false);
     fetchProducts(0, false);
   }, [fetchProducts]);
+
+  const handleCategorySelect = (id) => {
+    setActiveCategory(id);
+    setPage(0);
+    setError(null);
+    setIsPaginationMode(true);
+    fetchProducts(0, false, id);
+    setIsMobileCatOpen(false);
+  };
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
@@ -79,6 +110,7 @@ export default function Product() {
   const handleSearchSubmit = () => {
     setIsPaginationMode(true);
     setPage(0);
+    setError(null);
     fetchProducts(0, false);
   };
 
@@ -98,28 +130,31 @@ export default function Product() {
 
         <div className={`category-list ${isMobileCatOpen ? 'mobile-open' : ''}`}>
           <div className="cat-item cancel-hover">
-            <span className="cat-trigger"><MenuOutlined /> {t('categories')}</span>
+            <span className="cat-trigger"><MenuOutlined /> {t('categories')} Prime</span>
             <div className="mega-menu">
               <div className="mega-menu-left">
                 <div className="mega-column">
-                  <h3>{t('makeup')}</h3>
-                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_face')}</Link>
-                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_lips')}</Link>
-                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('makeup_eyes')}</Link>
-                </div>
-                <div className="mega-column">
-                  <h3>{t('skincare')}</h3>
-                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('cleanser')}</Link>
-                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('toner')}</Link>
-                  <Link to="/product" onClick={handleResetFilter} className="mega-item">{t('serum')}</Link>
-                </div>
-                <div className="mega-column">
-                  <h3>{t('body_care')}</h3>
-                  <Link to="/product" className="mega-item">{t('shower_gel')}</Link>
-                </div>
-                <div className="mega-column">
-                  <h3>{t('hair_care')}</h3>
-                  <Link to="/product" className="mega-item">{t('shampoo')}</Link>
+                  <h3>{t('all_categories')}</h3>
+                  <div 
+                    onClick={() => {
+                      setActiveCategory(null);
+                      handleResetFilter();
+                    }} 
+                    className={`mega-item ${activeCategory === null ? 'active' : ''}`}
+                    style={{ cursor: 'pointer' }}
+                  >
+                    {t('all_products')}
+                  </div>
+                  {categories.map(cat => (
+                    <div 
+                      key={cat.id} 
+                      onClick={() => handleCategorySelect(cat.id)} 
+                      className={`mega-item ${activeCategory === cat.id ? 'active' : ''}`}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {cat.categoryName}
+                    </div>
+                  ))}
                 </div>
               </div>
               <div className="mega-menu-right">
@@ -176,6 +211,8 @@ export default function Product() {
                   </div>
                 ))}
               </div>
+            ) : error ? (
+              <div className="no-products">{t('api_error_fetch_products')}</div>
             ) : products.length === 0 ? (
               <div className="no-products">{t('no_products_found')}</div>
             ) : (

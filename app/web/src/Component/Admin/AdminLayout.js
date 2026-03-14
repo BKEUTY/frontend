@@ -20,6 +20,7 @@ import { useAuth } from '../../Context/AuthContext';
 import logo_image from '../../Assets/Images/logo.svg';
 import { useLanguage } from '../../i18n/LanguageContext';
 import LanguageToggle from '../Common/LanguageToggle';
+import ErrorBoundary from '../ErrorBoundary/ErrorBoundary';
 import './Admin.css';
 
 const { Header, Sider, Content } = Layout;
@@ -159,10 +160,10 @@ const AdminLayout = () => {
                         menu={{ items: userMenuItems }}
                         placement="bottomRight"
                         trigger={['click']}
-                        overlayClassName="admin-user-dropdown"
+                        classNames={{ root: 'admin-user-dropdown' }}
                     >
                         <div className="admin-user-profile">
-                            <Avatar size={28} style={{ backgroundColor: '#c2185b' }}>
+                            <Avatar size={28} style={{ backgroundColor: 'var(--admin-primary)' }}>
                                 {user?.name?.[0]?.toUpperCase() || 'A'}
                             </Avatar>
                             <span className="admin-username">{user?.name || 'Admin'}</span>
@@ -187,7 +188,9 @@ const AdminLayout = () => {
 
             <Layout className="site-layout">
                 <Content className="site-layout-background admin-content">
-                    <Outlet />
+                    <ErrorBoundary>
+                        <Outlet />
+                    </ErrorBoundary>
                 </Content>
             </Layout>
 
@@ -202,7 +205,7 @@ const AdminLayout = () => {
                 centered
             >
                 <div className="command-search-header">
-                    <SearchOutlined style={{ fontSize: '20px', color: '#c2185b' }} />
+                    <SearchOutlined style={{ fontSize: '20px', color: 'var(--admin-primary)' }} />
                     <Input
                         placeholder={t('admin_search_placeholder')}
                         variant="borderless"
@@ -232,7 +235,7 @@ const AdminLayout = () => {
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    color: '#c2185b'
+                                    color: 'var(--admin-primary)'
                                 }}>
                                     {item.icon}
                                 </div>

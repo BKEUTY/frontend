@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd';
-import { MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, Typography } from 'antd';
+import { MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useAuth } from '../../Context/AuthContext';
 import { notifyError, notifySuccess } from '../../utils/NotificationService';
@@ -20,7 +20,6 @@ const Login = () => {
         setLoading(true);
         try {
             const user = await login(values.email, values.password);
-
             notifySuccess('success', t('login_success'));
 
             if (user?.role === 'ADMIN') {
@@ -42,11 +41,6 @@ const Login = () => {
         } finally {
             setLoading(false);
         }
-    };
-
-    const handleSocialLogin = (provider) => {
-        // Fix: Đã sửa lỗi gọi hàm showNotification không tồn tại
-        notifySuccess('info', `${t('login_with', 'Tính năng đăng nhập')} ${provider} ${t('coming_soon', 'đang được phát triển!')}`);
     };
 
     return (
@@ -139,27 +133,6 @@ const Login = () => {
                                 {t('login')}
                             </Button>
                         </Form.Item>
-
-                        <Divider plain className="auth-divider">
-                            {t('or_login_with')}
-                        </Divider>
-
-                        <Space direction="horizontal" size="middle" className="social-login-container">
-                            <Button
-                                icon={<GoogleOutlined />}
-                                onClick={() => handleSocialLogin('Google')}
-                                className="social-btn social-btn-google"
-                            >
-                                Google
-                            </Button>
-                            <Button
-                                icon={<FacebookOutlined />}
-                                onClick={() => handleSocialLogin('Facebook')}
-                                className="social-btn social-btn-facebook"
-                            >
-                                Facebook
-                            </Button>
-                        </Space>
 
                         <div className="auth-footer">
                             <Text>

@@ -9,10 +9,7 @@ import {
     CheckCircleFilled,
     HeartOutlined,
     MessageOutlined,
-    ShoppingOutlined,
-    ThunderboltFilled,
-    ClockCircleOutlined,
-    ArrowRightOutlined
+    ShoppingOutlined
 } from '@ant-design/icons';
 import { CButton } from '../../Component/Common';
 import best_selling_image from "../../Assets/Images/Products/product_placeholder.svg";
@@ -38,7 +35,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
     const [isError, setIsError] = useState(false);
 
     const [activeTab, setActiveTab] = useState('details');
-    const [selectedSize, setSelectedSize] = useState("50ml");
     const [selectedOptions, setSelectedOptions] = useState({});
     const [currentVariant, setCurrentVariant] = useState(null);
     const [mainImage, setMainImage] = useState(best_selling_image);
@@ -142,7 +138,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                     setIsError(true);
                 }
             } catch (err) {
-                console.error("Error fetching product detail:", err);
                 setIsError(true);
             } finally {
                 setIsLoading(false);
@@ -169,7 +164,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
             const match = productData.variants.find(v => {
                 if (!v.variantOptions || Object.keys(v.variantOptions).length === 0) return false;
                 
-                // Compare all selected options with variant options
                 return Object.entries(selectedOptions).every(([optName, selectedVal]) => {
                     const vVal = v.variantOptions[optName];
                     if (!vVal || !selectedVal) return false;
@@ -199,13 +193,13 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
     if (isLoading || !productData) return (
         <div className="product-detail-page">
             <div className="product-top-section">
-                <Skeleton width="50%" height="450px" style={{ marginRight: '20px' }} />
+                <Skeleton width="45%" height="450px" style={{ marginRight: '40px', borderRadius: '16px' }} />
                 <div style={{ flex: 1 }}>
-                    <Skeleton width="40%" height="20px" style={{ marginBottom: '10px' }} />
+                    <Skeleton width="30%" height="20px" style={{ marginBottom: '15px' }} />
                     <Skeleton width="80%" height="40px" style={{ marginBottom: '20px' }} />
-                    <Skeleton width="30%" height="30px" style={{ marginBottom: '20px' }} />
-                    <Skeleton width="100%" height="100px" style={{ marginBottom: '20px' }} />
-                    <Skeleton width="100%" height="50px" />
+                    <Skeleton width="40%" height="30px" style={{ marginBottom: '30px' }} />
+                    <Skeleton width="100%" height="80px" style={{ marginBottom: '30px' }} />
+                    <Skeleton width="100%" height="60px" />
                 </div>
             </div>
         </div>
@@ -236,7 +230,8 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
         { id: 'ingredients', label: t('ingredients') },
         { id: 'reviews', label: `${t('reviews')} (${productData.reviews_count})` },
     ];
-    const isOutOfStock = currentVariant ? currentVariant.stockQuantity === 0 : false;
+    
+    const isOutOfStock = currentVariant ? currentVariant.stockQuantity <= 0 : false;
 
     return (
         <div className="product-detail-page">
@@ -274,11 +269,10 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
 
                     <div className="detail-tags">
                         <div className="rating-container">
-                            <StarFilled style={{ color: '#ffc107', fontSize: '18px' }} />
+                            <StarFilled className="star-icon" />
                             <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')})
                         </div>
                     </div>
-
 
                     <div className="price-box">
                         <div className="current-price">
@@ -287,43 +281,31 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                         </div>
                     </div>
 
-                    <div className="product-options-section" style={{ borderTop: '2px solid #f8fafc', borderBottom: '2px solid #f8fafc', padding: '30px 0', margin: '30px 0' }}>
+                    <div className="product-options-section">
                         {productData.options && productData.options.map((opt, idx) => (
-                            <div key={idx} className="option-group" style={{ marginBottom: 25 }}>
-                                <span className="option-label" style={{ fontWeight: 800, color: '#0f172a', marginBottom: 15, display: 'block', fontSize: '1.05rem', letterSpacing: '0.5px' }}>{opt.name.toUpperCase()}:</span>
-                                <div className="size-options" style={{ display: 'flex', flexWrap: 'wrap', gap: 15 }}>
-                                    {opt.values.map(val => (
-                                        <button
-                                            key={val}
-                                            className={`size-btn ${selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? 'active' : ''}`}
-                                            onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
-                                            style={{
-                                                padding: '14px 28px',
-                                                borderRadius: '14px',
-                                                border: selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? '2px solid var(--color_main_title)' : '2px solid #f1f5f9',
-                                                background: selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? 'var(--color_main_title)' : '#fff',
-                                                color: selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim() ? '#fff' : '#475569',
-                                                fontWeight: 800,
-                                                fontSize: '1rem',
-                                                transition: 'all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1)',
-                                                cursor: 'pointer',
-                                                boxShadow: selectedOptions[opt.name] === val ? '0 10px 20px rgba(194, 24, 91, 0.2)' : 'none',
-                                                minWidth: '90px',
-                                                textAlign: 'center',
-                                                transform: selectedOptions[opt.name] === val ? 'translateY(-2px)' : 'none'
-                                            }}
-                                        >
-                                            {val}
-                                        </button>
-                                    ))}
+                            <div key={idx} className="option-group">
+                                <span className="option-label">{opt.name.toUpperCase()}:</span>
+                                <div className="size-options">
+                                    {opt.values.map(val => {
+                                        const isActive = selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim();
+                                        return (
+                                            <button
+                                                key={val}
+                                                className={`size-btn ${isActive ? 'active' : ''}`}
+                                                onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
+                                            >
+                                                {val}
+                                            </button>
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ))}
 
                         {currentVariant && (
-                            <div className="selected-variant-info" style={{ marginTop: 10, marginBottom: 25, paddingTop: 15, borderTop: '1px solid #f1f5f9' }}>
-                                <span style={{ fontSize: '0.95rem', color: '#64748b' }}>{t('variant_selected_label')}: </span>
-                                <strong style={{ fontSize: '1.15rem', color: 'var(--color_main_title)' }}>
+                            <div className="selected-variant-info">
+                                <span className="variant-label-title">{t('variant_selected_label')}: </span>
+                                <strong className="variant-label-value">
                                     {currentVariant.variantOptions && Object.keys(currentVariant.variantOptions).length > 0
                                         ? Object.values(currentVariant.variantOptions).join(' - ')
                                         : currentVariant.productVariantName}
@@ -331,11 +313,11 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                             </div>
                         )}
 
-                        <div className="stock-info" style={{ marginBottom: 20, color: '#334155', fontSize: '0.95rem', fontWeight: 500 }}>
-                            {t('in_stock_label')} <strong style={{ color: 'var(--color_main_title)' }}>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
+                        <div className="stock-info">
+                            {t('in_stock_label')} <strong>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
                         </div>
 
-                        <div className="option-group">
+                        <div className="option-group align-center mt-10">
                             <span className="option-label">{t('quantity')}:</span>
                             <div className="input-quantity-wrapper">
                                 <button className="qty-btn" onClick={() => handleQuantityChange(-1)}>-</button>
@@ -345,8 +327,7 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                         </div>
                     </div>
 
-
-                    <div className="actions" style={{ width: '100%', maxWidth: '550px' }}>
+                    <div className="actions-wrapper">
                         <CButton
                             type="primary"
                             disabled={!isAdminView && isOutOfStock}
@@ -357,10 +338,11 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                                     notify(t('feature_developing_title'), "info");
                                 }
                             }}
-                            style={{ flex: 1, minWidth: '140px', height: 52 }}
+                            className="btn-action-buy"
                         >
-                            <span className="btn-main-text">{(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('buy_now')}</span>
+                            <span>{(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('buy_now')}</span>
                         </CButton>
+                        
                         <CButton
                             type="outline"
                             disabled={!isAdminView && isOutOfStock}
@@ -371,8 +353,8 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                                     handleAddToCart();
                                 }
                             }}
-                            style={{ flex: 1.5, minWidth: '220px', height: 52 }}
                             icon={<ShoppingOutlined />}
+                            className="btn-action-cart"
                         >
                             {(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('add_to_cart')}
                         </CButton>

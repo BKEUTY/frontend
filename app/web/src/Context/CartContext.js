@@ -1,7 +1,7 @@
-import React, { createContext, useState, useContext, useEffect } from 'react';
-
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import cartApi from '../api/cartApi';
+import axiosClient from '../api/axiosClient';
 import { useLocation } from 'react-router-dom';
 
 const CartContext = createContext();
@@ -13,74 +13,136 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const { user, isAuthenticated, role } = useAuth();
     const location = useLocation();
-    const userId = user?.id || 1;
-
+    
     const isAdminPath = location.pathname.startsWith('/admin');
+    const LOCAL_CART_KEY = 'bkeuty_guest_cart';
 
-    const fetchCart = async () => {
-        if (role === 'ADMIN' || !isAuthenticated || isAdminPath) return;
+    const fetchCart = useCallback(async () => {
+        if (role === 'ADMIN' || isAdminPath) return;
 
-        try {
-            const res = await cartApi.getAll();
-            if (res.status === 200) {
-                const data = res.data;
-                const mapped = data.map(item => ({
-                    ...item,
-                    id: item.productId || item.id,
-                    image: item.image || 'placeholder',
-                }));
-                setCartItems(mapped);
-            }
-        } catch (error) {
-            console.error("Failed to fetch cart", error);
+        if (isAuthenticated) {
+            try {
+                const res = await cartApi.getAll();
+                if (res.status === 200 || res.data) {
+                    const data = res.data || [];
+                    const mapped = data.map(item => ({
+                        ...item,
+                        id: item.productId || item.id,
+                        image: item.image || 'placeholder',
+                    }));
+                    setCartItems(mapped);
+                }
+            } catch (error) {}
+        } else {
+            const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
+            setCartItems(localCart);
         }
-    };
+    }, [isAuthenticated, role, isAdminPath]);
 
     useEffect(() => {
-        // Only fetch for non-admins and non-admin routes
-        if (isAuthenticated && role !== 'ADMIN' && !isAdminPath) {
-            fetchCart();
-        }
-    }, [role, isAuthenticated, isAdminPath]);
+        const syncCartOnLogin = async () => {
+            if (isAuthenticated && role === 'USER') {
+                const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
+                if (localCart.length > 0) {
+                    for (const item of localCart) {
+                        try {
+                            await cartApi.add({
+                                userId: user?.id,
+                                productId: item.productId || item.id,
+                                variantId: item.variantId,
+                                quantity: item.quantity
+                            });
+                        } catch (e) {}
+                    }
+                    localStorage.removeItem(LOCAL_CART_KEY);
+                }
+                fetchCart();
+            }
+        };
+        syncCartOnLogin();
+    }, [isAuthenticated, role, user?.id, fetchCart]);
+
+    useEffect(() => {
+        fetchCart();
+    }, [fetchCart]);
+
+    const saveLocalCart = (items) => {
+        localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(items));
+        setCartItems(items);
+    };
 
     const toggleCart = () => setIsCartOpen(!isCartOpen);
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
 
     const addToCart = async (product) => {
-        setCartItems(prev => {
-            const existing = prev.find(item => item.id === product.id && item.variantId === product.variantId);
-            if (existing) {
-                return prev.map(item => (item.id === product.id && item.variantId === product.variantId) ? { ...item, quantity: item.quantity + (product.quantity || 1) } : item);
-            }
-            return [...prev, { ...product, quantity: product.quantity || 1 }];
-        });
         setIsCartOpen(true);
+        const quantityToAdd = product.quantity || 1;
 
-        try {
-            await cartApi.add({
-                userId: userId,
-                productId: product.id || product.productId,
-                variantId: product.variantId
-            });
-
-            await fetchCart();
-        } catch (error) {
-            console.error("Failed to add to cart API", error);
+        if (isAuthenticated) {
+            try {
+                await cartApi.add({
+                    userId: user?.id,
+                    productId: product.id || product.productId,
+                    variantId: product.variantId,
+                    quantity: quantityToAdd
+                });
+                await fetchCart();
+            } catch (error) {}
+        } else {
+            const localCart = [...cartItems];
+            const existingIdx = localCart.findIndex(item => item.id === product.id && item.variantId === product.variantId);
+            if (existingIdx > -1) {
+                localCart[existingIdx].quantity += quantityToAdd;
+            } else {
+                localCart.push({ 
+                    ...product, 
+                    cartId: `local_${Date.now()}`, 
+                    quantity: quantityToAdd 
+                });
+            }
+            saveLocalCart(localCart);
         }
     };
 
     const updateQuantity = async (cartId, quantity) => {
         if (quantity < 1) return;
-        setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity: quantity } : item));
+
+        if (isAuthenticated) {
+            setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity } : item));
+            try {
+                await axiosClient.put(`/api/cart/${cartId}`, { quantity });
+                fetchCart();
+            } catch (error) {
+                fetchCart();
+            }
+        } else {
+            const localCart = cartItems.map(item => item.cartId === cartId ? { ...item, quantity } : item);
+            saveLocalCart(localCart);
+        }
     };
 
-    const removeFromCart = (cartId) => {
-        setCartItems(prev => prev.filter(item => item.cartId !== cartId));
+    const removeFromCart = async (cartId) => {
+        if (isAuthenticated) {
+            setCartItems(prev => prev.filter(item => item.cartId !== cartId));
+            try {
+                await axiosClient.delete(`/api/cart/${cartId}`);
+                fetchCart();
+            } catch (error) {
+                fetchCart();
+            }
+        } else {
+            const localCart = cartItems.filter(item => item.cartId !== cartId);
+            saveLocalCart(localCart);
+        }
     };
 
     return (
-        <CartContext.Provider value={{ isCartOpen, toggleCart, openCart, closeCart, cartItems, setCartItems, addToCart, fetchCart, updateQuantity, removeFromCart }}>
+        <CartContext.Provider value={{ 
+            isCartOpen, toggleCart, openCart, closeCart, 
+            cartItems, setCartItems, addToCart, fetchCart, 
+            updateQuantity, removeFromCart 
+        }}>
             {children}
         </CartContext.Provider>
     );

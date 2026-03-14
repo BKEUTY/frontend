@@ -6,18 +6,13 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import { useCart } from "../../Context/CartContext";
 import product_cart_image from "../../Assets/Images/Products/product_placeholder_rect.svg";
 import { getImageUrl } from "../../api/axiosClient";
-import {
-  DeleteOutlined,
-  ShoppingOutlined,
-  CheckOutlined,
-  ArrowRightOutlined
-} from '@ant-design/icons';
+import { DeleteOutlined, ShoppingOutlined } from '@ant-design/icons';
 
 export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
   const { t } = useLanguage();
-  const { cartItems: products, fetchCart, updateQuantity } = useCart();
+  const { cartItems: products, fetchCart, updateQuantity, removeFromCart } = useCart();
 
   const PROMOTIONS = [
     { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: t('promo_welcome_10') },
@@ -79,24 +74,17 @@ export default function Cart() {
     });
   };
 
-  const handleDelete = (cartId) => {
+  const handleDelete = async (cartId) => {
     if (!window.confirm(t('confirm_delete_item'))) return;
-
-    fetch(`${process.env.REACT_APP_API_URL}/cart/${cartId}`, {
-      method: 'DELETE'
-    })
-      .then(res => {
-        if (res.ok) {
-          fetchCart();
-          const newSelected = new Set(selectedIds);
-          newSelected.delete(cartId);
-          setSelectedIds(newSelected);
-          notify(t('delete_success'), "success");
-        } else {
-          notify(t('delete_error'), "error");
-        }
-      })
-      .catch(err => console.error(err));
+    try {
+      await removeFromCart(cartId);
+      const newSelected = new Set(selectedIds);
+      newSelected.delete(cartId);
+      setSelectedIds(newSelected);
+      notify(t('delete_success'), "success");
+    } catch (err) {
+      notify(t('delete_error'), "error");
+    }
   };
 
   return (
@@ -128,7 +116,7 @@ export default function Cart() {
                 <ShoppingOutlined style={{ fontSize: '100px', color: '#e5e7eb', marginBottom: '24px' }} />
                 <p className="cart-empty-text">{t('cart_empty')}</p>
                 <button className="btn-continue-shopping" onClick={() => navigate('/')}>
-                  {t('continue_shopping') || "Continue Shopping"}
+                  {t('continue_shopping')}
                 </button>
               </div>
             ) : (
@@ -148,7 +136,7 @@ export default function Cart() {
                       <img
                         className="cart-product-img"
                         loading="lazy"
-                        src={product.image ? getImageUrl(product.image) : product_cart_image}
+                        src={product.image && product.image !== 'placeholder' ? getImageUrl(product.image) : product_cart_image}
                         alt="product"
                         onError={(e) => { e.target.src = product_cart_image }}
                       />
@@ -156,7 +144,7 @@ export default function Cart() {
                     <div className="cart-product-details">
                       <p className="cart-product-name">{product.name}</p>
                       <p className="cart-product-desc">
-                        {t('description')}: {product.description}
+                        {t('description')}: {product.description || product.variantDisplay}
                       </p>
                     </div>
                   </div>
@@ -237,4 +225,3 @@ export default function Cart() {
     </main>
   );
 }
-

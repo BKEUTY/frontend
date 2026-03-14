@@ -178,7 +178,7 @@ export default {
     filter_with_media: "With Photo/Video",
     no_products_found: "No products found.",
     variant_selection_label: "Select variation",
-    variant_selected_label: "Selected choice:",
+    variant_selected_label: "Selected choice",
 
     // --- Cart & Checkout ---
     cart: "Cart",

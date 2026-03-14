@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import authApi from '../../api/authApi';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Checkbox, Divider, Typography, Space } from 'antd';
-import { UserOutlined, MailOutlined, LockOutlined, GoogleOutlined, FacebookOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, Typography } from 'antd';
+import { UserOutlined, MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { notifyError, notifySuccess } from '../../utils/NotificationService';
 import './Auth.css';
@@ -37,7 +37,6 @@ const Register = () => {
             notifySuccess(t('success'), t('register_success') || 'Registration Successful');
             navigate('/login');
         } catch (error) {
-            console.error('Registration error:', error);
             const errorData = error.response?.data;
             const message = typeof errorData === 'string' 
                 ? errorData 
@@ -49,13 +48,8 @@ const Register = () => {
         }
     };
 
-    const handleSocialRegister = (provider) => {
-        showNotification(`${t('register_with', 'Register with')} ${provider}`, 'info');
-    };
-
     return (
         <div className="auth-container">
-
             <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
                 <div className="auth-image-overlay">
                     <div className="auth-brand-section">
@@ -64,7 +58,6 @@ const Register = () => {
                     </div>
                 </div>
             </div>
-
 
             <div className="auth-form-side">
                 <div className="auth-lang-switch">
@@ -204,27 +197,6 @@ const Register = () => {
                                 {t('register')}
                             </Button>
                         </Form.Item>
-
-                        <Divider plain className="auth-divider">
-                            {t('or_register_with')}
-                        </Divider>
-
-                        <Space direction="horizontal" size="middle" className="social-login-container">
-                            <Button
-                                icon={<GoogleOutlined />}
-                                onClick={() => handleSocialRegister('Google')}
-                                className="social-btn social-btn-google"
-                            >
-                                Google
-                            </Button>
-                            <Button
-                                icon={<FacebookOutlined />}
-                                onClick={() => handleSocialRegister('Facebook')}
-                                className="social-btn social-btn-facebook"
-                            >
-                                Facebook
-                            </Button>
-                        </Space>
 
                         <div className="auth-footer">
                             <Text>

@@ -35,8 +35,6 @@ const createClient = (baseURL) => {
 
     client.interceptors.request.use((config) => {
         const currentToken = getAccessToken();
-        
-        // Không gắn token cho các endpoint liên quan đến auth
         const isAuthUrl = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'].some(url => config.url.includes(url));
 
         if (!isAuthUrl && currentToken) {
@@ -57,6 +55,10 @@ const createClient = (baseURL) => {
             const status = response ? response.status : null;
 
             if (status === 401 && !originalRequest._retry) {
+                if (originalRequest.url.includes('/api/auth/refresh')) {
+                    return Promise.reject(error);
+                }
+
                 if (isRefreshing) {
                     return new Promise((resolve, reject) => {
                         subscribeTokenRefresh((token, err) => {
@@ -72,7 +74,7 @@ const createClient = (baseURL) => {
 
                 try {
                     const res = await authBaseClient.post('/api/auth/refresh');
-                    const newToken = res.data.accessToken || res.data.access_token;
+                    const newToken = res.data.accessToken || res.data.access_token || res.data.data?.accessToken;
 
                     if (newToken) {
                         setAccessToken(newToken);
@@ -81,8 +83,6 @@ const createClient = (baseURL) => {
 
                         originalRequest.headers.Authorization = `Bearer ${newToken}`;
                         return client(originalRequest);
-                    } else {
-                        throw new Error('Refresh failed');
                     }
                 } catch (refreshError) {
                     isRefreshing = false;
@@ -102,7 +102,6 @@ const createClient = (baseURL) => {
                 }
             }
 
-            // Xử lý báo lỗi chung (Global Error Handler)
             if (status !== 401 && !originalRequest.skipGlobalErrorHandler) {
                 let fallbackKey = 'error_unknown';
                 if (status === 403) fallbackKey = 'error_403';

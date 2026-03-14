@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Steps, Form, Input, Button, Select, Upload, notification,
     Table, InputNumber, Row, Col, Typography, Empty
@@ -136,7 +136,8 @@ const ProductCreate = () => {
     const handleSubmitOptions = async () => {
         if (!createdProductId) return;
 
-        const validOptions = optionTypes.filter(o => o.name.trim() !== '' && o.values.length > 0);
+        const validOptions = optionTypes.filter(o => o.name && o.name.trim() !== '' && o.values && o.values.length > 0);
+        
         if (validOptions.length === 0) {
             notification.error({
                 message: t('error'),
@@ -148,7 +149,7 @@ const ProductCreate = () => {
 
         setLoading(true);
         try {
-            await adminApi.createOption({
+            const res = await adminApi.createOption({
                 productId: createdProductId,
                 productOptionValues: validOptions.map(opt => ({
                     optionName: opt.name,
@@ -156,12 +157,37 @@ const ProductCreate = () => {
                 }))
             });
 
+            if (res.data) {
+                setVariants([]);
+                const fetchedVariants = res.data;
+                const suffixes = [];
+                const generateCombinations = (opts, index = 0, currentCombo = []) => {
+                    if (index === opts.length) {
+                        suffixes.push(currentCombo.join(' - '));
+                        return;
+                    }
+                    for (let val of opts[index].values) {
+                        generateCombinations(opts, index + 1, [...currentCombo, val]);
+                    }
+                };
+                generateCombinations(validOptions);
+
+                const mappedVariants = fetchedVariants.map((v, idx) => {
+                    const shortName = suffixes[idx] || v.productVariantName || '';
+                    return {
+                        ...v,
+                        displayVariantName: shortName,
+                        optionValues: suffixes[idx] ? suffixes[idx].split(' - ') : [],
+                    };
+                });
+                setVariants(mappedVariants);
+            }
+
             notification.success({
                 message: t('success'),
                 description: t('admin_msg_options_success'),
                 key: 'admin_msg_options_success'
             });
-            await fetchVariants(createdProductId);
             setCurrentStep(3);
         } catch (error) {
             notification.error({
@@ -178,8 +204,8 @@ const ProductCreate = () => {
         try {
             const res = await adminApi.getVariants(pid);
             let fetchedVariants = res.data || [];
-
             const validOptions = optionTypes.filter(o => o.name.trim() !== '' && o.values.length > 0);
+            
             if (validOptions.length > 0) {
                 const suffixes = [];
                 const generateCombinations = (opts, index = 0, currentCombo = []) => {
@@ -194,56 +220,19 @@ const ProductCreate = () => {
                 generateCombinations(validOptions);
 
                 fetchedVariants = fetchedVariants.map((v, idx) => {
-                    const comboValues = suffixes[idx] ? suffixes[idx].split(' - ') : [];
                     const shortName = suffixes[idx] || v.productVariantName || '';
                     return {
                         ...v,
                         displayVariantName: shortName,
-                        optionValues: comboValues,
-                        fullVariantNameForBackend: `${v.productName || ''} - ${shortName}`
+                        optionValues: suffixes[idx] ? suffixes[idx].split(' - ') : [],
                     };
                 });
-
-                const initialSelected = {};
-                validOptions.forEach(opt => {
-                    if (opt.values.length > 0) initialSelected[opt.name] = opt.values[0];
-                });
-                setSelectedOptions(initialSelected);
-            } else {
-                fetchedVariants = fetchedVariants.map(v => ({ ...v, displayVariantName: v.productName || v.productVariantName, optionValues: [] }));
             }
-
             setVariants(fetchedVariants);
-
-            // Reconstruct optionTypes from variants if current state is empty/default
-            const isDefault = optionTypes.length === 1 && optionTypes[0].values.length === 0;
-            if (isDefault && fetchedVariants.length > 0) {
-                const map = {};
-                fetchedVariants.forEach(v => {
-                    if (v.variantOptions) {
-                        Object.entries(v.variantOptions).forEach(([name, val]) => {
-                            if (!map[name]) map[name] = new Set();
-                            map[name].add(val);
-                        });
-                    }
-                });
-                const derived = Object.entries(map).map(([name, values]) => ({
-                    name, 
-                    values: Array.from(values)
-                }));
-                if (derived.length > 0) {
-                    setOptionTypes(derived);
-                    const initial = {};
-                    derived.forEach(d => { if(d.values.length > 0) initial[d.name] = d.values[0]; });
-                    setSelectedOptions(initial);
-                }
-            }
-        } catch (error) {
-
-        }
+        } catch (error) {}
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (variants.length > 0 && Object.keys(selectedOptions).length > 0) {
             const match = variants.find(v => {
                 if (!v.optionValues || v.optionValues.length === 0) return false;
@@ -305,10 +294,8 @@ const ProductCreate = () => {
                 description: t('admin_msg_variants_success'),
                 key: 'admin_msg_variants_success'
             });
-            const pid = createdProductId;
-            navigate(`/admin/products/${pid}`);
+            navigate(`/admin/products/${createdProductId}`);
         } catch (error) {
-
         } finally {
             setLoading(false);
         }
@@ -317,10 +304,7 @@ const ProductCreate = () => {
     return (
         <div className="product-create-container" style={{ paddingBottom: 60 }}>
             <div className="product-header-section">
-                <div
-                    className="admin-back-btn"
-                    onClick={() => navigate('/admin/products')}
-                >
+                <div className="admin-back-btn" onClick={() => navigate('/admin/products')}>
                     <ArrowRightOutlined style={{ transform: 'rotate(180deg)' }} />
                 </div>
                 <div className="product-header-info">
@@ -393,7 +377,6 @@ const ProductCreate = () => {
                                     {form.getFieldValue('name') || t('admin_placeholder_product_name')}
                                 </h1>
 
-
                                 <div className="detail-price" style={{ margin: '20px 0', fontSize: '1.6rem', fontWeight: 700, color: 'var(--color_main_title)', display: 'flex', alignItems: 'baseline', gap: 10 }}>
                                     {(currentVariant ? currentVariant.price : 0).toLocaleString("vi-VN")}đ
                                     <span className="vat-tag" style={{ color: '#999', fontSize: '0.85rem', fontWeight: 400 }}>{t('vat_included')}</span>
@@ -440,7 +423,6 @@ const ProductCreate = () => {
                                         {t('in_stock_label')} <strong style={{ color: '#1e293b' }}>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
                                     </div>
                                 </div>
-
 
                                 <div className="actions" style={{ marginTop: 25 }}>
                                     <CButton 
@@ -537,11 +519,11 @@ const ProductCreate = () => {
                                                 />
                                             </div>
                                         ))}
-                                        <CButton type="dashed" onClick={handleAddOptionType} icon={<PlusOutlined />} style={{ width: '100%' }}>
+                                        <CButton type="dashed" onClick={handleAddOptionType} icon={<PlusOutlined />} style={{ width: '100%', marginTop: 24, marginBottom: 8 }}>
                                             {t('admin_btn_add_option')}
                                         </CButton>
 
-                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%' }}>
+                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%', marginTop: 48 }}>
                                             <CButton type="secondary" onClick={() => setCurrentStep(1)} style={{ flex: 1 }}>
                                                 {t('back')}
                                             </CButton>
@@ -554,12 +536,12 @@ const ProductCreate = () => {
 
                                 {currentStep === 3 && (
                                     <div className="product-variants-edit-section">
-                                        <div className="product-variants-section" style={{ marginTop: 10 }}>
+                                        <div className="product-variants-section" style={{ marginTop: 24, background: '#ffffff', borderRadius: '20px', padding: '20px', border: '1px solid #f1f5f9' }}>
                                             <h3 style={{ marginBottom: 20, fontSize: '1.05rem', fontWeight: 700, color: '#1e293b' }}>{t('admin_step_4')}</h3>
                                             <div className="custom-scrollbar" style={{ maxHeight: '460px', overflowY: 'auto', paddingRight: 8 }}>
                                                 {variants.map(record => (
-                                                    <div key={record.id} className="variant-row" style={{ display: 'flex', flexWrap: 'wrap', gap: 16 }}>
-                                                        <div className="variant-image-upload">
+                                                    <div key={record.id} className="variant-row" style={{ display: 'flex', alignItems: 'center', gap: 16, border: '1px solid #f1f5f9', borderRadius: '12px', padding: '12px 16px', marginBottom: 12 }}>
+                                                        <div className="variant-image-upload" style={{ width: 64, height: 64, borderRadius: 12, border: '1px dashed #cbd5e1', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                                                             <Upload showUploadList={false} beforeUpload={(file) => handleVariantImageUpload(record.id, file)}>
                                                                 {(record.image || record.productImageUrl) ? (
                                                                     <img src={getImageUrl(record.image || record.productImageUrl)} alt="v" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -571,7 +553,7 @@ const ProductCreate = () => {
                                                             </Upload>
                                                         </div>
                                                         <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-                                                            <div style={{ fontWeight: 600, color: '#333', fontSize: '0.9rem', whiteSpace: 'normal', wordBreak: 'break-word' }}>
+                                                            <div style={{ fontWeight: 600, color: '#333', fontSize: '0.9rem' }}>
                                                                 {record.displayVariantName || record.productVariantName}
                                                             </div>
                                                             <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap' }}>
@@ -604,7 +586,7 @@ const ProductCreate = () => {
                                             </div>
                                         </div>
 
-                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%', paddingTop: 20 }}>
+                                        <div className="actions" style={{ display: 'flex', gap: 15, width: '100%', paddingTop: 20, marginTop: 48 }}>
                                             <CButton type="secondary" onClick={() => setCurrentStep(2)} style={{ flex: 1 }}>
                                                 {t('back')}
                                             </CButton>

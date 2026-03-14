@@ -178,7 +178,7 @@ export default {
     filter_with_media: "Có Hình Ảnh/Video",
     no_products_found: "Không tìm thấy sản phẩm.",
     variant_selection_label: "Lựa chọn phân loại",
-    variant_selected_label: "Lựa chọn đã chọn:",
+    variant_selected_label: "Lựa chọn đã chọn",
 
     // --- Cart & Checkout ---
     cart: "Giỏ Hàng",

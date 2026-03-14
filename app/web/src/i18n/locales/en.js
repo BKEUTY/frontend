@@ -1,5 +1,4 @@
 export default {
-    // --- General & Common ---
     home: "Home",
     search: "Search",
     search_placeholder: "Search for products...",
@@ -41,7 +40,6 @@ export default {
     settings: "Settings & Support",
     chat: "Chat with us",
 
-    // --- Authentication ---
     login: "Login",
     login_subtitle: "Log in to experience our premium services",
     login_success: "Login success",
@@ -72,7 +70,6 @@ export default {
     full_name: "Full Name",
     username: "Username",
     
-    // --- OTP & Validation ---
     step_email: "Email",
     step_otp: "OTP Verification",
     step_new_pass: "New Password",
@@ -96,7 +93,6 @@ export default {
     name_min: "Name must be at least 2 characters!",
     term_required: "Please agree to the terms!",
 
-    // --- Navigation & Categories ---
     product: "Product",
     service: "Service",
     promotion: "Promotion",
@@ -106,6 +102,7 @@ export default {
     about_brand: "About Brand",
     beauty_corner: "Beauty Corner",
     categories: "Categories",
+    all_categories: "All Categories",
     brands: "Brands",
     new_arrivals: "New Arrivals",
     best_sellers: "Best Sellers",
@@ -116,9 +113,9 @@ export default {
     all_products: "All Products",
     product_section: "Products",
 
-    // --- Cosmetics Categories ---
     makeup: "Makeup",
     skincare: "Skincare",
+    fragrance: "Fragrance",
     gift_sets: "Gift Sets",
     makeup_face: "Face",
     makeup_lips: "Lips",
@@ -138,7 +135,6 @@ export default {
     conditioner: "Conditioner",
     hair_oil: "Hair Oil",
 
-    // --- Product Details ---
     colors: "Colors",
     scent: "Scent",
     no_scent: "No Scent",
@@ -178,9 +174,9 @@ export default {
     filter_with_media: "With Photo/Video",
     no_products_found: "No products found.",
     variant_selection_label: "Select variation",
-    variant_selected_label: "Selected choice:",
+    variant_selected_label: "Selected choice",
+    load_more: "Load More",
 
-    // --- Cart & Checkout ---
     cart: "Cart",
     cart_empty: "Your cart is empty",
     cart_empty_desc: "Your cart is currently empty. Let's find some beauty essentials!",
@@ -224,7 +220,6 @@ export default {
     select_promo: "Select Promotion Code",
     promo_code: "Promo Code",
 
-    // --- Delivery & Promos ---
     fast_delivery_2h: "2H Fast Free Delivery",
     fast_delivery_2h_short: "2H Delivery",
     fast_delivery_desc: "Want it by 10 AM tomorrow? Order before midnight and select 2H Delivery at checkout.",
@@ -244,7 +239,6 @@ export default {
     total_spent: "Total Spent",
     next_level_condition: "Spend {amount} more to reach {level}",
 
-    // --- Account & Orders ---
     account: "Account",
     my_orders: "My Orders",
     my_appointments: "My Appointments",
@@ -292,7 +286,6 @@ export default {
     issue_return: "Return / Refund",
     tax: "Tax",
 
-    // --- Spa & Appointments ---
     appointment_list: "Appointment List",
     manage_appointments_desc: "Manage upcoming appointments and booking history",
     search_appointment_placeholder: "Search service, branch...",
@@ -314,7 +307,6 @@ export default {
     cancel_tooltip: "Cancel",
     edit_tooltip: "Edit",
 
-    // --- Policies & About Us ---
     terms_and_policy: "Terms & Policy",
     agree_terms: "I agree with",
     terms: "Terms",
@@ -355,7 +347,6 @@ export default {
     about_us_value_dedication: "Dedication: Putting customers at the center, advising on right needs, caring with right process.",
     about_us_value_trend: "Trend: Always leading in updating the latest beauty trends and technologies.",
 
-    // --- Footer & Contacts ---
     footer_support: "Customer Support",
     support_team: "Customer Support",
     footer_connect: "Connect with Bkeuty",
@@ -375,7 +366,6 @@ export default {
     contact_office_address: "Address: Ward 6. Linh Trung Ward, Thu Duc City, Ho Chi Minh City.",
     contact_office_desc: "This is where we work and operate the system. You can come directly to experience products at the 1st floor showroom.",
 
-    // --- Retail Stores ---
     retail_intro: "Experience classy shopping space with thousands of free test products at BKEUTY store system nationwide.",
     retail_store_img: "[Luxurious flagship store facade image]",
     retail_hcm_title: "Ho Chi Minh City Area",
@@ -401,7 +391,6 @@ export default {
     retail_no_result: "No branches found.",
     retail_back_to_list: "Back to list",
 
-    // --- Promotions Page ---
     promo_list_title: "Promotion List",
     promo_search_placeholder: "Search by name, promo code...",
     promo_tab_all: "All",
@@ -421,7 +410,6 @@ export default {
     promo_status_expired: "Expired",
     no_promos_found: "No promotions found matching your criteria.",
 
-    // --- Chatbot (AI) ---
     chatbot_title: "Virtual Assistant BKEUTY",
     chatbot_greeting: "Hello, how can I help you today?",
     chatbot_input_placeholder: "Type your message...",
@@ -430,7 +418,6 @@ export default {
     chatbot_response_product: "Great! Here are some moisturizer suggestions for dry skin that BKEUTY recommends for you:",
     chatbot_demo_product_name: "BKEUTY Hydra-Deep Moisturizing Cream",
 
-    // --- Admin Dashboard ---
     admin_dashboard_title: "Admin Dashboard",
     admin_home_welcome: "Welcome Back, Admin!",
     admin_home_subtitle: "Select a module to manage your store activities today",
@@ -499,7 +486,6 @@ export default {
     admin_select_hint: "select",
     admin_close_hint: "close",
 
-    // --- Admin Product Management ---
     admin_product_list: "Product List",
     admin_product_create: "Create New Product",
     admin_create_title: "Create New Product",
@@ -554,8 +540,8 @@ export default {
     admin_alert_variants_desc: "Set price, stock, and images for each specific variation.",
     admin_msg_variants_desc: "Manage price and stock for each variation",
     admin_label_variant: "Specific Variation",
-    admin_label_price: "Unit Price",
-    admin_label_stock: "Stock",
+    admin_label_price: "Retail Price",
+    admin_label_stock: "Stock Quantity",
     admin_placeholder_price: "Price (VND)",
     admin_placeholder_stock: "Quantity",
     admin_btn_finish_later: "Save & Hide",
@@ -570,7 +556,6 @@ export default {
     admin_variant_desc_label: "Variation description (optional)",
     admin_preview_mode_msg: "This is a preview mode, you cannot add to cart.",
     
-    // --- Admin Notifications/Errors ---
     admin_msg_create_success: "Product created successfully!",
     admin_msg_options_success: "Options created successfully!",
     admin_msg_variants_success: "All variants updated successfully!",
@@ -584,7 +569,6 @@ export default {
     admin_error_name_required: "Product name is required!",
     admin_error_category_required: "Select at least one category.",
 
-    // --- Global Errors & Alerts ---
     error_404_title: "Page Not Found",
     error_404_desc: "Sorry, the page you are looking for does not exist.",
     error_500_title: "Internal Server Error",
@@ -607,7 +591,6 @@ export default {
     trust_check: "Check Before Accept",
     user_preview: "User Preview",
 
-    // --- API Error Messages ---
     api_error_general: "Something went wrong. Please try again.",
     api_error_network: "Network error. Please check your connection.",
     api_error_login: "Login failed. Please try again.",

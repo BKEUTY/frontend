@@ -1,5 +1,4 @@
 export default {
-    // --- General & Common ---
     home: "Trang Chủ",
     search: "Tìm Kiếm",
     search_placeholder: "Tìm kiếm sản phẩm...",
@@ -41,7 +40,6 @@ export default {
     settings: "Cài đặt & Hỗ trợ",
     chat: "Chat với chúng tôi",
 
-    // --- Authentication ---
     login: "Đăng Nhập",
     login_subtitle: "Đăng nhập để trải nghiệm dịch vụ cao cấp",
     login_success: "Đăng nhập thành công",
@@ -72,7 +70,6 @@ export default {
     full_name: "Họ Và Tên",
     username: "Tên hiển thị",
     
-    // --- OTP & Validation ---
     step_email: "Email",
     step_otp: "Xác thực OTP",
     step_new_pass: "Mật khẩu mới",
@@ -96,7 +93,6 @@ export default {
     name_min: "Họ tên phải có ít nhất 2 ký tự!",
     term_required: "Vui lòng đồng ý với điều khoản!",
 
-    // --- Navigation & Categories ---
     product: "Sản Phẩm",
     service: "Dịch Vụ",
     promotion: "Khuyến Mãi",
@@ -106,6 +102,7 @@ export default {
     about_brand: "Về Thương Hiệu",
     beauty_corner: "Góc Làm Đẹp",
     categories: "DANH MỤC",
+    all_categories: "Tất cả danh mục",
     brands: "THƯƠNG HIỆU",
     new_arrivals: "HÀNG MỚI VỀ",
     best_sellers: "BÁN CHẠY",
@@ -116,9 +113,9 @@ export default {
     all_products: "Tất Cả Sản Phẩm",
     product_section: "Sản Phẩm",
 
-    // --- Cosmetics Categories ---
     makeup: "Trang Điểm",
     skincare: "Chăm Sóc Da",
+    fragrance: "Nước hoa",
     gift_sets: "Bộ Quà Tặng",
     makeup_face: "Trang Điểm Mặt",
     makeup_lips: "Trang Điểm Môi",
@@ -138,7 +135,6 @@ export default {
     conditioner: "Dầu Xả",
     hair_oil: "Dưỡng Tóc",
 
-    // --- Product Details ---
     colors: "Màu Sắc",
     scent: "Mùi hương",
     no_scent: "Không mùi",
@@ -178,9 +174,9 @@ export default {
     filter_with_media: "Có Hình Ảnh/Video",
     no_products_found: "Không tìm thấy sản phẩm.",
     variant_selection_label: "Lựa chọn phân loại",
-    variant_selected_label: "Lựa chọn đã chọn:",
+    variant_selected_label: "Lựa chọn đã chọn",
+    load_more: "Tải Thêm",
 
-    // --- Cart & Checkout ---
     cart: "Giỏ Hàng",
     cart_empty: "Giỏ hàng của bạn đang trống",
     cart_empty_desc: "Giỏ hàng của bạn hiện đang trống. Hãy tìm thêm những sản phẩm làm đẹp cần thiết nhé!",
@@ -206,7 +202,7 @@ export default {
     phone_placeholder: "Nhập số điện thoại",
     address_placeholder: "Nhập địa chỉ đầy đủ",
     note: "Ghi chú (Tùy chọn)",
-    note_placeholder: "Ghi chú về đơn hàng, ví dụ: thời gian hay chỉ dẫn địa điểm giao hàng chi tiết hơn.",
+    note_placeholder: "Ghi chú về đơn hàng, ví dụ: thời gian nhận hàng hay chỉ dẫn cụ thể.",
     payment_method: "Phương Thức Thanh Toán",
     payment_cod: "Thanh toán khi nhận hàng (COD)",
     payment_banking: "Chuyển khoản ngân hàng (QR Code)",
@@ -224,7 +220,6 @@ export default {
     select_promo: "Chọn Mã Khuyến Mãi",
     promo_code: "Mã giảm giá",
 
-    // --- Delivery & Promos ---
     fast_delivery_2h: "Giao Nhanh Miễn Phí 2H",
     fast_delivery_2h_short: "Giao 2H",
     fast_delivery_desc: "Cần gấp lúc 10h sáng mai? Đặt hàng trước nửa đêm và chọn Giao hàng 2H khi thanh toán.",
@@ -244,7 +239,6 @@ export default {
     total_spent: "Tổng chi tiêu",
     next_level_condition: "Chi thêm {amount} để đạt mức {level}",
 
-    // --- Account & Orders ---
     account: "Tài Khoản",
     my_orders: "Đơn hàng của tôi",
     my_appointments: "Lịch hẹn của tôi",
@@ -292,7 +286,6 @@ export default {
     issue_return: "Hoàn hàng",
     tax: "Thuế",
 
-    // --- Spa & Appointments ---
     appointment_list: "Danh sách lịch hẹn",
     manage_appointments_desc: "Quản lý các cuộc hẹn sắp tới và lịch sử đặt lịch",
     search_appointment_placeholder: "Tìm kiếm dịch vụ, chi nhánh...",
@@ -314,7 +307,6 @@ export default {
     cancel_tooltip: "Hủy",
     edit_tooltip: "Chỉnh sửa",
 
-    // --- Policies & About Us ---
     terms_and_policy: "Điều Khoản & Chính Sách",
     agree_terms: "Tôi đồng ý với",
     terms: "Điều khoản",
@@ -355,7 +347,6 @@ export default {
     about_us_value_dedication: "Tận tâm (Dedication): Đặt khách hàng làm trung tâm, tư vấn đúng nhu cầu, chăm sóc đúng quy trình.",
     about_us_value_trend: "Tiên phong (Trend): Luôn đi đầu trong việc cập nhật các xu hướng và công nghệ làm đẹp mới nhất.",
 
-    // --- Footer & Contacts ---
     footer_support: "Hỗ Trợ Khách Hàng",
     support_team: "Hỗ Trợ Khách Hàng",
     footer_connect: "Kết Nối Với Bkeuty",
@@ -375,7 +366,6 @@ export default {
     contact_office_address: "Địa chỉ: Khu phố 6, Phường Linh Trung, Thành phố Thủ Đức, TP. Hồ Chí Minh.",
     contact_office_desc: "Đây là nơi chúng tôi làm việc và vận hành hệ thống. Quý khách có thể đến trực tiếp để trải nghiệm sản phẩm tại showroom tầng 1.",
 
-    // --- Retail Stores ---
     retail_intro: "Trải nghiệm không gian mua sắm đẳng cấp với hàng nghìn sản phẩm test miễn phí tại hệ thống cửa hàng BKEUTY trên toàn quốc.",
     retail_store_img: "[Hình ảnh mặt tiền cửa hàng flagship sang trọng]",
     retail_hcm_title: "Khu Vực TP. Hồ Chí Minh",
@@ -401,7 +391,6 @@ export default {
     retail_no_result: "Không tìm thấy chi nhánh nào.",
     retail_back_to_list: "Quay lại danh sách",
 
-    // --- Promotions Page ---
     promo_list_title: "Danh Sách Khuyến Mãi",
     promo_search_placeholder: "Tìm kiếm theo tên, mã khuyến mãi...",
     promo_tab_all: "Tất cả",
@@ -421,7 +410,6 @@ export default {
     promo_status_expired: "Đã diễn ra",
     no_promos_found: "Không tìm thấy khuyến mãi nào.",
 
-    // --- Chatbot (AI) ---
     chatbot_title: "Trợ lý ảo BKEUTY",
     chatbot_greeting: "Chào bạn, mình có thể giúp gì cho bạn?",
     chatbot_input_placeholder: "Nhập tin nhắn của bạn...",
@@ -430,7 +418,6 @@ export default {
     chatbot_response_product: "Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:",
     chatbot_demo_product_name: "Kem dưỡng ẩm sâu BKEUTY Hydra-Deep",
 
-    // --- Admin Dashboard ---
     admin_dashboard_title: "Trang Quản Trị",
     admin_home_welcome: "Chào mừng trở lại, Admin!",
     admin_home_subtitle: "Vui lòng chọn phân hệ để quản lý cửa hàng hôm nay",
@@ -469,10 +456,10 @@ export default {
     admin_appointments: "Lịch hẹn",
     admin_staff: "Nhân viên",
     admin_reports: "Báo cáo",
-    admin_dashboard_sales: "Tổng Doanh Thu",
-    admin_dashboard_orders: "Tổng Đơn Hàng",
-    admin_dashboard_appointments: "Tổng Lịch Hẹn",
-    admin_dashboard_users: "Tổng Người Dùng",
+    admin_dashboard_sales: "Doanh Thu",
+    admin_dashboard_orders: "Đơn Hàng",
+    admin_dashboard_appointments: "Lịch Hẹn",
+    admin_dashboard_users: "Người Dùng",
     admin_dashboard_products: "Tổng Sản Phẩm",
     admin_dashboard_overview: "Tổng Quan Báo Cáo",
     admin_recent_orders: "Đơn Hàng Gần Đây",
@@ -499,7 +486,6 @@ export default {
     admin_select_hint: "chọn",
     admin_close_hint: "đóng",
 
-    // --- Admin Product Management ---
     admin_product_list: "Danh sách sản phẩm",
     admin_product_create: "Tạo sản phẩm mới",
     admin_create_title: "Tạo sản phẩm mới",
@@ -570,7 +556,6 @@ export default {
     admin_variant_desc_label: "Mô tả phân loại (nếu có)",
     admin_preview_mode_msg: "Đây là chế độ xem trước, bạn không thể thêm vào giỏ hàng.",
     
-    // --- Admin Notifications/Errors ---
     admin_msg_create_success: "Thông tin cơ bản đã được lưu!",
     admin_msg_options_success: "Cấu hình phân loại đã được lưu!",
     admin_msg_variants_success: "Toàn bộ danh sách phân loại đã được cập nhật!",
@@ -584,7 +569,6 @@ export default {
     admin_error_name_required: "Vui lòng nhập tên sản phẩm!",
     admin_error_category_required: "Chọn ít nhất một danh mục.",
 
-    // --- Global Errors & Alerts ---
     error_404_title: "Không Tìm Thấy Trang",
     error_404_desc: "Xin lỗi, trang bạn đang tìm kiếm không tồn tại.",
     error_500_title: "Lỗi Máy Chủ",
@@ -607,7 +591,6 @@ export default {
     trust_check: "Được kiểm hàng trước khi nhận",
     user_preview: "Xem trước (User)",
 
-    // --- API Error Messages ---
     api_error_general: "Có lỗi xảy ra. Vui lòng thử lại.",
     api_error_network: "Lỗi kết nối mạng. Vui lòng kiểm tra đường truyền.",
     api_error_login: "Đăng nhập thất bại. Vui lòng kiểm tra lại.",

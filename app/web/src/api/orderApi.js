@@ -5,7 +5,7 @@ class OrderApi extends BaseApi {
         super('/api/order');
     }
 
-    getByUser(userId) {
+    getHistory() {
         return this.client.get(`${this.resource}/history`, { errorMessage: 'api_error_order_history' });
     }
 
@@ -16,4 +16,3 @@ class OrderApi extends BaseApi {
 
 const orderApi = new OrderApi();
 export default orderApi;
-

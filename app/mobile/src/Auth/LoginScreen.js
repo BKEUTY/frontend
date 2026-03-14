@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useState } from 'react';
 import {
-    View,
+    Alert,
+    Image,
+    KeyboardAvoidingView,
+    Platform,
+    ScrollView,
+    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    StyleSheet,
-    ScrollView,
-    KeyboardAvoidingView,
-    Platform,
-    Image,
-    Alert,
+    View,
 } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useLanguage } from '../i18n/LanguageContext';
 import Loading from '../Component/Common/Loading';
 import { useAuth } from '../Context/AuthContext';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const LoginScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -28,11 +28,7 @@ const LoginScreen = ({ navigation }) => {
         setLoading(true);
         try {
             const user = await login(email, password);
-            if (user?.role === 'ADMIN') {
-                navigation.replace('AdminDashboard');
-            } else {
-                navigation.replace('Main');
-            }
+            navigation.replace('Main');
         } catch (error) {
             console.error(error);
             Alert.alert(t('error', 'Error'), t('api_error_login', 'Login failed. Please check your credentials.'));

@@ -16,29 +16,49 @@ const ProductScreen = ({ navigation }) => {
     const [searchText, setSearchText] = useState('');
     const [activeCategory, setActiveCategory] = useState('all');
 
-    const categories = [
-        { id: 'all', label: t('all_products'), icon: 'apps-outline' },
-        { id: 'makeup', label: t('makeup'), icon: 'brush-outline' },
-        { id: 'skincare', label: t('skincare'), icon: 'sparkles-outline' },
-        { id: 'body', label: t('body_care'), icon: 'body-outline' },
-        { id: 'hair', label: t('hair_care'), icon: 'water-outline' },
-    ];
-
-    const fetchProducts = useCallback(async () => {
+    const fetchProducts = useCallback(async (catId = null) => {
         setLoading(true);
         try {
-            const response = await productApi.getAll();
-            setProducts(response.data);
+            const params = {};
+            if (catId && catId !== 'all') params.categoryId = catId;
+            const response = await productApi.getAll(params);
+            setProducts(response.data.content || []);
         } catch (err) {
             console.error("Fetch products error:", err);
+            setProducts([]);
         } finally {
             setLoading(false);
         }
     }, []);
 
+    const fetchCategories = useCallback(async () => {
+        try {
+            const res = await productApi.getCategories();
+            if (res.data) {
+                const dynamicCats = res.data.map(c => ({
+                    id: c.id,
+                    label: c.categoryName,
+                    icon: 'sparkles-outline'
+                }));
+                // Keep 'all' category
+                setCategoryList([
+                    { id: 'all', label: t('all_products'), icon: 'apps-outline' },
+                    ...dynamicCats
+                ]);
+            }
+        } catch (err) {
+            console.error("Fetch categories error:", err);
+        }
+    }, [t]);
+
+    const [categoryList, setCategoryList] = useState([
+        { id: 'all', label: t('all_products'), icon: 'apps-outline' }
+    ]);
+
     useEffect(() => {
-        fetchProducts();
-    }, [fetchProducts]);
+        fetchCategories();
+        fetchProducts(activeCategory);
+    }, [activeCategory, fetchProducts, fetchCategories]);
 
     const handleAddToCart = async (product) => {
         addToCart({
@@ -81,7 +101,7 @@ const ProductScreen = ({ navigation }) => {
                     showsHorizontalScrollIndicator={false}
                     contentContainerStyle={styles.categoriesScroll}
                 >
-                    {categories.map((cat) => (
+                    {categoryList.map((cat) => (
                         <TouchableOpacity
                             key={cat.id}
                             style={[

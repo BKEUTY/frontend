@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { COLORS } from '../../constants/Theme';
+import { getImageUrl } from '../../api/axiosClient';
 
 const { width } = Dimensions.get('window');
 const GRID_WIDTH = (width - 45) / 2;
@@ -26,21 +28,33 @@ const ProductCard = ({
         >
             <View style={imageStyle}>
                 {item.image ? (
-                    <Image source={{ uri: item.image }} style={styles.image} resizeMode="cover" />
+                    <Image 
+                        source={{ uri: getImageUrl(item.image) }} 
+                        style={styles.image} 
+                        resizeMode="cover" 
+                    />
                 ) : (
-                    <View style={styles.imagePlaceholder} />
+                    <View style={styles.imagePlaceholder}>
+                        <Ionicons name="image-outline" size={40} color="#e5e7eb" />
+                    </View>
                 )}
 
                 <View style={styles.badgeContainer}>
                     {item.tag && (
-                        <View style={styles.tagBadge}>
+                        <LinearGradient
+                            colors={['#ef4444', '#b91c1c']}
+                            style={styles.tagBadge}
+                        >
                             <Text style={styles.tagText}>{item.tag}</Text>
-                        </View>
+                        </LinearGradient>
                     )}
                     {item.discount && (
-                        <View style={styles.discountBadge}>
+                        <LinearGradient
+                            colors={['#ec4899', '#be185d']}
+                            style={styles.discountBadge}
+                        >
                             <Text style={styles.discountText}>-{item.discount}%</Text>
-                        </View>
+                        </LinearGradient>
                     )}
                 </View>
             </View>
@@ -62,7 +76,7 @@ const ProductCard = ({
                     <View>
                         {item.oldPrice && <Text style={styles.oldPriceText}>{item.oldPrice}</Text>}
                         <Text style={styles.priceText}>
-                            {item.price ? (typeof item.price === 'string' ? item.price : item.price.toLocaleString("vi-VN") + 'đ') : '0đ'}
+                            {item.minPrice ? `${item.minPrice.toLocaleString("vi-VN")}đ` : (item.price || '0đ')}
                         </Text>
                     </View>
 

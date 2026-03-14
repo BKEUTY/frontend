@@ -1,36 +1,22 @@
-import React, { useState } from 'react';
-import {
-    View, Text, StyleSheet, ScrollView, TextInput,
-    TouchableOpacity, Image, Alert, KeyboardAvoidingView, Platform
-} from 'react-native';
-import { MaterialCommunityIcons, Ionicons, Feather } from '@expo/vector-icons';
+import { Feather, Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
-import { useLanguage } from '../../i18n/LanguageContext';
+import { useState } from 'react';
+import {
+    Alert,
+    Image,
+    KeyboardAvoidingView, Platform,
+    ScrollView,
+    StyleSheet,
+    Text,
+    TouchableOpacity,
+    View
+} from 'react-native';
+import { CButton, CInput } from '../../Component/Common';
+import adminApi from '../../api/adminApi';
 import { COLORS } from '../../constants/Theme';
+import { useLanguage } from '../../i18n/LanguageContext';
 
-const AdminInput = ({ label, placeholder, value, onChangeText, multiline, keyboardType, prefix }) => (
-    <View>
-        {label && <Text style={styles.label}>{label}</Text>}
-        <View style={[
-            styles.inputContainer,
-            multiline && styles.textAreaContainer,
-            prefix && { flexDirection: 'row', alignItems: 'center' }
-        ]}>
-            {prefix && <Text style={styles.inputPrefix}>{prefix}</Text>}
-            <TextInput
-                style={[styles.input, multiline && styles.textArea]}
-                placeholder={placeholder}
-                value={value}
-                onChangeText={onChangeText}
-                placeholderTextColor="#94a3b8"
-                multiline={multiline}
-                numberOfLines={multiline ? 4 : 1}
-                textAlignVertical={multiline ? 'top' : 'center'}
-                keyboardType={keyboardType}
-            />
-        </View>
-    </View>
-);
+
 
 const ProductCreateScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -63,7 +49,9 @@ const ProductCreateScreen = ({ navigation }) => {
         }
     };
 
-    const handleNext = () => {
+    const [loading, setLoading] = useState(false);
+
+    const handleNext = async () => {
         if (currentStep === 0) {
             if (!name) {
                 Alert.alert(t('error'), t('admin_error_name_required'));
@@ -71,16 +59,79 @@ const ProductCreateScreen = ({ navigation }) => {
             }
             setCurrentStep(1);
         } else if (currentStep === 1) {
+            setCurrentStep(2);
+        } else if (currentStep === 2) {
             const validOptions = optionTypes.filter(o => o.name && o.values.length > 0);
             if (validOptions.length === 0) {
                 Alert.alert(t('error'), t("admin_error_at_least_one_option"));
                 return;
             }
             generateVariants(validOptions);
-            setCurrentStep(2);
+            setCurrentStep(3);
         } else {
+            if (isPreview) {
+                Alert.alert(t('info'), t('admin_preview_mode_msg'));
+                return;
+            }
+            saveProduct();
+        }
+    };
+
+    const saveProduct = async () => {
+        setLoading(true);
+        try {
+
+            const productRes = await adminApi.createProduct({
+                name,
+                categoryName: category,
+                description,
+                status: 'ACTIVE'
+            });
+            const productId = productRes.data.id;
+
+
+            if (image) {
+                await adminApi.uploadProductImage(image, productId);
+            }
+
+
+            const validOptions = optionTypes.filter(o => o.name && o.values.length > 0);
+            for (const opt of validOptions) {
+                await adminApi.createOption({
+                    productId,
+                    optionName: opt.name,
+                    optionValues: opt.values
+                });
+            }
+
+
+            const variantsRes = await adminApi.getVariants(productId);
+            const backendVariants = variantsRes.data;
+
+
+            const updates = backendVariants.map(bv => {
+                const userVar = variants.find(v => bv.productVariantName.includes(v.value));
+                if (userVar) {
+                    return adminApi.updateVariant({
+                        id: bv.id,
+                        productVariantName: bv.productVariantName,
+                        price: parseFloat(userVar.price) || 0,
+                        stockQuantity: parseInt(userVar.stock) || 0,
+                        status: 'ACTIVE'
+                    });
+                }
+                return null;
+            }).filter(u => u !== null);
+
+            await Promise.all(updates);
+
             Alert.alert(t('success'), t('admin_msg_create_success'));
             navigation.goBack();
+        } catch (err) {
+            console.error("Save product error:", err);
+            Alert.alert(t('error'), t('admin_error_create'));
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -148,85 +199,57 @@ const ProductCreateScreen = ({ navigation }) => {
     const renderGeneralStep = () => (
         <View>
             <View style={styles.card}>
-                <Text style={styles.cardTitle}>{t('admin_section_general')}</Text>
-
-                {isPreview && (
-                    <View style={{ marginBottom: 20 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#ff5722', padding: 10, borderRadius: 8, marginBottom: 15 }}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-                                <Ionicons name="flash" size={18} color="white" />
-                                <Text style={{ color: 'white', fontWeight: 'bold', fontStyle: 'italic', fontSize: 16 }}>FLASH DEAL</Text>
-                            </View>
-                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
-                                <Text style={{ backgroundColor: 'black', color: 'white', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>02</Text>
-                                <Text style={{ color: 'white' }}>:</Text>
-                                <Text style={{ backgroundColor: 'black', color: 'white', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>04</Text>
-                                <Text style={{ color: 'white' }}>:</Text>
-                                <Text style={{ backgroundColor: 'black', color: 'white', paddingHorizontal: 5, paddingVertical: 2, borderRadius: 4, fontSize: 12, fontWeight: 'bold' }}>42</Text>
-                            </View>
-                        </View>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-                            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#d32f2f' }}>0đ</Text>
-                            <Text style={{ color: '#999', fontSize: 14 }}>{t('admin_hint_price_step_3')}</Text>
-                        </View>
-                    </View>
-                )}
-                <AdminInput
+                <Text style={styles.cardTitle}>
+                    <Ionicons name="information-circle" size={20} color={COLORS.mainTitle} style={{ marginRight: 8 }} />
+                    {t('admin_section_general')}
+                </Text>
+                <CInput
                     label={t('admin_label_name')}
                     placeholder={t('admin_placeholder_product_name')}
                     value={name}
                     onChangeText={setName}
                 />
-                <AdminInput
+                <CInput
                     label={t('admin_label_category')}
                     placeholder={t('admin_placeholder_categories')}
                     value={category}
                     onChangeText={setCategory}
-                    prefix={<Ionicons name="list" size={18} color="#94a3b8" style={{ marginRight: 8 }} />}
+                    prefix={<Ionicons name="list" size={18} color="#94a3b8" />}
                 />
-                <AdminInput
+                <CInput
                     label={t('admin_label_desc')}
                     placeholder={t('admin_placeholder_desc')}
                     value={description}
                     onChangeText={setDescription}
                     multiline
                 />
+            </View>
+        </View>
+    );
 
-                {isPreview && (
-                    <View style={{ backgroundColor: '#f1f8e9', padding: 15, borderRadius: 8, marginTop: 10, borderWidth: 1, borderColor: '#c5e1a5' }}>
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 5 }}>
-                            <View style={{ backgroundColor: '#ff9800', paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4, marginRight: 8 }}>
-                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 10, fontStyle: 'italic' }}>NowFree</Text>
-                            </View>
-                            <Text style={{ color: '#2e7d32', fontWeight: 'bold', fontSize: 14 }}>{t('fast_delivery_2h')}</Text>
+    const renderMediaStep = () => (
+        <View style={styles.card}>
+            <Text style={styles.cardTitle}>
+                <Ionicons name="image" size={20} color={COLORS.mainTitle} style={{ marginRight: 8 }} />
+                {t('admin_section_media')}
+            </Text>
+            <TouchableOpacity style={styles.uploadBox} onPress={pickImage} activeOpacity={0.8}>
+                {image ? (
+                    <>
+                        <Image source={{ uri: image }} style={styles.previewImage} />
+                        <TouchableOpacity style={styles.removeImageBtn} onPress={() => setImage(null)}>
+                            <Ionicons name="close-circle" size={24} color="#ef4444" />
+                        </TouchableOpacity>
+                    </>
+                ) : (
+                    <View style={styles.uploadPlaceholder}>
+                        <View style={styles.uploadIconCircle}>
+                            <Ionicons name="cloud-upload-outline" size={28} color={COLORS.mainTitle} />
                         </View>
-                        <Text style={{ color: '#555', fontSize: 13, lineHeight: 18 }}>
-                            {t('fast_delivery_desc')}
-                        </Text>
+                        <Text style={styles.uploadText}>{t('admin_btn_upload')}</Text>
                     </View>
                 )}
-            </View>
-
-            <View style={styles.card}>
-                <Text style={styles.cardTitle}>{t('admin_section_media')}</Text>
-                <TouchableOpacity style={styles.uploadBox} onPress={pickImage} activeOpacity={0.8}>
-                    {image ? (
-                        <>
-                            <Image source={{ uri: image }} style={styles.previewImage} />
-                            <TouchableOpacity style={styles.removeImageBtn} onPress={() => setImage(null)}>
-                                <Ionicons name="close-circle" size={24} color="#ef4444" />
-                            </TouchableOpacity>
-                        </>
-                    ) : (
-                        <View style={styles.uploadPlaceholder}>
-                            <View style={styles.uploadIconCircle}>
-                                <Ionicons name="cloud-upload-outline" size={28} color={COLORS.mainTitle || '#c2185b'} />
-                            </View>
-                            <Text style={styles.uploadText}>{t('admin_btn_upload')}</Text>
-                        </View>
-                    )}
-                </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
         </View>
     );
 
@@ -242,7 +265,7 @@ const ProductCreateScreen = ({ navigation }) => {
                         </TouchableOpacity>}
                     </View>
 
-                    <AdminInput
+                    <CInput
                         placeholder={t('admin_placeholder_option_name')}
                         value={opt.name}
                         onChangeText={(text) => updateOptionName(index, text)}
@@ -253,25 +276,30 @@ const ProductCreateScreen = ({ navigation }) => {
                         {opt.values.map((val, valIdx) => (
                             <TouchableOpacity key={valIdx} style={styles.tag} onPress={() => removeOptionValue(index, valIdx)}>
                                 <Text style={styles.tagText}>{val}</Text>
-                                <Ionicons name="close" size={14} color={COLORS.mainTitle || '#c2185b'} />
+                                <Ionicons name="close" size={14} color={COLORS.mainTitle} />
                             </TouchableOpacity>
                         ))}
                     </View>
 
                     <View style={styles.addValueRow}>
                         <View style={{ flex: 1, marginRight: 10 }}>
-                            <AdminInput
+                            <CInput
                                 placeholder={t('admin_placeholder_add_value')}
                                 value={activeOptionIndex === index ? newOptionValue : ''}
                                 onChangeText={(text) => {
                                     setActiveOptionIndex(index);
                                     setNewOptionValue(text);
                                 }}
+                                style={{ marginBottom: 0 }}
                             />
                         </View>
-                        <TouchableOpacity style={styles.addBtnSmall} onPress={() => addOptionValue(index)}>
-                            <Ionicons name="add" size={24} color="white" />
-                        </TouchableOpacity>
+                        <CButton
+                            type="primary"
+                            title=""
+                            icon={<Ionicons name="add" size={24} color="white" />}
+                            onPress={() => addOptionValue(index)}
+                            style={{ width: 48, height: 48, borderRadius: 12 }}
+                        />
                     </View>
                 </View>
             ))}
@@ -310,18 +338,19 @@ const ProductCreateScreen = ({ navigation }) => {
                             </View>
                         ) : (
                             <View style={styles.variantRow}>
-                                <View style={{ flexBasis: '46%', minWidth: 100, flexGrow: 1 }}>
-                                    <AdminInput
+                                <View style={{ flex: 1 }}>
+                                    <CInput
                                         label={t('admin_label_price')}
                                         placeholder={t('admin_placeholder_price')}
-                                        prefix="₫"
+                                        prefix={<Text style={styles.inputPrefix}>₫</Text>}
                                         keyboardType="numeric"
                                         value={variant.price}
                                         onChangeText={(val) => handleVariantChange(variant.id, 'price', val)}
                                     />
                                 </View>
-                                <View style={{ flexBasis: '46%', minWidth: 100, flexGrow: 1 }}>
-                                    <AdminInput
+                                <View style={{ width: 12 }} />
+                                <View style={{ flex: 1 }}>
+                                    <CInput
                                         label={t('admin_label_stock')}
                                         placeholder={t('admin_placeholder_stock')}
                                         keyboardType="numeric"
@@ -354,7 +383,7 @@ const ProductCreateScreen = ({ navigation }) => {
 
             <View style={styles.stepperContainer}>
                 <View style={styles.stepper}>
-                    {[0, 1, 2].map((step) => (
+                    {[0, 1, 2, 3].map((step) => (
                         <View key={step} style={styles.stepItem}>
                             <View style={[
                                 styles.stepCircle,
@@ -366,12 +395,13 @@ const ProductCreateScreen = ({ navigation }) => {
                                 ) : (
                                     <View style={styles.stepIconWrapper}>
                                         {step === 0 && <Feather name="shopping-bag" size={16} color={currentStep >= step ? "white" : "#94a3b8"} />}
-                                        {step === 1 && <Feather name="settings" size={16} color={currentStep >= step ? "white" : "#94a3b8"} />}
-                                        {step === 2 && <MaterialCommunityIcons name="collage" size={16} color={currentStep >= step ? "white" : "#94a3b8"} />}
+                                        {step === 1 && <Feather name="image" size={16} color={currentStep >= step ? "white" : "#94a3b8"} />}
+                                        {step === 2 && <Feather name="settings" size={16} color={currentStep >= step ? "white" : "#94a3b8"} />}
+                                        {step === 3 && <MaterialCommunityIcons name="collage" size={16} color={currentStep >= step ? "white" : "#94a3b8"} />}
                                     </View>
                                 )}
                             </View>
-                            {step < 2 && (
+                            {step < 3 && (
                                 <View style={[
                                     styles.stepLine,
                                     currentStep > step && { backgroundColor: COLORS.mainTitle || '#c2185b' }
@@ -382,37 +412,35 @@ const ProductCreateScreen = ({ navigation }) => {
                 </View>
                 <Text style={styles.stepLabel}>
                     {currentStep === 0 ? t('admin_step_info') :
-                        currentStep === 1 ? t('admin_step_options') : t('admin_step_variants')}
+                        currentStep === 1 ? t('admin_step_media') :
+                            currentStep === 2 ? t('admin_step_options') : t('admin_step_variants')}
                 </Text>
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {currentStep === 0 && renderGeneralStep()}
-                {currentStep === 1 && renderOptionsStep()}
-                {currentStep === 2 && renderVariantsStep()}
+                {currentStep === 1 && renderMediaStep()}
+                {currentStep === 2 && renderOptionsStep()}
+                {currentStep === 3 && renderVariantsStep()}
             </ScrollView>
 
             <View style={styles.footer}>
                 {currentStep > 0 && (
-                    <TouchableOpacity
-                        style={[styles.btn, styles.secondaryBtn]}
+                    <CButton
+                        type="secondary"
+                        title={t('back')}
                         onPress={() => setCurrentStep(currentStep - 1)}
-                    >
-                        <Text style={[styles.btnText, { color: '#333' }]}>{t('back')}</Text>
-                    </TouchableOpacity>
+                        style={styles.premiumBtnSecondary}
+                        fullWidth={false}
+                    />
                 )}
-
-                <TouchableOpacity
-                    style={[styles.btn, styles.primaryBtn, { flex: 1, marginLeft: currentStep > 0 ? 12 : 0 }]}
+                <CButton
+                    type="primary"
+                    title={currentStep === 3 ? t('admin_btn_save_finish') : t('continue')}
                     onPress={handleNext}
-                >
-                    <Text style={styles.btnText}>
-                        {currentStep === 0 ? t('admin_btn_create_continue') :
-                            currentStep === 1 ? t('admin_btn_gen_variants') :
-                                t('admin_btn_save_finish')}
-                    </Text>
-                    <Ionicons name={currentStep === 2 ? "checkmark-circle" : "arrow-forward"} size={24} color="white" />
-                </TouchableOpacity>
+                    icon={<Ionicons name={currentStep === 3 ? "checkmark-circle" : "arrow-forward"} size={22} color="white" />}
+                    style={styles.premiumBtnPrimary}
+                />
             </View>
         </KeyboardAvoidingView>
     );
@@ -762,46 +790,31 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     footer: {
-        padding: 20,
+        paddingHorizontal: 16,
+        paddingVertical: 20,
         paddingBottom: Platform.OS === 'ios' ? 34 : 20,
         backgroundColor: 'rgba(255, 255, 255, 0.98)',
         borderTopWidth: 1,
         borderTopColor: '#f1f5f9',
         flexDirection: 'row',
-        gap: 16,
+        gap: 12,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: -4 },
         shadowOpacity: 0.05,
         shadowRadius: 10,
         elevation: 8,
     },
-    btn: {
-        height: 56,
-        borderRadius: 28,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        gap: 8,
+    premiumBtnPrimary: {
+        flex: 2,
+        height: 58,
+        borderRadius: 16,
+        paddingVertical: 16,
     },
-    primaryBtn: {
-        backgroundColor: COLORS.mainTitle || '#c2185b',
-        shadowColor: COLORS.mainTitle || '#c2185b',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    secondaryBtn: {
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: '#e2e8f0',
-        width: 90,
-    },
-    btnText: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: '700',
-        letterSpacing: 0.5,
+    premiumBtnSecondary: {
+        flex: 1,
+        height: 58,
+        borderRadius: 16,
+        paddingVertical: 16,
     }
 });
 

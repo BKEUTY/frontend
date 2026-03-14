@@ -1,9 +1,38 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import authApi from '../api/authApi';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
+
+const decodeToken = (token) => {
+    try {
+        const parts = token.split('.');
+        if (parts.length < 2) return {};
+        const payload = parts[1];
+        const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+        
+        // Basic base64 decode for mobile environment
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+        let output = '';
+        let str = base64.replace(/=+$/, '');
+        for (
+            let bc = 0, bs, buffer, idx = 0;
+            (buffer = str.charAt(idx++));
+            ~buffer && ((bs = bc % 4 ? bs * 64 + buffer : buffer), bc++ % 4)
+                ? (output += String.fromCharCode(255 & (bs >> ((-2 * bc) & 6))))
+                : 0
+        ) {
+            buffer = chars.indexOf(buffer);
+        }
+        
+        return JSON.parse(decodeURIComponent(escape(output)));
+    } catch (e) {
+        console.error('Token decode error:', e);
+        return {};
+    }
+};
 
 export const AuthProvider = ({ children }) => {
 
@@ -27,37 +56,62 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (email, password) => {
-        return new Promise((resolve) => {
-            setTimeout(async () => {
-                let role = 'USER';
-
-                if (email.toLowerCase().includes('admin') || email === 'admin@gmail.com') {
-                    role = 'ADMIN';
-                }
-
-                const mockUser = {
-                    id: role === 'ADMIN' ? 'admin-01' : 'user-01',
-                    email: email,
-                    name: role === 'ADMIN' ? 'Admin Bkeuty' : 'Thanh Phong',
-                    role: role,
-                    token: 'mock-jwt-token-123456',
-                    avatar: null,
-                    level: "Member Gold",
-                    points: 1250,
-                };
-
-                setUser(mockUser);
-                await AsyncStorage.setItem('user', JSON.stringify(mockUser));
-                await AsyncStorage.setItem('token', mockUser.token);
-                resolve(mockUser);
-            }, 800);
-        });
+        try {
+            const data = {
+                username: email,
+                password: password
+            };
+            const response = await authApi.login(data);
+            const { accessToken } = response.data;
+            
+            const userData = decodeToken(accessToken);
+            const role = userData.realm_access?.roles?.includes('ADMIN') ? 'ADMIN' : 'USER';
+            
+            const user = {
+                id: userData.sub || email,
+                email: userData.email || email,
+                name: userData.name || userData.preferred_username || email.split('@')[0],
+                role: role,
+                token: accessToken,
+                avatar: null,
+                membership_level: role === 'ADMIN' ? 'ADMIN' : 'Diamond',
+                points: 1250,
+                total_spent: 85000000,
+                target_spent: 100000000,
+                next_level: "VIP"
+            };
+            
+            setUser(user);
+            await AsyncStorage.setItem('user', JSON.stringify(user));
+            await AsyncStorage.setItem('token', accessToken);
+            
+            return user;
+        } catch (error) {
+            console.error('Login error:', error);
+            throw error;
+        }
     };
 
     const logout = async () => {
-        setUser(null);
-        await AsyncStorage.removeItem('user');
-        await AsyncStorage.removeItem('token');
+        try {
+            await authApi.logout();
+        } catch (error) {
+            console.error('Logout API error:', error);
+        } finally {
+            setUser(null);
+            await AsyncStorage.removeItem('user');
+            await AsyncStorage.removeItem('token');
+            await AsyncStorage.removeItem('refreshToken');
+        }
+    };
+
+    const register = async (data) => {
+        try {
+            await authApi.register(data);
+        } catch (error) {
+            console.error('Register error:', error);
+            throw error;
+        }
     };
 
     const value = {
@@ -65,6 +119,7 @@ export const AuthProvider = ({ children }) => {
         isAuthenticated: !!user,
         role: user?.role,
         login,
+        register,
         logout,
         loading
     };

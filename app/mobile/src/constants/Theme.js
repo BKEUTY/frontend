@@ -24,7 +24,7 @@ export const SIZES = {
   h5: 12,
   padding: 16,
   paddingSide: 20,
-  buttonHeight: 54,
+  buttonHeight: 56,
   buttonRadius: 16,
 };
 

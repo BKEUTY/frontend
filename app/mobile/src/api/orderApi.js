@@ -2,15 +2,15 @@ import BaseApi from './BaseApi';
 
 class OrderApi extends BaseApi {
     constructor() {
-        super('/user/api/order');
+        super('/api/order');
     }
 
     placeOrder(data) {
-        return this.create(data, { errorMessage: 'api_error_checkout' });
+        return this.client.post(`${this.resource}/place-order`, data, { errorMessage: 'api_error_checkout' });
     }
 
     getByUser(userId) {
-        return this.client.get(`${this.resource}/${userId}`, { errorMessage: 'api_error_order_history' });
+        return this.client.get(`${this.resource}/history`, { errorMessage: 'api_error_order_history' });
     }
 }
 

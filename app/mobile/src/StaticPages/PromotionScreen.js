@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
 import { useLanguage } from '../i18n/LanguageContext';
 import { COLORS } from '../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
@@ -9,56 +9,73 @@ const MOCK_PROMOTIONS = [
         id: 1,
         name: "Trung Thu Tới, Giá Giảm Phơi Phới",
         code: "BKEUTY-TRUNGTHU-2025",
-        revenue: 290000000,
+        discount: "50%",
         target: "Khách hàng VIP",
         startDate: "2025-10-01",
         endDate: "2025-10-08",
         status: "expired",
-        applicable: true
+        applicable: true,
+        description: "Ưu đãi cực sốc lên tới 50% cho tất cả các mặt hàng mỹ phẩm tại BKEUTY nhân dịp Tết Trung Thu. Áp dụng cho đơn hàng từ 500k trở lên."
     },
     {
         id: 2,
         name: "Phụ Nữ Việt Nam, Deal Sốc Sập Sàn",
         code: "BKEUTY-PNVN-2025",
-        revenue: 350000000,
+        discount: "100.000đ",
         target: "Tất cả",
         startDate: "2025-10-14",
         endDate: "2025-10-21",
         status: "ongoing",
-        applicable: true
+        applicable: true,
+        description: "Tặng ngay voucher trị giá 100.000đ cho hóa đơn mua sắm từ 1.000.000đ. Chào mừng ngày Phụ Nữ Việt Nam 20/10."
     },
     {
         id: 3,
-        name: "Halloween Săn Sale Hóa Trang Cực Chất",
-        code: "BKEUTY-HALLOWEEN-2025",
-        revenue: 0,
-        target: "Thành viên kim cương",
-        startDate: "2025-10-25",
-        endDate: "2025-11-01",
-        status: "upcoming",
-        applicable: false
+        name: "Quốc Khánh Rực Rỡ, Sale Hết Cỡ",
+        code: "BKEUTY-QUOCKHANH-2025",
+        discount: "200.000đ",
+        target: "Tất cả",
+        startDate: "2025-08-29",
+        endDate: "2025-09-03",
+        status: "expired",
+        applicable: false,
+        description: "Giảm trực tiếp 200.000đ cho các set combo chăm sóc da toàn diện. Ưu đãi mừng Lễ Quốc Khánh 2/9."
     },
     {
         id: 4,
-        name: "Black Friday Siêu Sale, Giảm Tới Bến",
-        code: "BKEUTY-BLACKFRIDAY-2025",
-        revenue: 0,
-        target: "Tất cả",
-        startDate: "2025-11-20",
-        endDate: "2025-11-30",
+        name: "Halloween Deal Sốc Hóa Trang",
+        code: "BKEUTY-HALLOWEEN-2025",
+        discount: "30%",
+        target: "Khách hàng VIP",
+        startDate: "2025-10-29",
+        endDate: "2025-11-02",
         status: "upcoming",
-        applicable: true
+        applicable: true,
+        description: "Sắm đồ trang điểm 'chất' Halloween với ưu đãi giảm 30%. Chỉ dành riêng cho hội viện VIP của BKEUTY."
     },
     {
         id: 5,
-        name: "Mừng Giáng Sinh, Rinh Quà Lung Linh",
-        code: "BKEUTY-CHRISTMAS-2025",
-        revenue: 0,
-        target: "Khách hàng mới",
-        startDate: "2025-12-20",
-        endDate: "2025-12-27",
+        name: "Hè Sang Shopping Thả Ga",
+        code: "BKEUTY-SUMMER-2025",
+        discount: "Freeship",
+        target: "Tất cả",
+        startDate: "2025-07-01",
+        endDate: "2025-08-31",
+        status: "expired",
+        applicable: true,
+        description: "Miễn phí vận chuyển toàn quốc cho mọi đơn hàng trong suốt mùa hè rực rỡ."
+    },
+    {
+        id: 6,
+        name: "Siêu Hội 11.11 Bùng Nổ",
+        code: "BKEUTY-1111-2025",
+        discount: "Mua 1 Tặng 1",
+        target: "Khách hàng Premium",
+        startDate: "2025-11-10",
+        endDate: "2025-11-11",
         status: "upcoming",
-        applicable: false
+        applicable: false,
+        description: "Săn deal 11.11 với chương trình Mua 1 Tặng 1 cho các dòng son môi và kem nền bán chạy nhất."
     }
 ];
 
@@ -66,6 +83,8 @@ const PromotionScreen = ({ navigation }) => {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
     const [filterType, setFilterType] = useState('all');
+    const [selectedPromo, setSelectedPromo] = useState(null);
+    const [showVipInfo, setShowVipInfo] = useState(false);
 
     const filteredData = useMemo(() => {
         return MOCK_PROMOTIONS.filter(item => {
@@ -90,13 +109,41 @@ const PromotionScreen = ({ navigation }) => {
         return `${d}/${m}/${y}`;
     };
 
+    const InfoIcon = () => (
+        <TouchableOpacity
+            onPress={() => setShowVipInfo(true)}
+            style={styles.infoIconTouch}
+        >
+            <Ionicons name="information-circle-outline" size={16} color="#94a3b8" />
+        </TouchableOpacity>
+    );
+
     const renderItem = ({ item }) => {
         const isExpired = item.status === 'expired';
         return (
-            <View style={[styles.card, isExpired && styles.cardDisabled]}>
+            <TouchableOpacity
+                activeOpacity={0.7}
+                onPress={() => setSelectedPromo(item)}
+                style={[styles.card, isExpired && styles.cardDisabled]}
+            >
                 <View style={styles.cardHeader}>
                     <Text style={[styles.cardTitle, isExpired && styles.textDisabled]}>{item.name}</Text>
                     <Text style={[styles.cardCode, isExpired && styles.textDisabled]}>{item.code}</Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                    <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>{t('promo_col_discount')}:</Text>
+                    <Text style={[styles.infoValue, styles.highlightValue, isExpired && styles.textDisabled]}>{item.discount}</Text>
+                </View>
+
+                <View style={styles.infoRow}>
+                    <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>
+                        {t('promo_col_target')}:
+                    </Text>
+                    <View style={styles.rowInline}>
+                        <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{item.target}</Text>
+                        <InfoIcon />
+                    </View>
                 </View>
 
                 <View style={styles.infoRow}>
@@ -104,11 +151,6 @@ const PromotionScreen = ({ navigation }) => {
                     <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>
                         {formatDate(item.startDate)} - {formatDate(item.endDate)}
                     </Text>
-                </View>
-
-                <View style={styles.infoRow}>
-                    <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>{t('promo_col_target')}:</Text>
-                    <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{item.target}</Text>
                 </View>
 
                 <View style={styles.footerRow}>
@@ -142,7 +184,7 @@ const PromotionScreen = ({ navigation }) => {
                         </Text>
                     </View>
                 </View>
-            </View>
+            </TouchableOpacity>
         );
     };
 
@@ -187,6 +229,99 @@ const PromotionScreen = ({ navigation }) => {
                     <Text style={styles.noResult}>{t('no_promos_found')}</Text>
                 }
             />
+
+            {/* Promo Detail Modal */}
+            <Modal
+                visible={!!selectedPromo}
+                transparent={true}
+                animationType="slide"
+                onRequestClose={() => setSelectedPromo(null)}
+            >
+                <Pressable
+                    style={styles.modalOverlay}
+                    onPress={() => setSelectedPromo(null)}
+                >
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>{t('promo_info_title')}</Text>
+                            <TouchableOpacity onPress={() => setSelectedPromo(null)}>
+                                <Ionicons name="close" size={24} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+
+                        {selectedPromo && (
+                            <ScrollView style={styles.modalBody}>
+                                <View style={styles.modalDetailRow}>
+                                    <Text style={styles.modalLabel}>{t('promo_col_name')}:</Text>
+                                    <Text style={styles.modalValue}>{selectedPromo.name}</Text>
+                                </View>
+                                <View style={styles.modalDetailRow}>
+                                    <Text style={styles.modalLabel}>{t('promo_col_code')}:</Text>
+                                    <Text style={[styles.modalValue, styles.modalCode]}>{selectedPromo.code}</Text>
+                                </View>
+                                <View style={styles.modalDetailRow}>
+                                    <Text style={styles.modalLabel}>{t('promo_col_discount')}:</Text>
+                                    <Text style={[styles.modalValue, styles.modalDiscount]}>{selectedPromo.discount}</Text>
+                                </View>
+                                <View style={styles.modalDetailRow}>
+                                    <Text style={styles.modalLabel}>{t('promo_col_target')}:</Text>
+                                    <Text style={styles.modalValue}>{selectedPromo.target}</Text>
+                                </View>
+                                <View style={styles.modalDetailRow}>
+                                    <Text style={styles.modalLabel}>{t('promo_col_time')}:</Text>
+                                    <Text style={styles.modalValue}>
+                                        {formatDate(selectedPromo.startDate)} - {formatDate(selectedPromo.endDate)}
+                                    </Text>
+                                </View>
+                                <View style={styles.modalDescription}>
+                                    <Text style={styles.modalLabel}>{t('description')}:</Text>
+                                    <Text style={styles.modalDescriptionText}>{selectedPromo.description}</Text>
+                                </View>
+                            </ScrollView>
+                        )}
+
+                        <TouchableOpacity
+                            style={styles.modalCloseButton}
+                            onPress={() => setSelectedPromo(null)}
+                        >
+                            <Text style={styles.modalCloseButtonText}>{t('confirm')}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Pressable>
+            </Modal>
+
+            {/* VIP Info Modal */}
+            <Modal
+                visible={showVipInfo}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setShowVipInfo(false)}
+            >
+                <Pressable
+                    style={styles.modalOverlay}
+                    onPress={() => setShowVipInfo(false)}
+                >
+                    <View style={[styles.modalContent, styles.vipModal]}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>{t('vip_condition_title')}</Text>
+                            <TouchableOpacity onPress={() => setShowVipInfo(false)}>
+                                <Ionicons name="close" size={24} color="#333" />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.modalBody}>
+                            {t('vip_condition_content').split('\n').map((line, i) => (
+                                <Text key={i} style={styles.vipConditionLine}>{line}</Text>
+                            ))}
+                        </View>
+                        <TouchableOpacity
+                            style={styles.modalCloseButton}
+                            onPress={() => setShowVipInfo(false)}
+                        >
+                            <Text style={styles.modalCloseButtonText}>{t('cancel') || 'Đóng'}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </Pressable>
+            </Modal>
         </View>
     );
 };
@@ -408,6 +543,116 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
+    // New Styles
+    infoIconTouch: {
+        marginLeft: 6,
+        padding: 2,
+    },
+    rowInline: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    highlightValue: {
+        color: COLORS.mainTitle || '#c2185b',
+        fontWeight: '800',
+    },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 20,
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        width: '100%',
+        maxHeight: '80%',
+        borderRadius: 24,
+        overflow: 'hidden',
+        elevation: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.3,
+        shadowRadius: 20,
+    },
+    vipModal: {
+        maxHeight: '40%',
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f1f5f9',
+    },
+    modalTitle: {
+        fontSize: 18,
+        fontWeight: '800',
+        color: '#1e293b',
+    },
+    modalBody: {
+        padding: 20,
+    },
+    modalDetailRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+        paddingBottom: 12,
+        borderBottomWidth: 1,
+        borderBottomColor: '#f8fafc',
+    },
+    modalLabel: {
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#94a3b8',
+        textTransform: 'uppercase',
+    },
+    modalValue: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#1e293b',
+        flex: 1,
+        textAlign: 'right',
+        marginLeft: 20,
+    },
+    modalCode: {
+        color: COLORS.mainTitle || '#c2185b',
+        fontFamily: 'monospace',
+    },
+    modalDiscount: {
+        color: '#059669',
+        fontSize: 16,
+    },
+    modalDescription: {
+        marginTop: 10,
+        paddingBottom: 20,
+    },
+    modalDescriptionText: {
+        marginTop: 8,
+        fontSize: 14,
+        lineHeight: 22,
+        color: '#475569',
+    },
+    modalCloseButton: {
+        backgroundColor: COLORS.mainTitle || '#c2185b',
+        padding: 16,
+        alignItems: 'center',
+        margin: 20,
+        borderRadius: 16,
+    },
+    modalCloseButtonText: {
+        color: 'white',
+        fontSize: 16,
+        fontWeight: '800',
+    },
+    vipConditionLine: {
+        fontSize: 14,
+        lineHeight: 22,
+        color: '#334155',
+        marginBottom: 12,
+    }
 });
 
 

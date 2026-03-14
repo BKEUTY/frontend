@@ -1,9 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { COLORS, SIZES } from '../../constants/Theme';
+import { COLORS } from '../../constants/Theme';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { Ionicons, FontAwesome5, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width } = Dimensions.get('window');
 
@@ -16,9 +17,9 @@ const OrderDetailScreen = () => {
         createdAt: '10/10/2023',
         expectedDelivery: '10/10/2023',
         status_logs: [
-            { title: t('order_placed_success') || 'Đặt hàng thành công', desc: t('order_placed_desc') || 'Đơn hàng đã được đặt', time: '11:45 PM', icon: 'box-open' },
-            { title: t('preparing_order') || 'Đang được chuẩn bị', desc: t('preparing_order_desc') || 'Người gửi đang chuẩn bị hàng', time: '11:45 PM', icon: 'cogs' },
-            { title: t('international_processing') || 'Đang được xử lý ở nước ngoài', desc: t('international_processing_desc') || 'Đơn hàng đã xuất kho quốc tế : Nam Ninh', time: '11:45 PM', icon: 'plane-departure' }
+            { title: t('order_placed_success'), desc: t('order_placed_desc'), time: '11:45 PM', icon: 'cube-outline' },
+            { title: t('preparing_order'), desc: t('preparing_order_desc'), time: '11:45 PM', icon: 'construct-outline' },
+            { title: t('international_processing'), desc: t('international_processing_desc'), time: '11:45 PM', icon: 'airplane-outline' }
         ],
         subtotal: 15755,
         discount: 15755,
@@ -30,19 +31,25 @@ const OrderDetailScreen = () => {
     const renderTimelineStep = (icon, label, date, isActive, isCompleted) => {
         return (
             <View style={styles.timelineStep}>
-                <View style={[
-                    styles.stepIconBox,
-                    isCompleted && styles.stepCompleted,
-                    isActive && styles.stepActive
-                ]}>
-                    <FontAwesome5
-                        name={icon}
-                        size={18}
-                        color={isActive || isCompleted ? 'white' : '#bbb'}
-                        style={isCompleted && !isActive ? { color: COLORS.mainTitle } : {}}
-                    />
+                <View style={styles.stepIconBoxOuter}>
+                    {isActive || isCompleted ? (
+                        <LinearGradient
+                            colors={isActive ? [COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f'] : ['#f3f4f6', '#f3f4f6']}
+                            style={[styles.stepIconBox, isActive && styles.stepActiveShadow]}
+                        >
+                            <Ionicons
+                                name={icon}
+                                size={18}
+                                color={isActive ? 'white' : COLORS.mainTitle}
+                            />
+                        </LinearGradient>
+                    ) : (
+                        <View style={styles.stepIconBox}>
+                            <Ionicons name={icon} size={18} color="#9ca3af" />
+                        </View>
+                    )}
                 </View>
-                <View style={[styles.stepContent]}>
+                <View style={styles.stepContent}>
                     <Text style={[styles.stepLabel, isActive && styles.textActive]}>{label}</Text>
                     <Text style={styles.stepDate}>{date}</Text>
                 </View>
@@ -54,103 +61,96 @@ const OrderDetailScreen = () => {
         <View style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="#333" />
+                    <Ionicons name="arrow-back" size={24} color="#111827" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{t('order_detail') || 'Chi tiết đơn hàng'}</Text>
-                <View style={{ width: 24 }} />
+                <Text style={styles.headerTitle}>{t('order_detail')}</Text>
+                <View style={{ width: 40 }} />
             </View>
 
-            <ScrollView style={styles.content} showVerticalScrollIndicator={false}>
-                <View style={styles.sectionCard}>
-                    <View style={styles.orderIdRow}>
-                        <Text style={styles.orderIdLabel}>{t('order_id_label') || 'Đơn hàng #'}{orderData.id}</Text>
+            <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+                <View style={styles.mainCard}>
+                    <View style={styles.orderIdHeader}>
+                        <View>
+                            <Text style={styles.orderIdLabel}>{t('order_id_label')} #{orderData.id}</Text>
+                            <Text style={styles.orderDate}>{t('order_time')}: {orderData.createdAt}</Text>
+                        </View>
+                        <View style={styles.statusBadge}>
+                            <Text style={styles.statusBadgeText}>ONDELIVERY</Text>
+                        </View>
                     </View>
+
                     <View style={styles.actionButtonsRow}>
                         <TouchableOpacity style={styles.btnInvoice}>
-                            <FontAwesome5 name="file-invoice" size={14} color="#333" />
-                            <Text style={styles.btnText}>{t('invoice') || 'Hóa đơn'}</Text>
+                            <Ionicons name="document-text-outline" size={18} color="#4b5563" />
+                            <Text style={styles.btnText}>{t('invoice')}</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.btnTrack}>
-                            <FontAwesome5 name="map-marked-alt" size={14} color="white" />
-                            <Text style={[styles.btnText, { color: 'white' }]}>{t('track_order') || 'Theo dõi'}</Text>
+                        <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.8}>
+                            <LinearGradient
+                                colors={[COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f']}
+                                style={styles.btnTrack}
+                            >
+                                <Ionicons name="navigate-outline" size={18} color="white" />
+                                <Text style={[styles.btnText, { color: 'white' }]}>{t('track_order')}</Text>
+                            </LinearGradient>
                         </TouchableOpacity>
                     </View>
                 </View>
 
-                <View style={styles.datesCard}>
-                    <Text style={styles.dateText}>{t('order_time') || 'Thời gian:'} <Text style={styles.bold}>{orderData.createdAt}</Text></Text>
-                    <View style={styles.expectedRow}>
-                        <FontAwesome5 name="shipping-fast" size={14} color={COLORS.mainTitle} />
-                        <Text style={styles.expectedText}>{t('expected_delivery') || 'Giao dự kiến:'} <Text style={styles.bold}>{orderData.expectedDelivery}</Text></Text>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>{t('shipping_timeline') || 'Shipping Timeline'}</Text>
+                </View>
+
+                <View style={styles.timelineCard}>
+                    <View style={styles.timelineLine} />
+                    {renderTimelineStep('card-outline', t('timeline_paid'), '10/10/2023', false, true)}
+                    {renderTimelineStep('cube-outline', t('timeline_shipped'), '10/10/2023', false, true)}
+                    {renderTimelineStep('bicycle-outline', t('timeline_delivering'), 'Dự kiến 12/10', true, false)}
+                    {renderTimelineStep('checkmark-circle-outline', t('timeline_delivered'), '---', false, false)}
+                </View>
+
+                <View style={styles.infoGrid}>
+                    <View style={styles.infoCard}>
+                        <View style={styles.infoIconBox}>
+                            <Ionicons name="location-outline" size={20} color={COLORS.mainTitle} />
+                        </View>
+                        <View style={styles.infoContent}>
+                            <Text style={styles.infoLabel}>{t('delivery_header')}</Text>
+                            <Text style={styles.infoValue} numberOfLines={2}>192/4 Lý tự trọng, Ninh Kiều, Cần Thơ</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.infoCard}>
+                        <View style={styles.infoIconBox}>
+                            <Ionicons name="card-outline" size={20} color={COLORS.mainTitle} />
+                        </View>
+                        <View style={styles.infoContent}>
+                            <Text style={styles.infoLabel}>{t('payment_header')}</Text>
+                            <Text style={styles.infoValue}>Visa **5678</Text>
+                        </View>
                     </View>
                 </View>
 
-                <View style={styles.sectionCard}>
-                    <View style={styles.timelineContainer}>
-                        <View style={styles.timelineLine} />
-
-                        {renderTimelineStep('check', t('timeline_paid') || 'Đã thanh toán', '10/10/2023', false, true)}
-                        {renderTimelineStep('box-open', t('timeline_shipped') || 'Đã giao ĐVVC', '10/10/2023', false, true)}
-                        {renderTimelineStep('shipping-fast', t('timeline_delivering') || 'Đang giao hàng', 'Dự kiến 12/10', true, false)}
-                        {renderTimelineStep('inbox', t('timeline_delivered') || 'Đã nhận', '---', false, false)}
-                    </View>
-                </View>
-
-                <View style={styles.sectionCard}>
-                    <View style={styles.logsContainer}>
-                        <View style={styles.logsLine} />
-
-                        {orderData.status_logs.map((log, index) => (
-                            <View key={index} style={styles.logItem}>
-                                <View style={[styles.logIconBox, index === 0 && styles.logIconActive]}>
-                                    <FontAwesome5
-                                        name={log.icon}
-                                        size={16}
-                                        color={index === 0 ? 'white' : '#666'}
-                                    />
-                                </View>
-                                <View style={styles.logContent}>
-                                    <Text style={[styles.logTitle, index === 0 && styles.textActive]}>{log.title}</Text>
-                                    <Text style={styles.logDesc}>{log.desc}</Text>
-                                    <Text style={styles.logTime}>{log.time}</Text>
-                                </View>
-                            </View>
-                        ))}
-                    </View>
-                </View>
-
-                <View style={styles.infoCard}>
-                    <View style={styles.infoSection}>
-                        <Text style={styles.infoTitle}>{t('payment_header') || 'Thanh toán'}</Text>
-                        <Text style={styles.infoText}>Visa **56 <Text style={styles.visaBadge}> VISA </Text></Text>
-                    </View>
-                    <View style={[styles.infoSection, { borderTopWidth: 1, borderTopColor: '#fceef5', marginTop: 10, paddingTop: 10 }]}>
-                        <Text style={styles.infoTitle}>{t('delivery_header') || 'Địa chỉ nhận hàng'}</Text>
-                        <Text style={styles.infoText}>192/4 Lý tự trọng, Ninh Kiều, Cần Thơ</Text>
-                    </View>
-                </View>
-
-                <View style={[styles.sectionCard, styles.summaryCard]}>
-                    <Text style={[styles.infoTitle, { marginBottom: 15 }]}>{t('order_overview') || 'Chi tiết thanh toán'}</Text>
+                <View style={styles.summaryCard}>
+                    <Text style={styles.summaryTitle}>{t('order_overview')}</Text>
                     <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>{t('subtotal') || 'Tổng tiền hàng'}</Text>
+                        <Text style={styles.summaryLabel}>{t('subtotal')}</Text>
                         <Text style={styles.summaryValue}>{orderData.subtotal.toLocaleString()}đ</Text>
                     </View>
                     <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>{t('discount') || 'Giảm giá'}</Text>
-                        <Text style={styles.summaryValue}>(20%) - {orderData.discount.toLocaleString()}đ</Text>
+                        <Text style={styles.summaryLabel}>{t('discount')}</Text>
+                        <Text style={styles.summaryValueGreen}>- {orderData.discount.toLocaleString()}đ</Text>
                     </View>
                     <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>{t('shipping_fee') || 'Phí vận chuyển'}</Text>
+                        <Text style={styles.summaryLabel}>{t('shipping_fee')}</Text>
                         <Text style={styles.summaryValue}>{orderData.shipping.toLocaleString()}đ</Text>
                     </View>
                     <View style={styles.totalRow}>
-                        <Text style={styles.totalLabel}>{t('total') || 'Thành tiền'}</Text>
+                        <Text style={styles.totalLabel}>{t('total')}</Text>
                         <Text style={styles.totalValue}>{orderData.total.toLocaleString()}đ</Text>
                     </View>
                 </View>
 
-                <View style={{ height: 40 }} />
+                <View style={{ height: 60 }} />
             </ScrollView>
         </View>
     );
@@ -159,259 +159,228 @@ const OrderDetailScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#fff',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between',
         paddingHorizontal: 15,
-        height: 55,
+        height: 56,
         backgroundColor: 'white',
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderBottomColor: '#f3f4f6',
     },
     backButton: {
-        padding: 5,
+        width: 40,
+        height: 40,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     headerTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#333',
+        flex: 1,
+        textAlign: 'center',
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#111827',
     },
     content: {
         flex: 1,
-        padding: 15,
-    },
-    sectionCard: {
-        backgroundColor: 'white',
-        borderRadius: 12,
         padding: 20,
-        marginBottom: 15,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
-        shadowRadius: 5,
-        elevation: 2,
     },
-    orderIdRow: {
-        marginBottom: 15,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f9f9f9',
-        paddingBottom: 15,
+    mainCard: {
+        backgroundColor: 'white',
+        borderRadius: 24,
+        padding: 20,
+        marginBottom: 24,
+        elevation: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 12,
+        borderWidth: 1,
+        borderColor: '#f9fafb',
+    },
+    orderIdHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'flex-start',
+        marginBottom: 20,
     },
     orderIdLabel: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: COLORS.mainTitle,
+        fontSize: 17,
+        fontWeight: '900',
+        color: '#111827',
+        marginBottom: 4,
+    },
+    orderDate: {
+        fontSize: 13,
+        color: '#9ca3af',
+        fontWeight: '500',
+    },
+    statusBadge: {
+        backgroundColor: '#fff7ed',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 10,
+        borderWidth: 1,
+        borderColor: '#ffedd5',
+    },
+    statusBadgeText: {
+        color: '#ea580c',
+        fontSize: 10,
+        fontWeight: '800',
+        letterSpacing: 0.5,
     },
     actionButtonsRow: {
         flexDirection: 'row',
-        gap: 15,
+        gap: 12,
     },
     btnInvoice: {
         flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: SIZES.buttonHeight - 10,
-        borderRadius: SIZES.buttonRadius - 4,
+        height: 48,
+        borderRadius: 14,
+        backgroundColor: '#f9fafb',
         borderWidth: 1,
-        borderColor: '#ddd',
-        backgroundColor: 'white',
+        borderColor: '#e5e7eb',
         gap: 8,
     },
     btnTrack: {
-        flex: 1,
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        height: SIZES.buttonHeight - 10,
-        borderRadius: SIZES.buttonRadius - 4,
-        backgroundColor: COLORS.mainTitle,
+        height: 48,
+        borderRadius: 14,
         gap: 8,
     },
     btnText: {
-        fontSize: 15,
-        fontWeight: '700',
-        color: '#333',
-    },
-    datesCard: {
-        backgroundColor: '#fafafa',
-        borderRadius: 12,
-        padding: 15,
-        marginBottom: 15,
-        borderWidth: 1,
-        borderColor: '#eee',
-    },
-    dateText: {
         fontSize: 14,
-        color: '#555',
-        marginBottom: 8,
-    },
-    expectedRow: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-    },
-    expectedText: {
-        fontSize: 14,
-        color: COLORS.mainTitle,
-        fontWeight: '600',
-    },
-    bold: {
         fontWeight: '700',
+        color: '#374151',
     },
-
-    timelineContainer: {
+    sectionHeader: {
+        marginBottom: 16,
+        paddingHorizontal: 4,
+    },
+    sectionTitle: {
+        fontSize: 18,
+        fontWeight: '900',
+        color: '#111827',
+    },
+    timelineCard: {
+        backgroundColor: '#f9fafb',
+        borderRadius: 24,
+        padding: 24,
+        marginBottom: 24,
         position: 'relative',
-        paddingLeft: 10,
     },
     timelineLine: {
         position: 'absolute',
-        left: 30,
-        top: 20,
-        bottom: 20,
+        left: 44,
+        top: 40,
+        bottom: 40,
         width: 2,
-        backgroundColor: '#e9e9e9',
+        backgroundColor: '#e5e7eb',
         zIndex: 0,
     },
     timelineStep: {
         flexDirection: 'row',
-        marginBottom: 25,
-        alignItems: 'flex-start',
+        marginBottom: 24,
+        alignItems: 'center',
+    },
+    stepIconBoxOuter: {
+        width: 40,
+        height: 40,
+        marginRight: 20,
+        zIndex: 1,
     },
     stepIconBox: {
         width: 40,
         height: 40,
-        borderRadius: 20,
+        borderRadius: 14,
         backgroundColor: 'white',
-        borderWidth: 2,
-        borderColor: '#e0e0e0',
-        alignItems: 'center',
         justifyContent: 'center',
-        marginRight: 15,
-        zIndex: 1,
+        alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
     },
-    stepCompleted: {
-        borderColor: COLORS.mainTitle,
-        backgroundColor: 'white',
-    },
-    stepActive: {
-        borderColor: COLORS.mainTitle,
-        backgroundColor: COLORS.mainTitle,
-        elevation: 4,
+    stepActiveShadow: {
+        elevation: 5,
+        shadowColor: COLORS.mainTitle,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        borderWidth: 0,
     },
     stepContent: {
         flex: 1,
-        paddingTop: 8,
     },
     stepLabel: {
         fontSize: 14,
-        fontWeight: '600',
-        color: '#555',
-        marginBottom: 4,
+        fontWeight: '700',
+        color: '#111827',
+        marginBottom: 2,
     },
     stepDate: {
         fontSize: 12,
-        color: '#999',
+        color: '#9ca3af',
+        fontWeight: '500',
     },
     textActive: {
         color: COLORS.mainTitle,
-        fontWeight: '700',
     },
-
-    logsContainer: {
-        position: 'relative',
-        paddingLeft: 5,
-    },
-    logsLine: {
-        position: 'absolute',
-        top: 20,
-        bottom: 20,
-        left: 20,
-        width: 2,
-        backgroundColor: '#e9e9e9',
-        zIndex: 0,
-    },
-    logItem: {
+    infoGrid: {
         flexDirection: 'row',
-        marginBottom: 25,
-        alignItems: 'flex-start',
-    },
-    logIconBox: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        backgroundColor: '#f5f5f5',
-        borderWidth: 2,
-        borderColor: 'white',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginRight: 15,
-        zIndex: 1,
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-    },
-    logIconActive: {
-        backgroundColor: COLORS.mainTitle,
-        borderColor: 'white',
-        elevation: 4,
-    },
-    logContent: {
-        flex: 1,
-        paddingTop: 8,
-    },
-    logTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 4,
-    },
-    logDesc: {
-        fontSize: 14,
-        color: '#666',
-        lineHeight: 20,
-    },
-    logTime: {
-        fontSize: 12,
-        color: '#999',
-        marginTop: 6,
-        textAlign: 'right',
+        gap: 15,
+        marginBottom: 24,
     },
     infoCard: {
+        flex: 1,
         backgroundColor: 'white',
-        borderRadius: 12,
-        marginBottom: 15,
+        borderRadius: 20,
+        padding: 16,
         borderWidth: 1,
-        borderColor: '#fceef5',
-        overflow: 'hidden',
+        borderColor: '#f3f4f6',
+        alignItems: 'center',
     },
-    infoSection: {
-        padding: 20,
+    infoIconBox: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        backgroundColor: '#fff1f2',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 12,
     },
-    infoTitle: {
-        fontSize: 16,
+    infoContent: {
+        alignItems: 'center',
+    },
+    infoLabel: {
+        fontSize: 12,
+        fontWeight: '800',
+        color: '#9ca3af',
+        marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    infoValue: {
+        fontSize: 13,
         fontWeight: '700',
-        color: COLORS.mainTitle,
-        marginBottom: 10,
-    },
-    infoText: {
-        fontSize: 14,
-        color: '#555',
-        lineHeight: 22,
-    },
-    visaBadge: {
-        backgroundColor: '#1a1f71',
-        color: 'white',
-        fontSize: 10,
-        fontWeight: 'bold',
+        color: '#374151',
+        textAlign: 'center',
     },
     summaryCard: {
-        backgroundColor: '#fffbfc',
-        borderColor: '#f8e1eb',
-        borderWidth: 1,
+        backgroundColor: '#111827',
+        borderRadius: 24,
+        padding: 24,
+        marginBottom: 40,
+    },
+    summaryTitle: {
+        fontSize: 16,
+        fontWeight: '900',
+        color: 'white',
+        marginBottom: 20,
     },
     summaryRow: {
         flexDirection: 'row',
@@ -420,12 +389,18 @@ const styles = StyleSheet.create({
     },
     summaryLabel: {
         fontSize: 14,
-        color: '#555',
+        color: '#9ca3af',
+        fontWeight: '500',
     },
     summaryValue: {
         fontSize: 14,
-        color: '#333',
-        fontWeight: '500',
+        color: 'white',
+        fontWeight: '700',
+    },
+    summaryValueGreen: {
+        fontSize: 14,
+        color: '#10b981',
+        fontWeight: '700',
     },
     totalRow: {
         flexDirection: 'row',
@@ -433,17 +408,17 @@ const styles = StyleSheet.create({
         marginTop: 15,
         paddingTop: 15,
         borderTopWidth: 1,
-        borderTopColor: '#dabac8',
+        borderTopColor: 'rgba(255,255,255,0.1)',
         borderStyle: 'dashed',
     },
     totalLabel: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: '#333',
+        fontSize: 18,
+        fontWeight: '900',
+        color: 'white',
     },
     totalValue: {
-        fontSize: 18,
-        fontWeight: '800',
+        fontSize: 22,
+        fontWeight: '900',
         color: COLORS.mainTitle,
     },
 });

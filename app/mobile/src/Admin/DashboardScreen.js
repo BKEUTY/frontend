@@ -128,7 +128,7 @@ const DashboardScreen = () => {
             </View>
             <View style={styles.productMeta}>
                 <Text style={styles.productPrice}>{item.price}</Text>
-                <Text style={styles.productSold}>{t('sold', 'Đã bán')}: {item.sold}</Text>
+                <Text style={styles.productSold}>{t('sold_count')}: {item.sold}</Text>
             </View>
         </TouchableOpacity>
     );
@@ -143,8 +143,8 @@ const DashboardScreen = () => {
             >
                 <View style={styles.headerContent}>
                     <View>
-                        <Text style={styles.headerSubtitle}>{t('welcome', 'Xin chào')}, Admin</Text>
-                        <Text style={styles.headerTitle}>{t('dashboard', 'Tổng quan')}</Text>
+                        <Text style={styles.headerSubtitle}>{t('welcome')}, Admin</Text>
+                        <Text style={styles.headerTitle}>{t('dashboard')}</Text>
                     </View>
                     <TouchableOpacity style={styles.profileBtn}>
                         <View style={styles.avatarPlaceholder}>
@@ -160,9 +160,9 @@ const DashboardScreen = () => {
                 </View>
 
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{t('admin_top_products', 'Sản phẩm bán chạy')}</Text>
+                    <Text style={styles.sectionTitle}>{t('admin_top_products')}</Text>
                     <TouchableOpacity>
-                        <Text style={styles.seeAllText}>{t('view_all', 'Xem tất cả')}</Text>
+                        <Text style={styles.seeAllText}>{t('view_all')}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -178,7 +178,7 @@ const DashboardScreen = () => {
                     ) : (
                         <View style={styles.emptyContainer}>
                             <MaterialCommunityIcons name="package-variant-closed" size={48} color="#e2e8f0" />
-                            <Text style={styles.emptyText}>{t('no_products_found', 'No products found')}</Text>
+                            <Text style={styles.emptyText}>{t('no_products_found')}</Text>
                         </View>
                     )}
                 </View>
@@ -211,14 +211,14 @@ const DashboardScreen = () => {
                                 <View style={[styles.modalActionIcon, { backgroundColor: '#eff6ff' }]}>
                                     <FontAwesome5 name="edit" size={18} color="#3b82f6" />
                                 </View>
-                                <Text style={styles.modalActionText}>{t('edit', 'Chỉnh sửa')}</Text>
+                                <Text style={styles.modalActionText}>{t('edit')}</Text>
                             </TouchableOpacity>
 
                             <TouchableOpacity style={[styles.modalActionBtn, styles.modalActionBtnDanger]} onPress={handleDeleteProduct}>
                                 <View style={[styles.modalActionIcon, { backgroundColor: '#fef2f2' }]}>
                                     <MaterialCommunityIcons name="delete-outline" size={20} color="#ef4444" />
                                 </View>
-                                <Text style={[styles.modalActionText, { color: '#ef4444' }]}>{t('delete', 'Xóa')}</Text>
+                                <Text style={[styles.modalActionText, { color: '#ef4444' }]}>{t('delete')}</Text>
                             </TouchableOpacity>
                         </View>
                     </View>

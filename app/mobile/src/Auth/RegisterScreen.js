@@ -18,7 +18,7 @@ import { useAuth } from '../Context/AuthContext';
 
 const RegisterScreen = ({ navigation }) => {
     const { t } = useLanguage();
-    const { login } = useAuth();
+    const { login, register } = useAuth();
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -29,14 +29,45 @@ const RegisterScreen = ({ navigation }) => {
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
+        if (!fullName || !email || !password || !confirmPassword) {
+            Alert.alert(t('error'), t('please_fill_all_fields'));
+            return;
+        }
+
+        if (password !== confirmPassword) {
+            Alert.alert(t('error'), t('password_match_error'));
+            return;
+        }
+
         setLoading(true);
         try {
-            await login(email, password);
-            Alert.alert(t('success', 'Success'), t('register_success', 'Registration Successful'));
-            navigation.replace('Main');
+            const nameParts = fullName.trim().split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : firstName;
+
+            const registrationData = {
+                username: email,
+                email: email,
+                password: password,
+                firstName: firstName,
+                lastName: lastName,
+                phoneNumber: '0000000000', // Default
+                mainAddress: 'Vietnam' // Default
+            };
+
+            await register(registrationData);
+            
+            Alert.alert(
+                t('success', 'Success'), 
+                t('register_success', 'Registration Successful. You can now login.'),
+                [
+                    { text: 'OK', onPress: () => navigation.navigate('Login') }
+                ]
+            );
         } catch (error) {
-            console.error(error);
-            Alert.alert(t('error', 'Error'), t('api_error_register', 'Registration failed. Email might already exist.'));
+            console.error('Registration error:', error);
+            const errorMessage = error.response?.data?.message || error.message || t('api_error_register');
+            Alert.alert(t('error', 'Error'), errorMessage);
         } finally {
             setLoading(false);
         }

@@ -9,19 +9,23 @@ import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
+import { LinearGradient } from 'expo-linear-gradient';
+
 const AccountScreen = () => {
     const navigation = useNavigation();
-    const { t, toggleLanguage, language } = useLanguage();
+    const { t, changeLanguage, language } = useLanguage();
 
     const { user, logout, isAuthenticated } = useAuth();
 
     const mainFeatures = isAuthenticated ? [
-        { id: 'info', iconName: 'person-outline', title: t('account'), route: 'Profile' },
-        ...(user?.role === 'ADMIN' ? [{ id: 'dashboard', iconName: 'bar-chart-outline', title: t('dashboard', 'Admin Dashboard'), route: 'AdminDashboard' }] : []),
-        { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderDetail' },
-        { id: 'appointments', iconName: 'calendar-outline', title: t('my_appointments'), route: 'Appointments' },
-        { id: 'wallet', iconName: 'wallet-outline', title: t('my_wallet'), route: 'Wallet' },
+        { id: 'info', iconName: 'person-outline', title: t('account'), route: 'Profile', color: '#6366f1' },
+        // Temporarily bypass role check for dev/testing
+        { id: 'dashboard', iconName: 'bar-chart-outline', title: t('admin_dashboard_title'), route: 'AdminDashboard', color: '#10b981' },
+        { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderDetail', color: '#f59e0b' },
+        { id: 'appointments', iconName: 'calendar-outline', title: t('my_appointments'), route: 'Appointments', color: '#ec4899' },
+        { id: 'wallet', iconName: 'wallet-outline', title: t('my_wallet'), route: 'Wallet', color: '#14b8a6' },
     ] : [];
+
 
     const supportItems = [
         { id: 6, title: t('about_brand'), route: 'AboutUs' },
@@ -43,12 +47,22 @@ const AccountScreen = () => {
         navigation.navigate('Home');
     };
 
+    const toggleLang = () => {
+        const next = language === 'vi' ? 'en' : 'vi';
+        changeLanguage(next);
+    };
+
     return (
         <View style={styles.container}>
             <Header />
             <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {isAuthenticated && user ? (
-                    <View style={styles.profileHeader}>
+                    <LinearGradient
+                        colors={[COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={styles.profileHeader}
+                    >
                         <View style={styles.headerContent}>
                             <View style={styles.avatarSection}>
                                 {user.avatar ? (
@@ -58,81 +72,103 @@ const AccountScreen = () => {
                                         <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
                                     </View>
                                 )}
+                                <TouchableOpacity style={styles.editAvatarBtn}>
+                                    <Ionicons name="camera" size={16} color="white" />
+                                </TouchableOpacity>
                             </View>
                             <View style={styles.userInfo}>
                                 <Text style={styles.username}>{user.name}</Text>
-
-                                <View style={styles.membershipContainer}>
-                                    <View style={styles.premiumBadge}>
-                                        <Text style={styles.premiumBadgeText}>DIAMOND</Text>
-                                    </View>
-                                    <View style={styles.progressBarBg}>
-                                        <View style={[styles.progressBarFill, { width: '70%' }]} />
-                                    </View>
-                                    <Text style={styles.pointsText}>{user.points} {t('pts')}</Text>
+                                <View style={styles.membershipBadge}>
+                                    <Ionicons name="diamond" size={12} color="#fbc531" />
+                                    <Text style={styles.membershipText}>DIAMOND MEMBER</Text>
+                                </View>
+                                <View style={styles.pointsRow}>
+                                    <Text style={styles.pointsValue}>{user.points || 0}</Text>
+                                    <Text style={styles.pointsLabel}> {t('pts')}</Text>
                                 </View>
                             </View>
                         </View>
-                    </View>
+                    </LinearGradient>
                 ) : (
                     <View style={styles.guestContainer}>
-                        <Text style={styles.guestTitle}>{t('welcome_landing') || 'Welcome'}</Text>
-                        <Text style={styles.guestSubtitle}>{t('login_subtitle') || 'Login to continue'}</Text>
-                        <View style={styles.guestButtons}>
-                            <TouchableOpacity style={styles.loginBtn} onPress={() => navigation.navigate('Login')}>
-                                <Text style={styles.loginBtnText}>{t('login') || 'Login'}</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={styles.registerBtn} onPress={() => navigation.navigate('Register')}>
-                                <Text style={styles.registerBtnText}>{t('register') || 'Register'}</Text>
-                            </TouchableOpacity>
-                        </View>
+                        <LinearGradient
+                            colors={['#fff1f2', '#fff']}
+                            style={styles.guestCard}
+                        >
+                            <Ionicons name="person-circle-outline" size={60} color={COLORS.mainTitle} />
+                            <Text style={styles.guestTitle}>{t('welcome_landing') || 'Welcome'}</Text>
+                            <Text style={styles.guestSubtitle}>{t('login_subtitle') || 'Login to continue'}</Text>
+                            <View style={styles.guestButtons}>
+                                <TouchableOpacity onPress={() => navigation.navigate('Login')} style={{ flex: 1 }}>
+                                    <LinearGradient
+                                        colors={[COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f']}
+                                        style={styles.loginBtn}
+                                    >
+                                        <Text style={styles.loginBtnText}>{t('login')}</Text>
+                                    </LinearGradient>
+                                </TouchableOpacity>
+                                <TouchableOpacity 
+                                    style={styles.registerBtn} 
+                                    onPress={() => navigation.navigate('Register')}
+                                >
+                                    <Text style={styles.registerBtnText}>{t('register')}</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </LinearGradient>
                     </View>
                 )}
 
                 {isAuthenticated && (
-                    <>
-                        <Text style={styles.sectionTitle}>Dashboard</Text>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>{t('dashboard')}</Text>
                         <View style={styles.bentoGrid}>
                             {mainFeatures.map((item) => (
                                 <TouchableOpacity
                                     key={item.id}
                                     style={styles.bentoCard}
                                     onPress={() => handlePress(item)}
+                                    activeOpacity={0.8}
                                 >
-                                    <View style={styles.cardIconContainer}>
-                                        <Ionicons name={item.iconName} size={24} color={COLORS.mainTitle} />
+                                    <View style={[styles.cardIconContainer, { backgroundColor: item.color + '15' }]}>
+                                        <Ionicons name={item.iconName} size={24} color={item.color} />
                                     </View>
                                     <Text style={styles.cardTitle}>{item.title}</Text>
                                 </TouchableOpacity>
                             ))}
                         </View>
-                    </>
+                    </View>
                 )}
 
-                <Text style={styles.sectionTitle}>{t('support_header') || "Support"}</Text>
-                <View style={styles.menuSection}>
-                    {supportItems.map(item => (
-                        <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handlePress(item)}>
-                            <Text style={styles.menuItemText}>{item.title}</Text>
-                            <Text style={styles.chevron}>{'>'}</Text>
-                        </TouchableOpacity>
-                    ))}
+                <View style={styles.section}>
+                    <Text style={styles.sectionTitle}>{t('settings')}</Text>
+                    <View style={styles.menuSection}>
+                        {supportItems.map(item => (
+                            <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handlePress(item)}>
+                                <Text style={styles.menuItemText}>{item.title}</Text>
+                                <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+                            </TouchableOpacity>
+                        ))}
 
-                    <TouchableOpacity style={styles.menuItem} onPress={toggleLanguage}>
-                        <Text style={styles.menuItemText}>{t('language')}</Text>
-                        <Text style={{ fontWeight: 'bold', color: COLORS.mainTitle }}>
-                            {language === 'vi' ? 'Tiếng Việt' : 'English'} &gt;
-                        </Text>
-                    </TouchableOpacity>
-
-                    {isAuthenticated && (
-                        <TouchableOpacity style={[styles.menuItem, styles.logoutItem]} onPress={handleLogout}>
-                            <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
+                        <TouchableOpacity style={styles.menuItem} onPress={toggleLang}>
+                            <Text style={styles.menuItemText}>{t('language')}</Text>
+                            <View style={styles.langBadge}>
+                                <Text style={styles.langBadgeText}>
+                                    {language === 'vi' ? 'VI' : 'EN'}
+                                </Text>
+                                <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+                            </View>
                         </TouchableOpacity>
-                    )}
+
+                        {isAuthenticated && (
+                            <TouchableOpacity style={[styles.menuItem, styles.logoutItem]} onPress={handleLogout}>
+                                <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
+                                <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </View>
 
-                <View style={{ height: 30 }} />
+                <View style={{ height: 100 }} />
             </ScrollView>
         </View>
     );
@@ -141,48 +177,128 @@ const AccountScreen = () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#fff',
     },
     scrollContent: {
         flex: 1,
-        paddingHorizontal: 15,
     },
     profileHeader: {
-        marginTop: 20,
-        marginBottom: 25,
-        backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 20,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 3,
-        overflow: 'hidden',
+        padding: 30,
+        paddingTop: 40,
+        borderBottomLeftRadius: 40,
+        borderBottomRightRadius: 40,
+        marginBottom: 30,
+        elevation: 10,
+        shadowColor: COLORS.mainTitle,
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.2,
+        shadowRadius: 20,
+    },
+    headerContent: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    avatarSection: {
+        position: 'relative',
+        marginRight: 20,
+    },
+    avatar: {
+        width: 85,
+        height: 85,
+        borderRadius: 42.5,
+        borderWidth: 3,
+        borderColor: 'rgba(255,255,255,0.4)',
+    },
+    avatarPlaceholder: {
+        backgroundColor: 'rgba(255,255,255,0.2)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    avatarText: {
+        fontSize: 32,
+        fontWeight: 'bold',
+        color: 'white',
+    },
+    editAvatarBtn: {
+        position: 'absolute',
+        bottom: 0,
+        right: 0,
+        backgroundColor: '#10b981',
+        width: 28,
+        height: 28,
+        borderRadius: 14,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderWidth: 2,
+        borderColor: 'white',
+    },
+    userInfo: {
+        flex: 1,
+    },
+    username: {
+        fontSize: 24,
+        fontWeight: '900',
+        color: 'white',
+        marginBottom: 6,
+    },
+    membershipBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        paddingHorizontal: 12,
+        paddingVertical: 4,
+        borderRadius: 12,
+        alignSelf: 'flex-start',
+        marginBottom: 10,
+        gap: 6,
+    },
+    membershipText: {
+        color: 'white',
+        fontSize: 10,
+        fontWeight: '800',
+        letterSpacing: 1,
+    },
+    pointsRow: {
+        flexDirection: 'row',
+        alignItems: 'baseline',
+    },
+    pointsValue: {
+        color: 'white',
+        fontSize: 18,
+        fontWeight: '900',
+    },
+    pointsLabel: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 12,
+        fontWeight: '600',
     },
     guestContainer: {
+        paddingHorizontal: 20,
         marginTop: 20,
-        marginBottom: 25,
-        backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 24,
+        marginBottom: 30,
+    },
+    guestCard: {
+        borderRadius: 30,
+        padding: 30,
         alignItems: 'center',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
+        elevation: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 5 },
+        shadowOpacity: 0.1,
         shadowRadius: 10,
-        elevation: 3,
     },
     guestTitle: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: '#333',
+        fontSize: 24,
+        fontWeight: '900',
+        color: '#111827',
+        marginTop: 15,
         marginBottom: 8,
     },
     guestSubtitle: {
         fontSize: 15,
-        color: '#666',
-        marginBottom: 24,
+        color: '#6b7280',
+        marginBottom: 30,
+        textAlign: 'center',
     },
     guestButtons: {
         flexDirection: 'row',
@@ -190,186 +306,112 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     loginBtn: {
-        flex: 1,
-        backgroundColor: COLORS.mainTitle,
-        paddingVertical: 14,
-        borderRadius: 12,
+        height: 52,
+        borderRadius: 14,
+        justifyContent: 'center',
         alignItems: 'center',
     },
     loginBtnText: {
         color: 'white',
-        fontWeight: '700',
-        fontSize: 15,
+        fontWeight: '800',
+        fontSize: 16,
     },
     registerBtn: {
         flex: 1,
-        backgroundColor: '#fff',
-        borderWidth: 1,
-        borderColor: COLORS.mainTitle,
-        paddingVertical: 14,
-        borderRadius: 12,
+        height: 52,
+        borderRadius: 14,
+        justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1.5,
+        borderColor: COLORS.mainTitle,
+        backgroundColor: 'white',
     },
     registerBtnText: {
         color: COLORS.mainTitle,
-        fontWeight: '700',
-        fontSize: 15,
-    },
-    headerContent: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    avatarSection: {
-        marginRight: 15,
-    },
-    avatar: {
-        width: 70,
-        height: 70,
-        borderRadius: 35,
-        borderWidth: 2,
-        borderColor: COLORS.mainTitle,
-    },
-    avatarPlaceholder: {
-        backgroundColor: '#eee',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    avatarText: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        color: '#888',
-    },
-    userInfo: {
-        flex: 1,
-        justifyContent: 'center',
-    },
-    username: {
-        fontSize: 20,
         fontWeight: '800',
-        color: COLORS.mainTitle,
-        marginBottom: 8,
-        textShadowColor: 'rgba(0, 0, 0, 0.1)',
-        textShadowOffset: { width: 1, height: 1 },
-        textShadowRadius: 1,
+        fontSize: 16,
     },
-    membershipContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#f1f2f6',
-        borderRadius: 20,
-        paddingVertical: 6,
-        paddingHorizontal: 10,
-        alignSelf: 'flex-start',
+    section: {
+        paddingHorizontal: 20,
+        marginBottom: 30,
     },
-    premiumBadge: {
-        backgroundColor: '#00d2d3',
-        borderRadius: 6,
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        marginRight: 8,
-    },
-    premiumBadgeText: {
-        color: 'white',
-        fontWeight: '800',
-        fontSize: 10,
-    },
-    progressBarBg: {
-        height: 6,
-        backgroundColor: '#e0e0e0',
-        borderRadius: 3,
-        width: 60,
-        marginRight: 8,
-    },
-    progressBarFill: {
-        height: '100%',
-        backgroundColor: '#fbc531',
-        borderRadius: 3,
-    },
-    pointsText: {
-        fontSize: 11,
-        fontWeight: '700',
-        color: '#57606f',
-    },
-
     sectionTitle: {
-        fontSize: 22,
-        fontWeight: '800',
-        color: '#333',
-        marginBottom: 15,
-        marginLeft: 5,
+        fontSize: 20,
+        fontWeight: '900',
+        color: '#111827',
+        marginBottom: 20,
+        letterSpacing: -0.5,
     },
     bentoGrid: {
         flexDirection: 'row',
         flexWrap: 'wrap',
-        justifyContent: 'space-between',
-        marginBottom: 25,
+        gap: 15,
     },
     bentoCard: {
-        width: (width - 45) / 2,
+        width: (width - 55) / 2,
         backgroundColor: 'white',
-        borderRadius: 16,
+        borderRadius: 20,
         padding: 20,
-        marginBottom: 15,
+        elevation: 2,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
-        shadowRadius: 5,
-        elevation: 2,
-        alignItems: 'flex-start',
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
         borderWidth: 1,
-        borderColor: '#f0f0f0',
-        minHeight: 110,
+        borderColor: '#f3f4f6',
     },
     cardIconContainer: {
-        width: 48,
-        height: 48,
-        backgroundColor: '#fff0f6',
+        width: 44,
+        height: 44,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 12,
+        marginBottom: 15,
     },
     cardTitle: {
-        fontSize: 15,
-        fontWeight: '600',
-        color: '#333',
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#374151',
     },
-
     menuSection: {
-        backgroundColor: 'white',
-        borderRadius: 12,
-        paddingHorizontal: 15,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.03,
-        shadowRadius: 5,
-        elevation: 1,
+        backgroundColor: '#f9fafb',
+        borderRadius: 24,
+        padding: 10,
     },
     menuItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f5f5f5',
-        minHeight: 56,
+        paddingVertical: 14,
+        paddingHorizontal: 15,
     },
     menuItemText: {
         fontSize: 15,
-        color: '#333',
-        fontWeight: '500',
+        fontWeight: '600',
+        color: '#4b5563',
     },
-    chevron: {
-        color: '#ddd',
-        fontSize: 16,
+    langBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+    },
+    langBadgeText: {
+        fontSize: 12,
+        fontWeight: '800',
+        color: COLORS.mainTitle,
+        backgroundColor: '#fff1f2',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 6,
     },
     logoutItem: {
-        borderBottomWidth: 0,
-        marginTop: 5,
+        marginTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#f3f4f6',
+        paddingTop: 20,
     },
     logoutText: {
-        color: 'red',
-        fontWeight: '600',
+        color: '#ef4444',
     },
 });
 

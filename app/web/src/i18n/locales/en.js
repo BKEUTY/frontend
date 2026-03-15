@@ -103,6 +103,7 @@ export default {
     makeup_face: "Face Makeup",
     makeup_lips: "Lips Makeup",
     makeup_eyes: "Eyes Makeup",
+    beauty_tools: "Beauty Tools",
 
     quantity: "Quantity",
     sold_count: "sold",
@@ -208,5 +209,8 @@ export default {
     consent: "By signing up, you agree to receive promotional information from BKEUTY.",
     footer_address_val: "Thu Duc, HCMC",
     footer_phone_val: "1-802-526-2463",
-    product_section: "Product"
+    product_section: "Product",
+
+    mega_promo_title: "Mega Promotion",
+    mega_promo_desc: "Get exclusive offers tailored just for you."
 };

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import useClickOutside from '../../hooks/useClickOutside';
 import { useDebounce } from '../../hooks/useDebounce';
+import { SearchOutlined } from '@ant-design/icons';
 import './SearchBar.css';
 
 const MOCK_SUGGESTIONS = [
@@ -51,10 +52,7 @@ const SearchBar = () => {
                     onFocus={() => query.length > 0 && setShowSuggestions(true)}
                 />
                 <button className="search-button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                    </svg>
+                    <SearchOutlined style={{ fontSize: '18px', color: '#c2185b' }} />
                 </button>
             </div>
 
@@ -66,10 +64,7 @@ const SearchBar = () => {
                             setShowSuggestions(false);
                         }}>
                             <span className="search-icon-small">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#999" strokeWidth="2">
-                                    <circle cx="11" cy="11" r="8"></circle>
-                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                </svg>
+                                <SearchOutlined style={{ fontSize: '14px', color: '#999' }} />
                             </span>
                             {item}
                         </li>

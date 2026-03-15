@@ -35,7 +35,7 @@ const createClient = (baseURL) => {
 
     client.interceptors.request.use((config) => {
         const currentToken = getAccessToken();
-        const isAuthUrl = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'].some(url => config.url.includes(url));
+        const isAuthUrl = ['/api/auth/login', '/api/auth/register', '/api/auth/refresh'].some(url => config.url?.includes(url));
 
         if (!isAuthUrl && currentToken) {
             config.headers.Authorization = `Bearer ${currentToken}`;
@@ -55,7 +55,7 @@ const createClient = (baseURL) => {
             const status = response ? response.status : null;
 
             if (status === 401 && !originalRequest._retry) {
-                if (originalRequest.url.includes('/api/auth/refresh')) {
+                if (originalRequest.url?.includes('/api/auth/refresh')) {
                     return Promise.reject(error);
                 }
 
@@ -74,7 +74,7 @@ const createClient = (baseURL) => {
 
                 try {
                     const res = await authBaseClient.post('/api/auth/refresh');
-                    const newToken = res.data.accessToken || res.data.access_token || res.data.data?.accessToken;
+                    const newToken = res.data?.accessToken || res.data?.access_token || res.data?.data?.accessToken;
 
                     if (newToken) {
                         setAccessToken(newToken);
@@ -133,6 +133,7 @@ const createClient = (baseURL) => {
 };
 
 export const axiosClient = createClient(SERVER_URL);
+export const adminAxiosClient = createClient(SERVER_URL);
 
 export const getImageUrl = (imagePath) => {
     if (!imagePath) return null;

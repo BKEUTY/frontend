@@ -130,6 +130,19 @@
     margin-bottom: 25px;
 }
 
+.bkeuty-star {
+    color: #f59e0b !important;
+    background: transparent !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bkeuty-star svg {
+    fill: #f59e0b !important;
+    background: transparent !important;
+}
+
 .rating-container {
     display: flex;
     align-items: center;
@@ -138,9 +151,8 @@
     color: #475569;
 }
 
-.star-icon {
-    color: #f59e0b;
-    font-size: 1.1rem;
+.rating-container .bkeuty-star {
+    font-size: 1.2rem;
 }
 
 .price-box {
@@ -391,7 +403,6 @@
     gap: 20px;
 }
 
-/* Review Section */
 .review-dashboard {
     display: flex;
     align-items: center;
@@ -515,8 +526,9 @@
 .reviewer-name { font-weight: 700; color: #0f172a; }
 .review-time { color: #94a3b8; font-size: 0.9rem; }
 .review-stars-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.rv-star { color: #e2e8f0; }
-.rv-star.filled { color: #f59e0b; }
+.rv-star { color: #e2e8f0; display: inline-flex; align-items: center; }
+.rv-star.filled .bkeuty-star { color: #f59e0b !important; }
+.rv-star .bkeuty-star { color: #e2e8f0 !important; }
 .verified-tag { font-size: 0.8rem; color: #10b981; background: #dcfce7; padding: 4px 8px; border-radius: 6px; font-weight: 600; }
 .review-text { line-height: 1.6; margin-bottom: 15px; }
 
@@ -524,7 +536,6 @@
 .action-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 16px; border-radius: 20px; cursor: pointer; color: #64748b; font-weight: 500; display: flex; gap: 6px; align-items: center; transition: 0.2s; }
 .action-btn:hover { color: var(--color_main_title); background: #fff0f6; border-color: #ffd1dc; }
 
-/* Responsive Mobile */
 @media (max-width: 1024px) {
     .product-gallery { flex: 0 0 50%; }
 }
@@ -579,7 +590,6 @@
     .product-options-section { padding: 20px 0; }
     .option-group.align-center { flex-direction: column; align-items: flex-start; }
 
-    /* Sticky Action Bar on Mobile */
     .actions-wrapper {
         position: fixed;
         bottom: 0;

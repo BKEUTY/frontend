@@ -103,6 +103,7 @@ export default {
     makeup_face: "Trang điểm mặt",
     makeup_lips: "Trang điểm môi",
     makeup_eyes: "Trang điểm mắt",
+    beauty_tools: "Dụng cụ làm đẹp",
 
     quantity: "Số Lượng",
     sold_count: "đã bán",
@@ -208,5 +209,8 @@ export default {
     consent: "Bằng việc đăng ký, bạn đồng ý nhận thông tin khuyến mãi từ BKEUTY.",
     footer_address_val: "Thủ Đức, TP.HCM",
     footer_phone_val: "1-802-526-2463",
-    product_section: "Sản Phẩm"
+    product_section: "Sản Phẩm",
+
+    mega_promo_title: "Siêu Khuyến Mãi",
+    mega_promo_desc: "Nhận ưu đãi độc quyền dành riêng cho bạn."
 };

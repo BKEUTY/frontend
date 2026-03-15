@@ -10,6 +10,7 @@ import productApi from "../../api/productApi";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
@@ -23,25 +24,21 @@ export default function Product() {
   const [searchTerm, setSearchTerm] = useState('');
   const { t, language } = useLanguage();
 
-  const hardcodedCategories = [
-    { id: null, nameKey: 'all_products' },
-    { id: 1, nameKey: 'skincare' },
-    { id: 2, nameKey: 'makeup' },
-    { id: 3, nameKey: 'fragrance' },
-    { id: 4, nameKey: 'body_care' },
-    { id: 5, nameKey: 'hair_care' },
-    { id: 6, nameKey: 'gift_sets' },
-    { id: 7, nameKey: 'cleanser' },
-    { id: 8, nameKey: 'toner' },
-    { id: 9, nameKey: 'serum' },
-    { id: 10, nameKey: 'moisturizer' },
-    { id: 11, nameKey: 'sunscreen' },
-    { id: 12, nameKey: 'makeup_face' },
-    { id: 13, nameKey: 'makeup_lips' },
-    { id: 14, nameKey: 'makeup_eyes' }
-  ];
-
   const [activeCategory, setActiveCategory] = useState(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await productApi.getCategories();
+        if (res.data) {
+          setCategories(res.data);
+        }
+      } catch (err) {
+        setError(t('api_error_fetch_categories') || 'Failed to fetch categories');
+      }
+    };
+    fetchCategories();
+  }, [t]);
 
   const fetchProducts = useCallback((pageIndex, append, catId = activeCategory) => {
     setIsLoading(true);
@@ -53,22 +50,29 @@ export default function Product() {
     productApi.getAll(params)
       .then((res) => {
         const data = res.data;
-        let newContent = data.content || [];
+        let rawContent = data.content || [];
+
+        const filteredContent = rawContent.filter(product => {
+          if (!product.variants || product.variants.length === 0) {
+            return (product.price > 0 || product.minPrice > 0) && (product.stockQuantity > 0 || product.totalStock > 0);
+          }
+          return product.variants.some(v => v.price > 0 && v.stockQuantity > 0);
+        });
 
         if (append) {
-          setProducts(prev => [...prev, ...newContent]);
+          setProducts(prev => [...prev, ...filteredContent]);
         } else {
-          setProducts(newContent);
+          setProducts(filteredContent);
         }
         setTotalPages(data.totalPages);
       })
       .catch(() => {
-        setError(true);
+        setError(t('api_error_fetch_products'));
       })
       .finally(() => {
         setTimeout(() => setIsLoading(false), 500);
       });
-  }, [searchTerm, activeCategory]);
+  }, [searchTerm, activeCategory, t]);
 
   useEffect(() => {
     setPage(0);
@@ -109,8 +113,9 @@ export default function Product() {
   };
 
   const getCurrentCategoryName = () => {
-    const cat = hardcodedCategories.find(c => c.id === activeCategory);
-    return cat ? t(cat.nameKey) : t('all_products');
+    if (!activeCategory) return t('all_products');
+    const cat = categories.find(c => c.id === activeCategory);
+    return cat ? cat.categoryName : t('all_products');
   };
 
   return (
@@ -129,13 +134,19 @@ export default function Product() {
 
             <div className={`cat-mega-menu ${isMobileCatOpen ? 'mobile-open' : ''}`}>
               <div className="mega-grid">
-                {hardcodedCategories.map(cat => (
+                <div
+                  className={`mega-item ${activeCategory === null ? 'active' : ''}`}
+                  onClick={() => handleCategorySelect(null)}
+                >
+                  {t('all_products')}
+                </div>
+                {categories.map(cat => (
                   <div
-                    key={cat.id || 'all'}
+                    key={cat.id}
                     className={`mega-item ${activeCategory === cat.id ? 'active' : ''}`}
                     onClick={() => handleCategorySelect(cat.id)}
                   >
-                    {t(cat.nameKey)}
+                    {cat.categoryName}
                   </div>
                 ))}
               </div>
@@ -241,7 +252,6 @@ export default function Product() {
           </section>
         </div>
       </div>
-
     </main>
   );
 }

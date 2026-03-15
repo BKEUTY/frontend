@@ -262,7 +262,7 @@ export default function ProductDetail() {
 
                     <div className="detail-tags">
                         <div className="rating-container">
-                            <StarFilled className="star-icon" />
+                            <StarFilled className="bkeuty-star" />
                             <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')})
                         </div>
                     </div>
@@ -384,7 +384,7 @@ export default function ProductDetail() {
                                     <div className="star-stack">
                                         <div className="star-row">
                                             {[...Array(5)].map((_, i) => (
-                                                <StarFilled key={i} className="filled-star" />
+                                                <StarFilled key={i} className="bkeuty-star" />
                                             ))}
                                         </div>
                                         <span className="total-reviews">{productData.reviews_count} {t('reviews')}</span>
@@ -393,7 +393,7 @@ export default function ProductDetail() {
                                 <div className="rating-bars">
                                     {[5, 4, 3, 2, 1].map((star) => (
                                         <div key={star} className="bar-row">
-                                            <span className="star-label">{star} <StarFilled style={{ fontSize: '12px' }} /></span>
+                                            <span className="star-label">{star} <StarFilled style={{ fontSize: '12px' }} className="bkeuty-star" /></span>
                                             <div className="progress-bg">
                                                 <div className="progress-fi" style={{ width: star === 5 ? '70%' : star === 4 ? '20%' : '5%' }}></div>
                                             </div>
@@ -423,7 +423,7 @@ export default function ProductDetail() {
                                             <div className="review-stars-row">
                                                 {[...Array(5)].map((_, starIdx) => (
                                                     <span key={starIdx} className={`rv-star ${starIdx < rev.rating ? 'filled' : ''}`}>
-                                                        <StarFilled />
+                                                        <StarFilled className="bkeuty-star" />
                                                     </span>
                                                 ))}
                                                 {rev.verified && <span className="verified-tag"><CheckCircleFilled className="icon-check" /> {t('verified_purchase')}</span>}
@@ -454,35 +454,35 @@ export default function ProductDetail() {
                 </div>
             </div>
 
-                <div className="recommendations-section">
-                    <h2 className="section-title">{t('related_products')}</h2>
-                    <div className="product-grid related-products-grid">
-                        {[1, 2, 3, 4, 5].map(i => {
-                            const relatedProduct = {
-                                id: i,
-                                name: "Capture Totale Cell Energy",
-                                brand: "Dior",
-                                price: 3500000,
-                                image: best_selling_image,
-                                rating: 4.8,
-                                sold: 120
-                            };
-                            const clickState = {
-                                category: language === 'vi' ? 'Gợi ý' : 'Related Products',
-                                from: location.pathname
-                            };
-                            return (
-                                <ProductCard
-                                    key={i}
-                                    product={relatedProduct}
-                                    t={t}
-                                    language={language}
-                                    onClickData={clickState}
-                                />
-                            );
-                        })}
-                    </div>
+            <div className="recommendations-section">
+                <h2 className="section-title">{t('related_products')}</h2>
+                <div className="product-grid related-products-grid">
+                    {[1, 2, 3, 4, 5].map(i => {
+                        const relatedProduct = {
+                            id: i,
+                            name: "Capture Totale Cell Energy",
+                            brand: "Dior",
+                            price: 3500000,
+                            image: best_selling_image,
+                            rating: 4.8,
+                            sold: 120
+                        };
+                        const clickState = {
+                            category: language === 'vi' ? 'Gợi ý' : 'Related Products',
+                            from: location.pathname
+                        };
+                        return (
+                            <ProductCard
+                                key={i}
+                                product={relatedProduct}
+                                t={t}
+                                language={language}
+                                onClickData={clickState}
+                            />
+                        );
+                    })}
                 </div>
+            </div>
         </div>
     );
 }

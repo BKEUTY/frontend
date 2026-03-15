@@ -115,20 +115,7 @@ const LoginScreen = ({ navigation }) => {
                         <Text style={styles.loginButtonText}>{t('login', 'Login')}</Text>
                     </TouchableOpacity>
 
-                    <View style={styles.divider}>
-                        <View style={styles.dividerLine} />
-                        <Text style={styles.dividerText}>{t('or_login_with', 'Or login with')}</Text>
-                        <View style={styles.dividerLine} />
-                    </View>
 
-                    <View style={styles.socialButtons}>
-                        <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
-                            <Ionicons name="logo-google" size={24} color="#DB4437" />
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.socialButton} activeOpacity={0.7}>
-                            <Ionicons name="logo-facebook" size={24} color="#4267B2" />
-                        </TouchableOpacity>
-                    </View>
 
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>{t('no_account', "Don't have an account?")}</Text>
@@ -219,37 +206,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: '700',
     },
-    divider: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 32,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#e0e0e0',
-    },
-    dividerText: {
-        marginHorizontal: 16,
-        color: '#636e72',
-        fontSize: 14,
-    },
-    socialButtons: {
-        flexDirection: 'row',
-        justifyContent: 'center',
-        gap: 16,
-        marginBottom: 32,
-    },
-    socialButton: {
-        width: 56,
-        height: 56,
-        borderRadius: 12,
-        backgroundColor: '#f8f9fa',
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderWidth: 1,
-        borderColor: '#e0e0e0',
-    },
+
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',

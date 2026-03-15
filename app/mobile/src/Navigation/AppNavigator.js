@@ -19,9 +19,6 @@ import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
 import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, TermsScreen } from '../StaticPages/StaticScreens';
 import Chatbot from '../Component/Chatbot/Chatbot';
-import AdminDashboard from '../Admin/DashboardScreen';
-import AdminProductCreate from '../Admin/ProductCreateScreen';
-
 import NotFoundScreen from '../Component/ErrorPages/NotFoundScreen';
 import ServerErrorScreen from '../Component/ErrorPages/ServerErrorScreen';
 import { Ionicons } from '@expo/vector-icons';
@@ -88,9 +85,6 @@ export default function AppNavigator() {
                     <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
                     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
-
-                    <Stack.Screen name="AdminDashboard" component={AdminDashboard} options={{ headerShown: false }} />
-                    <Stack.Screen name="AdminProductCreate" component={AdminProductCreate} options={{ headerShown: false }} />
 
                     <Stack.Screen name="NotFound" component={NotFoundScreen} />
                     <Stack.Screen name="ServerError" component={ServerErrorScreen} />

@@ -7,11 +7,8 @@ import Footer from "./Component/Footer/Footer";
 import CartDrawer from "./pages/Cart/CartDrawer";
 import { CartProvider } from "./Context/CartContext";
 import { AuthProvider } from "./Context/AuthContext";
-import AdminRoute from "./Component/Auth/AdminRoute";
-import AdminLayout from "./Component/Admin/AdminLayout";
 import { authRoutes, errorRoutes } from "./routes/authRoutes";
 import { userRoutes } from "./routes/userRoutes";
-import { adminRoutes } from "./routes/adminRoutes";
 import ErrorBoundary from "./Component/ErrorBoundary/ErrorBoundary";
 import React, { Suspense } from 'react';
 import Skeleton from "./Component/Common/Skeleton";
@@ -21,16 +18,15 @@ function Layout() {
   const path = location.pathname;
 
   const isAuth = path === "/login" || path === "/register" || path === "/forgot-password";
-  const isAdmin = path.startsWith("/admin");
 
-  const showHeader = !isAuth && !isAdmin;
-  const showFooter = !isAuth && !isAdmin;
+  const showHeader = !isAuth;
+  const showFooter = !isAuth;
 
   return (
     <div className="App">
       {showHeader && <Header />}
 
-      <main className={isAdmin || isAuth ? "" : "main_content"}>
+      <main className={isAuth ? "" : "main_content"}>
         <ErrorBoundary>
           <Suspense fallback={<div style={{ padding: '20px' }}><Skeleton width="100%" height="400px" /></div>}>
             <Routes>
@@ -41,16 +37,6 @@ function Layout() {
               {userRoutes.map((route, index) => (
                 <Route key={index} path={route.path} element={route.element} />
               ))}
-
-              <Route path="/admin" element={
-                <AdminRoute>
-                  <AdminLayout />
-                </AdminRoute>
-              }>
-                {adminRoutes.map((route, index) => (
-                  <Route key={index} path={route.path} element={route.element} index={route.index} />
-                ))}
-              </Route>
 
               {errorRoutes.map((route, index) => (
                 <Route key={index} path={route.path} element={route.element} />

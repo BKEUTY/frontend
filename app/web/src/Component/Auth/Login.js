@@ -21,12 +21,7 @@ const Login = () => {
         try {
             const user = await login(values.email, values.password);
             notifySuccess('success', t('login_success'));
-
-            if (user?.role === 'ADMIN') {
-                navigate('/admin');
-            } else {
-                navigate('/home');
-            }
+            navigate('/home');
         } catch (error) {
             const errorRaw = error.response?.data;
             let descriptionKey = 'api_error_login';

@@ -13,7 +13,6 @@ const decodeToken = (token) => {
         const payload = parts[1];
         const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
         
-        // Basic base64 decode for mobile environment
         const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
         let output = '';
         let str = base64.replace(/=+$/, '');
@@ -65,16 +64,21 @@ export const AuthProvider = ({ children }) => {
             const { accessToken } = response.data;
             
             const userData = decodeToken(accessToken);
-            const role = userData.realm_access?.roles?.includes('ADMIN') ? 'ADMIN' : 'USER';
+            const userRole = userData.user_role || (userData.realm_access?.roles?.includes('USER') ? 'USER' : 'UNKNOWN');
+            const extractedRole = userRole.toUpperCase() === 'USER' ? 'USER' : 'UNKNOWN';
             
+            if (extractedRole !== 'USER') {
+                throw new Error('Only User can login to this app');
+            }
+
             const user = {
                 id: userData.sub || email,
                 email: userData.email || email,
                 name: userData.name || userData.preferred_username || email.split('@')[0],
-                role: role,
+                user_role: extractedRole,
                 token: accessToken,
                 avatar: null,
-                membership_level: role === 'ADMIN' ? 'ADMIN' : 'Diamond',
+                membership_level: 'Diamond',
                 points: 1250,
                 total_spent: 85000000,
                 target_spent: 100000000,
@@ -101,7 +105,6 @@ export const AuthProvider = ({ children }) => {
             setUser(null);
             await AsyncStorage.removeItem('user');
             await AsyncStorage.removeItem('token');
-            await AsyncStorage.removeItem('refreshToken');
         }
     };
 
@@ -117,7 +120,7 @@ export const AuthProvider = ({ children }) => {
     const value = {
         user,
         isAuthenticated: !!user,
-        role: user?.role,
+        user_role: user?.user_role,
         login,
         register,
         logout,

@@ -133,7 +133,6 @@ const createClient = (baseURL) => {
 };
 
 export const axiosClient = createClient(SERVER_URL);
-export const adminAxiosClient = createClient(SERVER_URL);
 
 export const getImageUrl = (imagePath) => {
     if (!imagePath) return null;

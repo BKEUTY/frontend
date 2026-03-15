@@ -1,0 +1,23 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies (including devDependencies like cross-env)
+RUN npm install
+
+# Copy source code (optional but good for initial container state)
+COPY . .
+
+# Set environment variables for development
+ENV NODE_ENV=development
+# Fix for hot reload on some systems/Docker versions
+ENV WATCHPACK_POLLING=true
+ENV CHOKIDAR_USEPOLLING=true
+
+EXPOSE 3000
+
+# Start application in development mode
+CMD ["npm", "start"]

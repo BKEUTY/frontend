@@ -19,8 +19,6 @@ const AccountScreen = () => {
 
     const mainFeatures = isAuthenticated ? [
         { id: 'info', iconName: 'person-outline', title: t('account'), route: 'Profile', color: '#6366f1' },
-        // Temporarily bypass role check for dev/testing
-        { id: 'dashboard', iconName: 'bar-chart-outline', title: t('admin_dashboard_title'), route: 'AdminDashboard', color: '#10b981' },
         { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderDetail', color: '#f59e0b' },
         { id: 'appointments', iconName: 'calendar-outline', title: t('my_appointments'), route: 'Appointments', color: '#ec4899' },
         { id: 'wallet', iconName: 'wallet-outline', title: t('my_wallet'), route: 'Wallet', color: '#14b8a6' },

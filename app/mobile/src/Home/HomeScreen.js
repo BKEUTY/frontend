@@ -298,7 +298,7 @@ const styles = StyleSheet.create({
     certImage: {
         width: 160,
         height: 60,
-        filter: 'brightness(0) invert(1)', // Note: React Native doesn't support filter like this, I'll use tintColor if needed or just let it be
+        tintColor: 'white',
     },
 });
 

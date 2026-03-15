@@ -22,13 +22,14 @@ const decodeToken = (token) => {
 
 const extractUserFromToken = (accessToken) => {
     const userData = decodeToken(accessToken);
-    const role = userData.user_role?.toUpperCase() === 'ADMIN' ? 'ADMIN' : 'USER';
+    const userRole = userData.user_role || (userData.realm_access?.roles?.includes('USER') ? 'USER' : 'UNKNOWN');
+    const role = userRole.toUpperCase() === 'USER' ? 'USER' : 'UNKNOWN';
 
     return {
         id: userData.sub,
         email: userData.email,
         name: userData.name || userData.preferred_username,
-        role
+        user_role: role
     };
 };
 
@@ -45,9 +46,15 @@ export const AuthProvider = ({ children }) => {
             const accessToken = response.data.accessToken || response.data.access_token;
             
             if (!accessToken) throw new Error('No access token returned');
-            setAccessToken(accessToken);
-            
             const newUser = extractUserFromToken(accessToken);
+            if (newUser.user_role !== 'USER') {
+                clearAccessToken();
+                setUser(null);
+                localStorage.removeItem('user');
+                return false;
+            }
+
+            setAccessToken(accessToken);
             setUser(newUser);
             localStorage.setItem('user', JSON.stringify(newUser));
             
@@ -75,9 +82,13 @@ export const AuthProvider = ({ children }) => {
         const response = await authApi.login({ username: email, password });
         const accessToken = response.data.accessToken || response.data.access_token;
         
-        setAccessToken(accessToken);
-        
         const newUser = extractUserFromToken(accessToken);
+        
+        if (newUser.user_role !== 'USER') {
+            throw new Error('Access Denied: Only User allowed');
+        }
+
+        setAccessToken(accessToken);
         setUser(newUser);
         localStorage.setItem('user', JSON.stringify(newUser));
         
@@ -88,7 +99,6 @@ export const AuthProvider = ({ children }) => {
         try {
             await authApi.logout();
         } catch (error) {
-            // Ignored
         } finally {
             setUser(null);
             clearAccessToken();
@@ -100,7 +110,7 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{
             user,
             isAuthenticated: !!user && !!getAccessToken(),
-            role: user?.role,
+            user_role: user?.user_role,
             isInitializing,
             login,
             logout,

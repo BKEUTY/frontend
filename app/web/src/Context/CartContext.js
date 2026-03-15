@@ -2,7 +2,6 @@ import React, { createContext, useState, useContext, useEffect, useCallback } fr
 import { useAuth } from './AuthContext';
 import cartApi from '../api/cartApi';
 import axiosClient from '../api/axiosClient';
-import { useLocation } from 'react-router-dom';
 
 const CartContext = createContext();
 
@@ -11,15 +10,11 @@ export const useCart = () => useContext(CartContext);
 export const CartProvider = ({ children }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
-    const { user, isAuthenticated, role } = useAuth();
-    const location = useLocation();
+    const { user, isAuthenticated, user_role } = useAuth();
     
-    const isAdminPath = location.pathname.startsWith('/admin');
     const LOCAL_CART_KEY = 'bkeuty_guest_cart';
 
     const fetchCart = useCallback(async () => {
-        if (role === 'ADMIN' || isAdminPath) return;
-
         if (isAuthenticated) {
             try {
                 const res = await cartApi.getAll();
@@ -37,11 +32,11 @@ export const CartProvider = ({ children }) => {
             const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
             setCartItems(localCart);
         }
-    }, [isAuthenticated, role, isAdminPath]);
+    }, [isAuthenticated]);
 
     useEffect(() => {
         const syncCartOnLogin = async () => {
-            if (isAuthenticated && role === 'USER') {
+            if (isAuthenticated && user_role === 'USER') {
                 const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
                 if (localCart.length > 0) {
                     for (const item of localCart) {
@@ -60,7 +55,7 @@ export const CartProvider = ({ children }) => {
             }
         };
         syncCartOnLogin();
-    }, [isAuthenticated, role, user?.id, fetchCart]);
+    }, [isAuthenticated, user_role, user?.id, fetchCart]);
 
     useEffect(() => {
         fetchCart();

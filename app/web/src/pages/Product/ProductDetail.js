@@ -20,15 +20,15 @@ import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
 
-export default function ProductDetail({ previewProduct, isAdminView = false }) {
+export default function ProductDetail() {
     const { id } = useParams();
     const { t, language } = useLanguage();
     const notify = useNotification();
     const { addToCart } = useCart();
     const location = useLocation();
 
-    const categoryName = isAdminView ? t('admin_home_products_title') : (location.state?.category || t('all_products'));
-    const categoryLink = isAdminView ? '/admin/products' : (location.state?.from || '/product');
+    const categoryName = location.state?.category || t('all_products');
+    const categoryLink = location.state?.from || '/product';
 
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -50,13 +50,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
     }, [productData]);
 
     useEffect(() => {
-        if (previewProduct) {
-            setProductData(previewProduct);
-            setMainImage(previewProduct.images?.[0] || best_selling_image);
-            setIsLoading(false);
-            return;
-        }
-
         const fetchProduct = async () => {
             setIsLoading(true);
             setIsError(false);
@@ -145,7 +138,7 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
         };
 
         fetchProduct();
-    }, [id, previewProduct]);
+    }, [id]);
 
     useEffect(() => {
         if (productData && productData.options) {
@@ -330,33 +323,21 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                     <div className="actions-wrapper">
                         <CButton
                             type="primary"
-                            disabled={!isAdminView && isOutOfStock}
-                            onClick={() => {
-                                if (isAdminView) {
-                                    notify(t('admin_preview_mode_msg'), "info");
-                                } else {
-                                    notify(t('feature_developing_title'), "info");
-                                }
-                            }}
+                            disabled={isOutOfStock}
+                            onClick={() => notify(t('feature_developing_title'), "info")}
                             className="btn-action-buy"
                         >
-                            <span>{(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('buy_now')}</span>
+                            <span>{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
                         </CButton>
                         
                         <CButton
                             type="outline"
-                            disabled={!isAdminView && isOutOfStock}
-                            onClick={() => {
-                                if (isAdminView) {
-                                    notify(t('admin_preview_mode_msg'), "info");
-                                } else {
-                                    handleAddToCart();
-                                }
-                            }}
+                            disabled={isOutOfStock}
+                            onClick={handleAddToCart}
                             icon={<ShoppingOutlined />}
                             className="btn-action-cart"
                         >
-                            {(!isAdminView && isOutOfStock) ? t('out_of_stock_btn') : t('add_to_cart')}
+                            {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
                         </CButton>
                     </div>
                 </div>
@@ -401,14 +382,18 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                                 <div className="rating-overview">
                                     <span className="big-score">{productData.rating}</span>
                                     <div className="star-stack">
-                                        <div className="star-row">★★★★★</div>
+                                        <div className="star-row">
+                                            {[...Array(5)].map((_, i) => (
+                                                <StarFilled key={i} className="filled-star" />
+                                            ))}
+                                        </div>
                                         <span className="total-reviews">{productData.reviews_count} {t('reviews')}</span>
                                     </div>
                                 </div>
                                 <div className="rating-bars">
                                     {[5, 4, 3, 2, 1].map((star) => (
                                         <div key={star} className="bar-row">
-                                            <span className="star-label">{star} ★</span>
+                                            <span className="star-label">{star} <StarFilled style={{ fontSize: '12px' }} /></span>
                                             <div className="progress-bg">
                                                 <div className="progress-fi" style={{ width: star === 5 ? '70%' : star === 4 ? '20%' : '5%' }}></div>
                                             </div>
@@ -469,7 +454,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                 </div>
             </div>
 
-            {!isAdminView && (
                 <div className="recommendations-section">
                     <h2 className="section-title">{t('related_products')}</h2>
                     <div className="product-grid related-products-grid">
@@ -499,7 +483,6 @@ export default function ProductDetail({ previewProduct, isAdminView = false }) {
                         })}
                     </div>
                 </div>
-            )}
         </div>
     );
 }

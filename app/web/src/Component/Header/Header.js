@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useCart } from "../../Context/CartContext";
+import { useAuth } from "../../Context/AuthContext";
 import { Layout, Menu, Drawer, Badge, Button, Dropdown, Avatar, Row, Col, Space } from 'antd';
 import {
   MenuOutlined,
@@ -24,6 +25,7 @@ export default function Header() {
   const { cartItems } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, isAuthenticated } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -82,7 +84,7 @@ export default function Header() {
           <div className="desktop-actions">
             <div className="action-btn-custom" onClick={() => navigate('/account')}>
               <UserOutlined className="action-icon" />
-              <span className="action-label">{t('not_logged_in')}</span>
+              <span className="action-label">{isAuthenticated ? (user?.name || t('account')) : t('not_logged_in')}</span>
             </div>
 
             <div className="action-btn-custom" onClick={toggleLanguage}>

@@ -1,4 +1,4 @@
-# BKEUTY - Beauty E-Commerce Platform
+# BKEUTY - Beauty Storefront (User Role)
 
 [English](#english) | [Tiếng Việt](#tiếng-việt)
 
@@ -8,44 +8,30 @@
 ## English
 
 ### Overview
-BKEUTY is a modern, omni-channel beauty e-commerce platform designed to provide a seamless and aesthetic shopping experience. The project consists of two main applications:
-1. **Web Application:** A responsive online store built with React 19.
-2. **Mobile Application:** A native mobile experience built with React Native and Expo.
+BKEUTY Storefront is the customer-facing application of the BKEUTY omni-channel platform. It is designed exclusively for customers to explore, shop, and manage their beauty journey with a premium, aesthetic experience.
+1. **Web Storefront:** A high-performance online shop built with React 19.
+2. **Mobile App:** A native shopping experience built with React Native and Expo.
 
-Both applications focus on high-performance user interfaces, modern design aesthetics, and a professional user experience.
+### Key Features (User Focus)
 
-### Key Features
+#### 1. Customer Authentication
+- **User-Specific Identity:** Dedicated login and registration for customers.
+- **Role Enforcement:** Strictly handles logic for the `USER` role.
+- **Account Recovery:** Full password reset functionality with OTP verification for customers.
 
-#### 1. Authentication System
-- **Unified Account:** Seamless login across web and mobile platforms.
-- **Security:** Secure authentication flow, password encryption, and input validation.
-- **Recovery:** Full password reset functionality with OTP verification.
+#### 2. Premium Shopping Experience
+- **Brand Identity:** Consistent "Deep Magenta" & "Be Vietnam Pro" aesthetics.
+- **Responsive & Native:** Fluid experience across Web, iOS, and Android.
+- **Micro-interactions:** Smooth animations and feedback tailored for luxury shopping.
 
-#### 2. User Interface & Experience
-- **Modern Aesthetic:** Clean, minimalist design with a consistent brand identity (Deep Magenta & Be Vietnam Pro).
-- **Responsive Web:** Fully optimized for all screen sizes (Desktop, Tablet, Mobile Web).
-- **Native Mobile:** Smooth, native performance with touch-optimized gestures and transitions.
-- **Interactive Feedback:** Real-time validation, loading skeletons, and fluid micro-interactions.
-
-#### 3. Core Functionality
+#### 3. Core Storefront Functionality
 - **Product Discovery:** Advanced filtering, search with suggestions, and categorized browsing.
-- **Shopping Experience:** Cart management, streamlined checkout, and order tracking.
-- **Notifications:** Push notifications for order updates and promotions (Mobile).
-- **Localization:** Full bilingual support (English/Vietnamese) across both apps.
+- **Cart & Checkout:** Streamlined cart management and secure checkout process.
+- **Personal Profile:** Track orders, manage loyalty points ("Diamond Member"), and view appointment history.
 
 ### Technical Stack
-
-#### Frontend (Web)
-- **Framework:** React 19
-- **UI System:** Ant Design 6 + Custom CSS Variables
-- **State Management:** Context API
-- **Routing:** React Router v7
-
-#### Mobile (App)
-- **Framework:** React Native + Expo 50+
-- **Navigation:** React Navigation v7
-- **UI:** Expo Vector Icons + Native Component Styling
-- **Services:** Expo Notifications, Async Storage
+- **Web:** React 19, Ant Design 6, Context API, React Router v7.
+- **Mobile:** React Native, Expo 50+, React Navigation v7, Async Storage.
 
 ---
 
@@ -53,41 +39,27 @@ Both applications focus on high-performance user interfaces, modern design aesth
 ## Tiếng Việt
 
 ### Tổng quan
-BKEUTY là nền tảng thương mại điện tử đa kênh chuyên về mỹ phẩm, mang lại trải nghiệm mua sắm hiện đại và tinh tế. Dự án bao gồm hai ứng dụng chính:
-1. **Website:** Cửa hàng trực tuyến thích ứng, xây dựng trên React 19.
-2. **Ứng dụng Di động:** Trải nghiệm native mượt mà, xây dựng trên React Native và Expo.
+BKEUTY Storefront là ứng dụng dành riêng cho khách hàng của nền tảng BKEUTY. Đây là không gian chuyên biệt để khách hàng khám phá, mua sắm và quản lý các dịch vụ làm đẹp với trải nghiệm cao cấp.
+1. **Website Khách hàng:** Cửa hàng trực tuyến hiệu suất cao trên React 19.
+2. **Ứng dụng Di động:** Trải nghiệm mua sắm native trên React Native và Expo.
 
-Cả hai ứng dụng đều tập trung vào giao diện hiệu suất cao, thẩm mỹ hiện đại và trải nghiệm người dùng chuyên nghiệp.
+### Tính năng chính (Dành cho Người dùng)
 
-### Tính năng chính
+#### 1. Xác thực Khách hàng
+- **Định danh Chuyên biệt:** Hệ thống đăng ký và đăng nhập dành riêng cho khách hàng.
+- **Kiểm soát Quyền hạn:** Xử lý nghiêm ngặt logic dành riêng cho role `USER`.
+- **Khôi phục Tài khoản:** Chức năng quên mật khẩu hoàn chỉnh với xác thực OTP.
 
-#### 1. Hệ thống Xác thực
-- **Tài khoản đồng nhất:** Đăng nhập liền mạch trên cả web và điện thoại.
-- **Bảo mật:** Quy trình xác thực an toàn, mã hóa mật khẩu và kiểm tra dữ liệu chặt chẽ.
-- **Khôi phục:** Chức năng quên mật khẩu tiện lợi với xác thực OTP.
-
-#### 2. Giao diện & Trải nghiệm
-- **Thẩm mỹ Hiện đại:** Thiết kế tối giản, sạch sẽ với nhận diện thương hiệu nhất quán.
-- **Web Thích ứng:** Tối ưu hiển thị trên mọi kích thước màn hình.
-- **Mobile Native:** Hiệu năng mượt mà với các thao tác chạm vuốt tự nhiên.
-- **Phản hồi Tương tác:** Xác thực thời gian thực, hiệu ứng loading skeleton và chuyển cảnh mượt mà.
+#### 2. Trải nghiệm Mua sắm Cao cấp
+- **Nhận diện Thương hiệu:** Thẩm mỹ nhất quán với tông màu "Deep Magenta".
+- **Đa nền tảng:** Trải nghiệm mượt mà trên cả Web và Mobile Native (iOS/Android).
+- **Tương tác Tinh tế:** Hiệu ứng chuyển cảnh và phản hồi được thiết kế cho ngành làm đẹp.
 
 #### 3. Chức năng Cốt lõi
 - **Khám phá Sản phẩm:** Bộ lọc nâng cao, tìm kiếm thông minh và duyệt theo danh mục.
-- **Mua sắm:** Quản lý giỏ hàng, thanh toán nhanh gọn và theo dõi đơn hàng chi tiết.
-- **Thông báo:** Nhận thông báo đẩy về đơn hàng và khuyến mãi (Mobile).
-- **Đa ngôn ngữ:** Hỗ trợ song ngữ (Tiếng Anh/Tiếng Việt) đồng bộ trên toàn hệ thống.
+- **Giỏ hàng & Thanh toán:** Quản lý giỏ hàng tối ưu và quy trình thanh toán nhanh gọn.
+- **Trang cá nhân:** Theo dõi đơn hàng, quản lý điểm thưởng (Thành viên Kim cương) và lịch sử hẹn dịch vụ.
 
 ### Nền tảng Kỹ thuật
-
-#### Frontend (Web)
-- **Framework:** React 19
-- **Hệ thống UI:** Ant Design 6 + Custom CSS Variables
-- **Quản lý Trạng thái:** Context API
-- **Định tuyến:** React Router v7
-
-#### Mobile (App)
-- **Framework:** React Native + Expo 50+
-- **Điều hướng:** React Navigation v7
-- **UI:** Expo Vector Icons + Native Component Styling
-- **Dịch vụ:** Expo Notifications, Async Storage
+- **Web:** React 19, Ant Design 6, Context API, React Router v7.
+- **Mobile:** React Native, Expo 50+, React Navigation v7, Async Storage.

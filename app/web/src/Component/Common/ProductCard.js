@@ -1,11 +1,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Badge, Rate, Typography, Space } from 'antd';
+import { Card, Badge, Rate, Typography, Space, Tag } from 'antd';
 import placeHolderImg from '../../Assets/Images/Products/product_placeholder.svg';
 import { getImageUrl } from '../../api/axiosClient';
 import './ProductCard.css';
 
-const { Meta } = Card;
 const { Text, Title } = Typography;
 
 const ProductCard = ({ product, t, language, onClickData }) => {
@@ -13,11 +12,12 @@ const ProductCard = ({ product, t, language, onClickData }) => {
 
     const idForDetail = product.id;
     const name = product.name;
-    const rawPrice = product.minPrice || 0;
+    const rawPrice = product.price !== undefined ? product.price : (product.minPrice || 0);
     const price = typeof rawPrice === 'number' ? `${rawPrice.toLocaleString("vi-VN")}đ` : rawPrice;
     const brand = product.brand || 'BKEUTY';
     const image = product.image ? getImageUrl(product.image) : placeHolderImg;
     const rating = parseFloat(product.rating || 4.8);
+    const stockQuantity = product.stockQuantity || 0;
 
     let sold = product.sold || 120;
     if (typeof sold === 'string') {
@@ -36,7 +36,7 @@ const ProductCard = ({ product, t, language, onClickData }) => {
     const CardContent = (
         <Card
             hoverable
-            className="product-card-antd"
+            className="product-card-antd product-card"
             cover={
                 <div className="card-image-wrapper">
                     <img alt={name} src={image} onError={(e) => { e.target.src = placeHolderImg }} loading="lazy" />
@@ -50,13 +50,18 @@ const ProductCard = ({ product, t, language, onClickData }) => {
                 <Title level={5} className="card-name" ellipsis={{ rows: 2 }}>{name}</Title>
 
                 <Space size="small" align="center" className="card-rating">
-                    <Rate disabled defaultValue={rating} allowHalf style={{ fontSize: 12, color: '#fadb14' }} />
-                    <Text type="secondary" style={{ fontSize: 12 }}>({sold})</Text>
+                    <Rate disabled defaultValue={rating} allowHalf className="card-rating-stars" />
+                    <Text type="secondary" className="card-sold-count">({sold})</Text>
                 </Space>
 
-                <div className="price-row">
-                    {product.oldPrice && <Text delete className="old-price">{product.oldPrice}</Text>}
-                    <Text className="card-price">{price}</Text>
+                <div className="price-stock-row">
+                    <div className="price-col">
+                        {product.oldPrice && <Text delete className="card-old-price">{product.oldPrice}</Text>}
+                        <Text className="card-price">{price}</Text>
+                    </div>
+                    <Tag color={stockQuantity > 0 ? 'green' : 'red'} className="stock-tag">
+                        {stockQuantity > 0 ? `${t('in_stock', 'Còn')} ${stockQuantity}` : t('out_of_stock', 'Hết hàng')}
+                    </Tag>
                 </div>
             </div>
         </Card>

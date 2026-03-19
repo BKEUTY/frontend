@@ -4,13 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { useNotification } from '../../Context/NotificationContext';
 import { useCart } from '../../Context/CartContext';
 import './ProductDetail.css';
-import {
-    StarFilled,
-    CheckCircleFilled,
-    HeartOutlined,
-    MessageOutlined,
-    ShoppingOutlined
-} from '@ant-design/icons';
+import { StarFilled, CheckCircleFilled, HeartOutlined, MessageOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { CButton } from '../../Component/Common';
 import best_selling_image from "../../Assets/Images/Products/product_placeholder.svg";
 import Pagination from "../../Component/Common/Pagination";
@@ -19,9 +13,10 @@ import Skeleton from "../../Component/Common/Skeleton";
 import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
+import { generateSlug, extractIdsFromSlug } from '../../utils/helpers';
 
 export default function ProductDetail() {
-    const { id } = useParams();
+    const { slug } = useParams();
     const { t, language } = useLanguage();
     const notify = useNotification();
     const { addToCart } = useCart();
@@ -29,6 +24,10 @@ export default function ProductDetail() {
 
     const categoryName = location.state?.category || t('all_products');
     const categoryLink = location.state?.from || '/product';
+
+    const { productId: parsedPid, variantId: parsedVid } = extractIdsFromSlug(slug);
+    const productIdParam = parsedPid || slug;
+    const variantIdParam = parsedVid;
 
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -39,7 +38,6 @@ export default function ProductDetail() {
     const [currentVariant, setCurrentVariant] = useState(null);
     const [mainImage, setMainImage] = useState(best_selling_image);
     const [quantity, setQuantity] = useState(1);
-
     const [reviewPage, setReviewPage] = useState(0);
     const reviewsPerPage = 5;
 
@@ -54,10 +52,12 @@ export default function ProductDetail() {
             setIsLoading(true);
             setIsError(false);
             try {
-                const response = await productApi.getById(id);
+                const response = await productApi.getById(productIdParam);
                 const found = response.data;
 
                 if (found) {
+                    const basePrice = found.minPrice !== undefined ? found.minPrice : (found.price || 0);
+                    
                     const mappedVariants = (found.variants || []).map(v => ({
                         id: v.id,
                         variantOptions: v.variantOptions || {},
@@ -67,9 +67,7 @@ export default function ProductDetail() {
                         productVariantName: v.productVariantName
                     }));
 
-                    const variantImages = mappedVariants
-                        .map(v => v.image)
-                        .filter(img => img !== null && img !== "");
+                    const variantImages = mappedVariants.map(v => v.image).filter(img => img !== null && img !== "");
 
                     let options = found.options || [];
                     if (options.length === 0) {
@@ -82,11 +80,7 @@ export default function ProductDetail() {
                                 });
                             }
                         });
-
-                        options = Object.entries(optionsMap).map(([name, valuesSet]) => ({
-                            name: name,
-                            values: Array.from(valuesSet)
-                        }));
+                        options = Object.entries(optionsMap).map(([name, valuesSet]) => ({ name, values: Array.from(valuesSet) }));
                     }
 
                     const mergedData = {
@@ -94,39 +88,42 @@ export default function ProductDetail() {
                         productId: found.id,
                         name: found.name || "Sản phẩm BKEUTY",
                         brand: "BKEUTY",
-                        price: mappedVariants.length > 0 ? mappedVariants[0].price : 0,
-                        original_price: mappedVariants.length > 0 ? mappedVariants[0].price * 1.1 : 0,
+                        price: mappedVariants.length > 0 ? mappedVariants[0].price : basePrice,
                         rating: 4.8,
                         reviews_count: 124,
-                        images: [
-                            found.image ? getImageUrl(found.image) : best_selling_image,
-                            ...variantImages,
-                            best_selling_image
-                        ].filter(Boolean).slice(0, 5),
+                        categories: found.categories || [],
+                        images: [found.image ? getImageUrl(found.image) : best_selling_image, ...variantImages, best_selling_image].filter(Boolean).slice(0, 5),
                         options: options,
                         variants: mappedVariants,
                         content: {
                             en: {
-                                description: found.description || "High-quality BKEUTY skincare product.",
-                                details: "This product is formulated with natural ingredients to provide the best results for your skin health and beauty.",
-                                application: "1. Cleanse your skin.\n2. Apply a proper amount to the targeted area.\n3. Massage gently until absorbed.",
-                                ingredients: "Aqua, Glycerin, Botanical Extracts, Vitamins, Natural Oils.",
-                                advance: "Advanced dermatological technology.",
-                                benefits_list: ["Revitalizing", "Repairing", "Moisturizing"]
+                                description: found.description || "",
+                                details: "High-quality BKEUTY skincare product.",
+                                application: "1. Cleanse your skin.\n2. Apply a proper amount.",
+                                ingredients: "Aqua, Glycerin, Botanical Extracts.",
                             },
                             vi: {
-                                description: found.description || "Sản phẩm chăm sóc da cao cấp từ BKEUTY.",
-                                details: "Sản phẩm được chiết xuất từ thành phần tự nhiên, giúp nuôi dưỡng làn da khỏe mạnh và rạng rỡ từ bên trong.",
-                                application: "1. Làm sạch da.\n2. Thoa một lượng vừa đủ lên vùng da cần chăm sóc.\n3. Massage nhẹ nhàng để dưỡng chất thấm sâu.",
-                                ingredients: "Nước khoáng, Glycerin, Chiết xuất thảo mộc, Vitamin, Tinh dầu tự nhiên.",
-                                advance: "Công nghệ da liễu tiên tiến.",
-                                benefits_list: ["Tái Tạo", "Phục Hồi", "Dưỡng Ẩm"]
+                                description: found.description || "",
+                                details: "Sản phẩm chăm sóc da cao cấp từ BKEUTY.",
+                                application: "1. Làm sạch da.\n2. Thoa một lượng vừa đủ.",
+                                ingredients: "Nước khoáng, Glycerin, Chiết xuất thảo mộc.",
                             }
                         },
                         reviews: []
                     };
+                    
                     setProductData(mergedData);
-                    setMainImage(mergedData.images[0]);
+                    
+                    if (variantIdParam && mappedVariants.length > 0) {
+                        const targetVariant = mappedVariants.find(v => v.id === variantIdParam);
+                        if (targetVariant && targetVariant.variantOptions) {
+                            setSelectedOptions(targetVariant.variantOptions);
+                        } else {
+                            setDefaultOptions(mergedData);
+                        }
+                    } else {
+                        setDefaultOptions(mergedData);
+                    }
                 } else {
                     setIsError(true);
                 }
@@ -137,61 +134,62 @@ export default function ProductDetail() {
             }
         };
 
-        fetchProduct();
-    }, [id]);
+        const setDefaultOptions = (data) => {
+            if (data.options) {
+                const initialOptions = {};
+                data.options.forEach(opt => {
+                    if (opt.values && opt.values.length > 0) initialOptions[opt.name] = opt.values[0];
+                });
+                setSelectedOptions(initialOptions);
+            }
+        };
 
-    useEffect(() => {
-        if (productData && productData.options) {
-            const initialOptions = {};
-            productData.options.forEach(opt => {
-                if (opt.values && opt.values.length > 0) {
-                    initialOptions[opt.name] = opt.values[0];
-                }
-            });
-            setSelectedOptions(initialOptions);
-        }
-    }, [productData]);
+        if (productIdParam) fetchProduct();
+    }, [productIdParam, variantIdParam]);
 
     useEffect(() => {
         if (productData && productData.variants && Object.keys(selectedOptions).length > 0) {
-            const match = productData.variants.find(v => {
+            const matchVariant = productData.variants.find(v => {
                 if (!v.variantOptions || Object.keys(v.variantOptions).length === 0) return false;
-                
                 return Object.entries(selectedOptions).every(([optName, selectedVal]) => {
                     const vVal = v.variantOptions[optName];
                     if (!vVal || !selectedVal) return false;
                     return vVal.toString().toLowerCase().trim() === selectedVal.toString().toLowerCase().trim();
                 });
             });
-            setCurrentVariant(match || null);
+            setCurrentVariant(matchVariant || null);
         }
     }, [selectedOptions, productData]);
 
     useEffect(() => {
-        if (currentVariant && currentVariant.image) {
-            setMainImage(currentVariant.image);
-        }
+        if (currentVariant && currentVariant.image) setMainImage(currentVariant.image);
     }, [currentVariant]);
+
+    useEffect(() => {
+        if (currentVariant && productData) {
+            const combinedName = currentVariant.productVariantName && currentVariant.productVariantName !== productData.name
+                ? `${productData.name} ${currentVariant.productVariantName}`
+                : productData.name;
+                
+            const newSlug = generateSlug(combinedName, productData.id, currentVariant.id);
+            if (slug !== newSlug) window.history.replaceState(null, '', `/product/${newSlug}`);
+        }
+    }, [currentVariant, productData, slug]);
 
     const totalReviewPages = productData ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
     const displayedReviews = productData ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage) : [];
-
-    const getLocalContent = (key) => {
-        if (!productData) return "";
-        return productData.content[language === 'vi' ? 'vi' : 'en'][key] || productData.content['en'][key];
-    };
+    const getLocalContent = (key) => productData?.content?.[language === 'vi' ? 'vi' : 'en']?.[key] || "";
 
     if (isError) return <NotFound />;
-
     if (isLoading || !productData) return (
         <div className="product-detail-page">
             <div className="product-top-section">
-                <Skeleton width="45%" height="450px" style={{ marginRight: '40px', borderRadius: '16px' }} />
-                <div style={{ flex: 1 }}>
-                    <Skeleton width="30%" height="20px" style={{ marginBottom: '15px' }} />
-                    <Skeleton width="80%" height="40px" style={{ marginBottom: '20px' }} />
-                    <Skeleton width="40%" height="30px" style={{ marginBottom: '30px' }} />
-                    <Skeleton width="100%" height="80px" style={{ marginBottom: '30px' }} />
+                <Skeleton width="45%" height="450px" className="detail-skeleton-img" />
+                <div className="detail-skeleton-info">
+                    <Skeleton width="30%" height="20px" className="mb-15" />
+                    <Skeleton width="80%" height="40px" className="mb-20" />
+                    <Skeleton width="40%" height="30px" className="mb-30" />
+                    <Skeleton width="100%" height="80px" className="mb-30" />
                     <Skeleton width="100%" height="60px" />
                 </div>
             </div>
@@ -223,7 +221,7 @@ export default function ProductDetail() {
         { id: 'ingredients', label: t('ingredients') },
         { id: 'reviews', label: `${t('reviews')} (${productData.reviews_count})` },
     ];
-    
+
     const isOutOfStock = currentVariant ? currentVariant.stockQuantity <= 0 : false;
 
     return (
@@ -238,27 +236,30 @@ export default function ProductDetail() {
                 <div className="product-gallery">
                     <div className="thumbnail-list">
                         {productData.images.map((img, idx) => (
-                            <div
-                                key={idx}
-                                className={`thumb-item ${mainImage === img ? 'active' : ''}`}
-                                onClick={() => setMainImage(img)}
-                            >
+                            <div key={idx} className={`thumb-item ${mainImage === img ? 'active' : ''}`} onClick={() => setMainImage(img)}>
                                 <img src={img} alt={`Thumb ${idx}`} />
                             </div>
                         ))}
                     </div>
                     <div className="main-image">
-                        <img 
-                            src={mainImage} 
-                            alt={productData.name} 
-                            onError={(e) => { e.target.src = best_selling_image }}
-                        />
+                        <img src={mainImage} alt={productData.name} onError={(e) => { e.target.src = best_selling_image }} />
                     </div>
                 </div>
 
                 <div className="product-info-side">
                     <div className="brand-label">{productData.brand}</div>
                     <h1 className="detail-title">{productData.name}</h1>
+
+                    {productData.categories && productData.categories.length > 0 && (
+                        <div className="detail-categories">
+                            <span className="detail-categories-label">{t('categories')}: </span>
+                            {productData.categories.map((cat, idx) => (
+                                <span key={idx} className="detail-category-tag">
+                                    {typeof cat === 'object' ? cat.categoryName : cat}
+                                </span>
+                            ))}
+                        </div>
+                    )}
 
                     <div className="detail-tags">
                         <div className="rating-container">
@@ -282,11 +283,7 @@ export default function ProductDetail() {
                                     {opt.values.map(val => {
                                         const isActive = selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim();
                                         return (
-                                            <button
-                                                key={val}
-                                                className={`size-btn ${isActive ? 'active' : ''}`}
-                                                onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}
-                                            >
+                                            <button key={val} className={`size-btn ${isActive ? 'active' : ''}`} onClick={() => setSelectedOptions(prev => ({ ...prev, [opt.name]: val }))}>
                                                 {val}
                                             </button>
                                         );
@@ -321,22 +318,10 @@ export default function ProductDetail() {
                     </div>
 
                     <div className="actions-wrapper">
-                        <CButton
-                            type="primary"
-                            disabled={isOutOfStock}
-                            onClick={() => notify(t('feature_developing_title'), "info")}
-                            className="btn-action-buy"
-                        >
+                        <CButton type="primary" disabled={isOutOfStock} onClick={() => notify(t('feature_developing_title'), "info")} className="btn-action-buy">
                             <span>{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
                         </CButton>
-                        
-                        <CButton
-                            type="outline"
-                            disabled={isOutOfStock}
-                            onClick={handleAddToCart}
-                            icon={<ShoppingOutlined />}
-                            className="btn-action-cart"
-                        >
+                        <CButton type="outline" disabled={isOutOfStock} onClick={handleAddToCart} icon={<ShoppingOutlined />} className="btn-action-cart">
                             {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
                         </CButton>
                     </div>
@@ -346,11 +331,7 @@ export default function ProductDetail() {
             <div className="product-content-tabs">
                 <div className="tab-headers">
                     {tabs.map(tab => (
-                        <button
-                            key={tab.id}
-                            className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`}
-                            onClick={() => setActiveTab(tab.id)}
-                        >
+                        <button key={tab.id} className={`tab-btn ${activeTab === tab.id ? 'active' : ''}`} onClick={() => setActiveTab(tab.id)}>
                             {tab.label}
                         </button>
                     ))}
@@ -365,9 +346,7 @@ export default function ProductDetail() {
                     {activeTab === 'application' && (
                         <div className="tab-content">
                             <h3>{t('how_to_apply')}</h3>
-                            {getLocalContent('application').split('\n').map((line, i) => (
-                                <p key={i}>{line}</p>
-                            ))}
+                            {getLocalContent('application').split('\n').map((line, i) => <p key={i}>{line}</p>)}
                         </div>
                     )}
                     {activeTab === 'ingredients' && (
@@ -383,9 +362,7 @@ export default function ProductDetail() {
                                     <span className="big-score">{productData.rating}</span>
                                     <div className="star-stack">
                                         <div className="star-row">
-                                            {[...Array(5)].map((_, i) => (
-                                                <StarFilled key={i} className="bkeuty-star" />
-                                            ))}
+                                            {[...Array(5)].map((_, i) => <StarFilled key={i} className="bkeuty-star" />)}
                                         </div>
                                         <span className="total-reviews">{productData.reviews_count} {t('reviews')}</span>
                                     </div>
@@ -394,9 +371,7 @@ export default function ProductDetail() {
                                     {[5, 4, 3, 2, 1].map((star) => (
                                         <div key={star} className="bar-row">
                                             <span className="star-label">{star} <StarFilled style={{ fontSize: '12px' }} className="bkeuty-star" /></span>
-                                            <div className="progress-bg">
-                                                <div className="progress-fi" style={{ width: star === 5 ? '70%' : star === 4 ? '20%' : '5%' }}></div>
-                                            </div>
+                                            <div className="progress-bg"><div className="progress-fi" style={{ width: star === 5 ? '70%' : star === 4 ? '20%' : '5%' }}></div></div>
                                         </div>
                                     ))}
                                 </div>
@@ -412,9 +387,7 @@ export default function ProductDetail() {
                             <div className="review-list-container">
                                 {displayedReviews.map((rev, i) => (
                                     <div key={i} className="review-card">
-                                        <div className="review-user-avatar">
-                                            {rev.user.charAt(0)}
-                                        </div>
+                                        <div className="review-user-avatar">{rev.user.charAt(0)}</div>
                                         <div className="review-content-body">
                                             <div className="review-header-row">
                                                 <span className="reviewer-name">{rev.user}</span>
@@ -428,27 +401,16 @@ export default function ProductDetail() {
                                                 ))}
                                                 {rev.verified && <span className="verified-tag"><CheckCircleFilled className="icon-check" /> {t('verified_purchase')}</span>}
                                             </div>
-                                            <div className="review-text">
-                                                {rev.content}
-                                            </div>
+                                            <div className="review-text">{rev.content}</div>
                                             <div className="review-actions">
-                                                <button className="action-btn">
-                                                    <HeartOutlined className="icon-action" /> {t('like')}
-                                                </button>
-                                                <button className="action-btn">
-                                                    <MessageOutlined className="icon-action" /> {t('comment')}
-                                                </button>
+                                                <button className="action-btn"><HeartOutlined className="icon-action" /> {t('like')}</button>
+                                                <button className="action-btn"><MessageOutlined className="icon-action" /> {t('comment')}</button>
                                             </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
-
-                            <Pagination
-                                page={reviewPage}
-                                totalPages={totalReviewPages}
-                                onPageChange={setReviewPage}
-                            />
+                            <Pagination page={reviewPage} totalPages={totalReviewPages} onPageChange={setReviewPage} />
                         </div>
                     )}
                 </div>
@@ -458,28 +420,8 @@ export default function ProductDetail() {
                 <h2 className="section-title">{t('related_products')}</h2>
                 <div className="product-grid related-products-grid">
                     {[1, 2, 3, 4, 5].map(i => {
-                        const relatedProduct = {
-                            id: i,
-                            name: "Capture Totale Cell Energy",
-                            brand: "Dior",
-                            price: 3500000,
-                            image: best_selling_image,
-                            rating: 4.8,
-                            sold: 120
-                        };
-                        const clickState = {
-                            category: language === 'vi' ? 'Gợi ý' : 'Related Products',
-                            from: location.pathname
-                        };
-                        return (
-                            <ProductCard
-                                key={i}
-                                product={relatedProduct}
-                                t={t}
-                                language={language}
-                                onClickData={clickState}
-                            />
-                        );
+                        const relatedProduct = { id: i, name: "Capture Totale Cell Energy", brand: "Dior", price: 3500000, image: best_selling_image, rating: 4.8, sold: 120 };
+                        return <ProductCard key={i} product={relatedProduct} t={t} language={language} onClickData={{ category: language === 'vi' ? 'Gợi ý' : 'Related Products', from: location.pathname }} />;
                     })}
                 </div>
             </div>

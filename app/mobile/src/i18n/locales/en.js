@@ -217,6 +217,9 @@ export default {
     scan_qr_desc: "Please scan the QR code below to pay",
     amount: "Amount",
     paid_confirm: "I have paid",
+    payment_checking: "Checking payment status...",
+    payment_success_msg: "Payment successful!",
+    payment_not_yet: "We haven't received your payment yet. Please try again in a few seconds or contact support.",
     select_promo: "Select Promotion Code",
     promo_code: "Promo Code",
 

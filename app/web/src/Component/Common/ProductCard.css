@@ -61,8 +61,6 @@
     z-index: 2;
 }
 
-
-
 .card-info {
     padding: 16px;
     display: flex;
@@ -110,23 +108,39 @@
     font-weight: 700;
 }
 
+.card-rating-stars {
+    font-size: 12px !important;
+    color: #fadb14 !important;
+}
+
+.card-sold-count {
+    font-size: 12px !important;
+}
+
 .card-sold {
     font-size: 0.8rem;
     color: #999;
     font-weight: 500;
 }
 
-.card-price-container {
-    margin-top: auto;
+.price-stock-row {
+    margin-top: 10px;
     display: flex;
-    align-items: baseline;
-    gap: 8px;
+    align-items: flex-end;
+    justify-content: space-between;
     flex-wrap: wrap;
+    gap: 8px;
+}
+
+.price-col {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .card-price {
-    font-size: 1.15rem;
-    font-weight: 800;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--color_main_title);
 }
 
@@ -137,17 +151,11 @@
     font-weight: 500;
 }
 
-.price-row {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-}
-
-.price-row .card-price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color_main_title);
+.stock-tag {
+    margin: 0 !important;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    padding: 0 6px;
 }
 
 @media (max-width: 768px) {
@@ -168,5 +176,11 @@
     .card-badges {
         top: 8px;
         left: 8px;
+    }
+
+    .price-stock-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
     }
 }

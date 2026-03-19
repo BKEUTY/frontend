@@ -16,14 +16,13 @@ const AccountScreen = () => {
     const { t, changeLanguage, language } = useLanguage();
 
     const { user, logout, isAuthenticated } = useAuth();
-
+    
     const mainFeatures = isAuthenticated ? [
         { id: 'info', iconName: 'person-outline', title: t('account'), route: 'Profile', color: '#6366f1' },
-        { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderDetail', color: '#f59e0b' },
+        { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderList', color: '#f59e0b' },
         { id: 'appointments', iconName: 'calendar-outline', title: t('my_appointments'), route: 'Appointments', color: '#ec4899' },
         { id: 'wallet', iconName: 'wallet-outline', title: t('my_wallet'), route: 'Wallet', color: '#14b8a6' },
     ] : [];
-
 
     const supportItems = [
         { id: 6, title: t('about_brand'), route: 'AboutUs' },

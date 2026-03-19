@@ -3,42 +3,44 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import Skeleton from '../../Component/Common/Skeleton';
 import { FiEye } from "react-icons/fi";
+import orderApi from '../../api/orderApi';
+import { useNotification } from '../../Context/NotificationContext';
 
 const MyOrders = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
+    const notify = useNotification();
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_API_URL}/order/1`)
-            .then(res => {
-                if (res.ok) return res.json();
-                throw new Error("API not available");
-            })
-            .then(data => {
+        const fetchOrders = async () => {
+            try {
+                const response = await orderApi.getHistory();
+                const data = response.data || [];
+                
                 const mappedOrders = data.map((order, index) => ({
-                    id: order.id || `ORD-${index + 1}`,
+                    id: order.orderId || `ORD-${index + 1}`,
                     date: order.orderDate,
                     total: order.total ? order.total.toLocaleString("vi-VN") + 'đ' : '0đ',
-                    status: 'pending'
+                    status: (order.paymentMethod === 'Banking' && !order.qrCodeLink) ? 'completed' : 'pending' // Simplified status logic for demo
                 }));
                 setOrders(mappedOrders);
+            } catch (err) {
+                console.error("Fetch orders error:", err);
+                // Fallback to mock data if API fails significantly or handle properly
+                setOrders([]);
+            } finally {
                 setLoading(false);
-            })
-            .catch(err => {
-                setOrders([
-                    { id: 1001, date: '2026-10-20', total: '500.000đ', status: 'completed' },
-                    { id: 1002, date: '2026-10-25', total: '1.200.000đ', status: 'pending' },
-                    { id: 1003, date: '2026-11-02', total: '350.000đ', status: 'cancelled' },
-                ]);
-                setLoading(false);
-            });
-    }, []);
+            }
+        };
+
+        fetchOrders();
+    }, [t]);
 
     if (loading) {
         return (
-            <div>
+            <div className="my-orders-page">
                 <h2>{t('my_orders')}</h2>
                 <br />
                 <table className="orders-table">
@@ -68,10 +70,17 @@ const MyOrders = () => {
     }
 
     return (
-        <div>
+        <div className="my-orders-page">
             <h2>{t('my_orders')}</h2>
             <br />
-            {orders.length === 0 ? <p>{t('no_orders')}</p> : (
+            {orders.length === 0 ? (
+                <div className="empty-orders">
+                    <p>{t('no_orders') || "Bạn chưa có đơn hàng nào."}</p>
+                    <button className="btn-continue-shopping" onClick={() => navigate('/')}>
+                        {t('continue_shopping')}
+                    </button>
+                </div>
+            ) : (
                 <table className="orders-table">
                     <thead>
                         <tr>

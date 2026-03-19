@@ -1,31 +1,83 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { COLORS } from '../../constants/Theme';
-import { useLanguage } from '../../i18n/LanguageContext';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Dimensions, ActivityIndicator, Image } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { COLORS } from '../constants/Theme';
+import { useLanguage } from '../i18n/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import orderApi from '../api/orderApi';
 
 const { width } = Dimensions.get('window');
 
 const OrderDetailScreen = () => {
     const navigation = useNavigation();
+    const route = useRoute();
+    const { orderId } = route.params || {};
     const { t } = useLanguage();
+    const [order, setOrder] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchOrderDetail = async () => {
+            try {
+                const response = await orderApi.getHistory();
+                if (response.data) {
+                    const found = response.data.find(o => 
+                        o.id?.toString() === orderId?.toString() || 
+                        o.orderId?.toString() === orderId?.toString()
+                    );
+                    setOrder(found);
+                }
+            } catch (error) {
+                console.error(error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        if (orderId) {
+            fetchOrderDetail();
+        } else {
+            setLoading(false);
+        }
+    }, [orderId]);
+
+    const getStatusText = (status) => {
+        if (!status) return 'PENDING';
+        return status.toUpperCase();
+    };
+
+    if (loading) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={COLORS.mainTitle} />
+            </View>
+        );
+    }
+
+    if (!order) {
+        return (
+            <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
+                <Ionicons name="alert-circle-outline" size={60} color="#e5e7eb" />
+                <Text style={{ marginTop: 10, color: '#6b7280' }}>{t('no_data')}</Text>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginTop: 20 }}>
+                    <Text style={{ color: COLORS.mainTitle, fontWeight: 'bold' }}>{t('back')}</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
 
     const orderData = {
-        id: '3354654654526',
-        createdAt: '10/10/2023',
-        expectedDelivery: '10/10/2023',
-        status_logs: [
-            { title: t('order_placed_success'), desc: t('order_placed_desc'), time: '11:45 PM', icon: 'cube-outline' },
-            { title: t('preparing_order'), desc: t('preparing_order_desc'), time: '11:45 PM', icon: 'construct-outline' },
-            { title: t('international_processing'), desc: t('international_processing_desc'), time: '11:45 PM', icon: 'airplane-outline' }
-        ],
-        subtotal: 15755,
-        discount: 15755,
-        shipping: 30000,
-        tax: 0,
-        total: 46000
+        id: order.id || order.orderId,
+        createdAt: order.orderDate ? new Date(order.orderDate).toLocaleDateString() : '---',
+        status: getStatusText(order.status),
+        subtotal: order.total || 0,
+        discount: 0,
+        shipping: 20000,
+        total: (order.total || 0) + 20000,
+        paymentMethod: order.paymentMethod,
+        address: order.address,
+        items: order.items || []
     };
 
     const renderTimelineStep = (icon, label, date, isActive, isCompleted) => {
@@ -74,37 +126,39 @@ const OrderDetailScreen = () => {
                             <Text style={styles.orderIdLabel}>{t('order_id_label')} #{orderData.id}</Text>
                             <Text style={styles.orderDate}>{t('order_time')}: {orderData.createdAt}</Text>
                         </View>
-                        <View style={styles.statusBadge}>
-                            <Text style={styles.statusBadgeText}>ONDELIVERY</Text>
+                        <View style={[styles.statusBadge, { backgroundColor: orderData.status === 'PAID' ? '#ecfdf5' : '#fff7ed' }]}>
+                            <Text style={[styles.statusBadgeText, { color: orderData.status === 'PAID' ? '#059669' : '#ea580c' }]}>
+                                {t(orderData.status.toLowerCase()) || orderData.status}
+                            </Text>
                         </View>
                     </View>
 
-                    <View style={styles.actionButtonsRow}>
-                        <TouchableOpacity style={styles.btnInvoice}>
-                            <Ionicons name="document-text-outline" size={18} color="#4b5563" />
-                            <Text style={styles.btnText}>{t('invoice')}</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ flex: 1.2 }} activeOpacity={0.8}>
-                            <LinearGradient
-                                colors={[COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f']}
-                                style={styles.btnTrack}
-                            >
-                                <Ionicons name="navigate-outline" size={18} color="white" />
-                                <Text style={[styles.btnText, { color: 'white' }]}>{t('track_order')}</Text>
-                            </LinearGradient>
-                        </TouchableOpacity>
+                    <View style={styles.itemSection}>
+                        {orderData.items.map((item, index) => (
+                            <View key={index} style={styles.productItem}>
+                                <Image 
+                                    source={{ uri: item.productVariantImage || 'https://via.placeholder.com/100' }} 
+                                    style={styles.productImage} 
+                                />
+                                <View style={styles.productInfo}>
+                                    <Text style={styles.productName} numberOfLines={1}>{item.productVariantName}</Text>
+                                    <Text style={styles.productQty}>x{item.quantity}</Text>
+                                    <Text style={styles.productPrice}>{item.price?.toLocaleString()}đ</Text>
+                                </View>
+                            </View>
+                        ))}
                     </View>
                 </View>
 
                 <View style={styles.sectionHeader}>
-                    <Text style={styles.sectionTitle}>{t('shipping_timeline') || 'Shipping Timeline'}</Text>
+                    <Text style={styles.sectionTitle}>{t('shipping_timeline')}</Text>
                 </View>
 
                 <View style={styles.timelineCard}>
                     <View style={styles.timelineLine} />
-                    {renderTimelineStep('card-outline', t('timeline_paid'), '10/10/2023', false, true)}
-                    {renderTimelineStep('cube-outline', t('timeline_shipped'), '10/10/2023', false, true)}
-                    {renderTimelineStep('bicycle-outline', t('timeline_delivering'), 'Dự kiến 12/10', true, false)}
+                    {renderTimelineStep('card-outline', t('timeline_paid'), orderData.status === 'PAID' ? orderData.createdAt : '---', false, orderData.status === 'PAID')}
+                    {renderTimelineStep('cube-outline', t('preparing_order'), orderData.createdAt, false, true)}
+                    {renderTimelineStep('bicycle-outline', t('timeline_delivering'), '---', true, false)}
                     {renderTimelineStep('checkmark-circle-outline', t('timeline_delivered'), '---', false, false)}
                 </View>
 
@@ -115,7 +169,7 @@ const OrderDetailScreen = () => {
                         </View>
                         <View style={styles.infoContent}>
                             <Text style={styles.infoLabel}>{t('delivery_header')}</Text>
-                            <Text style={styles.infoValue} numberOfLines={2}>192/4 Lý tự trọng, Ninh Kiều, Cần Thơ</Text>
+                            <Text style={styles.infoValue} numberOfLines={2}>{orderData.address}</Text>
                         </View>
                     </View>
 
@@ -125,7 +179,7 @@ const OrderDetailScreen = () => {
                         </View>
                         <View style={styles.infoContent}>
                             <Text style={styles.infoLabel}>{t('payment_header')}</Text>
-                            <Text style={styles.infoValue}>Visa **5678</Text>
+                            <Text style={styles.infoValue}>{orderData.paymentMethod}</Text>
                         </View>
                     </View>
                 </View>
@@ -135,10 +189,6 @@ const OrderDetailScreen = () => {
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>{t('subtotal')}</Text>
                         <Text style={styles.summaryValue}>{orderData.subtotal.toLocaleString()}đ</Text>
-                    </View>
-                    <View style={styles.summaryRow}>
-                        <Text style={styles.summaryLabel}>{t('discount')}</Text>
-                        <Text style={styles.summaryValueGreen}>- {orderData.discount.toLocaleString()}đ</Text>
                     </View>
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>{t('shipping_fee')}</Text>
@@ -179,8 +229,8 @@ const styles = StyleSheet.create({
     headerTitle: {
         flex: 1,
         textAlign: 'center',
-        fontSize: 16,
-        fontWeight: '700',
+        fontSize: 18,
+        fontWeight: 'bold',
         color: '#111827',
     },
     content: {
@@ -192,11 +242,11 @@ const styles = StyleSheet.create({
         borderRadius: 24,
         padding: 20,
         marginBottom: 24,
-        elevation: 10,
+        elevation: 8,
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.08,
-        shadowRadius: 12,
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
         borderWidth: 1,
         borderColor: '#f9fafb',
     },
@@ -218,47 +268,49 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     statusBadge: {
-        backgroundColor: '#fff7ed',
-        paddingHorizontal: 10,
-        paddingVertical: 5,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: '#ffedd5',
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
     },
     statusBadgeText: {
-        color: '#ea580c',
         fontSize: 10,
         fontWeight: '800',
+        textTransform: 'uppercase',
         letterSpacing: 0.5,
     },
-    actionButtonsRow: {
-        flexDirection: 'row',
-        gap: 12,
+    itemSection: {
+        marginTop: 10,
     },
-    btnInvoice: {
+    productItem: {
+        flexDirection: 'row',
+        marginBottom: 15,
+        alignItems: 'center',
+    },
+    productImage: {
+        width: 60,
+        height: 60,
+        borderRadius: 12,
+        backgroundColor: '#f3f4f6',
+    },
+    productInfo: {
+        marginLeft: 15,
         flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 48,
-        borderRadius: 14,
-        backgroundColor: '#f9fafb',
-        borderWidth: 1,
-        borderColor: '#e5e7eb',
-        gap: 8,
     },
-    btnTrack: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: 48,
-        borderRadius: 14,
-        gap: 8,
-    },
-    btnText: {
+    productName: {
         fontSize: 14,
         fontWeight: '700',
         color: '#374151',
+        marginBottom: 4,
+    },
+    productQty: {
+        fontSize: 12,
+        color: '#9ca3af',
+    },
+    productPrice: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        color: COLORS.mainTitle,
+        marginTop: 4,
     },
     sectionHeader: {
         marginBottom: 16,
@@ -395,11 +447,6 @@ const styles = StyleSheet.create({
     summaryValue: {
         fontSize: 14,
         color: 'white',
-        fontWeight: '700',
-    },
-    summaryValueGreen: {
-        fontSize: 14,
-        color: '#10b981',
         fontWeight: '700',
     },
     totalRow: {

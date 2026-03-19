@@ -9,7 +9,7 @@ class OrderApi extends BaseApi {
         return this.client.post(`${this.resource}/place-order`, data, { errorMessage: 'api_error_checkout' });
     }
 
-    getByUser(userId) {
+    getHistory() {
         return this.client.get(`${this.resource}/history`, { errorMessage: 'api_error_order_history' });
     }
 }

@@ -7,22 +7,65 @@ import { useQuery } from '@tanstack/react-query';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
 import about_image from "../../Assets/Images/Banners/banner_about_us.svg";
-
 import productApi from '../../api/productApi';
+import { generateSlug } from "../../utils/helpers";
 
 const bannerImages = [banner1, banner2];
 
 const Home = () => {
     const { t, language } = useLanguage();
-
     const [currentBanner, setCurrentBanner] = useState(0);
 
     const fetchHomeData = async () => {
         try {
             const response = await productApi.getAll({ page: 0, size: 10 });
-            return response.data.content || [];
+            const rawContent = response.data.content || [];
+
+            const detailPromises = rawContent.map(p => productApi.getById(p.id));
+            const detailResponses = await Promise.all(detailPromises);
+
+            let flattenedVariants = [];
+            
+            detailResponses.forEach((detailRes, index) => {
+                const productDetail = detailRes.data;
+                const parentData = rawContent[index];
+
+                if (productDetail && productDetail.variants && productDetail.variants.length > 0) {
+                    productDetail.variants.forEach(v => {
+                        const displayName = v.productVariantName || productDetail.name;
+                        flattenedVariants.push({
+                            ...parentData,
+                            ...v,
+                            id: generateSlug(displayName, productDetail.id, v.id),
+                            originalId: v.id,
+                            parentId: productDetail.id,
+                            name: displayName,
+                            price: Number(v.price) || 0,
+                            minPrice: Number(v.price) || 0,
+                            stockQuantity: Number(v.stockQuantity) || 0,
+                            image: v.productImageUrl || productDetail.image || parentData.image,
+                            categories: productDetail.categories || parentData.categories || []
+                        });
+                    });
+                } else {
+                    flattenedVariants.push({
+                        ...parentData,
+                        id: generateSlug(parentData.name, parentData.id, 0),
+                        originalId: parentData.id,
+                        parentId: parentData.id,
+                        name: parentData.name,
+                        price: Number(parentData.minPrice) || 0,
+                        minPrice: Number(parentData.minPrice) || 0,
+                        stockQuantity: 0,
+                        image: parentData.image,
+                        categories: parentData.categories || [],
+                        isParentOnly: true
+                    });
+                }
+            });
+
+            return flattenedVariants;
         } catch (error) {
-            console.error("Failed to fetch home products", error);
             return [];
         }
     };
@@ -96,9 +139,9 @@ const Home = () => {
                         Array(5).fill(0).map((_, i) => (
                             <div key={i} className="product-card">
                                 <Skeleton width="100%" height="220px" />
-                                <div style={{ padding: '20px' }}>
-                                    <Skeleton width="60%" height="20px" style={{ marginBottom: '10px' }} />
-                                    <Skeleton width="80%" height="20px" style={{ marginBottom: '10px' }} />
+                                <div className="skeleton-info-wrap">
+                                    <Skeleton width="60%" height="20px" className="skeleton-line-2" />
+                                    <Skeleton width="80%" height="20px" className="skeleton-line-2" />
                                     <Skeleton width="40%" height="20px" />
                                 </div>
                             </div>
@@ -107,7 +150,7 @@ const Home = () => {
                         bestSellers.map((item) => (
                             <ProductCard
                                 key={item.id}
-                                product={item}
+                                product={{ ...item, tag: t('best_sellers') }}
                                 t={t}
                                 language={language}
                                 onClickData={{
@@ -125,7 +168,7 @@ const Home = () => {
                     {suggestedProducts.map((item, index) => (
                         <ProductCard
                             key={`${item.id}-${index}`}
-                            product={item}
+                            product={{ ...item, tag: t('hot_deals') }}
                             t={t}
                             language={language}
                             onClickData={{

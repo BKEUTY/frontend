@@ -18,7 +18,7 @@ export const userRoutes = [
         element: <Product />
     },
     {
-        path: "product/:id",
+        path: "product/:slug",
         element: <ProductDetail />
     },
     {

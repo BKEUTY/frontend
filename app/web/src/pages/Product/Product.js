@@ -7,6 +7,7 @@ import ProductCard from "../../Component/Common/ProductCard";
 import Pagination from "../../Component/Common/Pagination";
 import { SearchOutlined, MenuOutlined, DownOutlined } from '@ant-design/icons';
 import productApi from "../../api/productApi";
+import { generateSlug } from "../../utils/helpers";
 
 export default function Product() {
   const [products, setProducts] = useState([]);
@@ -22,6 +23,7 @@ export default function Product() {
   const pageSize = 20;
 
   const [searchTerm, setSearchTerm] = useState('');
+  const [sortOption, setSortOption] = useState('default');
   const { t, language } = useLanguage();
 
   const [activeCategory, setActiveCategory] = useState(null);
@@ -40,7 +42,7 @@ export default function Product() {
     fetchCategories();
   }, [t]);
 
-  const fetchProducts = useCallback((pageIndex, append, catId = activeCategory) => {
+  const fetchProducts = useCallback((pageIndex, append, catId = activeCategory, currentSort = sortOption) => {
     setIsLoading(true);
     setError(null);
     const params = { page: pageIndex, size: pageSize };
@@ -48,21 +50,64 @@ export default function Product() {
     if (catId) params.categoryId = catId;
 
     productApi.getAll(params)
-      .then((res) => {
+      .then(async (res) => {
         const data = res.data;
         let rawContent = data.content || [];
 
-        const filteredContent = rawContent.filter(product => {
-          if (!product.variants || product.variants.length === 0) {
-            return (product.price > 0 || product.minPrice > 0) && (product.stockQuantity > 0 || product.totalStock > 0);
+        const detailPromises = rawContent.map(p => productApi.getById(p.id));
+        const detailResponses = await Promise.all(detailPromises);
+
+        let flattenedVariants = [];
+        
+        detailResponses.forEach((detailRes, index) => {
+          const productDetail = detailRes.data;
+          const parentData = rawContent[index];
+
+          if (productDetail && productDetail.variants && productDetail.variants.length > 0) {
+            productDetail.variants.forEach(v => {
+              const displayName = v.productVariantName || productDetail.name;
+                
+              flattenedVariants.push({
+                ...parentData,
+                ...v,
+                id: generateSlug(displayName, productDetail.id, v.id),
+                originalId: v.id,
+                parentId: productDetail.id,
+                name: displayName,
+                price: Number(v.price) || 0,
+                minPrice: Number(v.price) || 0,
+                stockQuantity: Number(v.stockQuantity) || 0,
+                image: v.productImageUrl || productDetail.image || parentData.image,
+                categories: productDetail.categories || parentData.categories || []
+              });
+            });
+          } else {
+            flattenedVariants.push({
+              ...parentData,
+              id: generateSlug(parentData.name, parentData.id, 0),
+              originalId: parentData.id,
+              parentId: parentData.id,
+              name: parentData.name,
+              price: Number(parentData.minPrice) || 0,
+              minPrice: Number(parentData.minPrice) || 0,
+              stockQuantity: 0,
+              image: parentData.image,
+              categories: parentData.categories || [],
+              isParentOnly: true
+            });
           }
-          return product.variants.some(v => v.price > 0 && v.stockQuantity > 0);
         });
 
+        if (currentSort === 'price_asc') {
+          flattenedVariants.sort((a, b) => a.price - b.price);
+        } else if (currentSort === 'price_desc') {
+          flattenedVariants.sort((a, b) => b.price - a.price);
+        }
+
         if (append) {
-          setProducts(prev => [...prev, ...filteredContent]);
+          setProducts(prev => [...prev, ...flattenedVariants]);
         } else {
-          setProducts(filteredContent);
+          setProducts(flattenedVariants);
         }
         setTotalPages(data.totalPages);
       })
@@ -72,7 +117,7 @@ export default function Product() {
       .finally(() => {
         setTimeout(() => setIsLoading(false), 500);
       });
-  }, [searchTerm, activeCategory, t]);
+  }, [searchTerm, activeCategory, sortOption, t]);
 
   useEffect(() => {
     setPage(0);
@@ -96,7 +141,15 @@ export default function Product() {
     setError(null);
     setIsPaginationMode(true);
     setIsMobileCatOpen(false);
-    fetchProducts(0, false, id);
+    fetchProducts(0, false, id, sortOption);
+  };
+
+  const handleSortChange = (e) => {
+    const newSort = e.target.value;
+    setSortOption(newSort);
+    setPage(0);
+    setIsPaginationMode(true);
+    fetchProducts(0, false, activeCategory, newSort);
   };
 
   const handleLoadMore = () => {
@@ -168,7 +221,7 @@ export default function Product() {
 
         <div className="prod-search-bar-wrapper">
           <button className="prod-search-btn" onClick={handleSearchSubmit}>
-            <SearchOutlined style={{ fontSize: '18px', color: '#c2185b' }} />
+            <SearchOutlined className="prod-search-icon" />
           </button>
           <input
             type="text"
@@ -184,22 +237,33 @@ export default function Product() {
       <div className="product-page">
         <div className="product-container">
           <section className="product-main-content">
-            <div className="product-header-bar">
+            <div className="product-header-bar product-header-flex">
               <div className="product-breadcrumb">
                 <span className="current">{getCurrentCategoryName()}</span>
                 <span className="count-badge">({products.length}{!isPaginationMode && products.length > 0 ? '+' : ''})</span>
+              </div>
+              <div className="product-sort">
+                <select 
+                  value={sortOption} 
+                  onChange={handleSortChange}
+                  className="sort-select"
+                >
+                  <option value="default">{t('default_sort', 'Sắp xếp: Mặc định')}</option>
+                  <option value="price_asc">{t('price_low_high', 'Giá: Thấp đến Cao')}</option>
+                  <option value="price_desc">{t('price_high_low', 'Giá: Cao đến Thấp')}</option>
+                </select>
               </div>
             </div>
 
             {isLoading && page === 0 ? (
               <div className="product-grid">
                 {Array(10).fill(0).map((_, i) => (
-                  <div key={i} className="product-card-skeleton">
+                  <div key={i} className="product-card-skeleton" >
                     <Skeleton width="100%" height="220px" />
-                    <div style={{ padding: '20px' }}>
-                      <Skeleton width="40%" height="15px" style={{ marginBottom: '5px' }} />
-                      <Skeleton width="90%" height="20px" style={{ marginBottom: '10px' }} />
-                      <Skeleton width="60%" height="20px" style={{ marginBottom: '15px' }} />
+                    <div className="skeleton-info-wrap">
+                      <Skeleton width="40%" height="15px" className="skeleton-line-1" />
+                      <Skeleton width="90%" height="20px" className="skeleton-line-2" />
+                      <Skeleton width="60%" height="20px" className="skeleton-line-3" />
                       <Skeleton width="100%" height="40px" />
                     </div>
                   </div>
@@ -214,7 +278,7 @@ export default function Product() {
                 <div className="product-grid">
                   {products.map((product, idx) => (
                     <ProductCard
-                      key={`${product.productId}-${idx}`}
+                      key={`${product.id}-${idx}`}
                       product={product}
                       t={t}
                       language={language}
@@ -224,7 +288,7 @@ export default function Product() {
 
                 <div className="pagination-wrapper-container">
                   {!isPaginationMode ? (
-                    <div style={{ textAlign: 'center', marginTop: '30px' }}>
+                    <div className="load-more-container">
                       {isLoading && page > 0 ? (
                         <p>{t('loading')}</p>
                       ) : (

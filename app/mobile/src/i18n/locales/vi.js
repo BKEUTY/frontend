@@ -214,6 +214,9 @@ export default {
     scan_qr_desc: "Vui lòng quét mã QR bên dưới để thanh toán",
     amount: "Số tiền",
     paid_confirm: "Tôi đã thanh toán",
+    payment_checking: "Đang kiểm tra thanh toán...",
+    payment_success_msg: "Thanh toán thành công!",
+    payment_not_yet: "Chúng tôi chưa nhận được thanh toán. Vui lòng thử lại sau vài giây hoặc liên hệ hỗ trợ.",
     select_promo: "Chọn Mã Khuyến Mãi",
     promo_code: "Mã giảm giá",
 

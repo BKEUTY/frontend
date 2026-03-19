@@ -12,6 +12,7 @@ import CheckoutScreen from '../Cart/CheckoutScreen';
 import AccountScreen from '../Account/AccountScreen';
 import ProfileScreen from '../Account/ProfileScreen';
 import OrderDetailScreen from '../Account/OrderDetailScreen';
+import OrderListScreen from '../Account/OrderListScreen';
 import RetailSystemScreen from '../StaticPages/RetailSystemScreen';
 import ServiceScreen from '../StaticPages/ServiceScreen';
 import PromotionScreen from '../StaticPages/PromotionScreen';
@@ -83,6 +84,7 @@ export default function AppNavigator() {
                     <Stack.Screen name="Terms" component={TermsScreen} options={{ headerShown: true, title: t('terms') }} />
 
                     <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
+                    <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
 

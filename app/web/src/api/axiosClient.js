@@ -55,7 +55,9 @@ const createClient = (baseURL) => {
             const status = response ? response.status : null;
 
             if (status === 401 && !originalRequest._retry) {
-                if (originalRequest.url?.includes('/api/auth/refresh')) {
+                const currentToken = getAccessToken();
+
+                if (!currentToken || originalRequest.url?.includes('/api/auth/refresh')) {
                     return Promise.reject(error);
                 }
 
@@ -89,7 +91,7 @@ const createClient = (baseURL) => {
                     onTokenRefreshed(null, refreshError);
                     
                     clearAccessToken();
-                    localStorage.removeItem('user');
+                    sessionStorage.removeItem('user');
 
                     if (!window.location.pathname.includes('/login')) {
                         const desc = getTranslation('error_session_expired') || 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.';

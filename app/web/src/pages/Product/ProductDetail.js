@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useNotification } from '../../Context/NotificationContext';
@@ -6,7 +6,6 @@ import { useCart } from '../../Context/CartContext';
 import './ProductDetail.css';
 import { StarFilled, CheckCircleFilled, HeartOutlined, MessageOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { CButton } from '../../Component/Common';
-import best_selling_image from "../../Assets/Images/Products/product_placeholder.svg";
 import Pagination from "../../Component/Common/Pagination";
 import ProductCard from "../../Component/Common/ProductCard";
 import Skeleton from "../../Component/Common/Skeleton";
@@ -14,6 +13,15 @@ import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
 import { generateSlug, extractIdsFromSlug } from '../../utils/helpers';
+
+import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
+import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
+import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
+import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
+import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
+
+const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
+const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
 export default function ProductDetail() {
     const { slug } = useParams();
@@ -29,6 +37,8 @@ export default function ProductDetail() {
     const productIdParam = parsedPid || slug;
     const variantIdParam = parsedVid;
 
+    const fallbackImg = useMemo(() => getRandomImage(), []);
+
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
@@ -36,7 +46,7 @@ export default function ProductDetail() {
     const [activeTab, setActiveTab] = useState('details');
     const [selectedOptions, setSelectedOptions] = useState({});
     const [currentVariant, setCurrentVariant] = useState(null);
-    const [mainImage, setMainImage] = useState(best_selling_image);
+    const [mainImage, setMainImage] = useState(fallbackImg);
     const [quantity, setQuantity] = useState(1);
     const [reviewPage, setReviewPage] = useState(0);
     const reviewsPerPage = 5;
@@ -92,7 +102,7 @@ export default function ProductDetail() {
                         rating: 4.8,
                         reviews_count: 124,
                         categories: found.categories || [],
-                        images: [found.image ? getImageUrl(found.image) : best_selling_image, ...variantImages, best_selling_image].filter(Boolean).slice(0, 5),
+                        images: [found.image ? getImageUrl(found.image) : fallbackImg, ...variantImages, getRandomImage(), getRandomImage(), getRandomImage()].filter(Boolean).slice(0, 5),
                         options: options,
                         variants: mappedVariants,
                         content: {
@@ -145,7 +155,7 @@ export default function ProductDetail() {
         };
 
         if (productIdParam) fetchProduct();
-    }, [productIdParam, variantIdParam]);
+    }, [productIdParam, variantIdParam, fallbackImg]);
 
     useEffect(() => {
         if (productData && productData.variants && Object.keys(selectedOptions).length > 0) {
@@ -242,7 +252,7 @@ export default function ProductDetail() {
                         ))}
                     </div>
                     <div className="main-image">
-                        <img src={mainImage} alt={productData.name} onError={(e) => { e.target.src = best_selling_image }} />
+                        <img src={mainImage} alt={productData.name} onError={(e) => { e.target.src = fallbackImg }} />
                     </div>
                 </div>
 
@@ -420,7 +430,7 @@ export default function ProductDetail() {
                 <h2 className="section-title">{t('related_products')}</h2>
                 <div className="product-grid related-products-grid">
                     {[1, 2, 3, 4, 5].map(i => {
-                        const relatedProduct = { id: i, name: "Capture Totale Cell Energy", brand: "Dior", price: 3500000, image: best_selling_image, rating: 4.8, sold: 120 };
+                        const relatedProduct = { id: i, name: "Capture Totale Cell Energy", brand: "Dior", price: 3500000, image: getRandomImage(), rating: 4.8, sold: 120 };
                         return <ProductCard key={i} product={relatedProduct} t={t} language={language} onClickData={{ category: language === 'vi' ? 'Gợi ý' : 'Related Products', from: location.pathname }} />;
                     })}
                 </div>

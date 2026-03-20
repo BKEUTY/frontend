@@ -1,11 +1,19 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Drawer, List, Avatar, Button, Checkbox, Typography, Space, Divider } from 'antd';
+import { Drawer, List, Avatar, Button, Checkbox, Typography, Space } from 'antd';
 import { DeleteOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useCart } from '../../Context/CartContext';
 import { useLanguage } from '../../i18n/LanguageContext';
-import product_img from "../../Assets/Images/Products/product_placeholder.svg";
 import './CartDrawer.css';
+
+import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
+import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
+import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
+import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
+import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
+
+const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
+const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
 const { Text, Title } = Typography;
 
@@ -46,19 +54,17 @@ const CartDrawer = () => {
     const footer = (
         <div className="cart-drawer-footer-content">
             <div className="total-row">
-                <Text strong>{t('subtotal')}:</Text>
-                <Title level={4} style={{ margin: 0, color: '#c2185b' }}>
-                    {selectedTotal.toLocaleString('vi-VN')}đ
-                </Title>
+                <span className="total-label">{t('subtotal')}:</span>
+                <span className="total-amount">{selectedTotal.toLocaleString('vi-VN')}đ</span>
             </div>
-            <Space direction="vertical" style={{ width: '100%', marginTop: 16 }}>
+            <Space direction="vertical" className="cart-drawer-btn-space">
                 <Button
                     type="primary"
                     block
                     size="large"
                     onClick={handleCheckout}
                     disabled={selectedIds.size === 0}
-                    style={{ background: '#c2185b', borderColor: '#c2185b' }}
+                    className="cart-drawer-checkout-btn"
                 >
                     {t('checkout_now')} ({selectedIds.size})
                 </Button>
@@ -84,8 +90,8 @@ const CartDrawer = () => {
                     <div className="empty-cart-icon-wrapper">
                         <ShoppingCartOutlined className="empty-cart-icon" />
                     </div>
-                    <Title level={4} style={{ marginTop: 16 }}>{t('cart_empty')}</Title>
-                    <Text type="secondary" style={{ marginBottom: 24, display: 'block' }}>{t('cart_empty_desc')}</Text>
+                    <Title level={4} className="empty-cart-title">{t('cart_empty')}</Title>
+                    <Text type="secondary" className="empty-cart-desc">{t('cart_empty_desc')}</Text>
                     <Button type="primary" size="large" onClick={() => { closeCart(); navigate('/product'); }}>
                         {t('continue_shopping')}
                     </Button>
@@ -102,27 +108,28 @@ const CartDrawer = () => {
                                     danger
                                     icon={<DeleteOutlined />}
                                     onClick={() => removeFromCart(item.cartId)}
+                                    className="cart-drawer-delete-btn"
                                 />
                             ]}
                         >
                             <List.Item.Meta
                                 avatar={
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                                    <div className="cart-drawer-avatar-wrap">
                                         <Checkbox
                                             checked={selectedIds.has(item.cartId)}
                                             onChange={() => toggleSelect(item.cartId)}
                                         />
-                                        <Avatar shape="square" size={64} src={item.image || product_img} />
+                                        <Avatar shape="square" size={64} src={item.image || getRandomImage()} />
                                     </div>
                                 }
-                                title={<Text ellipsis={{ tooltip: item.name }} style={{ width: 140 }}>{item.name}</Text>}
+                                title={<Text ellipsis={{ tooltip: item.name }} className="cart-drawer-item-title">{item.name}</Text>}
                                 description={
-                                    <Space direction="vertical" size={2}>
+                                    <div className="cart-drawer-item-desc">
                                         <Text type="secondary">x{item.quantity}</Text>
-                                        <Text strong style={{ color: '#c2185b' }}>
+                                        <Text strong className="cart-drawer-item-price">
                                             {item.price?.toLocaleString('vi-VN')}đ
                                         </Text>
-                                    </Space>
+                                    </div>
                                 }
                             />
                         </List.Item>

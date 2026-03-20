@@ -1,21 +1,30 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, Badge, Rate, Typography, Space, Tag } from 'antd';
-import placeHolderImg from '../../Assets/Images/Products/product_placeholder.svg';
 import { getImageUrl } from '../../api/axiosClient';
 import './ProductCard.css';
+
+import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
+import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
+import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
+import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
+import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
+
+const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
+const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
 const { Text, Title } = Typography;
 
 const ProductCard = ({ product, t, language, onClickData }) => {
     const navigate = useNavigate();
+    const fallbackImg = useMemo(() => getRandomImage(), []);
 
     const idForDetail = product.id;
     const name = product.name;
     const rawPrice = product.price !== undefined ? product.price : (product.minPrice || 0);
     const price = typeof rawPrice === 'number' ? `${rawPrice.toLocaleString("vi-VN")}đ` : rawPrice;
     const brand = product.brand || 'BKEUTY';
-    const image = product.image ? getImageUrl(product.image) : placeHolderImg;
+    const image = product.image ? getImageUrl(product.image) : fallbackImg;
     const rating = parseFloat(product.rating || 4.8);
     const stockQuantity = product.stockQuantity || 0;
 
@@ -39,7 +48,7 @@ const ProductCard = ({ product, t, language, onClickData }) => {
             className="product-card-antd product-card"
             cover={
                 <div className="card-image-wrapper">
-                    <img alt={name} src={image} onError={(e) => { e.target.src = placeHolderImg }} loading="lazy" />
+                    <img alt={name} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
                 </div>
             }
             onClick={handleClick}

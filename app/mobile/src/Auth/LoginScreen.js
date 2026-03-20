@@ -15,6 +15,7 @@ import {
 import Loading from '../Component/Common/Loading';
 import { useAuth } from '../Context/AuthContext';
 import { useLanguage } from '../i18n/LanguageContext';
+import { COLORS, SIZES, SHADOWS } from '../constants/Theme';
 
 const LoginScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -135,11 +136,11 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.background2,
     },
     scrollContent: {
         flexGrow: 1,
-        padding: 24,
+        padding: SIZES.padding * 1.5,
         justifyContent: 'center',
     },
     header: {
@@ -147,19 +148,20 @@ const styles = StyleSheet.create({
         marginBottom: 40,
     },
     logo: {
-        width: 120,
-        height: 60,
-        marginBottom: 24,
+        width: 140,
+        height: 70,
+        marginBottom: 20,
     },
     title: {
-        fontSize: 28,
+        fontSize: 30,
         fontWeight: '800',
-        color: '#2c3e50',
+        color: COLORS.text,
         marginBottom: 8,
+        letterSpacing: -0.5,
     },
     subtitle: {
-        fontSize: 15,
-        color: '#636e72',
+        fontSize: 16,
+        color: COLORS.textSecondary,
     },
     form: {
         width: '100%',
@@ -167,13 +169,13 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f8f9fa',
-        borderRadius: 12,
+        backgroundColor: COLORS.background,
+        borderRadius: SIZES.radiusLg,
         paddingHorizontal: 16,
         marginBottom: 16,
-        minHeight: 56,
+        minHeight: 60,
         borderWidth: 1,
-        borderColor: 'transparent',
+        borderColor: COLORS.inputBorder,
     },
     inputIcon: {
         marginRight: 12,
@@ -181,44 +183,45 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         fontSize: 16,
-        color: '#2c3e50',
+        color: COLORS.text,
     },
     eyeIcon: {
         padding: 8,
     },
     forgotPassword: {
         textAlign: 'right',
-        color: '#c2185b',
+        color: COLORS.mainTitle,
         fontSize: 14,
         fontWeight: '600',
         marginBottom: 24,
     },
     loginButton: {
-        backgroundColor: '#c2185b',
-        borderRadius: 12,
-        paddingVertical: 16,
+        backgroundColor: COLORS.mainTitle,
+        borderRadius: SIZES.radiusLg,
+        paddingVertical: 18,
         alignItems: 'center',
-        minHeight: 56,
+        minHeight: 60,
         justifyContent: 'center',
+        ...SHADOWS.medium,
     },
     loginButtonText: {
-        color: '#fff',
-        fontSize: 17,
+        color: COLORS.mainTitleText,
+        fontSize: 18,
         fontWeight: '700',
     },
-
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         gap: 8,
+        marginTop: 20,
     },
     footerText: {
-        color: '#636e72',
+        color: COLORS.textSecondary,
         fontSize: 15,
     },
     footerLink: {
-        color: '#c2185b',
+        color: COLORS.mainTitle,
         fontSize: 15,
         fontWeight: '700',
     },

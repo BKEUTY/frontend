@@ -255,12 +255,22 @@
     font-size: 0.95rem;
 }
 
+.summary-divider {
+    height: 1px;
+    background-color: #eee;
+    margin: 20px 0;
+}
+
 .summary-row {
     display: flex;
     justify-content: space-between;
     margin-bottom: 12px;
     color: #666;
     font-size: 0.95rem;
+}
+
+.summary-row.discount {
+    color: #2e7d32;
 }
 
 .summary-total {
@@ -293,7 +303,7 @@
     box-shadow: 0 4px 15px rgba(194, 24, 91, 0.2);
 }
 
-.btn-place-order:hover {
+.btn-place-order:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(194, 24, 91, 0.3);
     filter: brightness(1.1);
@@ -303,6 +313,30 @@
     transform: translateY(0);
 }
 
+.btn-place-order.processing {
+    background: #ccc;
+    cursor: wait;
+    box-shadow: none;
+}
+
+.back-link-wrapper {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.btn-back-cart {
+    color: #666;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+    text-decoration: underline;
+}
+
+.btn-back-cart:hover {
+    color: var(--color_main_title);
+}
+
+/* --- QR Page Styles --- */
 .checkout-qr-page {
     padding: 60px 20px;
     background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
@@ -321,11 +355,6 @@
     max-width: 480px;
     width: 100%;
     animation: fadeIn 0.5s ease-out;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
 }
 
 .qr-header {
@@ -378,6 +407,7 @@
 .qr-code-box img {
     width: 100%;
     height: 100%;
+    object-fit: contain;
 }
 
 .qr-overlay-scan {
@@ -443,6 +473,7 @@
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
+    font-size: 1rem;
 }
 
 .btn-confirm-payment:hover {

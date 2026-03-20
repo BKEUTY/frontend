@@ -3,7 +3,15 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import './Chatbot.css';
 import { CloseOutlined, SendOutlined, RobotOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
-import productPlaceholder from '../../Assets/Images/Products/product_placeholder.svg';
+
+import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
+import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
+import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
+import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
+import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
+
+const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
+const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
 const Chatbot = ({ isOpen, onClose }) => {
     const { t } = useLanguage();
@@ -21,6 +29,7 @@ const Chatbot = ({ isOpen, onClose }) => {
             ]);
         }
     }, [t, messages.length]);
+    
     const [inputValue, setInputValue] = useState('');
     const messagesEndRef = useRef(null);
 
@@ -85,14 +94,14 @@ const Chatbot = ({ isOpen, onClose }) => {
                                 content: {
                                     name: t('chatbot_demo_product_name'),
                                     price: '450.000 ₫',
-                                    image: productPlaceholder
+                                    image: getRandomImage()
                                 }
                             }]);
                             scrollToBottom();
                         }, 400);
                     }
                 }
-            }, 20); // 20ms typing effect (Real-time SSE simulation)
+            }, 20);
         }, 500);
     };
 
@@ -130,7 +139,7 @@ const Chatbot = ({ isOpen, onClose }) => {
                             {msg.type === 'product' && (
                                 <div className="chat-product-card">
                                     <div className="chat-product-image">
-                                        <img src={msg.content.image} alt={msg.content.name} />
+                                        <img src={msg.content.image} alt={msg.content.name} onError={(e) => { e.target.src = getRandomImage() }} />
                                     </div>
                                     <div className="chat-product-info">
                                         <h4>{msg.content.name}</h4>

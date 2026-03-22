@@ -1,11 +1,13 @@
-import "./Checkout.css";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Space } from "antd";
+import { FiTruck, FiCreditCard } from "react-icons/fi";
 import { useNotification } from "../../Context/NotificationContext";
-import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { usePaymentPolling } from "../../hooks/usePaymentPolling";
+import { CButton } from "../../Component/Common";
 import orderApi from '../../api/orderApi';
-import { FiTruck, FiCreditCard } from "react-icons/fi";
+import "./Checkout.css";
 
 export default function Checkout() {
     const { state } = useLocation();
@@ -49,11 +51,6 @@ export default function Checkout() {
             return;
         }
 
-        if (!cartIds || cartIds.length === 0) {
-            notify(t('no_products_payment'), "error");
-            return;
-        }
-
         setIsProcessing(true);
         try {
             const orderItemsPayload = cartIds.map((id) => ({ cartItemId: id }));
@@ -85,9 +82,7 @@ export default function Checkout() {
     const handleManualCheck = async () => {
         setIsCheckingPayment(true);
         const isPaid = await checkPaymentStatus();
-        if (!isPaid) {
-            notify(t('payment_not_yet'), "info");
-        }
+        if (!isPaid) notify(t('payment_not_yet'), "info");
         setIsCheckingPayment(false);
     };
 
@@ -100,13 +95,11 @@ export default function Checkout() {
                         <div className="order-chip">#{orderData.orderId}</div>
                     </div>
                     <p className="qr-desc">{t('scan_qr_desc')}</p>
-
                     <div className="qr-card">
                         <div className="qr-code-box">
                             <img src={orderData.qrCodeLink} alt="QR Code" />
                             <div className="qr-overlay-scan"></div>
                         </div>
-
                         <div className="qr-info-grid">
                             <div className="qr-info-item">
                                 <span className="label">{t('amount')}</span>
@@ -118,18 +111,13 @@ export default function Checkout() {
                             </div>
                         </div>
                     </div>
-
                     <div className="qr-actions">
-                        <button
-                            className={`btn-confirm-payment ${isCheckingPayment ? 'loading' : ''}`}
-                            onClick={handleManualCheck}
-                            disabled={isCheckingPayment}
-                        >
+                        <CButton type="primary" block size="large" loading={isCheckingPayment} onClick={handleManualCheck}>
                             {isCheckingPayment ? t('payment_checking') : t('paid_confirm')}
-                        </button>
-                        <button className="btn-back-link" onClick={() => setShowQR(false)}>
+                        </CButton>
+                        <CButton type="secondary" block size="large" onClick={() => setShowQR(false)}>
                             {t('back')}
-                        </button>
+                        </CButton>
                     </div>
                 </div>
             </main>
@@ -139,7 +127,6 @@ export default function Checkout() {
     return (
         <main className="checkout-page">
             <h1 className="checkout-title">{t('checkout')}</h1>
-
             <div className="checkout-container">
                 <div className="checkout-left">
                     <div className="checkout-section">
@@ -184,7 +171,6 @@ export default function Checkout() {
                 <div className="checkout-right">
                     <div className="order-summary-box">
                         <h2 className="summary-title">{t('order_summary')} ({selectedProducts.length} {t('items')})</h2>
-
                         <div className="order-items-list">
                             {selectedProducts.map((p, idx) => (
                                 <div key={idx} className="summary-item">
@@ -192,16 +178,14 @@ export default function Checkout() {
                                         <img src={p.image} alt={p.name} onError={(e) => e.target.src = 'https://placehold.co/100x100?text=Product'} />
                                     </div>
                                     <div className="summary-item-info">
-                                        <div className="summary-item-name">{p.name || `${t('product')} #${p.cartId}`}</div>
+                                        <div className="summary-item-name">{p.name}</div>
                                         <div className="summary-item-qty">x{p.quantity}</div>
                                     </div>
                                     <div className="summary-item-price">{(p.price * p.quantity).toLocaleString("vi-VN")}đ</div>
                                 </div>
                             ))}
                         </div>
-
                         <div className="summary-divider"></div>
-
                         <div className="summary-row">
                             <span>{t('subtotal')}</span>
                             <span>{subTotal.toLocaleString("vi-VN")}đ</span>
@@ -210,31 +194,19 @@ export default function Checkout() {
                             <span>{t('shipping_fee')}</span>
                             <span>{shippingFee.toLocaleString("vi-VN")}đ</span>
                         </div>
-                        {discount > 0 && (
-                            <div className="summary-row discount">
-                                <span>{t('discount')}</span>
-                                <span>-{discount.toLocaleString("vi-VN")}đ</span>
-                            </div>
-                        )}
-
                         <div className="summary-divider"></div>
-
                         <div className="summary-total">
                             <span>{t('total')}</span>
                             <span className="total-price">{grandTotal.toLocaleString("vi-VN")}đ</span>
                         </div>
-
-                        <button 
-                            className={`btn-place-order ${isProcessing ? 'processing' : ''}`} 
-                            onClick={handleCheckout}
-                            disabled={isProcessing}
-                        >
-                            {isProcessing ? t('loading') : (paymentMethod === 'banking' ? t('continue_payment') : t('place_order'))}
-                        </button>
-
-                        <div className="back-link-wrapper">
-                            <span className="btn-back-cart" onClick={() => navigate('/cart')}>{t('back_to_cart')}</span>
-                        </div>
+                        <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                            <CButton type="primary" block size="large" loading={isProcessing} disabled={isProcessing} onClick={handleCheckout}>
+                                {isProcessing ? t('loading') : (paymentMethod === 'banking' ? t('continue_payment') : t('place_order'))}
+                            </CButton>
+                            <CButton type="secondary" block size="large" onClick={() => navigate('/cart')}>
+                                {t('back_to_cart')}
+                            </CButton>
+                        </Space>
                     </div>
                 </div>
             </div>

@@ -8,14 +8,12 @@ import { useOrders } from '../../hooks/useOrders';
 const MyOrders = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
-    
     const { orders, loading } = useOrders();
 
     if (loading) {
         return (
             <div className="my-orders-page">
                 <h2>{t('my_orders')}</h2>
-                <br />
                 <table className="orders-table">
                     <thead>
                         <tr>
@@ -29,11 +27,11 @@ const MyOrders = () => {
                     <tbody>
                         {Array(5).fill(0).map((_, i) => (
                             <tr key={i}>
-                                <td><Skeleton width="80px" height="20px" /></td>
+                                <td><Skeleton width="60px" height="20px" /></td>
                                 <td><Skeleton width="100px" height="20px" /></td>
                                 <td><Skeleton width="80px" height="20px" /></td>
-                                <td><Skeleton width="100px" height="24px" borderRadius="12px" /></td>
-                                <td className="text-center"><Skeleton width="24px" height="24px" borderRadius="4px" style={{ display: 'inline-block' }} /></td>
+                                <td><Skeleton width="90px" height="24px" borderRadius="12px" /></td>
+                                <td className="text-center"><Skeleton width="24px" height="24px" /></td>
                             </tr>
                         ))}
                     </tbody>
@@ -77,19 +75,17 @@ const MyOrders = () => {
                                     </Link>
                                 </td>
                                 <td data-label={t('order_date')}>{order.date}</td>
-                                <td data-label={t('total')}>{order.total}</td>
+                                <td data-label={t('total')} style={{ fontWeight: '500' }}>{order.total}</td>
                                 <td data-label={t('status')}>
                                     <span className={`order-status status-${order.status}`}>
-                                        {order.status === 'completed' ? t('completed') :
-                                            order.status === 'cancelled' ? t('cancelled') : t('pending')}
+                                        {order.status === 'completed' ? t('completed') : t('pending')}
                                     </span>
                                 </td>
                                 <td data-label={t('actions_col')} className="text-center">
                                     <button
                                         className="btn-icon"
-                                        title={t('view_detail')}
                                         onClick={() => navigate(`/account/orders/${order.id}`)}
-                                        style={{ color: 'var(--color_main_title)', fontSize: '18px' }}
+                                        style={{ color: 'var(--color_main_title)', fontSize: '18px', background: 'none', border: 'none', cursor: 'pointer' }}
                                     >
                                         <FiEye />
                                     </button>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link, useLocation } from 'react-router-dom';
+import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import './Account.css';
 import AccountInfo from './AccountInfo';
 import MyOrders from './MyOrders';
@@ -7,16 +7,28 @@ import AppointmentList from './AppointmentList';
 import OrderDetail from './OrderDetail';
 import { useNotification } from '../../Context/NotificationContext';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useAuth } from '../../Context/AuthContext';
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
 import NotFound from '../../Component/ErrorPages/NotFound';
 
 export default function Account() {
     const notify = useNotification();
     const location = useLocation();
+    const navigate = useNavigate();
     const { t } = useLanguage();
+    const { user, logout } = useAuth();
 
     const handleUpdate = () => {
         notify(t('update_info_success'), 'success');
+    };
+
+    const handleLogout = async () => {
+        try {
+            await logout();
+            navigate('/');
+        } catch (error) {
+            console.error("Logout failed:", error);
+        }
     };
 
     const isActive = (path) => {
@@ -33,7 +45,7 @@ export default function Account() {
                     <div className="user-avatar-container">
                         <img src={account_image} alt="Avatar" className="user-avatar-img" />
                     </div>
-                    <span className="summary-name">Thanh Phong</span>
+                    <span className="summary-name">{user?.name || t('account')}</span>
                 </div>
                 <ul className="sidebar-menu">
                     <li>
@@ -55,7 +67,13 @@ export default function Account() {
                     <li><span className="sidebar-item">{t('shipping_address')}</span></li>
                 </ul>
                 <div className="sidebar-footer">
-                    <Link to="/" className="sidebar-item logout-item">{t('logout')}</Link>
+                    <div 
+                        className="sidebar-item logout-item" 
+                        onClick={handleLogout}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        {t('logout')}
+                    </div>
                 </div>
             </div>
 

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useAuth } from '../../Context/AuthContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import './LandingPage.css';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
@@ -10,6 +11,7 @@ const images = [banner1, banner2];
 
 const LandingPage = () => {
     const { t } = useLanguage();
+    const { isAuthenticated } = useAuth();
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
     const nextImage = () => {
@@ -42,16 +44,32 @@ const LandingPage = () => {
                         <span className="brand-name">BKEUTY</span>
                     </h1>
 
-                    <Link to="/login" className="btn-glass-primary">{t('login')}</Link>
-
-                    <div className="auth-links">
-                        {t('no_account')} <Link to="/register" className="register-link">{t('register')}</Link>
-                    </div>
+                    {isAuthenticated ? (
+                        <Link to="/product" className="btn-glass-primary">
+                            {t('view_all')}
+                        </Link>
+                    ) : (
+                        <>
+                            <Link to="/login" className="btn-glass-primary">
+                                {t('login')}
+                            </Link>
+                            <div className="auth-links">
+                                {t('no_account')}{' '}
+                                <Link to="/register" className="register-link">
+                                    {t('register')}
+                                </Link>
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 <div className="slider-controls">
-                    <button className="slider-arrow left" onClick={prevImage}><LeftOutlined /></button>
-                    <button className="slider-arrow right" onClick={nextImage}><RightOutlined /></button>
+                    <button className="slider-arrow left" onClick={prevImage}>
+                        <LeftOutlined />
+                    </button>
+                    <button className="slider-arrow right" onClick={nextImage}>
+                        <RightOutlined />
+                    </button>
                 </div>
             </div>
         </div>

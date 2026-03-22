@@ -37,10 +37,8 @@ const CartDrawer = () => {
 
     const handleCheckout = () => {
         if (selectedIds.size === 0) return;
-
         closeCart();
         const selectedProducts = cartItems.filter(item => selectedIds.has(item.cartId));
-
         navigate('/checkout', {
             state: {
                 cartIds: Array.from(selectedIds),
@@ -91,9 +89,9 @@ const CartDrawer = () => {
             className="cart-drawer-antd"
         >
             {cartItems.length === 0 ? (
-                <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                <div className="cart-empty-container">
                     <EmptyState 
-                        icon={<ShoppingCartOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />}
+                        icon={<ShoppingCartOutlined className="cart-empty-icon" />}
                         title={t('cart_empty')}
                         description={t('cart_empty_desc')}
                         actionText={t('continue_shopping')}

@@ -1,18 +1,18 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
 import {
     SearchOutlined,
     EnvironmentOutlined,
     PhoneOutlined,
-    ArrowRightOutlined,
     ClockCircleOutlined,
     UserOutlined,
     LeftOutlined
 } from '@ant-design/icons';
 import './StaticPage.css';
-import Skeleton from '../Common/Skeleton';
+import { Skeleton, PageWrapper, Pagination, CButton, EmptyState } from '../Common';
+import usePagination from '../../hooks/usePagination';
+import useClickOutside from '../../hooks/useClickOutside';
 import contact_map from "../../Assets/Images/contact_google_map.png";
-
 
 const StaticPageLayout = ({ title, children }) => {
     return (
@@ -30,7 +30,7 @@ const StaticPageLayout = ({ title, children }) => {
 export const AboutUs = () => {
     const { t } = useLanguage();
     return (
-        <StaticPageLayout title={t('about_brand') || "Về Thương Hiệu"}>
+        <StaticPageLayout title={t('about_brand')}>
             <div className="content-image-placeholder">
                 {t('about_us_banner')}
             </div>
@@ -59,7 +59,7 @@ export const AboutUs = () => {
 export const Contact = () => {
     const { t } = useLanguage();
     return (
-        <StaticPageLayout title={t('contact') || "Liên Hệ"}>
+        <StaticPageLayout title={t('contact')}>
             <p>{t('contact_intro')}</p>
 
             <div className="content-image-placeholder map-container">
@@ -85,24 +85,19 @@ export const Contact = () => {
 export const FAQ = () => {
     const { t } = useLanguage();
     return (
-        <StaticPageLayout title={t('faq') || "Câu Hỏi Thường Gặp"}>
+        <StaticPageLayout title={t('faq')}>
             <h3>{t('faq_1_title')}</h3>
-            <p>{t('faq_1_q1')}<br />
-                {t('faq_1_a1')}</p>
+            <p>{t('faq_1_q1')}<br />{t('faq_1_a1')}</p>
 
-            <p>{t('faq_1_q2')}<br />
-                {t('faq_1_a2')}</p>
+            <p>{t('faq_1_q2')}<br />{t('faq_1_a2')}</p>
 
             <h3>{t('faq_2_title')}</h3>
-            <p>{t('faq_2_q1')}<br />
-                {t('faq_2_a1')}</p>
+            <p>{t('faq_2_q1')}<br />{t('faq_2_a1')}</p>
 
-            <p>{t('faq_2_q2')}<br />
-                {t('faq_2_a2')}</p>
+            <p>{t('faq_2_q2')}<br />{t('faq_2_a2')}</p>
 
             <h3>{t('faq_3_title')}</h3>
-            <p>{t('faq_3_q1')}<br />
-                {t('faq_3_a1')}</p>
+            <p>{t('faq_3_q1')}<br />{t('faq_3_a1')}</p>
         </StaticPageLayout>
     );
 };
@@ -111,9 +106,14 @@ export const RetailSystem = () => {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
-    const [currentPage, setCurrentPage] = useState(1);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    
+    const dropdownRef = useRef(null);
+    useClickOutside(dropdownRef, () => setIsDropdownOpen(false));
+
+    const { pagination, setCurrent } = usePagination(0, 6);
 
     useEffect(() => {
         setIsLoading(true);
@@ -121,7 +121,8 @@ export const RetailSystem = () => {
             setIsLoading(false);
         }, 1000);
         return () => clearTimeout(timer);
-    }, [searchTerm, statusFilter, currentPage]);
+    }, [searchTerm, statusFilter, pagination.current]);
+
     const branches = useMemo(() => [
         { id: 1, name: "BKEUTY - Quận 1", address: "123 Lê Lợi, Phường Bến Nghé, Quận 1", phone: "0908 741 625", status: "Open", open_date: "2024-01-15", manager: "Nguyễn Văn A" },
         { id: 9, name: "BKEUTY - Đồng Nai", address: "Ấp Đất Mới, xã Long Phước, Đồng Nai", phone: "0908 741 633", status: "Closed", open_date: "2024-05-10", manager: "Nguyễn Văn I" },
@@ -145,23 +146,16 @@ export const RetailSystem = () => {
         });
     }, [branches, searchTerm, statusFilter]);
 
-    const itemsPerPage = 6;
-    const totalPages = Math.ceil(filteredBranches.length / itemsPerPage);
-    const paginatedBranches = filteredBranches.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && newPage <= totalPages) {
-            setCurrentPage(newPage);
-        }
-    };
+    const totalPages = Math.ceil(filteredBranches.length / pagination.pageSize);
+    const paginatedBranches = filteredBranches.slice(pagination.current * pagination.pageSize, (pagination.current + 1) * pagination.pageSize);
 
     if (selectedBranch) {
         return (
             <StaticPageLayout title={`${t('retail_detail')}: ${selectedBranch.name}`}>
                 <div className="retail-detail-view">
-                    <button className="back-btn" onClick={() => setSelectedBranch(null)}>
-                        <LeftOutlined /> {t('retail_back_to_list')}
-                    </button>
+                    <CButton type="outline" icon={<LeftOutlined />} onClick={() => setSelectedBranch(null)} style={{ marginBottom: 25, borderRadius: 30 }}>
+                        {t('retail_back_to_list')}
+                    </CButton>
 
                     <div className="detail-row">
                         <span className="detail-label"><EnvironmentOutlined /> {t('retail_address')}:</span>
@@ -191,22 +185,22 @@ export const RetailSystem = () => {
     }
 
     return (
-        <StaticPageLayout title={t('retail_system') || "Hệ Thống Cửa Hàng"}>
+        <StaticPageLayout title={t('retail_system')}>
             <div className="retail-filters">
                 <div className="retail-search-container">
-                    <SearchOutlined className="search-icon-img" style={{ fontSize: '18px', left: '22px', position: 'absolute', top: '50%', transform: 'translateY(-50%)', opacity: 0.4 }} />
+                    <SearchOutlined className="search-icon-img" />
                     <input
                         type="text"
                         placeholder={t('retail_search_placeholder')}
                         className="retail-search-input"
                         value={searchTerm}
-                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                        onChange={(e) => { setSearchTerm(e.target.value); setCurrent(0); }}
                     />
                 </div>
-                <div className="retail-status-dropdown-container">
+                <div className="retail-status-dropdown-container" ref={dropdownRef}>
                     <div
                         className="retail-status-trigger"
-                        onClick={() => document.getElementById('status-dropdown-menu').classList.toggle('show')}
+                        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     >
                         <span>
                             {statusFilter === 'all' && `${t('retail_filter_status')}: ${t('all')}`}
@@ -215,14 +209,14 @@ export const RetailSystem = () => {
                         </span>
                         <span className="dropdown-arrow">▼</span>
                     </div>
-                    <ul id="status-dropdown-menu" className="retail-status-menu">
-                        <li onClick={() => { setStatusFilter('all'); setCurrentPage(1); document.getElementById('status-dropdown-menu').classList.remove('show'); }} className={statusFilter === 'all' ? 'active' : ''}>
+                    <ul className={`retail-status-menu ${isDropdownOpen ? 'show' : ''}`}>
+                        <li onClick={() => { setStatusFilter('all'); setCurrent(0); setIsDropdownOpen(false); }} className={statusFilter === 'all' ? 'active' : ''}>
                             {t('retail_filter_status')}: {t('all')}
                         </li>
-                        <li onClick={() => { setStatusFilter('Open'); setCurrentPage(1); document.getElementById('status-dropdown-menu').classList.remove('show'); }} className={statusFilter === 'Open' ? 'active' : ''}>
+                        <li onClick={() => { setStatusFilter('Open'); setCurrent(0); setIsDropdownOpen(false); }} className={statusFilter === 'Open' ? 'active' : ''}>
                             {t('retail_status_open')}
                         </li>
-                        <li onClick={() => { setStatusFilter('Closed'); setCurrentPage(1); document.getElementById('status-dropdown-menu').classList.remove('show'); }} className={statusFilter === 'Closed' ? 'active' : ''}>
+                        <li onClick={() => { setStatusFilter('Closed'); setCurrent(0); setIsDropdownOpen(false); }} className={statusFilter === 'Closed' ? 'active' : ''}>
                             {t('retail_status_closed')}
                         </li>
                     </ul>
@@ -268,58 +262,33 @@ export const RetailSystem = () => {
                                     <PhoneOutlined className="store-icon" />
                                     <span>{branch.phone}</span>
                                 </div>
-                                <button
-                                    className="btn-store-detail"
+                                <CButton 
+                                    type="outline" 
+                                    block 
+                                    disabled={branch.status === 'Closed'} 
                                     onClick={() => branch.status === 'Open' && setSelectedBranch(branch)}
-                                    disabled={branch.status === 'Closed'}
+                                    style={{ marginTop: 'auto' }}
                                 >
                                     {t('retail_detail')}
-                                </button>
+                                </CButton>
                             </div>
                         ))}
                     </div>
-
-                    {totalPages > 1 && (
-                        <div className="pagination">
-                            <button
-                                className="page-btn"
-                                disabled={currentPage === 1}
-                                onClick={() => handlePageChange(currentPage - 1)}
-                            >
-                                ❮
-                            </button>
-                            {[...Array(totalPages)].map((_, index) => (
-                                <button
-                                    key={index + 1}
-                                    className={`page-btn ${currentPage === index + 1 ? 'active' : ''}`}
-                                    onClick={() => handlePageChange(index + 1)}
-                                >
-                                    {index + 1}
-                                </button>
-                            ))}
-                            <button
-                                className="page-btn"
-                                disabled={currentPage === totalPages}
-                                onClick={() => handlePageChange(currentPage + 1)}
-                            >
-                                ❯
-                            </button>
-                        </div>
-                    )}
+                    <Pagination page={pagination.current} totalPages={totalPages} onPageChange={setCurrent} />
                 </>
             ) : (
-                <p style={{ textAlign: 'center', color: '#666', marginTop: '40px' }}>{t('retail_no_result')}</p>
+                <div style={{ padding: '40px 0' }}>
+                    <EmptyState title={t('retail_no_result')} />
+                </div>
             )}
         </StaticPageLayout>
     );
 };
 
-
-
 export const Terms = () => {
     const { t } = useLanguage();
     return (
-        <StaticPageLayout title={t('terms') || "Điều Khoản & Chính Sách"}>
+        <StaticPageLayout title={t('terms')}>
             <h3>{t('terms_1_title')}</h3>
             <p>{t('terms_1_content')}</p>
 

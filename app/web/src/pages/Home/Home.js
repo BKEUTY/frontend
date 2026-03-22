@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Home.css';
-import Skeleton from '../../Component/Common/Skeleton';
-import ProductCard from '../../Component/Common/ProductCard';
+import { Skeleton, ProductCard, CButton } from '../../Component/Common';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
@@ -14,6 +15,7 @@ const bannerImages = [banner1, banner2];
 
 const Home = () => {
     const { t, language } = useLanguage();
+    const navigate = useNavigate();
     const [currentBanner, setCurrentBanner] = useState(0);
 
     const fetchHomeData = async () => {
@@ -83,17 +85,11 @@ const Home = () => {
         const timer = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
         }, 30000);
-
         return () => clearInterval(timer);
     }, []);
 
-    const nextBanner = () => {
-        setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
-    };
-
-    const prevBanner = () => {
-        setCurrentBanner((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
-    };
+    const nextBanner = () => setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
+    const prevBanner = () => setCurrentBanner((prev) => (prev - 1 + bannerImages.length) % bannerImages.length);
 
     return (
         <div className="home-container">
@@ -115,11 +111,11 @@ const Home = () => {
                 <div className="glass-overlay">
                     <h1 className="glass-title">{t('mid_autumn_promo')}</h1>
                     <p className="glass-subtitle">{t('promo_subtitle')}</p>
-                    <button className="btn-glass-primary">{t('explore')}</button>
+                    <button className="btn-glass-primary" onClick={() => navigate('/product')}>{t('explore')}</button>
                 </div>
 
-                <button className="slider-arrow left" onClick={prevBanner}>&#10094;</button>
-                <button className="slider-arrow right" onClick={nextBanner}>&#10095;</button>
+                <button className="slider-arrow left" onClick={prevBanner}><LeftOutlined /></button>
+                <button className="slider-arrow right" onClick={nextBanner}><RightOutlined /></button>
 
                 <div className="slider-dots">
                     {bannerImages.map((_, idx) => (
@@ -137,7 +133,7 @@ const Home = () => {
                 <div className="best-seller-grid bento-grid">
                     {isLoading ? (
                         Array(5).fill(0).map((_, i) => (
-                            <div key={i} className="product-card">
+                            <div key={i} className="product-card" style={{ border: '1px solid #eee', borderRadius: 12 }}>
                                 <Skeleton width="100%" height="220px" />
                                 <div className="skeleton-info-wrap">
                                     <Skeleton width="60%" height="20px" className="skeleton-line-2" />
@@ -185,7 +181,7 @@ const Home = () => {
                     <div className="section4-text">
                         <h2>{t('brand_story')}</h2>
                         <p>{t('brand_desc')}</p>
-                        <button className="btn-explore-brand">{t('explore_more')}</button>
+                        <button className="btn-explore-brand" onClick={() => navigate('/about')}>{t('explore_more')}</button>
                     </div>
 
                     <div className="section4-image">

@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import axiosClient from '../api/axiosClient';
 import { useAuth } from './AuthContext';
 
@@ -14,7 +15,12 @@ export const CartProvider = ({ children }) => {
     const fetchCart = async () => {
         if (!isAuthenticated) return;
         try {
-            const response = await axiosClient.get('/api/cart', { errorMessage: 'api_error_fetch_cart' });
+            const token = await AsyncStorage.getItem('token');
+            const response = await axiosClient.get('/api/cart', { 
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                errorMessage: 'api_error_fetch_cart',
+                skipGlobalErrorHandler: true
+            });
 
             const mapped = response.data.map(item => ({
                 ...item,
@@ -42,11 +48,15 @@ export const CartProvider = ({ children }) => {
         }
 
         try {
+            const token = await AsyncStorage.getItem('token');
             await axiosClient.post('/api/cart', {
-                productId: product.productId || product.id,
-                variantId: product.isVariant ? product.id : null,
-                userId: userId,
-            }, { errorMessage: 'api_error_add_cart' });
+                productVariantId: product.productVariantId,
+                quantity: product.quantity || 1
+            }, { 
+                headers: token ? { Authorization: `Bearer ${token}` } : {},
+                errorMessage: 'api_error_add_cart',
+                skipGlobalErrorHandler: true
+            });
 
             await fetchCart();
         } catch (error) {

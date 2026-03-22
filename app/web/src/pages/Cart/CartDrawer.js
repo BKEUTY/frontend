@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Drawer, List, Avatar, Button, Checkbox, Typography, Space } from 'antd';
+import { Drawer, List, Avatar, Checkbox, Typography, Space, Button } from 'antd';
 import { DeleteOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useCart } from '../../Context/CartContext';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { CButton, EmptyState } from '../../Component/Common';
 import './CartDrawer.css';
 
 import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
@@ -15,7 +16,7 @@ import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
 const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
 const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
-const { Text, Title } = Typography;
+const { Text } = Typography;
 
 const CartDrawer = () => {
     const { isCartOpen, closeCart, cartItems, removeFromCart } = useCart();
@@ -58,19 +59,23 @@ const CartDrawer = () => {
                 <span className="total-amount">{selectedTotal.toLocaleString('vi-VN')}đ</span>
             </div>
             <Space direction="vertical" className="cart-drawer-btn-space">
-                <Button
+                <CButton
                     type="primary"
                     block
                     size="large"
                     onClick={handleCheckout}
                     disabled={selectedIds.size === 0}
-                    className="cart-drawer-checkout-btn"
                 >
                     {t('checkout_now')} ({selectedIds.size})
-                </Button>
-                <Button block size="large" onClick={() => { closeCart(); navigate('/cart'); }}>
+                </CButton>
+                <CButton 
+                    type="secondary"
+                    block 
+                    size="large" 
+                    onClick={() => { closeCart(); navigate('/cart'); }}
+                >
                     {t('view_cart')}
-                </Button>
+                </CButton>
             </Space>
         </div>
     );
@@ -82,19 +87,18 @@ const CartDrawer = () => {
             onClose={closeCart}
             open={isCartOpen}
             size="default"
-            footer={footer}
+            footer={cartItems.length > 0 ? footer : null}
             className="cart-drawer-antd"
         >
             {cartItems.length === 0 ? (
-                <div className="empty-cart-container">
-                    <div className="empty-cart-icon-wrapper">
-                        <ShoppingCartOutlined className="empty-cart-icon" />
-                    </div>
-                    <Title level={4} className="empty-cart-title">{t('cart_empty')}</Title>
-                    <Text type="secondary" className="empty-cart-desc">{t('cart_empty_desc')}</Text>
-                    <Button type="primary" size="large" onClick={() => { closeCart(); navigate('/product'); }}>
-                        {t('continue_shopping')}
-                    </Button>
+                <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center' }}>
+                    <EmptyState 
+                        icon={<ShoppingCartOutlined style={{ fontSize: 48, color: '#cbd5e1' }} />}
+                        title={t('cart_empty')}
+                        description={t('cart_empty_desc')}
+                        actionText={t('continue_shopping')}
+                        onAction={() => { closeCart(); navigate('/product'); }}
+                    />
                 </div>
             ) : (
                 <List

@@ -37,6 +37,7 @@ export default {
     items: "items",
     products_lower: "products",
     no_data: "No data available",
+    no_orders: "You have no orders yet.",
     dashboard: "Dashboard",
     settings: "Settings & Support",
     chat: "Chat with us",
@@ -238,6 +239,7 @@ export default {
     brand_story: "The journey to pure beauty",
     brand_desc: "Bkeuty is proud to be a trusted companion, understanding and elevating Vietnamese skin.",
 
+    next_level_condition: "Spend {amount} more to become {level}",
     account: "Account",
     my_orders: "My Orders",
     my_appointments: "My Appointments",
@@ -363,7 +365,6 @@ export default {
     api_error_profile_update: "Failed to update profile.",
     api_error_change_password: "Failed to change password.",
 
-    // Additional keys from web
     mega_promo_title: "Mega promotion",
     mega_promo_desc: "Get exclusive offers tailored just for you.",
     promo_list_title: "Promotions & offers",
@@ -423,4 +424,5 @@ export default {
     default_sort: "Sort: Default",
     price_low_high: "Price: Low to high",
     price_high_low: "Price: High to low",
+    login_required_to_checkout: "Please log in to checkout",
 };

@@ -18,6 +18,7 @@ import ServiceScreen from '../StaticPages/ServiceScreen';
 import PromotionScreen from '../StaticPages/PromotionScreen';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useAuth } from '../Context/AuthContext';
 import { AboutUsScreen, ContactScreen, AppInfoScreen, FAQScreen, TermsScreen } from '../StaticPages/StaticScreens';
 import Chatbot from '../Component/Chatbot/Chatbot';
 import NotFoundScreen from '../Component/ErrorPages/NotFoundScreen';
@@ -33,6 +34,7 @@ const Stack = createNativeStackNavigator();
 
 function TabNavigator() {
     const { t } = useLanguage();
+    const { isAuthenticated } = useAuth();
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
@@ -57,7 +59,21 @@ function TabNavigator() {
             <Tab.Screen name="Product" component={ProductScreen} options={{ title: t('product') }} />
             <Tab.Screen name="Service" component={ServiceScreen} options={{ title: t('service') || "Service" }} />
             <Tab.Screen name="Cart" component={CartScreen} options={{ title: t('cart') }} />
-            <Tab.Screen name="Account" component={AccountScreen} options={{ title: t('account') }} />
+            <Tab.Screen 
+                name="Account" 
+                component={AccountScreen} 
+                options={{ title: t('account') }} 
+                listeners={({ navigation }) => ({
+                    tabPress: (e) => {
+                        e.preventDefault();
+                        if (!isAuthenticated) {
+                            navigation.navigate('Login');
+                        } else {
+                            navigation.navigate('Account');
+                        }
+                    },
+                })}
+            />
         </Tab.Navigator >
     );
 }

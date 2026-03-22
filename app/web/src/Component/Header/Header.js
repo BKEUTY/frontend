@@ -82,7 +82,7 @@ export default function Header() {
           </Badge>
 
           <div className="desktop-actions">
-            <div className="action-btn-custom" onClick={() => navigate('/account')}>
+            <div className="action-btn-custom" onClick={() => navigate(isAuthenticated ? '/account' : '/login')}>
               <UserOutlined className="action-icon" />
               <span className="action-label">{isAuthenticated ? (user?.name || t('account')) : t('not_logged_in')}</span>
             </div>
@@ -126,9 +126,9 @@ export default function Header() {
           <Button
             block
             icon={<UserOutlined />}
-            onClick={() => { navigate('/account'); setMobileMenuOpen(false); }}
+            onClick={() => { navigate(isAuthenticated ? '/account' : '/login'); setMobileMenuOpen(false); }}
           >
-            {t('account')}
+            {isAuthenticated ? (user?.name || t('account')) : t('login')}
           </Button>
 
           <Button

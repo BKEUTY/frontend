@@ -132,8 +132,12 @@ const ProductDetailScreen = ({ route, navigation }) => {
     };
 
     const handleAddToCart = () => {
+        const selectedVariantId = currentVariant?.id || (variants.length > 0 ? variants[0].id : (productDetail.productId || productDetail.id));
+        
         const itemToCart = {
-            id: currentVariant ? currentVariant.id : (productDetail.productId || productDetail.id),
+            productVariantId: selectedVariantId,
+            id: selectedVariantId,
+            cartId: `local_${Date.now()}`,
             name: currentVariant ? `${productDetail.name} - ${currentVariant.productVariantName}` : productDetail.name,
             price: currentVariant ? currentVariant.price : (productDetail.price || 0),
             image: (currentVariant && currentVariant.productImageUrl) ? currentVariant.productImageUrl : images[0],

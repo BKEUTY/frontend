@@ -5,35 +5,6 @@
   background-color: #f8f9fa;
 }
 
-.promotion-header {
-  margin-bottom: 40px;
-  text-align: center;
-}
-
-.promotion-title {
-  font-size: 2.5rem;
-  font-weight: 800;
-  color: #111;
-  margin-bottom: 10px;
-  position: relative;
-  display: inline-block;
-  background: linear-gradient(135deg, #111 0%, #333 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  padding-bottom: 5px;
-}
-
-.promotion-title::after {
-  content: '';
-  display: block;
-  width: 60px;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color_main_title), #ff4081);
-  margin: 10px auto 0;
-  border-radius: 2px;
-}
-
 .promotion-controls {
   background: white;
   padding: 24px;
@@ -113,7 +84,6 @@
   color: white;
   box-shadow: 0 4px 12px rgba(194, 24, 91, 0.25);
 }
-
 
 .promotion-table-container {
   background: white;
@@ -216,9 +186,6 @@
   color: #94a3b8 !important;
 }
 
-
-
-
 .status-badge {
   padding: 8px 16px;
   border-radius: 100px;
@@ -251,7 +218,6 @@
   border: 1px solid rgba(217, 70, 239, 0.2);
 }
 
-
 .applicable-badge {
   padding: 8px 16px;
   border-radius: 8px;
@@ -272,35 +238,6 @@
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);
 }
-
-
-.pagination {
-  margin-top: 40px;
-  gap: 12px;
-}
-
-.page-btn {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: none;
-  background: white;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
-}
-
-.page-btn:hover:not(:disabled) {
-  transform: translateY(-2px);
-  background: #c2185b;
-  color: white;
-}
-
-.page-btn.active {
-  background: #c2185b;
-  color: white;
-  box-shadow: 0 8px 20px rgba(194, 24, 91, 0.2);
-}
-
 
 .mobile-card-view {
   display: none;
@@ -323,7 +260,7 @@
 
 .card-title {
   font-size: 1.1rem;
-  color: \#1e293b;
+  color: #1e293b;
   margin-bottom: 8px;
 }
 
@@ -360,7 +297,6 @@
   font-weight: 600;
   text-align: right;
 }
-
 
 @media (max-width: 992px) {
   .promotion-table-container {
@@ -410,18 +346,9 @@
   filter: grayscale(0.5);
 }
 
-
 @media (max-width: 576px) {
   .promotion-page {
     padding: 24px var(--general_padding_left_right2);
-  }
-
-  .promotion-title {
-    font-size: 1.8rem;
-  }
-
-  .promotion-header {
-    margin-bottom: 24px;
   }
 
   .promotion-controls {
@@ -560,23 +487,14 @@
   justify-content: center;
 }
 
-.apply-promo-btn {
-  width: 100%;
-}
-
 .highlight-discount {
   color: var(--color_main_title) !important;
   font-size: 1.1rem !important;
 }
 
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes slideUp {
@@ -584,7 +502,6 @@
     transform: translateY(20px);
     opacity: 0;
   }
-
   to {
     transform: translateY(0);
     opacity: 1;

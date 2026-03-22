@@ -158,6 +158,25 @@
     padding: 0 6px;
 }
 
+.card-brand-cat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 8px;
+}
+
+.card-cat-tag {
+    font-size: 10px !important;
+    line-height: 18px !important;
+    padding: 0 6px !important;
+    margin: 0 !important;
+    border-radius: 4px !important;
+    color: #64748b !important;
+    background: #f8fafc !important;
+    border-color: #e2e8f0 !important;
+}
+
 @media (max-width: 768px) {
     .card-info {
         padding: 12px;

@@ -6,6 +6,7 @@ import { useLanguage } from "../../i18n/LanguageContext";
 import { useCart } from "../../Context/CartContext";
 import product_cart_image from "../../Assets/Images/Products/product_placeholder_rect.svg";
 import { getImageUrl } from "../../api/axiosClient";
+import { useAuth } from "../../Context/AuthContext";
 import { DeleteOutlined, ShoppingOutlined } from '@ant-design/icons';
 
 export default function Cart() {
@@ -58,7 +59,15 @@ export default function Cart() {
 
   const total = Math.max(0, subTotal - discountAmount);
 
+  const { isAuthenticated } = useAuth();
+
   const handleCheckout = () => {
+    if (!isAuthenticated) {
+      notify(t('login_required_to_checkout'), "info");
+      navigate("/login");
+      return;
+    }
+    
     if (selectedIds.size === 0) {
       notify(t('select_min_one'), "error");
       return;

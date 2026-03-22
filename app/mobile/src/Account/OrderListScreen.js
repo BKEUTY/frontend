@@ -3,46 +3,19 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity, RefreshControl } fr
 import { useNavigation } from '@react-navigation/native';
 import { COLORS } from '../constants/Theme';
 import { useLanguage } from '../i18n/LanguageContext';
-import orderApi from '../api/orderApi';
 import ScreenWrapper from '../Component/Common/ScreenWrapper';
 import { Ionicons } from '@expo/vector-icons';
 import { showToast } from '../utils/ToastService';
+import { useOrders } from '../hooks/useOrders';
 
 const OrderListScreen = () => {
     const navigation = useNavigation();
     const { t } = useLanguage();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
-
-    const fetchOrders = async () => {
-        try {
-            const response = await orderApi.getHistory();
-            if (response.data) {
-                const mappedOrders = response.data.map(order => ({
-                    ...order,
-                    id: order.orderId,
-                    date: order.orderDate,
-                    totalDisplay: order.total ? order.total.toLocaleString("vi-VN") + 'đ' : '0đ',
-                    // Simulated status logic like website
-                    status: (order.paymentMethod === 'Banking' && !order.qrCodeLink) ? 'COMPLETED' : 'PENDING'
-                }));
-                // Sort by date (descending)
-                mappedOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setOrders(mappedOrders);
-            }
-        } catch (error) {
-            console.error(error);
-            showToast(t('error'), 'error', t('api_error_order_history'));
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    };
+    const { orders, loading, refreshing, setRefreshing, fetchOrders } = useOrders();
 
     useEffect(() => {
         fetchOrders();
-    }, []);
+    }, [fetchOrders]);
 
     const onRefresh = () => {
         setRefreshing(true);

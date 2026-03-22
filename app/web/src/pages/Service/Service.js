@@ -1,11 +1,10 @@
 import React from 'react';
-import DevelopingState from '../../Component/Common/DevelopingState';
+import { DevelopingState, PageWrapper } from '../../Component/Common';
 
 export default function Service() {
     return (
-        <div className="service-page-wrapper">
+        <PageWrapper noCard>
             <DevelopingState />
-        </div>
+        </PageWrapper>
     );
 }
-

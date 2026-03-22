@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Oleo+Script:wght@700&display=swap');
 
-
 .landing-page {
     width: 100%;
     min-height: 100vh;
@@ -18,7 +17,6 @@
     overflow: hidden;
     background-color: #000;
 }
-
 
 .landing-hero .slider-wrapper {
     position: absolute;
@@ -44,22 +42,16 @@
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.3) 0%,
-            rgba(0, 0, 0, 0.5) 50%,
-            rgba(0, 0, 0, 0.7) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.7) 100%);
     z-index: 1;
 }
-
 
 .glass-overlay {
     position: absolute;
     inset: 0;
     z-index: 10;
     text-align: center;
-    background: linear-gradient(to bottom,
-            rgba(0, 0, 0, 0.1) 0%,
-            rgba(0, 0, 0, 0.4) 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -68,7 +60,7 @@
     pointer-events: none;
 }
 
-.glass-overlay>* {
+.glass-overlay > * {
     pointer-events: auto;
 }
 
@@ -88,13 +80,8 @@
 .brand-name {
     font-family: 'Oleo Script', cursive;
     font-size: 6rem;
-    color: #c2185b;
-    text-shadow:
-        -1px -1px 0 #000,
-        1px -1px 0 #000,
-        -1px 1px 0 #000,
-        1px 1px 0 #000,
-        0 4px 10px rgba(0, 0, 0, 0.5);
+    color: var(--color_main_title, #c2185b);
+    text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 4px 10px rgba(0, 0, 0, 0.5);
     display: block;
     line-height: 1;
     margin-top: 10px;
@@ -103,7 +90,7 @@
 
 .btn-glass-primary {
     background: #ffffff;
-    color: #c2185b;
+    color: var(--color_main_title, #c2185b);
     padding: 14px 48px;
     border-radius: 50px;
     font-weight: 700;
@@ -156,7 +143,7 @@
     border-radius: 50%;
     background: white;
     border: 1px solid rgba(0, 0, 0, 0.05);
-    color: #c2185b;
+    color: var(--color_main_title, #c2185b);
     font-size: 1.2rem;
     cursor: pointer;
     display: flex;
@@ -172,102 +159,27 @@
     transform: scale(1.1);
 }
 
-
 @media (max-width: 992px) {
-    .glass-title {
-        font-size: 2.5rem;
-    }
-
-    .brand-name {
-        font-size: 4.5rem;
-    }
+    .glass-title { font-size: 2.5rem; }
+    .brand-name { font-size: 4.5rem; }
 }
 
 @media (max-width: 768px) {
-    .landing-page {
-        background-color: #fff;
-        justify-content: flex-start;
-        min-height: auto;
-    }
-
-    .landing-hero {
-        height: 300px;
-        min-height: unset;
-        flex: none;
-    }
-
-    .glass-title {
-        font-size: 1.8rem;
-        margin-bottom: 10px;
-    }
-
-    .brand-name {
-        font-size: 3.5rem;
-    }
-
-    .btn-glass-primary {
-        padding: 10px 30px;
-        font-size: 0.9rem;
-    }
-
-    .slider-controls {
-        padding: 0 10px;
-    }
-
-    .slider-arrow {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
+    .landing-page { background-color: #fff; justify-content: flex-start; min-height: auto; }
+    .landing-hero { height: 300px; min-height: unset; flex: none; }
+    .glass-title { font-size: 1.8rem; margin-bottom: 10px; }
+    .brand-name { font-size: 3.5rem; }
+    .btn-glass-primary { padding: 10px 30px; font-size: 0.9rem; }
+    .slider-controls { padding: 0 10px; }
+    .slider-arrow { width: 40px; height: 40px; font-size: 1rem; }
 }
 
 @media (max-width: 480px) {
-    .landing-page {
-        background-color: #fff;
-        justify-content: flex-start;
-        min-height: auto;
-    }
-
-    .landing-hero {
-        height: 300px;
-        min-height: unset;
-        flex: none;
-    }
-
-    .hero-slide {
-        background-position: center;
-        background-size: cover;
-        background-repeat: no-repeat;
-    }
-
-    .glass-title {
-        font-size: 1.8rem;
-    }
-
-    .brand-name {
-        font-size: 3rem;
-        margin-top: 5px;
-        margin-bottom: 20px;
-    }
-
-    .btn-glass-primary {
-        padding: 10px 30px;
-        font-size: 0.9rem;
-        width: auto;
-        min-width: 180px;
-    }
-
-    .slider-controls {
-        display: flex;
-        padding: 0 5px;
-    }
-
-    .slider-arrow {
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
-        background: rgba(255, 255, 255, 0.8);
-    }
+    .hero-slide { background-position: center; background-size: cover; background-repeat: no-repeat; }
+    .brand-name { font-size: 3rem; margin-top: 5px; margin-bottom: 20px; }
+    .btn-glass-primary { width: auto; min-width: 180px; }
+    .slider-controls { display: flex; padding: 0 5px; }
+    .slider-arrow { width: 36px; height: 36px; font-size: 0.9rem; background: rgba(255, 255, 255, 0.8); }
 }
 
 body:has(.landing-page) .main_content {

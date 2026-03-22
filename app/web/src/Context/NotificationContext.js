@@ -13,17 +13,20 @@ export const useNotification = () => {
 
 export const NotificationProvider = ({ children }) => {
 
+    const [api, contextHolder] = notification.useNotification();
+
     const showNotification = useCallback((message, type = 'success', description = '') => {
-        notification[type]({
+        api[type]({
             message: message,
             description: description,
             placement: 'topRight',
             duration: 3,
         });
-    }, []);
+    }, [api]);
 
     return (
         <NotificationContext.Provider value={showNotification}>
+            {contextHolder}
             {children}
         </NotificationContext.Provider>
     );

@@ -8,7 +8,6 @@ import OrderDetail from './OrderDetail';
 import { useNotification } from '../../Context/NotificationContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
-
 import NotFound from '../../Component/ErrorPages/NotFound';
 
 export default function Account() {
@@ -17,7 +16,7 @@ export default function Account() {
     const { t } = useLanguage();
 
     const handleUpdate = () => {
-        notify(t('update_info_success'));
+        notify(t('update_info_success'), 'success');
     };
 
     const isActive = (path) => {
@@ -29,7 +28,6 @@ export default function Account() {
 
     return (
         <div className="account-container">
-
             <div className="account-sidebar">
                 <div className="user-summary">
                     <div className="user-avatar-container">

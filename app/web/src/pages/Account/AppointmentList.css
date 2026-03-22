@@ -1,30 +1,5 @@
 .appointment-list-container {
-    padding: 24px;
-    background: #ffffff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     font-family: var(--inter_font);
-}
-
-.appointment-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-    padding-bottom: 0;
-    border-bottom: none;
-}
-
-.appointment-header h3 {
-    font-size: 20px;
-    font-weight: 700;
-    color: #111827;
-    margin: 0 0 4px 0;
-}
-
-.current-time {
-    font-size: 13px;
-    color: #6b7280;
 }
 
 .search-box {
@@ -128,7 +103,6 @@
 
 .payment-status {
     font-size: 11px;
-    color: #10b981;
     font-weight: 500;
 }
 
@@ -216,68 +190,11 @@
     color: #6b7280;
 }
 
-.pagination {
-    display: flex;
-    gap: 6px;
-}
-
-.page-btn {
-    min-width: 32px;
-    height: 32px;
-    padding: 0 6px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e5e7eb;
-    background: white;
-    border-radius: 6px;
-    color: #6b7280;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.page-btn:hover:not(:disabled) {
-    border-color: var(--color_main_title);
-    color: var(--color_main_title);
-}
-
-.page-btn.active {
-    background-color: var(--color_main_title);
-    border-color: var(--color_main_title);
-    color: white;
-    box-shadow: 0 1px 2px rgba(163, 2, 81, 0.2);
-}
-
-.page-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    background-color: #f9fafb;
-}
-
 .text-center {
     text-align: center;
 }
 
-.no-data {
-    text-align: center;
-    padding: 40px !important;
-    color: #9ca3af;
-    font-style: italic;
-}
-
 @media (max-width: 768px) {
-    .appointment-list-container {
-        padding: 16px;
-    }
-
-    .appointment-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-    }
-
     .search-box,
     .search-input {
         width: 100%;
@@ -338,10 +255,5 @@
         font-size: 11px;
         margin-right: 15px;
         text-align: left;
-    }
-
-    .action-buttons {
-        justify-content: center;
-        width: 100%;
     }
 }

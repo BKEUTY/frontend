@@ -37,6 +37,7 @@ export default {
     items: "sản phẩm",
     products_lower: "sản phẩm",
     no_data: "Không có dữ liệu",
+    no_orders: "Bạn chưa có đơn hàng nào.",
     dashboard: "Tổng quan",
     settings: "Cài đặt & hỗ trợ",
     chat: "Chat với chúng tôi",
@@ -239,6 +240,7 @@ export default {
     brand_story: "Hành trình mang đến vẻ đẹp thuần khiết",
     brand_desc: "Bkeuty tự hào là người bạn đồng hành tin cậy, thấu hiểu và nâng tầm làn da Việt.",
 
+    next_level_condition: "Chỉ còn {amount} nữa để trở thành {level}",
     account: "Tài khoản",
     my_orders: "Đơn hàng của tôi",
     my_appointments: "Lịch hẹn của tôi",
@@ -364,7 +366,7 @@ export default {
     api_error_profile_update: "Cập nhật hồ sơ thất bại.",
     api_error_change_password: "Đổi mật khẩu thất bại.",
 
-    // Additional keys from web not in mobile yet
+    // Translation keys
     mega_promo_title: "Siêu khuyến mãi",
     mega_promo_desc: "Nhận ưu đãi độc quyền dành riêng cho bạn.",
     promo_list_title: "Chương trình khuyến mãi",
@@ -424,4 +426,5 @@ export default {
     default_sort: "Sắp xếp: Mặc định",
     price_low_high: "Giá: Thấp đến cao",
     price_high_low: "Giá: Cao đến thấp",
+    login_required_to_checkout: "Vui lòng đăng nhập để thanh toán",
 };

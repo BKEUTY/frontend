@@ -61,8 +61,11 @@ const ProductScreen = ({ navigation }) => {
     }, [activeCategory, fetchProducts, fetchCategories]);
 
     const handleAddToCart = async (product) => {
+        const productVariantId = product.variants?.length > 0 ? product.variants[0].id : (product.productId || product.id);
         addToCart({
-            id: product.productId || product.id,
+            cartId: `local_${Date.now()}`,
+            id: productVariantId,
+            productVariantId: productVariantId,
             name: product.name,
             price: product.price,
             image: product.image || 'placeholder',

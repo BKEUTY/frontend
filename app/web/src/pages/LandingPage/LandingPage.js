@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import './LandingPage.css';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
@@ -37,20 +38,20 @@ const LandingPage = () => {
 
                 <div className="glass-overlay">
                     <h1 className="glass-title">
-                        {t('welcome_landing') || 'Chào Mừng Đến Với'}
+                        {t('welcome_landing')}
                         <span className="brand-name">BKEUTY</span>
                     </h1>
 
-                    <Link to="/login" className="btn-glass-primary">{t('login') || 'ĐĂNG NHẬP'}</Link>
+                    <Link to="/login" className="btn-glass-primary">{t('login')}</Link>
 
                     <div className="auth-links">
-                        {t('no_account') || 'Chưa có tài khoản?'} <Link to="/register" className="register-link">{t('register') || 'Đăng Ký'}</Link>
+                        {t('no_account')} <Link to="/register" className="register-link">{t('register')}</Link>
                     </div>
                 </div>
 
                 <div className="slider-controls">
-                    <button className="slider-arrow left" onClick={prevImage}>&#10094;</button>
-                    <button className="slider-arrow right" onClick={nextImage}>&#10095;</button>
+                    <button className="slider-arrow left" onClick={prevImage}><LeftOutlined /></button>
+                    <button className="slider-arrow right" onClick={nextImage}><RightOutlined /></button>
                 </div>
             </div>
         </div>
@@ -58,4 +59,3 @@ const LandingPage = () => {
 };
 
 export default LandingPage;
-

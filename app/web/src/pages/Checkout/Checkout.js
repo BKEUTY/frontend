@@ -3,8 +3,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useNotification } from "../../Context/NotificationContext";
 import { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "../../i18n/LanguageContext";
+import { usePaymentPolling } from "../../hooks/usePaymentPolling";
 import orderApi from '../../api/orderApi';
-import paymentApi from '../../api/paymentApi';
+import { FiTruck, FiCreditCard } from "react-icons/fi";
 
 export default function Checkout() {
     const { state } = useLocation();
@@ -24,53 +25,23 @@ export default function Checkout() {
     const [orderData, setOrderData] = useState(null);
     const [isCheckingPayment, setIsCheckingPayment] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [formData, setFormData] = useState({
-        fullName: "",
-        phone: "",
-        address: "",
-        note: ""
-    });
+    const [formData, setFormData] = useState({ fullName: "", phone: "", address: "", note: "" });
 
-    // Check if there are no items
     useEffect(() => {
-        if (!state || !cartIds || cartIds.length === 0) {
-            navigate('/cart');
-        }
+        if (!state || !cartIds || cartIds.length === 0) navigate('/cart');
     }, [state, cartIds, navigate]);
+
+    const handlePaymentSuccess = useCallback(() => {
+        notify(t('payment_success_msg'), "success");
+        setTimeout(() => navigate('/account/orders'), 2000);
+    }, [notify, navigate, t]);
+
+    const { checkPaymentStatus } = usePaymentPolling(orderData?.orderId, showQR, handlePaymentSuccess);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
-
-    const checkPaymentStatus = useCallback(async (orderId) => {
-        try {
-            const response = await paymentApi.checkStatus(orderId);
-            // Check based on WebHookResponseDTO returning success
-            if (response && response.data && response.data.success === true) {
-                notify(t('payment_success_msg'), "success");
-                setTimeout(() => navigate('/account/orders'), 2000); // Điều hướng về giỏ hàng hoặc đơn hàng
-                return true;
-            }
-            return false;
-        } catch (error) {
-            console.error("Check status error:", error);
-            return false;
-        }
-    }, [navigate, notify, t]);
-
-    useEffect(() => {
-        let interval;
-        if (showQR && orderData?.orderId) {
-            interval = setInterval(async () => {
-                const isPaid = await checkPaymentStatus(orderData.orderId);
-                if (isPaid) clearInterval(interval);
-            }, 5000);
-        }
-        return () => {
-            if (interval) clearInterval(interval);
-        };
-    }, [showQR, orderData, checkPaymentStatus]);
 
     const handleCheckout = async () => {
         if (!formData.fullName || !formData.phone || !formData.address) {
@@ -84,27 +55,20 @@ export default function Checkout() {
         }
 
         setIsProcessing(true);
-        await processOrder(paymentMethod === 'banking' ? 'Banking' : 'COD');
-        setIsProcessing(false);
-    };
-
-    const processOrder = async (method) => {
         try {
-            // Chuẩn bị payload khớp với OrderCartItemDto
             const orderItemsPayload = cartIds.map((id) => ({ cartItemId: id }));
-
             const response = await orderApi.placeOrder({
-                paymentMethod: method,
+                paymentMethod: paymentMethod === 'banking' ? 'Banking' : 'COD',
                 address: formData.address,
-                phone: formData.phone, // Không nằm trong PlaceOrderRequestDto mẫu nhưng vẫn truyền
+                phone: formData.phone,
                 recipientName: formData.fullName,
                 note: formData.note,
                 orderItems: orderItemsPayload,
             });
 
-            const actualData = response.data;
+            const actualData = response.data || response;
 
-            if (method === 'Banking') {
+            if (paymentMethod === 'banking') {
                 setOrderData(actualData);
                 setShowQR(true);
             } else {
@@ -112,14 +76,15 @@ export default function Checkout() {
                 setTimeout(() => navigate('/account/orders'), 2000);
             }
         } catch (error) {
-            console.error("Checkout error:", error);
             notify(t('payment_error_try_again'), "error");
+        } finally {
+            setIsProcessing(false);
         }
     };
 
     const handleManualCheck = async () => {
         setIsCheckingPayment(true);
-        const isPaid = await checkPaymentStatus(orderData.orderId);
+        const isPaid = await checkPaymentStatus();
         if (!isPaid) {
             notify(t('payment_not_yet'), "info");
         }
@@ -145,9 +110,7 @@ export default function Checkout() {
                         <div className="qr-info-grid">
                             <div className="qr-info-item">
                                 <span className="label">{t('amount')}</span>
-                                <span className="value highlighting">
-                                    {(orderData.total || grandTotal).toLocaleString("vi-VN")}đ
-                                </span>
+                                <span className="value highlighting">{(orderData.total || grandTotal).toLocaleString("vi-VN")}đ</span>
                             </div>
                             <div className="qr-info-item">
                                 <span className="label">{t('order_id')}</span>
@@ -184,67 +147,34 @@ export default function Checkout() {
                         <div className="form-grid">
                             <div className="form-group">
                                 <label>{t('full_name')}</label>
-                                <input
-                                    type="text"
-                                    name="fullName"
-                                    value={formData.fullName}
-                                    onChange={handleInputChange}
-                                    placeholder={t('full_name_placeholder') || "Nhập họ và tên..."}
-                                />
+                                <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} placeholder={t('full_name_placeholder')} />
                             </div>
                             <div className="form-group">
                                 <label>{t('phone')}</label>
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    value={formData.phone}
-                                    onChange={handleInputChange}
-                                    placeholder={t('phone_placeholder') || "Nhập số điện thoại..."}
-                                />
+                                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} placeholder={t('phone_placeholder')} />
                             </div>
                         </div>
                         <div className="form-group">
                             <label>{t('address')}</label>
-                            <input
-                                type="text"
-                                name="address"
-                                value={formData.address}
-                                onChange={handleInputChange}
-                                placeholder={t('address_placeholder') || "Nhập địa chỉ giao hàng..."}
-                            />
+                            <input type="text" name="address" value={formData.address} onChange={handleInputChange} placeholder={t('address_placeholder')} />
                         </div>
                         <div className="form-group">
                             <label>{t('note')}</label>
-                            <textarea
-                                name="note"
-                                value={formData.note}
-                                onChange={handleInputChange}
-                                placeholder={t('note_placeholder') || "Ghi chú giao hàng..."}
-                            />
+                            <textarea name="note" value={formData.note} onChange={handleInputChange} placeholder={t('note_placeholder')} />
                         </div>
                     </div>
 
                     <div className="checkout-section">
                         <h2 className="section-header">{t('payment_method')}</h2>
                         <div className="payment-methods">
-                            <div
-                                className={`payment-option ${paymentMethod === 'cod' ? 'selected' : ''}`}
-                                onClick={() => setPaymentMethod('cod')}
-                            >
-                                <div className="payment-icon">🚚</div>
-                                <div className="payment-detail">
-                                    <div className="payment-name">{t('payment_cod')}</div>
-                                </div>
+                            <div className={`payment-option ${paymentMethod === 'cod' ? 'selected' : ''}`} onClick={() => setPaymentMethod('cod')}>
+                                <div className="payment-icon"><FiTruck /></div>
+                                <div className="payment-detail"><div className="payment-name">{t('payment_cod')}</div></div>
                                 <div className="radio-circle"></div>
                             </div>
-                            <div
-                                className={`payment-option ${paymentMethod === 'banking' ? 'selected' : ''}`}
-                                onClick={() => setPaymentMethod('banking')}
-                            >
-                                <div className="payment-icon">💳</div>
-                                <div className="payment-detail">
-                                    <div className="payment-name">{t('payment_banking')}</div>
-                                </div>
+                            <div className={`payment-option ${paymentMethod === 'banking' ? 'selected' : ''}`} onClick={() => setPaymentMethod('banking')}>
+                                <div className="payment-icon"><FiCreditCard /></div>
+                                <div className="payment-detail"><div className="payment-name">{t('payment_banking')}</div></div>
                                 <div className="radio-circle"></div>
                             </div>
                         </div>
@@ -303,9 +233,7 @@ export default function Checkout() {
                         </button>
 
                         <div className="back-link-wrapper">
-                            <span className="btn-back-cart" onClick={() => navigate('/cart')}>
-                                {t('back_to_cart')}
-                            </span>
+                            <span className="btn-back-cart" onClick={() => navigate('/cart')}>{t('back_to_cart')}</span>
                         </div>
                     </div>
                 </div>

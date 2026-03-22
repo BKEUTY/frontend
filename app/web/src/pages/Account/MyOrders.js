@@ -1,42 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import Skeleton from '../../Component/Common/Skeleton';
 import { FiEye } from "react-icons/fi";
-import orderApi from '../../api/orderApi';
-import { useNotification } from '../../Context/NotificationContext';
+import { useOrders } from '../../hooks/useOrders';
 
 const MyOrders = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
-    const notify = useNotification();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchOrders = async () => {
-            try {
-                const response = await orderApi.getHistory();
-                const data = response.data || [];
-                
-                const mappedOrders = data.map((order, index) => ({
-                    id: order.orderId || `ORD-${index + 1}`,
-                    date: order.orderDate,
-                    total: order.total ? order.total.toLocaleString("vi-VN") + 'đ' : '0đ',
-                    status: (order.paymentMethod === 'Banking' && !order.qrCodeLink) ? 'completed' : 'pending' // Simplified status logic for demo
-                }));
-                setOrders(mappedOrders);
-            } catch (err) {
-                console.error("Fetch orders error:", err);
-                // Fallback to mock data if API fails significantly or handle properly
-                setOrders([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchOrders();
-    }, [t]);
+    
+    const { orders, loading } = useOrders();
 
     if (loading) {
         return (
@@ -74,9 +47,13 @@ const MyOrders = () => {
             <h2>{t('my_orders')}</h2>
             <br />
             {orders.length === 0 ? (
-                <div className="empty-orders">
-                    <p>{t('no_orders') || "Bạn chưa có đơn hàng nào."}</p>
-                    <button className="btn-continue-shopping" onClick={() => navigate('/')}>
+                <div className="empty-orders" style={{ textAlign: 'center', padding: '40px 0' }}>
+                    <p style={{ color: '#666', marginBottom: '20px' }}>{t('no_orders')}</p>
+                    <button 
+                        className="btn-continue-shopping" 
+                        onClick={() => navigate('/product')}
+                        style={{ padding: '10px 24px', background: 'var(--color_main_title)', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+                    >
                         {t('continue_shopping')}
                     </button>
                 </div>
@@ -95,7 +72,7 @@ const MyOrders = () => {
                         {orders.map(order => (
                             <tr key={order.id}>
                                 <td data-label={t('order_id')}>
-                                    <Link to={`/account/orders/${order.id}`} style={{ color: '#a30251', fontWeight: 'bold' }}>
+                                    <Link to={`/account/orders/${order.id}`} style={{ color: 'var(--color_main_title)', fontWeight: 'bold' }}>
                                         #{order.id}
                                     </Link>
                                 </td>
@@ -112,7 +89,7 @@ const MyOrders = () => {
                                         className="btn-icon"
                                         title={t('view_detail')}
                                         onClick={() => navigate(`/account/orders/${order.id}`)}
-                                        style={{ color: '#a30251', fontSize: '18px' }}
+                                        style={{ color: 'var(--color_main_title)', fontSize: '18px' }}
                                     >
                                         <FiEye />
                                     </button>
@@ -127,4 +104,3 @@ const MyOrders = () => {
 };
 
 export default MyOrders;
-

@@ -27,7 +27,9 @@ export const CartProvider = ({ children }) => {
                     }));
                     setCartItems(mapped);
                 }
-            } catch (error) {}
+            } catch (error) {
+                console.error("Failed to fetch cart items:", error);
+            }
         } else {
             const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
             setCartItems(localCart);
@@ -42,12 +44,12 @@ export const CartProvider = ({ children }) => {
                     for (const item of localCart) {
                         try {
                             await cartApi.add({
-                                userId: user?.id,
-                                productId: item.productId || item.id,
-                                variantId: item.variantId,
+                                productVariantId: item.variantId || item.productId || item.id,
                                 quantity: item.quantity
                             });
-                        } catch (e) {}
+                        } catch (e) {
+                            console.error("Failed to sync item:", e);
+                        }
                     }
                     localStorage.removeItem(LOCAL_CART_KEY);
                 }
@@ -56,10 +58,6 @@ export const CartProvider = ({ children }) => {
         };
         syncCartOnLogin();
     }, [isAuthenticated, user_role, user?.id, fetchCart]);
-
-    useEffect(() => {
-        fetchCart();
-    }, [fetchCart]);
 
     const saveLocalCart = (items) => {
         localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(items));
@@ -77,22 +75,22 @@ export const CartProvider = ({ children }) => {
         if (isAuthenticated) {
             try {
                 await cartApi.add({
-                    userId: user?.id,
-                    productId: product.id || product.productId,
-                    variantId: product.variantId,
+                    productVariantId: product.productVariantId,
                     quantity: quantityToAdd
                 });
                 await fetchCart();
-            } catch (error) {}
+            } catch (error) {
+                console.error("Failed to add to cart:", error);
+            }
         } else {
             const localCart = [...cartItems];
-            const existingIdx = localCart.findIndex(item => item.id === product.id && item.variantId === product.variantId);
+            const existingIdx = localCart.findIndex(item => item.productVariantId === product.productVariantId || (item.id === product.id && !item.productVariantId));
             if (existingIdx > -1) {
                 localCart[existingIdx].quantity += quantityToAdd;
             } else {
                 localCart.push({ 
                     ...product, 
-                    cartId: `local_${Date.now()}`, 
+                    cartId: product.cartId || `local_${Date.now()}`, 
                     quantity: quantityToAdd 
                 });
             }
@@ -109,7 +107,7 @@ export const CartProvider = ({ children }) => {
                 await axiosClient.put(`/api/cart/${cartId}`, { quantity });
                 fetchCart();
             } catch (error) {
-                fetchCart();
+                fetchCart(); 
             }
         } else {
             const localCart = cartItems.map(item => item.cartId === cartId ? { ...item, quantity } : item);
@@ -124,7 +122,7 @@ export const CartProvider = ({ children }) => {
                 await axiosClient.delete(`/api/cart/${cartId}`);
                 fetchCart();
             } catch (error) {
-                fetchCart();
+                fetchCart(); 
             }
         } else {
             const localCart = cartItems.filter(item => item.cartId !== cartId);

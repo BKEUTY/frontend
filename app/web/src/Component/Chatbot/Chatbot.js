@@ -3,15 +3,9 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import './Chatbot.css';
 import { CloseOutlined, SendOutlined, RobotOutlined } from '@ant-design/icons';
 import ReactMarkdown from 'react-markdown';
+import { CButton } from '../../Component/Common';
 
-import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
-import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
-import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
-import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
-import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
-
-const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
-const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
+const PLACEHOLDER_IMAGE = 'https://placehold.co/150x150?text=BKEUTY';
 
 const Chatbot = ({ isOpen, onClose }) => {
     const { t } = useLanguage();
@@ -93,8 +87,8 @@ const Chatbot = ({ isOpen, onClose }) => {
                                 sender: 'bot',
                                 content: {
                                     name: t('chatbot_demo_product_name'),
-                                    price: '450.000 ₫',
-                                    image: getRandomImage()
+                                    price: '450.000 đ',
+                                    image: PLACEHOLDER_IMAGE
                                 }
                             }]);
                             scrollToBottom();
@@ -125,7 +119,7 @@ const Chatbot = ({ isOpen, onClose }) => {
                     <div key={msg.id} className={`message ${msg.sender}`}>
                         {msg.sender === 'bot' && (
                             <div className="bot-avatar">
-                                <RobotOutlined style={{ fontSize: '20px', color: '#c2185b' }} />
+                                <RobotOutlined style={{ fontSize: '20px', color: 'var(--color_main_title)' }} />
                             </div>
                         )}
 
@@ -139,12 +133,14 @@ const Chatbot = ({ isOpen, onClose }) => {
                             {msg.type === 'product' && (
                                 <div className="chat-product-card">
                                     <div className="chat-product-image">
-                                        <img src={msg.content.image} alt={msg.content.name} onError={(e) => { e.target.src = getRandomImage() }} />
+                                        <img src={msg.content.image} alt={msg.content.name} onError={(e) => { e.target.src = PLACEHOLDER_IMAGE }} />
                                     </div>
                                     <div className="chat-product-info">
                                         <h4>{msg.content.name}</h4>
                                         <span className="chat-product-price">{msg.content.price}</span>
-                                        <button className="chat-product-btn">{t('view_now')}</button>
+                                        <CButton type="primary" size="small" block className="chat-product-btn">
+                                            {t('view_now')}
+                                        </CButton>
                                     </div>
                                 </div>
                             )}

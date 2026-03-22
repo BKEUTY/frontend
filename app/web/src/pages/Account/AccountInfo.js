@@ -92,13 +92,13 @@ const AccountInfo = ({ onUpdate }) => {
                         disabled
                     />
                     <div className="form-group" style={{ marginBottom: 24 }}>
-                        <label className="c-input-label" style={{ fontWeight: 600 }}>{t('gender')}</label>
+                        <label className="c-input-label">{t('gender')}</label>
                         <select
-                            className="form-select"
+                            className="c-input-field"
                             name="gender"
                             value={userData.gender}
                             onChange={handleInputChange}
-                            style={{ width: '100%', height: 46, borderRadius: 8, border: '1.5px solid #e2e8f0', padding: '0 12px' }}
+                            style={{ width: '100%', height: 46, padding: '0 12px' }}
                         >
                             <option value="Nam">{t('male')}</option>
                             <option value="Nu">{t('female')}</option>
@@ -106,7 +106,7 @@ const AccountInfo = ({ onUpdate }) => {
                         </select>
                     </div>
                     <CInput
-                        label="Email"
+                        label={t('step_email')}
                         type="email"
                         name="email"
                         value={userData.email}
@@ -146,14 +146,18 @@ const AccountInfo = ({ onUpdate }) => {
                     <div className="avatar-preview">
                         <img src={avatar} alt="Avatar" className={avatar === default_avatar ? "default-icon" : "user-photo"} />
                     </div>
-                    <label className="button upload-avatar-btn">
-                        {t('update_avatar')}
-                        <input type="file" hidden onChange={handleFileChange} accept="image/*" />
-                    </label>
+                    <div style={{ position: 'relative' }}>
+                        <CButton type="outline">{t('update_avatar')}</CButton>
+                        <input 
+                            type="file" 
+                            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'pointer' }} 
+                            onChange={handleFileChange} 
+                            accept="image/*" 
+                        />
+                    </div>
                 </div>
             </div>
         </div>
     );
 };
 export default AccountInfo;
-

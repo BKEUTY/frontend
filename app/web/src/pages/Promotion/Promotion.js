@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { useLanguage } from "../../i18n/LanguageContext";
+import { Pagination, EmptyState, CButton, PageWrapper } from '../../Component/Common';
+import { SearchOutlined } from '@ant-design/icons';
 import "./Promotion.css";
-import search_icon from "./icon_search.svg";
 
 const MOCK_PROMOTIONS = [
     {
@@ -122,7 +123,7 @@ export default function Promotion() {
     const { t } = useLanguage();
     const [filterType, setFilterType] = useState('all');
     const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0); 
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
     const itemsPerPage = 5;
@@ -143,13 +144,9 @@ export default function Promotion() {
 
     const totalPages = Math.ceil(filteredData.length / itemsPerPage);
     const currentData = filteredData.slice(
-        (currentPage - 1) * itemsPerPage,
-        currentPage * itemsPerPage
+        currentPage * itemsPerPage,
+        (currentPage + 1) * itemsPerPage
     );
-
-    const formatCurrency = (val) => {
-        return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
-    };
 
     const formatDate = (dateStr) => {
         const [y, m, d] = dateStr.split('-');
@@ -181,190 +178,163 @@ export default function Promotion() {
 
     return (
         <div className="promotion-page">
-            <div className="promotion-header">
-                <h1 className="promotion-title">{t('promo_list_title')}</h1>
-            </div>
+            <PageWrapper title={t('promo_list_title')} noCard>
+                <div className="promotion-controls">
+                    <div className="promo-search-bar">
+                        <SearchOutlined className="promo-search-icon" style={{ fontSize: '20px' }} />
+                        <input
+                            type="text"
+                            className="promo-search-input"
+                            placeholder={t('promo_search_placeholder')}
+                            value={searchTerm}
+                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
+                        />
+                    </div>
 
-            <div className="promotion-controls">
-                <div className="promo-search-bar">
-                    <img src={search_icon} alt="search" className="promo-search-icon" />
-                    <input
-                        type="text"
-                        className="promo-search-input"
-                        placeholder={t('promo_search_placeholder')}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
+                    <div className="filter-tabs">
+                        <button
+                            className={`filter-tab ${filterType === 'all' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('all'); setCurrentPage(0); }}
+                        >
+                            {t('promo_tab_all')}
+                        </button>
+                        <button
+                            className={`filter-tab ${filterType === 'ongoing' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('ongoing'); setCurrentPage(0); }}
+                        >
+                            {t('promo_tab_ongoing')}
+                        </button>
+                        <button
+                            className={`filter-tab ${filterType === 'upcoming' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('upcoming'); setCurrentPage(0); }}
+                        >
+                            {t('promo_tab_upcoming')}
+                        </button>
+                        <button
+                            className={`filter-tab ${filterType === 'expired' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('expired'); setCurrentPage(0); }}
+                        >
+                            {t('promo_tab_expired')}
+                        </button>
+                        <button
+                            className={`filter-tab ${filterType === 'applicable' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('applicable'); setCurrentPage(0); }}
+                        >
+                            {t('promo_tab_applicable')}
+                        </button>
+                    </div>
                 </div>
 
-                <div className="filter-tabs">
-                    <button
-                        className={`filter-tab ${filterType === 'all' ? 'active' : ''}`}
-                        onClick={() => setFilterType('all')}
-                    >
-                        {t('promo_tab_all')}
-                    </button>
-                    <button
-                        className={`filter-tab ${filterType === 'ongoing' ? 'active' : ''}`}
-                        onClick={() => setFilterType('ongoing')}
-                    >
-                        {t('promo_tab_ongoing')}
-                    </button>
-                    <button
-                        className={`filter-tab ${filterType === 'upcoming' ? 'active' : ''}`}
-                        onClick={() => setFilterType('upcoming')}
-                    >
-                        {t('promo_tab_upcoming')}
-                    </button>
-                    <button
-                        className={`filter-tab ${filterType === 'expired' ? 'active' : ''}`}
-                        onClick={() => setFilterType('expired')}
-                    >
-                        {t('promo_tab_expired')}
-                    </button>
-                    <button
-                        className={`filter-tab ${filterType === 'applicable' ? 'active' : ''}`}
-                        onClick={() => setFilterType('applicable')}
-                    >
-                        {t('promo_tab_applicable')}
-                    </button>
+                <div className="promotion-table-container">
+                    <table className="promotion-table">
+                        <thead>
+                            <tr>
+                                <th>{t('promo_col_name')}</th>
+                                <th>{t('promo_col_code')}</th>
+                                <th>{t('promo_col_discount')}</th>
+                                <th>
+                                    {t('promo_col_target')}
+                                    <InfoIcon />
+                                </th>
+                                <th>{t('promo_col_time')}</th>
+                                <th style={{ textAlign: 'center' }}>{t('promo_col_status')}</th>
+                                <th style={{ textAlign: 'center' }}>{t('promo_col_applicable')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentData.length > 0 ? (
+                                currentData.map((item) => (
+                                    <tr
+                                        key={item.id}
+                                        className={`promo-row ${item.status === 'expired' ? 'disabled-row' : ''}`}
+                                        onClick={() => setSelectedPromo(item)}
+                                    >
+                                        <td>{item.name}</td>
+                                        <td>
+                                            <span className="code-highlight">{item.code}</span>
+                                        </td>
+                                        <td>
+                                            <span className="discount-tag">{item.discount}</span>
+                                        </td>
+                                        <td>{item.target}</td>
+                                        <td>{formatDate(item.startDate)} - {formatDate(item.endDate)}</td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <span className={`status-badge status-${item.status}`}>
+                                                {t(`promo_status_${item.status}`)}
+                                            </span>
+                                        </td>
+                                        <td style={{ textAlign: 'center' }}>
+                                            <span className={`applicable-badge ${item.applicable ? 'app-yes' : 'app-no'}`}>
+                                                {item.applicable ? t('yes') : t('no')}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="7" style={{ padding: '40px 0' }}>
+                                        <EmptyState title={t('no_promos_found')} />
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
                 </div>
-            </div>
 
-            <div className="promotion-table-container">
-                <table className="promotion-table">
-                    <thead>
-                        <tr>
-                            <th>{t('promo_col_name')}</th>
-                            <th>{t('promo_col_code')}</th>
-                            <th>{t('promo_col_discount')}</th>
-                            <th>
-                                {t('promo_col_target')}
-                                <InfoIcon />
-                            </th>
-                            <th>{t('promo_col_time')}</th>
-                            <th style={{ textAlign: 'center' }}>{t('promo_col_status')}</th>
-                            <th style={{ textAlign: 'center' }}>{t('promo_col_applicable')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {currentData.length > 0 ? (
-                            currentData.map((item) => (
-                                <tr
-                                    key={item.id}
-                                    className={`promo-row ${item.status === 'expired' ? 'disabled-row' : ''}`}
-                                    onClick={() => setSelectedPromo(item)}
-                                >
-                                    <td>{item.name}</td>
-                                    <td>
-                                        <span className="code-highlight">{item.code}</span>
-                                    </td>
-                                    <td>
-                                        <span className="discount-tag">{item.discount}</span>
-                                    </td>
-                                    <td>{item.target}</td>
-                                    <td>{formatDate(item.startDate)} - {formatDate(item.endDate)}</td>
-                                    <td style={{ textAlign: 'center' }}>
+                <div className="mobile-card-view">
+                    {currentData.length > 0 ? (
+                        currentData.map((item) => (
+                            <div
+                                className={`promotion-card ${item.status === 'expired' ? 'disabled-card' : ''}`}
+                                key={item.id}
+                                onClick={() => setSelectedPromo(item)}
+                            >
+                                <div className="card-header">
+                                    <div className="card-title">{item.name}</div>
+                                    <span className="card-code">{item.code}</span>
+                                </div>
+                                <div className="card-row">
+                                    <span className="card-label">{t('promo_col_discount')}</span>
+                                    <span className="card-value highlight-discount">{item.discount}</span>
+                                </div>
+                                <div className="card-row">
+                                    <span className="card-label">
+                                        {t('promo_col_target')}
+                                        <InfoIcon />
+                                    </span>
+                                    <span className="card-value">{item.target}</span>
+                                </div>
+                                <div className="card-row">
+                                    <span className="card-label">{t('promo_col_time')}</span>
+                                    <span className="card-value">{formatDate(item.startDate)} - {formatDate(item.endDate)}</span>
+                                </div>
+                                <div className="card-row">
+                                    <span className="card-label">{t('promo_col_status')}</span>
+                                    <span className="card-value">
                                         <span className={`status-badge status-${item.status}`}>
                                             {t(`promo_status_${item.status}`)}
                                         </span>
-                                    </td>
-                                    <td style={{ textAlign: 'center' }}>
+                                    </span>
+                                </div>
+                                <div className="card-row">
+                                    <span className="card-label">{t('promo_col_applicable')}</span>
+                                    <span className="card-value">
                                         <span className={`applicable-badge ${item.applicable ? 'app-yes' : 'app-no'}`}>
                                             {item.applicable ? t('yes') : t('no')}
                                         </span>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="7" style={{ textAlign: 'center', padding: '30px' }}>
-                                    {t('no_promos_found')}
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-
-            <div className="mobile-card-view">
-                {currentData.length > 0 ? (
-                    currentData.map((item) => (
-                        <div
-                            className={`promotion-card ${item.status === 'expired' ? 'disabled-card' : ''}`}
-                            key={item.id}
-                            onClick={() => setSelectedPromo(item)}
-                        >
-                            <div className="card-header">
-                                <div className="card-title">{item.name}</div>
-                                <span className="card-code">{item.code}</span>
-                            </div>
-                            <div className="card-row">
-                                <span className="card-label">{t('promo_col_discount')}</span>
-                                <span className="card-value highlight-discount">{item.discount}</span>
-                            </div>
-                            <div className="card-row">
-                                <span className="card-label">
-                                    {t('promo_col_target')}
-                                    <InfoIcon />
-                                </span>
-                                <span className="card-value">{item.target}</span>
-                            </div>
-                            <div className="card-row">
-                                <span className="card-label">{t('promo_col_time')}</span>
-                                <span className="card-value">{formatDate(item.startDate)} - {formatDate(item.endDate)}</span>
-                            </div>
-                            <div className="card-row">
-                                <span className="card-label">{t('promo_col_status')}</span>
-                                <span className="card-value">
-                                    <span className={`status-badge status-${item.status}`}>
-                                        {t(`promo_status_${item.status}`)}
                                     </span>
-                                </span>
+                                </div>
                             </div>
-                            <div className="card-row">
-                                <span className="card-label">{t('promo_col_applicable')}</span>
-                                <span className="card-value">
-                                    <span className={`applicable-badge ${item.applicable ? 'app-yes' : 'app-no'}`}>
-                                        {item.applicable ? t('yes') : t('no')}
-                                    </span>
-                                </span>
-                            </div>
+                        ))
+                    ) : (
+                        <div style={{ padding: '40px 0' }}>
+                            <EmptyState title={t('no_promos_found')} />
                         </div>
-                    ))
-                ) : (
-                    <div style={{ textAlign: 'center', padding: '30px', color: '#666' }}>
-                        {t('no_promos_found')}
-                    </div>
-                )}
-            </div>
+                    )}
+                </div>
 
-            <div className="pagination">
-                <button
-                    className="page-btn"
-                    disabled={currentPage === 1}
-                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                >
-                    ❮
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                    <button
-                        key={page}
-                        className={`page-btn ${currentPage === page ? 'active' : ''}`}
-                        onClick={() => setCurrentPage(page)}
-                    >
-                        {page}
-                    </button>
-                ))}
-                <button
-                    className="page-btn"
-                    disabled={currentPage === totalPages || totalPages === 0}
-                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                >
-                    ❯
-                </button>
-            </div>
+                <Pagination page={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+            </PageWrapper>
 
             {selectedPromo && (
                 <div className="promo-modal-overlay" onClick={() => setSelectedPromo(null)}>
@@ -400,9 +370,9 @@ export default function Promotion() {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="button apply-promo-btn" onClick={() => setSelectedPromo(null)}>
+                            <CButton type="primary" block onClick={() => setSelectedPromo(null)}>
                                 {t('confirm')}
-                            </button>
+                            </CButton>
                         </div>
                     </div>
                 </div>
@@ -423,9 +393,9 @@ export default function Promotion() {
                             </div>
                         </div>
                         <div className="modal-footer">
-                            <button className="button" onClick={() => setShowVipInfo(false)}>
-                                {t('close_hint') || 'Đóng'}
-                            </button>
+                            <CButton type="primary" block onClick={() => setShowVipInfo(false)}>
+                                {t('close_hint')}
+                            </CButton>
                         </div>
                     </div>
                 </div>

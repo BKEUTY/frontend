@@ -1,168 +1,75 @@
 import "./Product.css";
-import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
-import Skeleton from "../../Component/Common/Skeleton";
-import ProductCard from "../../Component/Common/ProductCard";
-import Pagination from "../../Component/Common/Pagination";
+import { Skeleton, Pagination, ProductCard, CButton } from "../../Component/Common";
 import { SearchOutlined, MenuOutlined, DownOutlined } from '@ant-design/icons';
 import productApi from "../../api/productApi";
-import { generateSlug } from "../../utils/helpers";
+import useClickOutside from "../../hooks/useClickOutside";
+import { useDebounce } from "../../hooks/useDebounce";
+import { useProducts } from "../../hooks/useProducts";
 
 export default function Product() {
-  const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
+  const { t, language } = useLanguage();
   const dropdownRef = useRef(null);
-
-  const [page, setPage] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-  const [isPaginationMode, setIsPaginationMode] = useState(false);
   const pageSize = 20;
 
+  const [categories, setCategories] = useState([]);
+  const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
+  const [page, setPage] = useState(0);
+  const [isPaginationMode, setIsPaginationMode] = useState(false);
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('default');
-  const { t, language } = useLanguage();
-
   const [activeCategory, setActiveCategory] = useState(null);
+
+  const debouncedSearch = useDebounce(searchTerm, 500);
+  const { products, isLoading, error, totalPages, fetchProducts } = useProducts(pageSize);
+
+  useClickOutside(dropdownRef, () => setIsMobileCatOpen(false));
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
         const res = await productApi.getCategories();
-        if (res.data) {
-          setCategories(res.data);
-        }
-      } catch (err) {
-        setError(t('api_error_fetch_categories') || 'Failed to fetch categories');
-      }
+        if (res.data) setCategories(res.data);
+      } catch (err) {}
     };
     fetchCategories();
-  }, [t]);
-
-  const fetchProducts = useCallback((pageIndex, append, catId = activeCategory, currentSort = sortOption) => {
-    setIsLoading(true);
-    setError(null);
-    const params = { page: pageIndex, size: pageSize };
-    if (searchTerm) params.name = searchTerm;
-    if (catId) params.categoryId = catId;
-
-    productApi.getAll(params)
-      .then(async (res) => {
-        const data = res.data;
-        let rawContent = data.content || [];
-
-        const detailPromises = rawContent.map(p => productApi.getById(p.id));
-        const detailResponses = await Promise.all(detailPromises);
-
-        let flattenedVariants = [];
-        
-        detailResponses.forEach((detailRes, index) => {
-          const productDetail = detailRes.data;
-          const parentData = rawContent[index];
-
-          if (productDetail && productDetail.variants && productDetail.variants.length > 0) {
-            productDetail.variants.forEach(v => {
-              const displayName = v.productVariantName || productDetail.name;
-                
-              flattenedVariants.push({
-                ...parentData,
-                ...v,
-                id: generateSlug(displayName, productDetail.id, v.id),
-                originalId: v.id,
-                parentId: productDetail.id,
-                name: displayName,
-                price: Number(v.price) || 0,
-                minPrice: Number(v.price) || 0,
-                stockQuantity: Number(v.stockQuantity) || 0,
-                image: v.productImageUrl || productDetail.image || parentData.image,
-                categories: productDetail.categories || parentData.categories || []
-              });
-            });
-          } else {
-            flattenedVariants.push({
-              ...parentData,
-              id: generateSlug(parentData.name, parentData.id, 0),
-              originalId: parentData.id,
-              parentId: parentData.id,
-              name: parentData.name,
-              price: Number(parentData.minPrice) || 0,
-              minPrice: Number(parentData.minPrice) || 0,
-              stockQuantity: 0,
-              image: parentData.image,
-              categories: parentData.categories || [],
-              isParentOnly: true
-            });
-          }
-        });
-
-        if (currentSort === 'price_asc') {
-          flattenedVariants.sort((a, b) => a.price - b.price);
-        } else if (currentSort === 'price_desc') {
-          flattenedVariants.sort((a, b) => b.price - a.price);
-        }
-
-        if (append) {
-          setProducts(prev => [...prev, ...flattenedVariants]);
-        } else {
-          setProducts(flattenedVariants);
-        }
-        setTotalPages(data.totalPages);
-      })
-      .catch(() => {
-        setError(t('api_error_fetch_products'));
-      })
-      .finally(() => {
-        setTimeout(() => setIsLoading(false), 500);
-      });
-  }, [searchTerm, activeCategory, sortOption, t]);
+  }, []);
 
   useEffect(() => {
     setPage(0);
-    setIsPaginationMode(false);
-    fetchProducts(0, false);
-  }, [fetchProducts]);
-
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsMobileCatOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    const isFiltering = debouncedSearch.length > 0 || activeCategory !== null;
+    setIsPaginationMode(isFiltering);
+    fetchProducts(0, false, debouncedSearch, activeCategory, sortOption);
+  }, [debouncedSearch, activeCategory, sortOption, fetchProducts]);
 
   const handleCategorySelect = (id) => {
     setActiveCategory(id);
-    setPage(0);
-    setError(null);
-    setIsPaginationMode(true);
     setIsMobileCatOpen(false);
-    fetchProducts(0, false, id, sortOption);
   };
 
   const handleSortChange = (e) => {
-    const newSort = e.target.value;
-    setSortOption(newSort);
-    setPage(0);
-    setIsPaginationMode(true);
-    fetchProducts(0, false, activeCategory, newSort);
+    setSortOption(e.target.value);
   };
 
   const handleLoadMore = () => {
     const nextPage = page + 1;
     setPage(nextPage);
-    fetchProducts(nextPage, true);
+    fetchProducts(nextPage, true, debouncedSearch, activeCategory, sortOption);
+  };
+
+  const handlePageChange = (newPage) => {
+    setPage(newPage);
+    fetchProducts(newPage, false, debouncedSearch, activeCategory, sortOption);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearchSubmit = () => {
     setIsPaginationMode(true);
     setPage(0);
-    setError(null);
-    fetchProducts(0, false);
+    fetchProducts(0, false, searchTerm, activeCategory, sortOption);
   };
 
   const getCurrentCategoryName = () => {
@@ -248,9 +155,9 @@ export default function Product() {
                   onChange={handleSortChange}
                   className="sort-select"
                 >
-                  <option value="default">{t('default_sort', 'Sắp xếp: Mặc định')}</option>
-                  <option value="price_asc">{t('price_low_high', 'Giá: Thấp đến Cao')}</option>
-                  <option value="price_desc">{t('price_high_low', 'Giá: Cao đến Thấp')}</option>
+                  <option value="default">{t('default_sort')}</option>
+                  <option value="price_asc">{t('price_low_high')}</option>
+                  <option value="price_desc">{t('price_high_low')}</option>
                 </select>
               </div>
             </div>
@@ -270,7 +177,7 @@ export default function Product() {
                 ))}
               </div>
             ) : error ? (
-              <div className="no-products">{t('api_error_fetch_products')}</div>
+              <div className="no-products">{t(error)}</div>
             ) : products.length === 0 ? (
               <div className="no-products">{t('no_products_found')}</div>
             ) : (
@@ -282,6 +189,10 @@ export default function Product() {
                       product={product}
                       t={t}
                       language={language}
+                      onClickData={{
+                          category: getCurrentCategoryName(),
+                          from: '/product'
+                      }}
                     />
                   ))}
                 </div>
@@ -293,9 +204,9 @@ export default function Product() {
                         <p>{t('loading')}</p>
                       ) : (
                         page < totalPages - 1 && (
-                          <button className="btn-view-more" onClick={handleLoadMore}>
+                          <CButton type="outline" onClick={handleLoadMore}>
                             {t('load_more')}
-                          </button>
+                          </CButton>
                         )
                       )}
                     </div>
@@ -303,11 +214,7 @@ export default function Product() {
                     <Pagination
                       page={page}
                       totalPages={totalPages}
-                      onPageChange={(newPage) => {
-                        setPage(newPage);
-                        fetchProducts(newPage, false);
-                        window.scrollTo({ top: 0, behavior: 'smooth' });
-                      }}
+                      onPageChange={handlePageChange}
                     />
                   )}
                 </div>

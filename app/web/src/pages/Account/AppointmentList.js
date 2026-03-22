@@ -1,15 +1,14 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { FiEdit3, FiTrash2, FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import searchIcon from '../../Assets/Images/Icons/icon_search.svg';
-import Skeleton from '../../Component/Common/Skeleton';
+import { FiEdit3, FiTrash2 } from "react-icons/fi";
+import { SearchOutlined } from '@ant-design/icons';
+import { Skeleton, Pagination, EmptyState, PageWrapper } from '../../Component/Common';
 import './AppointmentList.css';
 
 const AppointmentList = () => {
     const { t } = useLanguage();
     const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
+    const [currentPage, setCurrentPage] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const itemsPerPage = 5;
 
@@ -35,34 +34,27 @@ const AppointmentList = () => {
     );
 
     const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
+    const startIndex = currentPage * itemsPerPage;
     const currentAppointments = filteredAppointments.slice(startIndex, startIndex + itemsPerPage);
 
-    const handlePageChange = (page) => {
-        if (page >= 1 && page <= totalPages) {
-            setCurrentPage(page);
-        }
-    };
-
     return (
-        <div className="appointment-list-container">
-            <div className="appointment-header">
-                <div>
-                    <h3>{t('appointment_list')}</h3>
-                    <span className="current-time">{t('manage_appointments_desc')}</span>
-                </div>
+        <PageWrapper
+            title={t('appointment_list')}
+            subtitle={t('manage_appointments_desc')}
+            noCard
+            extra={
                 <div className="search-box">
                     <input
                         type="text"
                         placeholder={t('search_appointment_placeholder')}
                         value={searchTerm}
-                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
                         className="search-input"
                     />
-                    <img src={searchIcon} alt="Search" className="btn-search-icon" />
+                    <SearchOutlined className="btn-search-icon" />
                 </div>
-            </div>
-
+            }
+        >
             <div className="appointment-table-wrapper">
                 <table className="appointment-table">
                     <thead>
@@ -137,7 +129,9 @@ const AppointmentList = () => {
                             ))
                         ) : (
                             <tr>
-                                <td colSpan="7" className="no-data">{t('no_appointments_found')}</td>
+                                <td colSpan="7">
+                                    <EmptyState title={t('no_appointments_found')} />
+                                </td>
                             </tr>
                         )}
                     </tbody>
@@ -152,38 +146,9 @@ const AppointmentList = () => {
                     <strong>{filteredAppointments.length}</strong>
                     {t('appointments_unit')}
                 </div>
-
-                {totalPages > 1 && (
-                    <div className="pagination">
-                        <button
-                            className="page-btn"
-                            disabled={currentPage === 1}
-                            onClick={() => handlePageChange(currentPage - 1)}
-                        >
-                            <FiChevronLeft />
-                        </button>
-
-                        {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
-                            <button
-                                key={page}
-                                className={`page-btn ${currentPage === page ? 'active' : ''}`}
-                                onClick={() => handlePageChange(page)}
-                            >
-                                {page}
-                            </button>
-                        ))}
-
-                        <button
-                            className="page-btn"
-                            disabled={currentPage === totalPages}
-                            onClick={() => handlePageChange(currentPage + 1)}
-                        >
-                            <FiChevronRight />
-                        </button>
-                    </div>
-                )}
+                <Pagination page={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
             </div>
-        </div>
+        </PageWrapper>
     );
 };
 

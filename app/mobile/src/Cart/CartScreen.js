@@ -6,6 +6,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 import Header from '../Component/Header';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useCart } from '../Context/CartContext';
+import { useAuth } from '../Context/AuthContext';
 import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
@@ -155,7 +156,15 @@ const CartScreen = () => {
         );
     };
 
+    const { isAuthenticated } = useAuth();
+    
     const handleCheckout = () => {
+        if (!isAuthenticated) {
+            showToast(t('info'), 'info', t('login_required_to_checkout'));
+            navigation.navigate('Login');
+            return;
+        }
+        
         const selectedIds = Object.keys(selectedItems).filter(id => selectedItems[id]);
         if (selectedIds.length === 0) {
             showToast(t('error'), 'error', t('select_min_one'));

@@ -51,6 +51,20 @@
     transform: translate(-50%, -50%) scale(1.05);
 }
 
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background-color: #ef4444;
+    color: white;
+    font-weight: 800;
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
+}
+
 .card-badges {
     position: absolute;
     top: 12px;

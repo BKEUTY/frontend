@@ -185,7 +185,7 @@ export default function Product() {
                 <div className="product-grid">
                   {products.map((product, idx) => (
                     <ProductCard
-                      key={`${product.id}-${idx}`}
+                      key={`${product.productId || product.id}-${idx}`}
                       product={product}
                       t={t}
                       language={language}

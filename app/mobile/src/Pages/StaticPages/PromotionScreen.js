@@ -1,83 +1,9 @@
-import React, { useState, useMemo } from 'react';
-import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView, Modal, Pressable } from 'react-native';
+import React, { useState, useMemo, useEffect } from 'react';
+import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity, ScrollView, Modal, Pressable, ActivityIndicator } from 'react-native';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { COLORS } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
-
-const MOCK_PROMOTIONS = [
-    {
-        id: 1,
-        name: "Trung Thu Tới, Giá Giảm Phơi Phới",
-        code: "BKEUTY-TRUNGTHU-2025",
-        discount: "50%",
-        target: "Khách hàng VIP",
-        startDate: "2025-10-01",
-        endDate: "2025-10-08",
-        status: "expired",
-        applicable: true,
-        description: "Ưu đãi cực sốc lên tới 50% cho tất cả các mặt hàng mỹ phẩm tại BKEUTY nhân dịp Tết Trung Thu. Áp dụng cho đơn hàng từ 500k trở lên."
-    },
-    {
-        id: 2,
-        name: "Phụ Nữ Việt Nam, Deal Sốc Sập Sàn",
-        code: "BKEUTY-PNVN-2025",
-        discount: "100.000đ",
-        target: "Tất cả",
-        startDate: "2025-10-14",
-        endDate: "2025-10-21",
-        status: "ongoing",
-        applicable: true,
-        description: "Tặng ngay voucher trị giá 100.000đ cho hóa đơn mua sắm từ 1.000.000đ. Chào mừng ngày Phụ Nữ Việt Nam 20/10."
-    },
-    {
-        id: 3,
-        name: "Quốc Khánh Rực Rỡ, Sale Hết Cỡ",
-        code: "BKEUTY-QUOCKHANH-2025",
-        discount: "200.000đ",
-        target: "Tất cả",
-        startDate: "2025-08-29",
-        endDate: "2025-09-03",
-        status: "expired",
-        applicable: false,
-        description: "Giảm trực tiếp 200.000đ cho các set combo chăm sóc da toàn diện. Ưu đãi mừng Lễ Quốc Khánh 2/9."
-    },
-    {
-        id: 4,
-        name: "Halloween Deal Sốc Hóa Trang",
-        code: "BKEUTY-HALLOWEEN-2025",
-        discount: "30%",
-        target: "Khách hàng VIP",
-        startDate: "2025-10-29",
-        endDate: "2025-11-02",
-        status: "upcoming",
-        applicable: true,
-        description: "Sắm đồ trang điểm 'chất' Halloween với ưu đãi giảm 30%. Chỉ dành riêng cho hội viện VIP của BKEUTY."
-    },
-    {
-        id: 5,
-        name: "Hè Sang Shopping Thả Ga",
-        code: "BKEUTY-SUMMER-2025",
-        discount: "Freeship",
-        target: "Tất cả",
-        startDate: "2025-07-01",
-        endDate: "2025-08-31",
-        status: "expired",
-        applicable: true,
-        description: "Miễn phí vận chuyển toàn quốc cho mọi đơn hàng trong suốt mùa hè rực rỡ."
-    },
-    {
-        id: 6,
-        name: "Siêu Hội 11.11 Bùng Nổ",
-        code: "BKEUTY-1111-2025",
-        discount: "Mua 1 Tặng 1",
-        target: "Khách hàng Premium",
-        startDate: "2025-11-10",
-        endDate: "2025-11-11",
-        status: "upcoming",
-        applicable: false,
-        description: "Săn deal 11.11 với chương trình Mua 1 Tặng 1 cho các dòng son môi và kem nền bán chạy nhất."
-    }
-];
+import { usePromotions } from '../../hooks/usePromotions';
 
 const PromotionScreen = ({ navigation }) => {
     const { t } = useLanguage();
@@ -86,27 +12,44 @@ const PromotionScreen = ({ navigation }) => {
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
 
+    const { promotions, isLoading, error, fetchPromotions } = usePromotions();
+
+    useEffect(() => {
+        fetchPromotions();
+    }, [fetchPromotions]);
+
     const filteredData = useMemo(() => {
-        return MOCK_PROMOTIONS.filter(item => {
+        if (!promotions) return [];
+        return promotions.filter(item => {
             const searchMatch =
-                item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.code.toLowerCase().includes(searchTerm.toLowerCase());
+                item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                item.description?.toLowerCase().includes(searchTerm.toLowerCase());
 
             if (!searchMatch) return false;
 
             if (filterType === 'all') return true;
-            if (filterType === 'applicable') return item.applicable;
             return item.status === filterType;
         });
-    }, [filterType, searchTerm]);
+    }, [filterType, searchTerm, promotions]);
 
     const formatCurrency = (val) => {
-        return new Intl.NumberFormat('vi-VN').format(val);
+        return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
     };
 
     const formatDate = (dateStr) => {
-        const [y, m, d] = dateStr.split('-');
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        const y = date.getFullYear();
+        const m = (date.getMonth() + 1).toString().padStart(2, '0');
+        const d = date.getDate().toString().padStart(2, '0');
         return `${d}/${m}/${y}`;
+    };
+
+    const formatDiscount = (item) => {
+        if (item.discountType === 'PERCENTAGE') {
+            return `${item.discountValue}%`;
+        }
+        return formatCurrency(item.discountValue);
     };
 
     const InfoIcon = () => (
@@ -119,7 +62,7 @@ const PromotionScreen = ({ navigation }) => {
     );
 
     const renderItem = ({ item }) => {
-        const isExpired = item.status === 'expired';
+        const isExpired = item.status === 'ENDED' || item.status === 'DISABLED';
         return (
             <TouchableOpacity
                 activeOpacity={0.7}
@@ -127,21 +70,28 @@ const PromotionScreen = ({ navigation }) => {
                 style={[styles.card, isExpired && styles.cardDisabled]}
             >
                 <View style={styles.cardHeader}>
-                    <Text style={[styles.cardTitle, isExpired && styles.textDisabled]}>{item.name}</Text>
-                    <Text style={[styles.cardCode, isExpired && styles.textDisabled]}>{item.code}</Text>
+                    <Text style={[styles.cardTitle, isExpired && styles.textDisabled]}>{item.title}</Text>
+                    <Text style={[styles.cardCode, isExpired && styles.textDisabled]}>#{item.id}</Text>
                 </View>
 
                 <View style={styles.infoRow}>
                     <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>{t('promo_col_discount')}:</Text>
-                    <Text style={[styles.infoValue, styles.highlightValue, isExpired && styles.textDisabled]}>{item.discount}</Text>
+                    <Text style={[styles.infoValue, styles.highlightValue, isExpired && styles.textDisabled]}>{formatDiscount(item)}</Text>
                 </View>
+
+                {item.maxDiscount > 0 && (
+                <View style={styles.infoRow}>
+                    <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>Tối đa:</Text>
+                    <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{formatCurrency(item.maxDiscount)}</Text>
+                </View>
+                )}
 
                 <View style={styles.infoRow}>
                     <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>
                         {t('promo_col_target')}:
                     </Text>
                     <View style={styles.rowInline}>
-                        <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{item.target}</Text>
+                        <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{item.promotionType || 'Tất cả'}</Text>
                         <InfoIcon />
                     </View>
                 </View>
@@ -149,38 +99,24 @@ const PromotionScreen = ({ navigation }) => {
                 <View style={styles.infoRow}>
                     <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>{t('promo_col_time')}:</Text>
                     <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>
-                        {formatDate(item.startDate)} - {formatDate(item.endDate)}
+                        {formatDate(item.startAt)} - {formatDate(item.endAt)}
                     </Text>
                 </View>
 
                 <View style={styles.footerRow}>
                     <View style={[
                         styles.statusBadge,
-                        item.status === 'ongoing' && styles.statusOngoing,
-                        item.status === 'upcoming' && styles.statusUpcoming,
-                        item.status === 'expired' && styles.statusExpired
+                        item.status === 'STARTING' && styles.statusOngoing,
+                        item.status === 'INCOMING' && styles.statusUpcoming,
+                        (item.status === 'ENDED' || item.status === 'DISABLED') && styles.statusExpired
                     ]}>
                         <Text style={[
                             styles.statusText,
-                            item.status === 'ongoing' && styles.statusTextOngoing,
-                            item.status === 'upcoming' && styles.statusTextUpcoming,
-                            item.status === 'expired' && styles.statusTextExpired
+                            item.status === 'STARTING' && styles.statusTextOngoing,
+                            item.status === 'INCOMING' && styles.statusTextUpcoming,
+                            (item.status === 'ENDED' || item.status === 'DISABLED') && styles.statusTextExpired
                         ]}>
                             {t(`promo_status_${item.status}`)}
-                        </Text>
-                    </View>
-
-                    <View style={[
-                        styles.appBadge,
-                        item.applicable ? styles.appYes : styles.appNo,
-                        isExpired && styles.statusExpired
-                    ]}>
-                        <Text style={[
-                            styles.badgeText,
-                            item.applicable ? styles.appYesText : styles.appNoText,
-                            isExpired && styles.statusTextExpired
-                        ]}>
-                            {item.applicable ? t('yes') : t('no')}
                         </Text>
                     </View>
                 </View>
@@ -204,31 +140,37 @@ const PromotionScreen = ({ navigation }) => {
                     />
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
-                    {['all', 'ongoing', 'upcoming', 'expired', 'applicable'].map((type) => (
+                    {['all', 'STARTING', 'INCOMING', 'ENDED'].map((type) => (
                         <TouchableOpacity
                             key={type}
                             style={[styles.filterChip, filterType === type && styles.filterChipActive]}
                             onPress={() => setFilterType(type)}
                         >
                             <Text style={[styles.filterChipText, filterType === type && styles.filterChipTextActive]}>
-                                {type === 'all' ? t('all') :
-                                    type === 'applicable' ? t('promo_tab_applicable') :
-                                        t(`promo_tab_${type}`)}
+                                {type === 'all' ? t('all') : t(`promo_tab_${type}`)}
                             </Text>
                         </TouchableOpacity>
                     ))}
                 </ScrollView>
             </View>
 
-            <FlatList
-                data={filteredData}
-                renderItem={renderItem}
-                keyExtractor={item => item.id.toString()}
-                contentContainerStyle={styles.listContent}
-                ListEmptyComponent={
-                    <Text style={styles.noResult}>{t('no_promos_found')}</Text>
-                }
-            />
+            {isLoading ? (
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <ActivityIndicator size="large" color={COLORS.mainTitle} />
+                </View>
+            ) : (
+                <FlatList
+                    data={filteredData}
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id.toString()}
+                    contentContainerStyle={styles.listContent}
+                    ListEmptyComponent={
+                        <Text style={styles.noResult}>{t('no_promos_found')}</Text>
+                    }
+                    onRefresh={fetchPromotions}
+                    refreshing={isLoading}
+                />
+            )}
 
             {/* Promo Detail Modal */}
             <Modal
@@ -253,24 +195,24 @@ const PromotionScreen = ({ navigation }) => {
                             <ScrollView style={styles.modalBody}>
                                 <View style={styles.modalDetailRow}>
                                     <Text style={styles.modalLabel}>{t('promo_col_name')}:</Text>
-                                    <Text style={styles.modalValue}>{selectedPromo.name}</Text>
+                                    <Text style={styles.modalValue}>{selectedPromo.title}</Text>
                                 </View>
                                 <View style={styles.modalDetailRow}>
-                                    <Text style={styles.modalLabel}>{t('promo_col_code')}:</Text>
-                                    <Text style={[styles.modalValue, styles.modalCode]}>{selectedPromo.code}</Text>
+                                    <Text style={styles.modalLabel}>Mã ID:</Text>
+                                    <Text style={[styles.modalValue, styles.modalCode]}>#{selectedPromo.id}</Text>
                                 </View>
                                 <View style={styles.modalDetailRow}>
                                     <Text style={styles.modalLabel}>{t('promo_col_discount')}:</Text>
-                                    <Text style={[styles.modalValue, styles.modalDiscount]}>{selectedPromo.discount}</Text>
+                                    <Text style={[styles.modalValue, styles.modalDiscount]}>{formatDiscount(selectedPromo)}</Text>
                                 </View>
                                 <View style={styles.modalDetailRow}>
                                     <Text style={styles.modalLabel}>{t('promo_col_target')}:</Text>
-                                    <Text style={styles.modalValue}>{selectedPromo.target}</Text>
+                                    <Text style={styles.modalValue}>{selectedPromo.promotionType || 'Tất cả'}</Text>
                                 </View>
                                 <View style={styles.modalDetailRow}>
                                     <Text style={styles.modalLabel}>{t('promo_col_time')}:</Text>
                                     <Text style={styles.modalValue}>
-                                        {formatDate(selectedPromo.startDate)} - {formatDate(selectedPromo.endDate)}
+                                        {formatDate(selectedPromo.startAt)} - {formatDate(selectedPromo.endAt)}
                                     </Text>
                                 </View>
                                 <View style={styles.modalDescription}>

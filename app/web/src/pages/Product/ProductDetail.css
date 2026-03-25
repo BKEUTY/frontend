@@ -90,6 +90,7 @@
     padding: 20px;
     height: 500px;
     overflow: hidden;
+    position: relative;
 }
 
 .main-image img {
@@ -101,6 +102,20 @@
 
 .main-image:hover img {
     transform: scale(1.08);
+}
+
+.discount-badge-main {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: #ef4444;
+    color: white;
+    font-weight: 800;
+    font-size: 1.1rem;
+    padding: 6px 14px;
+    border-radius: 20px;
+    z-index: 10;
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
 }
 
 .product-info-side {
@@ -181,6 +196,12 @@
     margin-bottom: 30px;
 }
 
+.current-price-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .current-price {
     font-size: 2.2rem;
     font-weight: 800;
@@ -192,6 +213,20 @@
     padding: 15px 25px;
     border-radius: 12px;
     width: fit-content;
+}
+
+.old-price-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 5px;
+}
+
+.old-price-text {
+    font-size: 1.2rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+    font-weight: 600;
 }
 
 .vat-tag {

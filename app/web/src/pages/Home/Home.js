@@ -2,14 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import './Home.css';
-import { Skeleton, ProductCard, CButton } from '../../Component/Common';
+import { Skeleton, ProductCard } from '../../Component/Common';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useQuery } from '@tanstack/react-query';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
 import about_image from "../../Assets/Images/Banners/banner_about_us.svg";
 import productApi from '../../api/productApi';
-import { generateSlug } from "../../utils/helpers";
 
 const bannerImages = [banner1, banner2];
 
@@ -21,52 +20,21 @@ const Home = () => {
     const fetchHomeData = async () => {
         try {
             const response = await productApi.getAll({ page: 0, size: 10 });
-            const rawContent = response.data.content || [];
+            const data = response.data || response;
+            const rawContent = data.content || [];
 
-            const detailPromises = rawContent.map(p => productApi.getById(p.id));
-            const detailResponses = await Promise.all(detailPromises);
-
-            let flattenedVariants = [];
-            
-            detailResponses.forEach((detailRes, index) => {
-                const productDetail = detailRes.data;
-                const parentData = rawContent[index];
-
-                if (productDetail && productDetail.variants && productDetail.variants.length > 0) {
-                    productDetail.variants.forEach(v => {
-                        const displayName = v.productVariantName || productDetail.name;
-                        flattenedVariants.push({
-                            ...parentData,
-                            ...v,
-                            id: generateSlug(displayName, productDetail.id, v.id),
-                            originalId: v.id,
-                            parentId: productDetail.id,
-                            name: displayName,
-                            price: Number(v.price) || 0,
-                            minPrice: Number(v.price) || 0,
-                            stockQuantity: Number(v.stockQuantity) || 0,
-                            image: v.productImageUrl || productDetail.image || parentData.image,
-                            categories: productDetail.categories || parentData.categories || []
-                        });
-                    });
-                } else {
-                    flattenedVariants.push({
-                        ...parentData,
-                        id: generateSlug(parentData.name, parentData.id, 0),
-                        originalId: parentData.id,
-                        parentId: parentData.id,
-                        name: parentData.name,
-                        price: Number(parentData.minPrice) || 0,
-                        minPrice: Number(parentData.minPrice) || 0,
-                        stockQuantity: 0,
-                        image: parentData.image,
-                        categories: parentData.categories || [],
-                        isParentOnly: true
-                    });
-                }
-            });
-
-            return flattenedVariants;
+            return rawContent.map(p => ({
+                id: p.productId || p.id,
+                productId: p.productId || p.id,
+                name: p.variantName || p.name || '',
+                price: p.discountPrice ?? p.originPrice ?? p.price ?? 0,
+                originPrice: p.originPrice ?? p.oldPrice ?? p.price ?? 0,
+                discountPrice: p.discountPrice ?? p.minPrice ?? 0,
+                stockQuantity: p.stock ?? p.stockQuantity ?? 0,
+                image: p.imageUrl || p.image,
+                originalId: p.productId || p.id,
+                parentId: p.productId || p.id
+            }));
         } catch (error) {
             return [];
         }

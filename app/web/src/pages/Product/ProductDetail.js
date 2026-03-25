@@ -36,6 +36,7 @@ export default function ProductDetail() {
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
     const [productData, setProductData] = useState(null);
+    const [relatedProducts, setRelatedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
 
@@ -63,9 +64,9 @@ export default function ProductDetail() {
                 if (!targetProductId && slug) {
                     const allRes = await productApi.getAll({ page: 0, size: 1000 });
                     const allProducts = allRes.data?.content || [];
-                    const matched = allProducts.find(p => generateSlug(p.name) === slug || slug.includes(generateSlug(p.name)));
+                    const matched = allProducts.find(p => generateSlug(p.variantName || p.name) === slug || slug.includes(generateSlug(p.variantName || p.name)));
                     if (matched) {
-                        targetProductId = matched.id;
+                        targetProductId = matched.productId || matched.id;
                     }
                 }
 
@@ -76,19 +77,30 @@ export default function ProductDetail() {
                 }
 
                 const response = await productApi.getById(targetProductId);
-                const found = response.data;
+                const found = response.data || response;
 
                 if (found) {
-                    const basePrice = found.minPrice !== undefined ? found.minPrice : (found.price || 0);
+                    const baseOrigin = found.originPrice ?? found.oldPrice ?? found.price ?? 0;
+                    const baseDiscount = found.discountPrice ?? found.minPrice ?? 0;
+                    const baseHasDiscount = baseOrigin > baseDiscount && baseDiscount > 0;
+                    const baseSellingPrice = baseHasDiscount ? baseDiscount : baseOrigin;
                     
-                    const mappedVariants = (found.variants || []).map(v => ({
-                        id: v.id,
-                        variantOptions: v.variantOptions || {},
-                        price: parseFloat(v.price) || 0,
-                        stockQuantity: v.stockQuantity || 0,
-                        image: v.productImageUrl ? getImageUrl(v.productImageUrl) : null,
-                        productVariantName: v.productVariantName
-                    }));
+                    const mappedVariants = (found.variants || []).map(v => {
+                        const vOrigin = v.originPrice ?? v.oldPrice ?? v.price ?? 0;
+                        const vDiscount = v.discountPrice ?? v.minPrice ?? 0;
+                        const hasDiscount = vOrigin > vDiscount && vDiscount > 0;
+
+                        return {
+                            id: v.variantId || v.id,
+                            variantOptions: v.variantOptions || {},
+                            price: hasDiscount ? vDiscount : vOrigin,
+                            originPrice: vOrigin,
+                            hasDiscount: hasDiscount,
+                            stockQuantity: v.stock ?? v.stockQuantity ?? 0,
+                            image: v.imageUrl || v.productImageUrl ? getImageUrl(v.imageUrl || v.productImageUrl) : null,
+                            productVariantName: v.variantName || v.productVariantName || found.name
+                        };
+                    });
 
                     const variantImages = mappedVariants.map(v => v.image).filter(img => img !== null && img !== "");
 
@@ -107,15 +119,18 @@ export default function ProductDetail() {
                     }
 
                     const mergedData = {
-                        id: found.id,
-                        productId: found.id,
-                        name: found.name || "Sản phẩm BKEUTY",
-                        brand: "BKEUTY",
-                        price: mappedVariants.length > 0 ? mappedVariants[0].price : basePrice,
-                        rating: 4.8,
-                        reviews_count: 124,
+                        id: found.productId || found.id,
+                        productId: found.productId || found.id,
+                        name: found.variantName || found.name || "Sản phẩm BKEUTY",
+                        brand: found.brand || "BKEUTY",
+                        price: mappedVariants.length > 0 ? mappedVariants[0].price : baseSellingPrice,
+                        originPrice: mappedVariants.length > 0 ? mappedVariants[0].originPrice : baseOrigin,
+                        hasDiscount: mappedVariants.length > 0 ? mappedVariants[0].hasDiscount : baseHasDiscount,
+                        stockQuantity: found.stock ?? found.stockQuantity ?? 0,
+                        rating: found.rating || 4.8,
+                        reviews_count: found.reviews_count || 124,
                         categories: found.categories || [],
-                        images: [found.image ? getImageUrl(found.image) : fallbackImg, ...variantImages, getRandomImage(), getRandomImage(), getRandomImage()].filter(Boolean).slice(0, 5),
+                        images: [found.imageUrl || found.image ? getImageUrl(found.imageUrl || found.image) : fallbackImg, ...variantImages, getRandomImage(), getRandomImage(), getRandomImage()].filter(Boolean).slice(0, 5),
                         options: options,
                         variants: mappedVariants,
                         content: {
@@ -147,6 +162,13 @@ export default function ProductDetail() {
                     } else {
                         setDefaultOptions(mergedData);
                     }
+
+                    try {
+                        const relatedRes = await productApi.getAll({ page: 0, size: 6 });
+                        const relatedItems = relatedRes.data?.content || [];
+                        setRelatedProducts(relatedItems.filter(p => p.productId !== targetProductId).slice(0, 5));
+                    } catch (e) {}
+
                 } else {
                     setIsError(true);
                 }
@@ -191,7 +213,7 @@ export default function ProductDetail() {
     useEffect(() => {
         if (currentVariant && productData) {
             const combinedName = currentVariant.productVariantName && currentVariant.productVariantName !== productData.name
-                ? `${productData.name} ${currentVariant.productVariantName}`
+                ? currentVariant.productVariantName
                 : productData.name;
                 
             const newSlug = generateSlug(combinedName, productData.id, currentVariant.id);
@@ -230,6 +252,14 @@ export default function ProductDetail() {
         if (newVal >= 1) setQuantity(newVal);
     };
 
+    const displayName = currentVariant?.productVariantName || productData.name;
+    const displayPrice = currentVariant ? currentVariant.price : productData.price;
+    const displayOriginPrice = currentVariant ? currentVariant.originPrice : productData.originPrice;
+    const isDiscounted = currentVariant ? currentVariant.hasDiscount : productData.hasDiscount;
+    const discountPercent = isDiscounted ? Math.round(((displayOriginPrice - displayPrice) / displayOriginPrice) * 100) : null;
+    const displayStock = currentVariant ? currentVariant.stockQuantity : productData.stockQuantity;
+    const isOutOfStock = displayStock <= 0;
+
     const handleAddToCart = () => {
         const selectedVariantId = currentVariant?.id || (productData.variants && productData.variants.length > 0 ? productData.variants[0].id : productData.id);
         
@@ -238,8 +268,8 @@ export default function ProductDetail() {
             productVariantId: selectedVariantId,
             id: selectedVariantId,
             productId: productData.id,
-            name: productData.name,
-            price: currentVariant ? currentVariant.price : productData.price,
+            name: displayName,
+            price: displayPrice,
             image: mainImage,
             quantity: quantity,
             variantDisplay: currentVariant?.variantOptions ? Object.values(currentVariant.variantOptions).join(' - ') : (currentVariant?.productVariantName || '')
@@ -254,14 +284,12 @@ export default function ProductDetail() {
         { id: 'reviews', label: `${t('reviews')} (${productData.reviews_count})` },
     ];
 
-    const isOutOfStock = currentVariant ? currentVariant.stockQuantity <= 0 : false;
-
     return (
         <div className="product-detail-page">
             <div className="breadcrumb">
                 <Link to={categoryLink} state={{ fromDetail: true }}>{categoryName}</Link>
                 <span className="divider">/</span>
-                <span className="current">{productData.name}</span>
+                <span className="current">{displayName}</span>
             </div>
 
             <div className="product-top-section">
@@ -274,13 +302,14 @@ export default function ProductDetail() {
                         ))}
                     </div>
                     <div className="main-image">
-                        <img src={mainImage} alt={productData.name} onError={(e) => { e.target.src = fallbackImg }} />
+                        <img src={mainImage} alt={displayName} onError={(e) => { e.target.src = fallbackImg }} />
+                        {discountPercent && <div className="discount-badge-main">-{discountPercent}%</div>}
                     </div>
                 </div>
 
                 <div className="product-info-side">
                     <div className="brand-label">{productData.brand}</div>
-                    <h1 className="detail-title">{productData.name}</h1>
+                    <h1 className="detail-title">{displayName}</h1>
 
                     {productData.categories && productData.categories.length > 0 && (
                         <div className="detail-categories">
@@ -301,9 +330,16 @@ export default function ProductDetail() {
                     </div>
 
                     <div className="price-box">
-                        <div className="current-price">
-                            {(currentVariant ? currentVariant.price : productData.price).toLocaleString("vi-VN")}đ
-                            <span className="vat-tag">{t('vat_included')}</span>
+                        <div className="current-price-wrapper">
+                            <div className="current-price">
+                                {displayPrice.toLocaleString("vi-VN")}đ
+                                <span className="vat-tag">{t('vat_included')}</span>
+                            </div>
+                            {isDiscounted && (
+                                <div className="old-price-wrapper">
+                                    <span className="old-price-text">{displayOriginPrice.toLocaleString("vi-VN")}đ</span>
+                                </div>
+                            )}
                         </div>
                     </div>
 
@@ -324,19 +360,17 @@ export default function ProductDetail() {
                             </div>
                         ))}
 
-                        {currentVariant && (
+                        {currentVariant && currentVariant.variantOptions && Object.keys(currentVariant.variantOptions).length > 0 && (
                             <div className="selected-variant-info">
                                 <span className="variant-label-title">{t('variant_selected_label')}: </span>
                                 <strong className="variant-label-value">
-                                    {currentVariant.variantOptions && Object.keys(currentVariant.variantOptions).length > 0
-                                        ? Object.values(currentVariant.variantOptions).join(' - ')
-                                        : currentVariant.productVariantName}
+                                    {Object.values(currentVariant.variantOptions).join(' - ')}
                                 </strong>
                             </div>
                         )}
 
                         <div className="stock-info">
-                            {t('in_stock_label')} <strong>{currentVariant ? currentVariant.stockQuantity : 0}</strong> {t('items_available')}
+                            {t('in_stock_label')} <strong>{displayStock}</strong> {t('items_available')}
                         </div>
 
                         <div className="option-group align-center mt-10">
@@ -448,15 +482,16 @@ export default function ProductDetail() {
                 </div>
             </div>
 
-            <div className="recommendations-section">
-                <h2 className="section-title">{t('related_products')}</h2>
-                <div className="product-grid related-products-grid">
-                    {[1, 2, 3, 4, 5].map(i => {
-                        const relatedProduct = { id: i, name: "Capture Totale Cell Energy", brand: "Dior", price: 3500000, image: getRandomImage(), rating: 4.8, sold: 120 };
-                        return <ProductCard key={i} product={relatedProduct} t={t} language={language} onClickData={{ category: language === 'vi' ? 'Gợi ý' : 'Related Products', from: location.pathname }} />;
-                    })}
+            {relatedProducts.length > 0 && (
+                <div className="recommendations-section">
+                    <h2 className="section-title">{t('related_products')}</h2>
+                    <div className="product-grid related-products-grid">
+                        {relatedProducts.map((p, i) => (
+                            <ProductCard key={i} product={p} t={t} language={language} onClickData={{ category: language === 'vi' ? 'Gợi ý' : 'Related Products', from: location.pathname }} />
+                        ))}
+                    </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 }

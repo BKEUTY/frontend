@@ -1,123 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLanguage } from "../../i18n/LanguageContext";
 import { Pagination, EmptyState, CButton, PageWrapper } from '../../Component/Common';
 import { SearchOutlined } from '@ant-design/icons';
+import promotionApi from '../../api/promotionApi';
+import { Spin } from 'antd';
 import "./Promotion.css";
-
-const MOCK_PROMOTIONS = [
-    {
-        id: 1,
-        name: "Trung Thu Tới, Giá Giảm Phơi Phới",
-        code: "BKEUTY-TRUNGTHU-2025",
-        discount: "50%",
-        target: "Khách hàng VIP",
-        targetKey: "vip",
-        startDate: "2025-10-01",
-        endDate: "2025-10-08",
-        status: "expired",
-        applicable: true,
-        type: "PERCENTAGE",
-        description: "Ưu đãi cực sốc lên tới 50% cho tất cả các mặt hàng mỹ phẩm tại BKEUTY nhân dịp Tết Trung Thu. Áp dụng cho đơn hàng từ 500k trở lên."
-    },
-    {
-        id: 2,
-        name: "Phụ Nữ Việt Nam, Deal Sốc Sập Sàn",
-        code: "BKEUTY-PNVN-2025",
-        discount: "100.000đ",
-        target: "Tất cả",
-        targetKey: "all",
-        startDate: "2025-10-14",
-        endDate: "2025-10-21",
-        status: "ongoing",
-        applicable: true,
-        type: "FIX_AMOUNT",
-        description: "Tặng ngay voucher trị giá 100.000đ cho hóa đơn mua sắm từ 1.000.000đ. Chào mừng ngày Phụ Nữ Việt Nam 20/10."
-    },
-    {
-        id: 3,
-        name: "Mừng Ngày Quốc Khánh, Hạ Giá Không Phanh",
-        code: "BKEUTY-QUOCKHANH-2025",
-        discount: "200.000đ",
-        target: "Tất cả",
-        targetKey: "all",
-        startDate: "2025-08-29",
-        endDate: "2025-09-03",
-        status: "expired",
-        applicable: false,
-        type: "COMBO",
-        description: "Giảm trực tiếp 200.000đ cho các set combo chăm sóc da toàn diện. Ưu đãi mừng Lễ Quốc Khánh 2/9."
-    },
-    {
-        id: 4,
-        name: "Halloween, Cúng MakeUp Thôi",
-        code: "BKEUTY-HALLOWEEN-2025",
-        discount: "30%",
-        target: "Khách hàng VIP",
-        targetKey: "vip",
-        startDate: "2025-10-29",
-        endDate: "2025-11-02",
-        status: "upcoming",
-        applicable: true,
-        type: "PERCENTAGE",
-        description: "Sắm đồ trang điểm 'chất' Halloween với ưu đãi giảm 30%. Chỉ dành riêng cho hội viện VIP của BKEUTY."
-    },
-    {
-        id: 5,
-        name: "Hè Đến Rồi, Shopping Thôi",
-        code: "BKEUTY-MUAHE-2025",
-        discount: "Freeship",
-        target: "Tất cả",
-        targetKey: "all",
-        startDate: "2025-07-01",
-        endDate: "2025-08-31",
-        status: "expired",
-        applicable: true,
-        type: "SHIPPING_DISCOUNT",
-        description: "Miễn phí vận chuyển toàn quốc cho mọi đơn hàng trong suốt mùa hè rực rỡ."
-    },
-    {
-        id: 6,
-        name: "11 THÁNG 11",
-        code: "BKEUTY-1111-2025",
-        discount: "Mua 1 Tặng 1",
-        target: "Khách hàng Premium",
-        targetKey: "premium",
-        startDate: "2025-11-10",
-        endDate: "2025-11-11",
-        status: "upcoming",
-        applicable: false,
-        type: "BUY_X_GET_Y",
-        description: "Săn deal 11.11 với chương trình Mua 1 Tặng 1 cho các dòng son môi và kem nền bán chạy nhất."
-    },
-    {
-        id: 7,
-        name: "Chào Thành Viên Mới",
-        code: "BKEUTY-NEW-MEMBER",
-        discount: "10%",
-        target: "Thành viên mới",
-        targetKey: "new",
-        startDate: "2025-01-01",
-        endDate: "2025-12-31",
-        status: "ongoing",
-        applicable: true,
-        type: "MEMBERSHIP",
-        description: "Món quà chào mừng cho thành viên mới của gia đình BKEUTY. Giảm ngay 10% cho đơn hàng đầu tiên."
-    },
-    {
-        id: 8,
-        name: "Giáng Sinh An Lành",
-        code: "BKEUTY-XMAS-2025",
-        discount: "Giảm 30%",
-        target: "Tất cả",
-        targetKey: "all",
-        startDate: "2025-12-20",
-        endDate: "2025-12-25",
-        status: "upcoming",
-        applicable: true,
-        type: "PERCENTAGE",
-        description: "Ấm áp mùa Noel với ưu đãi giảm 30% cho toàn bộ gian hàng. Quà tặng kèm cho mỗi đơn hàng trên 2 triệu."
-    }
-];
 
 export default function Promotion() {
     const { t } = useLanguage();
@@ -126,31 +13,57 @@ export default function Promotion() {
     const [currentPage, setCurrentPage] = useState(0); 
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
-    const itemsPerPage = 5;
+    const [promotions, setPromotions] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [totalPages, setTotalPages] = useState(0);
+    const itemsPerPage = 30; // Backend is set to 30
+
+    const fetchPromotions = useCallback(async (page = 0) => {
+        setLoading(true);
+        try {
+            const res = await promotionApi.getPromotions(page);
+            if (res.data) {
+                setPromotions(res.data.content || []);
+                setTotalPages(res.data.totalPages || 0);
+            }
+        } catch (error) {
+            console.error("Fetch promotions error:", error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        fetchPromotions(currentPage);
+    }, [currentPage, fetchPromotions]);
 
     const filteredData = useMemo(() => {
-        return MOCK_PROMOTIONS.filter(item => {
+        return promotions.filter(item => {
             const searchMatch =
-                item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.code.toLowerCase().includes(searchTerm.toLowerCase());
+                (item.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (item.id || "").toString().includes(searchTerm.toLowerCase());
 
             if (!searchMatch) return false;
 
             if (filterType === 'all') return true;
-            if (filterType === 'applicable') return item.applicable;
+            if (filterType === 'applicable') return item.status === 'STARTING';
             return item.status === filterType;
         });
-    }, [filterType, searchTerm]);
+    }, [filterType, searchTerm, promotions]);
 
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const currentData = filteredData.slice(
-        currentPage * itemsPerPage,
-        (currentPage + 1) * itemsPerPage
-    );
+    const currentData = filteredData; // Backend handles pagination mostly but we filter locally if needed
 
     const formatDate = (dateStr) => {
-        const [y, m, d] = dateStr.split('-');
-        return `${d}/${m}/${y}`;
+        if (!dateStr) return '';
+        const date = new Date(dateStr);
+        return date.toLocaleDateString('vi-VN');
+    };
+
+    const formatDiscount = (item) => {
+        if (item.discountType === 'PERCENTAGE') {
+            return `${item.discountValue}%`;
+        }
+        return new Intl.NumberFormat('vi-VN').format(item.discountValue) + 'đ';
     };
 
     const InfoIcon = () => (
@@ -199,22 +112,22 @@ export default function Promotion() {
                             {t('promo_tab_all')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'ongoing' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('ongoing'); setCurrentPage(0); }}
+                            className={`filter-tab ${filterType === 'STARTING' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('STARTING'); setCurrentPage(0); }}
                         >
-                            {t('promo_tab_ongoing')}
+                            {t('promo_tab_STARTING')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'upcoming' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('upcoming'); setCurrentPage(0); }}
+                            className={`filter-tab ${filterType === 'INCOMING' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('INCOMING'); setCurrentPage(0); }}
                         >
-                            {t('promo_tab_upcoming')}
+                            {t('promo_tab_INCOMING')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'expired' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('expired'); setCurrentPage(0); }}
+                            className={`filter-tab ${filterType === 'ENDED' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('ENDED'); setCurrentPage(0); }}
                         >
-                            {t('promo_tab_expired')}
+                            {t('promo_tab_ENDED')}
                         </button>
                         <button
                             className={`filter-tab ${filterType === 'applicable' ? 'active' : ''}`}
@@ -226,101 +139,93 @@ export default function Promotion() {
                 </div>
 
                 <div className="promotion-table-container">
-                    <table className="promotion-table">
-                        <thead>
-                            <tr>
-                                <th>{t('promo_col_name')}</th>
-                                <th>{t('promo_col_code')}</th>
-                                <th>{t('promo_col_discount')}</th>
-                                <th>
-                                    {t('promo_col_target')}
-                                    <InfoIcon />
-                                </th>
-                                <th>{t('promo_col_time')}</th>
-                                <th style={{ textAlign: 'center' }}>{t('promo_col_status')}</th>
-                                <th style={{ textAlign: 'center' }}>{t('promo_col_applicable')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {currentData.length > 0 ? (
-                                currentData.map((item) => (
-                                    <tr
-                                        key={item.id}
-                                        className={`promo-row ${item.status === 'expired' ? 'disabled-row' : ''}`}
-                                        onClick={() => setSelectedPromo(item)}
-                                    >
-                                        <td>{item.name}</td>
-                                        <td>
-                                            <span className="code-highlight">{item.code}</span>
-                                        </td>
-                                        <td>
-                                            <span className="discount-tag">{item.discount}</span>
-                                        </td>
-                                        <td>{item.target}</td>
-                                        <td>{formatDate(item.startDate)} - {formatDate(item.endDate)}</td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <span className={`status-badge status-${item.status}`}>
-                                                {t(`promo_status_${item.status}`)}
-                                            </span>
-                                        </td>
-                                        <td style={{ textAlign: 'center' }}>
-                                            <span className={`applicable-badge ${item.applicable ? 'app-yes' : 'app-no'}`}>
-                                                {item.applicable ? t('yes') : t('no')}
-                                            </span>
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '50px' }}><Spin size="large" /></div>
+                    ) : (
+                        <table className="promotion-table">
+                            <thead>
+                                <tr>
+                                    <th>{t('promo_col_name')}</th>
+                                    <th>ID</th>
+                                    <th>{t('promo_col_discount')}</th>
+                                    <th>
+                                        {t('promo_col_target')}
+                                        <InfoIcon />
+                                    </th>
+                                    <th>{t('promo_col_time')}</th>
+                                    <th style={{ textAlign: 'center' }}>{t('promo_col_status')}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {currentData.length > 0 ? (
+                                    currentData.map((item) => (
+                                        <tr
+                                            key={item.id}
+                                            className={`promo-row ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled-row' : ''}`}
+                                            onClick={() => setSelectedPromo(item)}
+                                        >
+                                            <td>{item.title}</td>
+                                            <td>
+                                                <span className="code-highlight">#{item.id}</span>
+                                            </td>
+                                            <td>
+                                                <span className="discount-tag">{formatDiscount(item)}</span>
+                                            </td>
+                                            <td>{item.promotionType || 'ALL'}</td>
+                                            <td>{formatDate(item.startAt)} - {formatDate(item.endAt)}</td>
+                                            <td style={{ textAlign: 'center' }}>
+                                                <span className={`status-badge status-${item.status}`}>
+                                                    {t(`promo_status_${item.status}`)}
+                                                </span>
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan="6" style={{ padding: '40px 0' }}>
+                                            <EmptyState title={t('no_promos_found')} />
                                         </td>
                                     </tr>
-                                ))
-                            ) : (
-                                <tr>
-                                    <td colSpan="7" style={{ padding: '40px 0' }}>
-                                        <EmptyState title={t('no_promos_found')} />
-                                    </td>
-                                </tr>
-                            )}
-                        </tbody>
-                    </table>
+                                )}
+                            </tbody>
+                        </table>
+                    )}
                 </div>
 
                 <div className="mobile-card-view">
-                    {currentData.length > 0 ? (
+                    {loading ? (
+                        <div style={{ textAlign: 'center', padding: '50px' }}><Spin size="large" /></div>
+                    ) : currentData.length > 0 ? (
                         currentData.map((item) => (
                             <div
-                                className={`promotion-card ${item.status === 'expired' ? 'disabled-card' : ''}`}
+                                className={`promotion-card ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled-card' : ''}`}
                                 key={item.id}
                                 onClick={() => setSelectedPromo(item)}
                             >
                                 <div className="card-header">
-                                    <div className="card-title">{item.name}</div>
-                                    <span className="card-code">{item.code}</span>
+                                    <div className="card-title">{item.title}</div>
+                                    <span className="card-code">#{item.id}</span>
                                 </div>
                                 <div className="card-row">
                                     <span className="card-label">{t('promo_col_discount')}</span>
-                                    <span className="card-value highlight-discount">{item.discount}</span>
+                                    <span className="card-value highlight-discount">{formatDiscount(item)}</span>
                                 </div>
                                 <div className="card-row">
                                     <span className="card-label">
                                         {t('promo_col_target')}
                                         <InfoIcon />
                                     </span>
-                                    <span className="card-value">{item.target}</span>
+                                    <span className="card-value">{item.promotionType || 'ALL'}</span>
                                 </div>
                                 <div className="card-row">
                                     <span className="card-label">{t('promo_col_time')}</span>
-                                    <span className="card-value">{formatDate(item.startDate)} - {formatDate(item.endDate)}</span>
+                                    <span className="card-value">{formatDate(item.startAt)} - {formatDate(item.endAt)}</span>
                                 </div>
                                 <div className="card-row">
                                     <span className="card-label">{t('promo_col_status')}</span>
                                     <span className="card-value">
                                         <span className={`status-badge status-${item.status}`}>
                                             {t(`promo_status_${item.status}`)}
-                                        </span>
-                                    </span>
-                                </div>
-                                <div className="card-row">
-                                    <span className="card-label">{t('promo_col_applicable')}</span>
-                                    <span className="card-value">
-                                        <span className={`applicable-badge ${item.applicable ? 'app-yes' : 'app-no'}`}>
-                                            {item.applicable ? t('yes') : t('no')}
                                         </span>
                                     </span>
                                 </div>
@@ -346,23 +251,29 @@ export default function Promotion() {
                         <div className="modal-body">
                             <div className="detail-item">
                                 <label>{t('promo_col_name')}:</label>
-                                <span>{selectedPromo.name}</span>
+                                <span>{selectedPromo.title}</span>
                             </div>
                             <div className="detail-item">
-                                <label>{t('promo_col_code')}:</label>
-                                <span className="modal-code">{selectedPromo.code}</span>
+                                <label>ID:</label>
+                                <span className="modal-code">#{selectedPromo.id}</span>
                             </div>
                             <div className="detail-item">
                                 <label>{t('promo_col_discount')}:</label>
-                                <span className="modal-discount">{selectedPromo.discount}</span>
+                                <span className="modal-discount">{formatDiscount(selectedPromo)}</span>
                             </div>
+                            {selectedPromo.maxDiscount > 0 && (
+                                <div className="detail-item">
+                                    <label>Giảm tối đa:</label>
+                                    <span>{new Intl.NumberFormat('vi-VN').format(selectedPromo.maxDiscount)}đ</span>
+                                </div>
+                            )}
                             <div className="detail-item">
                                 <label>{t('promo_col_target')}:</label>
-                                <span>{selectedPromo.target}</span>
+                                <span>{selectedPromo.promotionType || 'ALL'}</span>
                             </div>
                             <div className="detail-item">
                                 <label>{t('promo_col_time')}:</label>
-                                <span>{formatDate(selectedPromo.startDate)} - {formatDate(selectedPromo.endDate)}</span>
+                                <span>{formatDate(selectedPromo.startAt)} - {formatDate(selectedPromo.endAt)}</span>
                             </div>
                             <div className="description-section">
                                 <label>{t('description')}:</label>

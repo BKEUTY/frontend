@@ -16,7 +16,8 @@ export default function Promotion() {
     const [promotions, setPromotions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(0);
-    const itemsPerPage = 30; // Backend is set to 30
+    const [totalItems, setTotalItems] = useState(0);
+    const itemsPerPage = 30;
 
     const fetchPromotions = useCallback(async (page = 0) => {
         setLoading(true);
@@ -25,6 +26,7 @@ export default function Promotion() {
             if (res.data) {
                 setPromotions(res.data.content || []);
                 setTotalPages(res.data.totalPages || 0);
+                setTotalItems(res.data.totalElements || 0);
             }
         } catch (error) {
             console.error("Fetch promotions error:", error);
@@ -51,7 +53,7 @@ export default function Promotion() {
         });
     }, [filterType, searchTerm, promotions]);
 
-    const currentData = filteredData; // Backend handles pagination mostly but we filter locally if needed
+    const currentData = filteredData;
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '';
@@ -238,7 +240,13 @@ export default function Promotion() {
                     )}
                 </div>
 
-                <Pagination page={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                <Pagination 
+                    page={currentPage} 
+                    totalPages={totalPages} 
+                    totalItems={totalItems} 
+                    pageSize={itemsPerPage} 
+                    onPageChange={setCurrentPage} 
+                />
             </PageWrapper>
 
             {selectedPromo && (

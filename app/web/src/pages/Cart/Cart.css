@@ -395,6 +395,24 @@
     color: white;
 }
 
+.cart-price-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.cart-current-price {
+    font-weight: 600;
+    color: var(--color_main_title);
+}
+
+.cart-old-price {
+    font-size: 0.85em;
+    color: #a0aec0;
+    text-decoration: line-through;
+    margin-top: 2px;
+}
+
 @media (max-width: 900px) {
     .cart-page {
         padding: 30px 20px;

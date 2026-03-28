@@ -139,14 +139,13 @@ const AppointmentList = () => {
             </div>
 
             <div className="appointment-footer">
-                <div className="showing-info">
-                    {t('showing_info_appointments')}
-                    <strong>{startIndex + 1}-{Math.min(startIndex + itemsPerPage, filteredAppointments.length)}</strong>
-                    {t('of_total_appointments')}
-                    <strong>{filteredAppointments.length}</strong>
-                    {t('appointments_unit')}
-                </div>
-                <Pagination page={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+                <Pagination 
+                    page={currentPage} 
+                    totalPages={totalPages} 
+                    totalItems={filteredAppointments.length} 
+                    pageSize={itemsPerPage} 
+                    onPageChange={setCurrentPage} 
+                />
             </div>
         </PageWrapper>
     );

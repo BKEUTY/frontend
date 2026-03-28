@@ -16,11 +16,20 @@ export default function Checkout() {
     const { t } = useLanguage();
 
     const cartIds = state?.cartIds || [];
-    const subTotal = state?.subTotal || 0;
-    const shippingFee = 20000;
-    const discount = state?.discount || 0;
     const selectedProducts = state?.selectedProducts || [];
-    const grandTotal = Math.max(0, subTotal + shippingFee - discount);
+
+    const totals = selectedProducts.reduce((acc, p) => {
+        const originalPrice = p.price || 0;
+        const effectivePrice = p.effectivePrice ?? p.promotionPrice ?? originalPrice;
+        return {
+            original: acc.original + (originalPrice * p.quantity),
+            final: acc.final + (effectivePrice * p.quantity)
+        };
+    }, { original: 0, final: 0 });
+
+    const totalOriginalPrice = totals.original;
+    const grandTotal = totals.final;
+    const totalDiscount = totalOriginalPrice - grandTotal;
 
     const [paymentMethod, setPaymentMethod] = useState("cod");
     const [showQR, setShowQR] = useState(false);
@@ -30,7 +39,7 @@ export default function Checkout() {
     const [formData, setFormData] = useState({ fullName: "", phone: "", address: "", note: "" });
 
     useEffect(() => {
-        if (!state || !cartIds || cartIds.length === 0) navigate('/cart');
+        if (!state || cartIds.length === 0) navigate('/cart');
     }, [state, cartIds, navigate]);
 
     const handlePaymentSuccess = useCallback(() => {
@@ -50,21 +59,18 @@ export default function Checkout() {
             notify(t('fill_delivery_info'), "error");
             return;
         }
-
         setIsProcessing(true);
         try {
-            const orderItemsPayload = cartIds.map((id) => ({ cartItemId: id }));
             const response = await orderApi.placeOrder({
                 paymentMethod: paymentMethod === 'banking' ? 'Banking' : 'COD',
                 address: formData.address,
                 phone: formData.phone,
                 recipientName: formData.fullName,
                 note: formData.note,
-                orderItems: orderItemsPayload,
+                orderItems: cartIds.map(id => ({ cartItemId: id })),
             });
 
             const actualData = response.data || response;
-
             if (paymentMethod === 'banking') {
                 setOrderData(actualData);
                 setShowQR(true);
@@ -72,7 +78,7 @@ export default function Checkout() {
                 notify(t('order_success'), "success");
                 setTimeout(() => navigate('/account/orders'), 2000);
             }
-        } catch (error) {
+        } catch {
             notify(t('payment_error_try_again'), "error");
         } finally {
             setIsProcessing(false);
@@ -172,28 +178,41 @@ export default function Checkout() {
                     <div className="order-summary-box">
                         <h2 className="summary-title">{t('order_summary')} ({selectedProducts.length} {t('items')})</h2>
                         <div className="order-items-list">
-                            {selectedProducts.map((p, idx) => (
-                                <div key={idx} className="summary-item">
-                                    <div className="summary-item-image">
-                                        <img src={p.image} alt={p.name} onError={(e) => e.target.src = 'https://placehold.co/100x100?text=Product'} />
+                            {selectedProducts.map((p, idx) => {
+                                const effectivePrice = p.effectivePrice ?? p.promotionPrice ?? p.price;
+                                const hasDiscount = p.price > 0 && effectivePrice < p.price;
+                                return (
+                                    <div key={idx} className="summary-item">
+                                        <div className="summary-item-image">
+                                            <img src={p.image} alt={p.name} onError={(e) => e.target.src = 'https://placehold.co/100x100?text=Product'} />
+                                        </div>
+                                        <div className="summary-item-info">
+                                            <div className="summary-item-name">{p.name}</div>
+                                            <div className="summary-item-qty">x{p.quantity}</div>
+                                            {hasDiscount && (
+                                                <div className="summary-item-original-price">
+                                                    {p.price.toLocaleString("vi-VN")}đ
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="summary-item-price">
+                                            {(effectivePrice * p.quantity).toLocaleString("vi-VN")}đ
+                                        </div>
                                     </div>
-                                    <div className="summary-item-info">
-                                        <div className="summary-item-name">{p.name}</div>
-                                        <div className="summary-item-qty">x{p.quantity}</div>
-                                    </div>
-                                    <div className="summary-item-price">{(p.price * p.quantity).toLocaleString("vi-VN")}đ</div>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                         <div className="summary-divider"></div>
                         <div className="summary-row">
-                            <span>{t('subtotal')}</span>
-                            <span>{subTotal.toLocaleString("vi-VN")}đ</span>
+                            <span>{t('total_original_price') || 'Tổng giá gốc'}</span>
+                            <span>{totalOriginalPrice.toLocaleString("vi-VN")}đ</span>
                         </div>
-                        <div className="summary-row">
-                            <span>{t('shipping_fee')}</span>
-                            <span>{shippingFee.toLocaleString("vi-VN")}đ</span>
-                        </div>
+                        {totalDiscount > 0 && (
+                            <div className="summary-row discount">
+                                <span>{t('total_discount') || 'Tổng giá giảm'}</span>
+                                <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
+                            </div>
+                        )}
                         <div className="summary-divider"></div>
                         <div className="summary-total">
                             <span>{t('total')}</span>

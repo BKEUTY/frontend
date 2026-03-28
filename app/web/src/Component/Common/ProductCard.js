@@ -15,54 +15,18 @@ const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.
 
 const { Text, Title } = Typography;
 
-const ProductCard = ({ product, t, language, onClickData }) => {
+const ProductCard = ({ product, t }) => {
     const navigate = useNavigate();
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
-    const idForDetail = product.productId || product.id; 
-    const name = product.variantName || product.name || '';
-    
-    const originPrice = product.originPrice ?? product.oldPrice ?? product.price ?? 0;
-    const discountPrice = product.discountPrice ?? product.minPrice ?? 0;
-
-    const hasDiscount = originPrice > discountPrice && discountPrice > 0;
-    const displayPrice = hasDiscount ? discountPrice : originPrice;
-    
-    const formattedPrice = typeof displayPrice === 'number' ? `${displayPrice.toLocaleString("vi-VN")}đ` : displayPrice;
-    const oldPriceDisplay = hasDiscount ? `${originPrice.toLocaleString("vi-VN")}đ` : null;
-
-    let discountPercentage = null;
-    if (hasDiscount) {
-        discountPercentage = Math.round(((originPrice - discountPrice) / originPrice) * 100);
-    }
-
-    const brand = product.brand || 'BKEUTY';
-    const imgSource = product.imageUrl || product.image;
-    const image = imgSource ? getImageUrl(imgSource) : fallbackImg;
+    const image = product.imgUrl ? getImageUrl(product.imgUrl) : fallbackImg;
+    const hasDiscount = product.originPrice > 0 && product.discountPrice > 0 && product.discountPrice < product.originPrice;
     const rating = parseFloat(product.rating || 4.8);
-    const stockQuantity = product.stock ?? product.stockQuantity ?? 0;
-    
-    const firstCategory = product.categories && product.categories.length > 0 
-        ? (typeof product.categories[0] === 'object' ? product.categories[0].categoryName : product.categories[0])
-        : null;
-
-    let sold = product.sold || 120;
-    if (typeof sold === 'string') {
-        const parsed = parseInt(sold.replace(/\D/g, ''));
-        if (!isNaN(parsed)) sold = parsed;
-    }
-
-    const tag = product.tag;
+    const tag = hasDiscount ? t('promotion') : product.tag;
+    const productId = product.productId;
 
     const handleClick = () => {
-        const path = `/product/${idForDetail}`;
-        navigate(path, { 
-            state: { 
-                ...onClickData, 
-                productId: idForDetail, 
-                variantId: product.variantId || product.originalId 
-            } 
-        });
+        navigate(`/product/${product.variantName}`, { state: {productId} });
     };
 
     const CardContent = (
@@ -71,10 +35,7 @@ const ProductCard = ({ product, t, language, onClickData }) => {
             className="product-card-antd product-card"
             cover={
                 <div className="card-image-wrapper">
-                    <img alt={name} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
-                    {discountPercentage && (
-                        <div className="discount-badge">-{discountPercentage}%</div>
-                    )}
+                    <img alt={product.variantName} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
                 </div>
             }
             onClick={handleClick}
@@ -82,24 +43,44 @@ const ProductCard = ({ product, t, language, onClickData }) => {
         >
             <div className="card-info">
                 <Space size="small" className="card-brand-cat">
-                    <Text type="secondary" className="card-brand">{brand.toUpperCase()}</Text>
-                    {firstCategory && <Tag color="default" className="card-cat-tag">{firstCategory}</Tag>}
+                    <Text type="secondary" className="card-brand">{product.brand.toUpperCase()}</Text>
                 </Space>
-                
-                <Title level={5} className="card-name" ellipsis={{ rows: 2 }}>{name}</Title>
+
+                <Title level={5} className="card-name" ellipsis={{ rows: 2 }}>{product.variantName}</Title>
+
+                {product.categories && product.categories.length > 0 && (
+                    <div className="card-categories-wrapper">
+                        {product.categories.slice(0, 2).map((cat) => (
+                            <span key={cat.id} className="card-category-pill">
+                                {cat.categoryName}
+                            </span>
+                        ))}
+                        {product.categories.length > 2 && (
+                            <span className="card-category-pill plus-more">
+                                +{product.categories.length - 2}
+                            </span>
+                        )}
+                    </div>
+                )}
 
                 <Space size="small" align="center" className="card-rating">
                     <Rate disabled defaultValue={rating} allowHalf className="card-rating-stars" />
-                    <Text type="secondary" className="card-sold-count">({sold})</Text>
+                    {/* <Text type="secondary" className="card-sold-count">({product.sold})</Text> */}
                 </Space>
 
                 <div className="price-stock-row">
                     <div className="price-col">
-                        {oldPriceDisplay && <Text delete className="card-old-price">{oldPriceDisplay}</Text>}
-                        <Text className="card-price">{formattedPrice}</Text>
+                        {hasDiscount && (
+                            <Text delete className="card-old-price">
+                                {product.originPrice.toLocaleString('vi-VN')}đ
+                            </Text>
+                        )}
+                        <Text className="card-price">
+                            {product.discountPrice.toLocaleString('vi-VN')}đ
+                        </Text>
                     </div>
-                    <Tag color={stockQuantity > 0 ? 'green' : 'red'} className="stock-tag">
-                        {stockQuantity > 0 ? `${t('in_stock')} ${stockQuantity}` : t('out_of_stock_btn')}
+                    <Tag color={product.stock > 0 ? 'green' : 'red'} className="stock-tag">
+                        {product.stock > 0 ? `${t('in_stock')} ${product.stock}` : t('out_of_stock_btn')}
                     </Tag>
                 </div>
             </div>
@@ -107,11 +88,7 @@ const ProductCard = ({ product, t, language, onClickData }) => {
     );
 
     if (tag) {
-        return (
-            <Badge.Ribbon text={tag} color="pink">
-                {CardContent}
-            </Badge.Ribbon>
-        );
+        return <Badge.Ribbon text={tag} color="pink">{CardContent}</Badge.Ribbon>;
     }
 
     return CardContent;

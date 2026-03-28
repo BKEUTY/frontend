@@ -1,22 +1,16 @@
 import BaseApi from './BaseApi';
+import publicAxiosClient from './publicAxiosClient';
 
 class ProductApi extends BaseApi {
     constructor() {
-        super('/api/product');
-    }
-    getAll(params) {
-        return this.client.get(this.resource, { params });
+        super('/api/product', publicAxiosClient);
     }
 
     getCategories() {
         return this.client.get(`${this.resource}/categories`);
     }
 
-    getById(id) {
-        return this.client.get(`${this.resource}/${id}`);
-    }
 }
 
 const productApi = new ProductApi();
 export default productApi;
-

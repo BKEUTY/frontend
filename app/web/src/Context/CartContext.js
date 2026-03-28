@@ -7,64 +7,71 @@ const CartContext = createContext();
 
 export const useCart = () => useContext(CartContext);
 
+const LOCAL_CART_KEY = 'bkeuty_guest_cart';
+
+const getLocalCart = () => JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
+const saveLocalCart = (items) => localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(items));
+const clearLocalCart = () => localStorage.removeItem(LOCAL_CART_KEY);
+
+const mapCartItem = (item) => ({
+    cartId: item.cartId,
+    productVariantId: item.productVariantId,
+    name: item.name || '',
+    price: item.price ?? 0,
+    promotionPrice: item.promotionPrice ?? item.price ?? 0,
+    image: item.image || 'placeholder',
+    quantity: item.quantity,
+});
+
 export const CartProvider = ({ children }) => {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [cartItems, setCartItems] = useState([]);
-    const { user, isAuthenticated, user_role } = useAuth();
-    
-    const LOCAL_CART_KEY = 'bkeuty_guest_cart';
+    const { isAuthenticated, user_role } = useAuth();
 
     const fetchCart = useCallback(async () => {
         if (isAuthenticated) {
             try {
                 const res = await cartApi.getAll();
-                if (res.status === 200 || res.data) {
-                    const data = res.data || [];
-                    const mapped = data.map(item => ({
-                        ...item,
-                        id: item.productId || item.id,
-                        image: item.image || 'placeholder',
-                    }));
-                    setCartItems(mapped);
-                }
+                const data = res.data || [];
+                setCartItems(data.map(mapCartItem));
             } catch (error) {
-                console.error("Failed to fetch cart items:", error);
+                console.error("Failed to fetch cart:", error);
             }
         } else {
-            const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
-            setCartItems(localCart);
+            setCartItems(getLocalCart());
         }
     }, [isAuthenticated]);
 
     useEffect(() => {
         const syncCartOnLogin = async () => {
-            if (isAuthenticated && user_role === 'USER') {
-                const localCart = JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [];
-                if (localCart.length > 0) {
-                    for (const item of localCart) {
-                        try {
-                            await cartApi.add({
-                                productVariantId: item.variantId || item.productId || item.id,
-                                quantity: item.quantity
-                            });
-                        } catch (e) {
-                            console.error("Failed to sync item:", e);
-                        }
+            if (!isAuthenticated || user_role !== 'USER') return;
+
+            const localCart = getLocalCart();
+            if (localCart.length > 0) {
+                for (const item of localCart) {
+                    try {
+                        await cartApi.add({
+                            productVariantId: item.productVariantId,
+                            quantity: item.quantity,
+                        });
+                    } catch (e) {
+                        console.error("Failed to sync cart item:", e);
                     }
-                    localStorage.removeItem(LOCAL_CART_KEY);
                 }
-                fetchCart();
+                clearLocalCart();
             }
+            await fetchCart();
         };
         syncCartOnLogin();
-    }, [isAuthenticated, user_role, user?.id, fetchCart]);
+    }, [isAuthenticated, user_role, fetchCart]);
 
-    const saveLocalCart = (items) => {
-        localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(items));
-        setCartItems(items);
-    };
+    useEffect(() => {
+        if (!isAuthenticated) {
+            setCartItems(getLocalCart());
+        }
+    }, [isAuthenticated]);
 
-    const toggleCart = () => setIsCartOpen(!isCartOpen);
+    const toggleCart = () => setIsCartOpen(prev => !prev);
     const openCart = () => setIsCartOpen(true);
     const closeCart = () => setIsCartOpen(false);
 
@@ -76,42 +83,64 @@ export const CartProvider = ({ children }) => {
             try {
                 await cartApi.add({
                     productVariantId: product.productVariantId,
-                    quantity: quantityToAdd
+                    quantity: quantityToAdd,
                 });
                 await fetchCart();
             } catch (error) {
                 console.error("Failed to add to cart:", error);
             }
         } else {
-            const localCart = [...cartItems];
-            const existingIdx = localCart.findIndex(item => item.productVariantId === product.productVariantId || (item.id === product.id && !item.productVariantId));
+            const localCart = getLocalCart();
+            const existingIdx = localCart.findIndex(item => item.productVariantId === product.productVariantId);
             if (existingIdx > -1) {
                 localCart[existingIdx].quantity += quantityToAdd;
             } else {
-                localCart.push({ 
-                    ...product, 
-                    cartId: product.cartId || `local_${Date.now()}`, 
-                    quantity: quantityToAdd 
+                localCart.push({
+                    cartId: `local_${Date.now()}`,
+                    productVariantId: product.productVariantId,
+                    quantity: quantityToAdd,
+                    name: product.name,
+                    price: product.price,
+                    promotionPrice: product.promotionPrice || product.price,
+                    image: product.image || 'placeholder',
                 });
             }
             saveLocalCart(localCart);
+            setCartItems(localCart);
         }
     };
 
     const updateQuantity = async (cartId, quantity) => {
         if (quantity < 1) return;
 
+        const currentItem = cartItems.find(item => item.cartId === cartId);
+        if (!currentItem) return;
+
+        const isIncreasing = quantity > currentItem.quantity;
+        const diff = Math.abs(quantity - currentItem.quantity);
+
         if (isAuthenticated) {
             setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity } : item));
             try {
-                await axiosClient.put(`/api/cart/${cartId}`, { quantity });
-                fetchCart();
+                if (isIncreasing) {
+                    await cartApi.add({
+                        productVariantId: currentItem.productVariantId,
+                        quantity: diff
+                    });
+                } else {
+                    for (let i = 0; i < diff; i++) {
+                        await cartApi.decrease(cartId);
+                    }
+                }
             } catch (error) {
-                fetchCart(); 
+                await fetchCart();
             }
         } else {
-            const localCart = cartItems.map(item => item.cartId === cartId ? { ...item, quantity } : item);
+            const localCart = getLocalCart().map(item =>
+                item.cartId === cartId ? { ...item, quantity } : item
+            );
             saveLocalCart(localCart);
+            setCartItems(localCart);
         }
     };
 
@@ -120,21 +149,22 @@ export const CartProvider = ({ children }) => {
             setCartItems(prev => prev.filter(item => item.cartId !== cartId));
             try {
                 await axiosClient.delete(`/api/cart/${cartId}`);
-                fetchCart();
             } catch (error) {
-                fetchCart(); 
+                await fetchCart();
             }
         } else {
-            const localCart = cartItems.filter(item => item.cartId !== cartId);
+            const localCart = getLocalCart().filter(item => item.cartId !== cartId);
             saveLocalCart(localCart);
+            setCartItems(localCart);
         }
     };
 
     return (
-        <CartContext.Provider value={{ 
-            isCartOpen, toggleCart, openCart, closeCart, 
-            cartItems, setCartItems, addToCart, fetchCart, 
-            updateQuantity, removeFromCart 
+        <CartContext.Provider value={{
+            isCartOpen, toggleCart, openCart, closeCart,
+            cartItems, setCartItems,
+            addToCart, fetchCart,
+            updateQuantity, removeFromCart,
         }}>
             {children}
         </CartContext.Provider>

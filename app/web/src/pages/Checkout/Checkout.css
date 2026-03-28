@@ -504,6 +504,13 @@
     text-decoration: underline;
 }
 
+.summary-item-original-price {
+    font-size: 0.78rem;
+    color: #94a3b8;
+    text-decoration: line-through;
+    margin-top: 2px;
+}
+
 @media (max-width: 1024px) {
     .checkout-container {
         gap: 25px;

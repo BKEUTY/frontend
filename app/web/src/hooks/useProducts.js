@@ -6,52 +6,42 @@ export const useProducts = (pageSize = 20) => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [totalPages, setTotalPages] = useState(0);
+    const [totalItems, setTotalItems] = useState(0);
 
     const fetchProducts = useCallback(async (pageIndex, append, searchTerm, catId, currentSort) => {
         setIsLoading(true);
         setError(null);
         try {
-            const params = { page: pageIndex, size: pageSize };
-            if (searchTerm) params.search = searchTerm; 
-            if (catId && catId !== 'all') params.categoryId = catId;
-
-            const res = await productApi.getAll(params);
-            const data = res.data || res;
-            const rawContent = data.content || [];
-
-            let mappedProducts = rawContent.map(p => ({
-                id: p.productId,
-                productId: p.productId,
-                name: p.variantName,
-                price: p.discountPrice ?? p.originPrice ?? 0,
-                oldPrice: p.originPrice,
-                stockQuantity: p.stock ?? 0,
-                image: p.imageUrl,
-                originalId: p.productId,
-                parentId: p.productId
-            }));
+            const params = { 
+                page: pageIndex, 
+                size: pageSize 
+            };
 
             if (searchTerm) {
-                const lowerTerm = searchTerm.toLowerCase();
-                mappedProducts = mappedProducts.filter(v => 
-                    v.name?.toLowerCase().includes(lowerTerm)
-                );
+                params.name = searchTerm.trim();
             }
 
-            if (currentSort === 'price_asc') {
-                mappedProducts.sort((a, b) => a.price - b.price);
-            } else if (currentSort === 'price_desc') {
-                mappedProducts.sort((a, b) => b.price - a.price);
+            if (catId && catId !== 'all') {
+                params.categoryId = catId;
+            }
+            
+            if (currentSort !== 'default') {
+                params.sort = currentSort; 
             }
 
-            setProducts(prev => append ? [...prev, ...mappedProducts] : mappedProducts);
-            setTotalPages(data.totalPages || 1);
+            const res = await productApi.getAll(params);
+            const newItems = res.data?.content || [];
+
+            setProducts(prev => append ? [...prev, ...newItems] : newItems);
+            setTotalPages(res.data?.totalPages || 1);
+            setTotalItems(res.data?.totalElements || 0);
+
         } catch (err) {
             setError('api_error_fetch_products');
         } finally {
-            setTimeout(() => setIsLoading(false), 500);
+            setTimeout(() => setIsLoading(false), 300);
         }
     }, [pageSize]);
 
-    return { products, isLoading, error, totalPages, fetchProducts };
+    return { products, isLoading, error, totalPages, totalItems, fetchProducts };
 };

@@ -163,7 +163,6 @@ export default {
     price: "Giá",
     market_price: "Giá thị trường",
     ends_in: "KẾT THÚC TRONG",
-    vat_included: "đã bao gồm VAT",
     in_stock_label: "Trong kho",
     out_of_stock_btn: "Tạm hết hàng",
     items_available: "sản phẩm có sẵn",
@@ -442,6 +441,8 @@ export default {
     default_sort: "Sắp xếp: Mặc định",
     price_low_high: "Giá: Thấp đến cao",
     price_high_low: "Giá: Cao đến thấp",
+    stock_low_high: "Số lượng: Thấp đến cao",
+    stock_high_low: "Số lượng: Cao đến thấp",
     login_required_to_checkout: "Vui lòng đăng nhập để thanh toán",
 
     chatbot_title: "Trợ lý BKEUTY",
@@ -451,5 +452,11 @@ export default {
     chatbot_response_consult: "Cảm ơn bạn đã liên hệ! Chuyên viên tư vấn làm đẹp sẽ hỗ trợ bạn ngay lập tức. Trong thời gian chờ đợi, bạn có thể chia sẻ thêm về tình trạng da hiện tại không?",
     chatbot_demo_product_name: "Kem Dưỡng Ẩm Chuyên Sâu BKEUTY",
     view_now: "Xem ngay",
-    in_stock: "Còn hàng"
+    in_stock: "Còn hàng",
+    error_session_expired: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
+    pagination_showing: "Hiển thị",
+    pagination_of: "trong số",
+    pagination_results: "kết quả",
+    total_original_price: "Tổng giá gốc",
+    total_discount: "Tổng giảm giá"
 };

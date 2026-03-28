@@ -1,26 +1,34 @@
-import axiosClient from "./axiosClient";
+import BaseApi from './BaseApi';
 
-import { getAccessToken } from "./tokenStorage";
+class CartApi extends BaseApi {
+    constructor() {
+        super('/api/cart');
+    }
 
-const cartApi = {
-    getAll: () => {
-        const url = '/api/cart';
-        const token = getAccessToken();
-        return axiosClient.get(url, { 
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
+    getAll(config = {}) {
+        return this.client.get(this.resource, { 
             errorMessage: 'api_error_fetch_cart',
-            skipGlobalErrorHandler: true
-        });
-    },
-    add: (data) => {
-        const url = '/api/cart';
-        const token = getAccessToken();
-        return axiosClient.post(url, data, { 
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
-            errorMessage: 'api_error_add_cart',
-            skipGlobalErrorHandler: true
+            skipGlobalErrorHandler: true,
+            ...config
         });
     }
-};
 
+    add(data, config = {}) {
+        return this.client.post(this.resource, data, { 
+            errorMessage: 'api_error_add_cart',
+            skipGlobalErrorHandler: true,
+            ...config
+        });
+    }
+
+    decrease(cartId, config = {}) {
+        return this.client.put(`${this.resource}/${cartId}/minus`, {}, {
+            errorMessage: 'api_error_update_cart',
+            skipGlobalErrorHandler: true,
+            ...config
+        });
+    }
+}
+
+const cartApi = new CartApi();
 export default cartApi;

@@ -162,7 +162,6 @@ export default {
     price: "Price",
     market_price: "Market Price",
     ends_in: "ENDS IN",
-    vat_included: "VAT included",
     in_stock_label: "In stock",
     out_of_stock_btn: "Out of Stock",
     items_available: "items available",

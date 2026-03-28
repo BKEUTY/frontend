@@ -15,6 +15,10 @@ class BaseApi {
         return this.client.get(`${this.resource}/${id}`, config);
     }
 
+    getByName(name, config = {}) {
+        return this.client.get(`${this.resource}/name/${name}`, config);
+    }
+
     create(data, config = {}) {
         return this.client.post(this.resource, data, config);
     }

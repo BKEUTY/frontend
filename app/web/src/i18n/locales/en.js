@@ -162,7 +162,6 @@ export default {
     price: "Price",
     market_price: "Market Price",
     ends_in: "ENDS IN",
-    vat_included: "VAT included",
     in_stock_label: "In stock",
     out_of_stock_btn: "Out of Stock",
     items_available: "items available",
@@ -441,6 +440,8 @@ export default {
     default_sort: "Sort: Default",
     price_low_high: "Price: Low to high",
     price_high_low: "Price: High to low",
+    stock_low_high: "Stock: Low to high",
+    stock_high_low: "Stock: High to low",
     login_required_to_checkout: "Please log in to checkout",
 
     chatbot_title: "BKEUTY Assistant",
@@ -450,5 +451,11 @@ export default {
     chatbot_response_consult: "Thank you for reaching out! A beauty consultant will assist you shortly. In the meantime, could you share more about your skin condition?",
     chatbot_demo_product_name: "BKEUTY Deep Moisture Cream",
     view_now: "View Now",
-    in_stock: "In Stock"
+    in_stock: "In Stock",
+    error_session_expired: "Your session has expired. Please log in again.",
+    pagination_showing: "Showing",
+    pagination_of: "of",
+    pagination_results: "results",
+    total_original_price: "Total original price",
+    total_discount: "Total discount"
 };

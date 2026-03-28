@@ -274,7 +274,13 @@ export const RetailSystem = () => {
                             </div>
                         ))}
                     </div>
-                    <Pagination page={pagination.current} totalPages={totalPages} onPageChange={setCurrent} />
+                    <Pagination 
+                        page={pagination.current} 
+                        totalPages={totalPages} 
+                        totalItems={filteredBranches.length} 
+                        pageSize={pagination.pageSize} 
+                        onPageChange={setCurrent} 
+                    />
                 </>
             ) : (
                 <div style={{ padding: '40px 0' }}>

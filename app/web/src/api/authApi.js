@@ -1,22 +1,28 @@
-import axiosClient from "./axiosClient";
+import BaseApi from './BaseApi';
 
-const authApi = {
-    login: (data) => {
-        const url = '/api/auth/login';
-        return axiosClient.post(url, data);
-    },
-    register: (data) => {
-        const url = '/api/auth/register';
-        return axiosClient.post(url, data);
-    },
-    refresh: (data) => {
-        const url = '/api/auth/refresh';
-        return axiosClient.post(url, data || {}, { skipGlobalErrorHandler: true });
-    },
-    logout: () => {
-        const url = '/api/auth/logout';
-        return axiosClient.post(url);
+class AuthApi extends BaseApi {
+    constructor() {
+        super('/api/auth');
     }
-};
 
+    login(data) {
+        return this.client.post(`${this.resource}/login`, data);
+    }
+
+    register(data) {
+        return this.client.post(`${this.resource}/register`, data);
+    }
+
+    refresh(data) {
+        return this.client.post(`${this.resource}/refresh`, data || {}, { 
+            skipGlobalErrorHandler: true 
+        });
+    }
+
+    logout() {
+        return this.client.post(`${this.resource}/logout`);
+    }
+}
+
+const authApi = new AuthApi();
 export default authApi;

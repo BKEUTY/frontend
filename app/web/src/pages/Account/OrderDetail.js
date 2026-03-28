@@ -1,146 +1,100 @@
-
 import React from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { FaBoxOpen, FaGear, FaPlaneDeparture, FaCheck, FaTruckFast, FaInbox, FaFileInvoice, FaMapLocationDot, FaCircleInfo, FaBox, FaRotateLeft, FaArrowUpRightFromSquare } from "react-icons/fa6";
+import { FaCreditCard, FaMapLocationDot, FaArrowLeft } from "react-icons/fa6";
 import './OrderDetail.css';
 
 const OrderDetail = () => {
     const { id } = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
     const { t } = useLanguage();
 
-    const orderData = {
-        id: id || '3354654654526',
-        createdAt: '10/10/2023',
-        expectedDelivery: '10/10/2023',
-        status_logs: [
-            { title: t('order_placed_success'), desc: t('order_placed_desc'), time: '11:45 PM', icon: <FaBoxOpen /> },
-            { title: t('preparing_order'), desc: t('preparing_order_desc'), time: '11:45 PM', icon: <FaGear /> },
-            { title: t('international_processing'), desc: t('international_processing_desc'), time: '11:45 PM', icon: <FaPlaneDeparture /> }
-        ],
-        subtotal: 15755,
-        discount: 15755,
-        shipping: 30000,
-        tax: 0,
-        total: 46000
-    };
+    const orderData = location.state?.order;
+
+    if (!orderData) {
+        return (
+            <div className="order-detail-container" style={{ textAlign: 'center', padding: '50px' }}>
+                <p>{t('order_not_found') || 'Không tìm thấy thông tin đơn hàng.'}</p>
+                <button onClick={() => navigate('/account/orders')} className="btn-back-fallback">
+                    <FaArrowLeft /> {t('back')}
+                </button>
+            </div>
+        );
+    }
+    const subtotal = orderData.items?.reduce((sum, item) => sum + (item.price * item.quantity), 0) || orderData.total;
+    const totalDiscount = orderData.items?.reduce((sum, item) => {
+        if (item.promotionPrice && item.promotionPrice < item.price) {
+            return sum + ((item.price - item.promotionPrice) * item.quantity);
+        }
+        return sum;
+    }, 0) || 0;
 
     return (
         <div className="order-detail-container animate-fade-in">
             <div className="order-header animate-slide-up">
-                <h2>{t('order_id_label')}{orderData.id}</h2>
-                <div className="order-actions">
-                    <button className="btn-invoice"><FaFileInvoice /> {t('invoice')}</button>
-                    <button className="btn-track"><FaMapLocationDot /> {t('track_order')}</button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <button className="btn-back" onClick={() => navigate('/account/orders')}>
+                        <FaArrowLeft />
+                    </button>
+                    <h2>{t('order_id_label') || 'Mã đơn hàng: '}#{orderData.orderId || id}</h2>
                 </div>
             </div>
 
             <div className="order-dates animate-slide-up delay-100">
-                <span>{t('order_time')} <strong>{orderData.createdAt}</strong></span>
-                <span className="expected-date"><FaTruckFast /> {t('expected_delivery')} <strong>{orderData.expectedDelivery}</strong></span>
+                <span>{t('order_time') || 'Ngày đặt:'} <strong>{orderData.orderDate}</strong></span>
             </div>
 
-            <div className="order-timeline animate-slide-up delay-200">
-                <div className="timeline-step completed">
-                    <div className="step-icon-box"><FaCheck /></div>
-                    <div className="step-info">
-                        <div className="step-label">{t('timeline_paid')}</div>
-                        <div className="step-date">10/10/2023</div>
-                    </div>
-                </div>
-                <div className="timeline-step completed">
-                    <div className="step-icon-box"><FaBoxOpen /></div>
-                    <div className="step-info">
-                        <div className="step-label">{t('timeline_shipped')}</div>
-                        <div className="step-date">10/10/2023</div>
-                    </div>
-                </div>
-                <div className="timeline-step active">
-                    <div className="step-icon-box"><FaTruckFast /></div>
-                    <div className="step-info">
-                        <div className="step-label">{t('timeline_delivering')}</div>
-                        <div className="step-date">{t('timeline_date_expected')} 12/10</div>
-                    </div>
-                </div>
-                <div className="timeline-step">
-                    <div className="step-icon-box"><FaInbox /></div>
-                    <div className="step-info">
-                        <div className="step-label">{t('timeline_delivered')}</div>
-                        <div className="step-date">---</div>
-                    </div>
-                </div>
-            </div>
-
-            <div className="order-logs animate-slide-up delay-300">
-                {orderData.status_logs.map((log, index) => (
-                    <div className="log-item" key={index}>
-                        <div className="log-icon-placeholder">{log.icon}</div>
-                        <div className="log-content">
-                            <h4>{log.title}</h4>
-                            <p>{log.desc}</p>
+            <div className="order-items-list animate-slide-up delay-200">
+                <h3 className="section-title">{t('order_items') || 'Danh sách sản phẩm'}</h3>
+                {orderData.items?.map((item, index) => (
+                    <div className="order-item-card" key={index}>
+                        <div className="item-img">
+                            <img src={item.productVariantImage || 'https://placehold.co/100x100?text=Product'} alt={item.productVariantName} />
                         </div>
-                        <div className="log-time">{log.time}</div>
+                        <div className="item-details">
+                            <h4>{item.productVariantName}</h4>
+                            <p className="item-qty">Số lượng: x{item.quantity}</p>
+                        </div>
+                        <div className="item-pricing">
+                            <span className="current-price">{(item.promotionPrice || item.price).toLocaleString("vi-VN")}đ</span>
+                            {item.promotionPrice < item.price && (
+                                <span className="original-price">{item.price.toLocaleString("vi-VN")}đ</span>
+                            )}
+                        </div>
                     </div>
                 ))}
             </div>
 
             <div className="order-info-grid animate-slide-up delay-300">
                 <div className="info-section">
-                    <h3>{t('payment_header')}</h3>
-                    <p className="info-text">Visa **56 <span className="visa-badge">VISA</span></p>
+                    <h3><FaCreditCard /> {t('payment_header') || 'Phương thức thanh toán'}</h3>
+                    <p className="info-text font-bold">{orderData.paymentMethod}</p>
                 </div>
                 <div className="info-section">
-                    <h3>{t('delivery_header')}</h3>
+                    <h3><FaMapLocationDot /> {t('delivery_header') || 'Địa chỉ giao hàng'}</h3>
                     <div className="address-box">
-                        <p className="address-label">{t('address')}</p>
-                        <p>192/4 Lý tự trọng, Ninh Kiều, Cần Thơ</p>
+                        <p>{orderData.address}</p>
                     </div>
                 </div>
             </div>
 
             <div className="order-summary-section animate-slide-up delay-300">
-                <div className="help-section">
-                    <h3>{t('support_header')}</h3>
-                    <ul className="help-links">
-                        <li>
-                            <FaCircleInfo className="help-icon" />
-                            <span>{t('issue_delivery')}</span>
-                            <FaArrowUpRightFromSquare className="link-arrow" />
-                        </li>
-                        <li>
-                            <FaBox className="help-icon" />
-                            <span>{t('issue_order_info')}</span>
-                            <FaArrowUpRightFromSquare className="link-arrow" />
-                        </li>
-                        <li>
-                            <FaRotateLeft className="help-icon" />
-                            <span>{t('issue_return')}</span>
-                            <FaArrowUpRightFromSquare className="link-arrow" />
-                        </li>
-                    </ul>
-                </div>
-
                 <div className="summary-section">
-                    <h3>{t('order_overview')}</h3>
+                    <h3>{t('order_overview') || 'Tổng quan đơn hàng'}</h3>
                     <div className="summary-row">
-                        <span>{t('subtotal')}</span>
-                        <span>{orderData.subtotal.toLocaleString()}đ</span>
+                        <span>{t('subtotal') || 'Tổng giá gốc'}</span>
+                        <span>{subtotal.toLocaleString("vi-VN")}đ</span>
                     </div>
-                    <div className="summary-row">
-                        <span>{t('discount')}</span>
-                        <span>(20%) - {orderData.discount.toLocaleString()}đ</span>
-                    </div>
-                    <div className="summary-row">
-                        <span>{t('shipping_fee')}</span>
-                        <span>{orderData.shipping.toLocaleString()}đ</span>
-                    </div>
-                    <div className="summary-row">
-                        <span>{t('tax')}</span>
-                        <span>{orderData.tax}đ</span>
-                    </div>
+                    {totalDiscount > 0 && (
+                        <div className="summary-row discount-row">
+                            <span>{t('discount') || 'Tổng giảm giá'}</span>
+                            <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
+                        </div>
+                    )}
                     <div className="summary-row total-row">
-                        <span>{t('total')}</span>
-                        <span>{orderData.total.toLocaleString()}đ</span>
+                        <span>{t('total') || 'Tổng cộng'}</span>
+                        <span>{orderData.total.toLocaleString("vi-VN")}đ</span>
                     </div>
                 </div>
             </div>

@@ -1,38 +1,29 @@
 .product-card {
-    background: white;
-    border-radius: 12px;
+    background: #ffffff;
+    border-radius: 16px;
     overflow: hidden;
     border: 1px solid #f1f5f9;
-    box-shadow: none;
-    transition: all 0.2s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     flex-direction: column;
-    position: relative;
     height: 100%;
     cursor: pointer;
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    border-color: #e2e8f0;
+    box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.1);
 }
 
 .product-card-antd .ant-card-body {
     padding: 0 !important;
 }
 
-.product-card-antd .card-info {
-    padding: 12px 14px;
-}
-
-.product-card:hover {
-    transform: translateY(-2px);
-    box-shadow: none;
-    border-color: #e2e8f0;
-}
-
 .card-image-wrapper {
     position: relative;
     padding-top: 100%;
-    background: #f8fafc;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    background: #fdfdfd;
     overflow: hidden;
 }
 
@@ -41,38 +32,10 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 85%;
-    height: 85%;
+    width: 90%;
+    height: 90%;
     object-fit: contain;
-    transition: transform 0.5s ease;
-}
-
-.product-card:hover .card-image-wrapper img {
-    transform: translate(-50%, -50%) scale(1.05);
-}
-
-.discount-badge {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    background-color: #ef4444;
-    color: white;
-    font-weight: 800;
-    font-size: 0.8rem;
-    padding: 4px 10px;
-    border-radius: 20px;
-    z-index: 10;
-    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.3);
-}
-
-.card-badges {
-    position: absolute;
-    top: 12px;
-    left: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-    z-index: 2;
+    transition: transform 0.6s ease;
 }
 
 .card-info {
@@ -80,140 +43,137 @@
     display: flex;
     flex-direction: column;
     flex: 1;
-    text-align: left;
 }
 
 .card-brand {
-    color: #999;
-    font-size: 0.75rem;
+    color: #94a3b8;
+    font-size: 0.65rem;
     font-weight: 700;
-    letter-spacing: 1.2px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
 }
 
 .card-name {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--color_general_text);
-    margin-bottom: 8px;
-    line-height: 1.4;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    color: #1e293b !important;
+    margin-bottom: 8px !important;
+    line-height: 1.5;
+    height: 3rem;
     display: -webkit-box;
     -webkit-line-clamp: 2;
-    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
-    height: 2.8rem;
 }
 
-.card-meta {
+.card-categories-wrapper {
     display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 10px;
+    min-height: 22px;
+}
+
+.card-category-pill {
+    background-color: #f1f5f9;
+    color: #64748b;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 12px;
+    line-height: 1;
+    display: inline-flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.product-card:hover .card-category-pill {
+    background-color: #fff1f2;
+    color: #c2185b;
+}
+
+.card-category-pill.plus-more {
+    background-color: #e2e8f0;
+    color: #475569;
 }
 
 .card-rating {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    color: #ffa502;
-    font-size: 0.85rem;
-    font-weight: 700;
+    margin-bottom: 12px;
 }
 
 .card-rating-stars {
-    font-size: 12px !important;
-    color: #fadb14 !important;
-}
-
-.card-sold-count {
-    font-size: 12px !important;
-}
-
-.card-sold {
-    font-size: 0.8rem;
-    color: #999;
-    font-weight: 500;
+    font-size: 11px !important;
 }
 
 .price-stock-row {
-    margin-top: 10px;
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px dashed #f1f5f9;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 8px;
 }
 
 .price-col {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-}
-
-.card-price {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--color_main_title);
+    justify-content: center;
 }
 
 .card-old-price {
-    font-size: 0.85rem;
-    color: #b2bec3;
-    text-decoration: line-through;
-    font-weight: 500;
+    font-size: 0.75rem !important;
+    color: #cbd5e1 !important;
+    margin-bottom: -2px;
+}
+
+.card-price {
+    font-size: 1.15rem !important;
+    font-weight: 800 !important;
+    color: #0f172a !important;
 }
 
 .stock-tag {
     margin: 0 !important;
-    font-size: 0.75rem;
-    border-radius: 4px;
-    padding: 0 6px;
-}
-
-.card-brand-cat {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    margin-bottom: 8px;
-}
-
-.card-cat-tag {
     font-size: 10px !important;
-    line-height: 18px !important;
-    padding: 0 6px !important;
-    margin: 0 !important;
-    border-radius: 4px !important;
-    color: #64748b !important;
-    background: #f8fafc !important;
-    border-color: #e2e8f0 !important;
+    font-weight: 600 !important;
+    padding: 2px 8px !important;
+    border-radius: 6px !important;
+    border: none !important;
+    text-transform: uppercase;
+}
+
+.ant-tag-green {
+    background: #f0fdf4 !important;
+    color: #16a34a !important;
+}
+
+.ant-tag-red {
+    background: #fef2f2 !important;
+    color: #ef4444 !important;
 }
 
 @media (max-width: 768px) {
     .card-info {
         padding: 12px;
     }
-
+    
     .card-name {
-        font-size: 0.9rem;
+        font-size: 0.9rem !important;
         height: 2.7rem;
-        margin-bottom: 8px;
     }
 
     .card-price {
-        font-size: 1.1rem;
-    }
-
-    .card-badges {
-        top: 8px;
-        left: 8px;
+        font-size: 1rem !important;
     }
 
     .price-stock-row {
         flex-direction: column;
         align-items: flex-start;
-        gap: 6px;
+        gap: 8px;
+    }
+    
+    .stock-tag {
+        align-self: flex-start;
     }
 }

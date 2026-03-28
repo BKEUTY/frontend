@@ -14,52 +14,28 @@ export default function Cart() {
   const notify = useNotification();
   const { t } = useLanguage();
   const { cartItems: products, fetchCart, updateQuantity, removeFromCart } = useCart();
-
-  const PROMOTIONS = [
-    { id: 'PROMO1', code: 'WELCOME10', discount: 0.1, label: t('promo_welcome_10') },
-    { id: 'PROMO2', code: 'FREESHIP', discount: 20000, type: 'fixed', label: t('promo_freeship') },
-  ];
+  const { isAuthenticated } = useAuth();
 
   const [selectedIds, setSelectedIds] = useState(new Set());
-  const [selectedPromo, setSelectedPromo] = useState(null);
 
-  useEffect(() => {
-    fetchCart();
-  }, [fetchCart]);
+  useEffect(() => { fetchCart(); }, [fetchCart]);
 
   const handleSelectOne = (id) => {
     const newSelected = new Set(selectedIds);
-    if (newSelected.has(id)) {
-      newSelected.delete(id);
-    } else {
-      newSelected.add(id);
-    }
+    if (newSelected.has(id)) newSelected.delete(id);
+    else newSelected.add(id);
     setSelectedIds(newSelected);
   };
 
   const handleSelectAll = (e) => {
-    if (e.target.checked) {
-      setSelectedIds(new Set(products.map(p => p.cartId)));
-    } else {
-      setSelectedIds(new Set());
-    }
+    setSelectedIds(e.target.checked ? new Set(products.map(p => p.cartId)) : new Set());
   };
 
+  const getEffectivePrice = (p) =>
+    p.promotionPrice > 0 && p.promotionPrice < p.price ? p.promotionPrice : p.price;
+
   const selectedProducts = products.filter(p => selectedIds.has(p.cartId));
-  const subTotal = selectedProducts.reduce((sum, p) => sum + (p.price * p.quantity), 0);
-
-  let discountAmount = 0;
-  if (selectedPromo) {
-    if (selectedPromo.type === 'fixed') {
-      discountAmount = selectedPromo.discount;
-    } else {
-      discountAmount = subTotal * selectedPromo.discount;
-    }
-  }
-
-  const total = Math.max(0, subTotal - discountAmount);
-
-  const { isAuthenticated } = useAuth();
+  const subTotal = selectedProducts.reduce((sum, p) => sum + getEffectivePrice(p) * p.quantity, 0);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -67,7 +43,6 @@ export default function Cart() {
       navigate("/login");
       return;
     }
-    
     if (selectedIds.size === 0) {
       notify(t('select_min_one'), "error");
       return;
@@ -75,10 +50,13 @@ export default function Cart() {
     navigate("/checkout", {
       state: {
         cartIds: Array.from(selectedIds),
-        selectedProducts: selectedProducts,
-        subTotal: subTotal,
-        discount: discountAmount,
-        total: total,
+        selectedProducts: selectedProducts.map(p => ({
+          ...p,
+          effectivePrice: getEffectivePrice(p),
+        })),
+        subTotal,
+        discount: 0,
+        total: subTotal,
       },
     });
   };
@@ -91,7 +69,7 @@ export default function Cart() {
       newSelected.delete(cartId);
       setSelectedIds(newSelected);
       notify(t('delete_success'), "success");
-    } catch (err) {
+    } catch {
       notify(t('delete_error'), "error");
     }
   };
@@ -129,60 +107,73 @@ export default function Cart() {
                 </button>
               </div>
             ) : (
-              products.map((product) => (
-                <div id={product.cartId} className="cart-item-row" key={product.cartId}>
-                  <div className="cart-col-checkbox">
-                    <input
-                      type="checkbox"
-                      checked={selectedIds.has(product.cartId)}
-                      onChange={() => handleSelectOne(product.cartId)}
-                      className="cart-checkbox"
-                    />
-                  </div>
+              products.map((product) => {
+                const hasDiscount = product.promotionPrice > 0 && product.promotionPrice < product.price;
+                const effectivePrice = hasDiscount ? product.promotionPrice : product.price;
 
-                  <div className="cart-col-product cart-product-info">
-                    <div className="cart-product-img-wrapper">
-                      <img
-                        className="cart-product-img"
-                        loading="lazy"
-                        src={product.image && product.image !== 'placeholder' ? getImageUrl(product.image) : product_cart_image}
-                        alt="product"
-                        onError={(e) => { e.target.src = product_cart_image }}
+                return (
+                  <div id={product.cartId} className="cart-item-row" key={product.cartId}>
+                    <div className="cart-col-checkbox">
+                      <input
+                        type="checkbox"
+                        checked={selectedIds.has(product.cartId)}
+                        onChange={() => handleSelectOne(product.cartId)}
+                        className="cart-checkbox"
                       />
                     </div>
-                    <div className="cart-product-details">
-                      <p className="cart-product-name">{product.name}</p>
-                      <p className="cart-product-desc">
-                        {t('description')}: {product.description || product.variantDisplay}
-                      </p>
+
+                    <div className="cart-col-product cart-product-info">
+                      <div className="cart-product-img-wrapper">
+                        <img
+                          className="cart-product-img"
+                          loading="lazy"
+                          src={product.image && product.image !== 'placeholder' ? getImageUrl(product.image) : product_cart_image}
+                          alt="product"
+                          onError={(e) => { e.target.src = product_cart_image }}
+                        />
+                      </div>
+                      <div className="cart-product-details">
+                        <p className="cart-product-name">{product.name}</p>
+                        <p className="cart-product-desc">
+                          {t('description')}: {product.description || product.variantDisplay}
+                        </p>
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="cart-col-price">
-                    {product.price.toLocaleString("vi-VN")}đ
-                  </div>
-
-                  <div className="cart-col-quantity">
-                    <div className="quantity-control">
-                      <button className="qty-btn" onClick={() => updateQuantity(product.cartId, product.quantity - 1)}>-</button>
-                      <span className="qty-value">{product.quantity}</span>
-                      <button className="qty-btn" onClick={() => updateQuantity(product.cartId, product.quantity + 1)}>+</button>
+                    <div className="cart-col-price">
+                      <div className="cart-price-wrapper">
+                        <span className="cart-current-price">{effectivePrice.toLocaleString("vi-VN")}đ</span>
+                        {hasDiscount && (
+                          <span className="cart-old-price">{product.price.toLocaleString("vi-VN")}đ</span>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="cart-col-total cart-item-total">
-                    {(product.price * product.quantity).toLocaleString("vi-VN")}đ
-                  </div>
+                    <div className="cart-col-quantity">
+                      <div className="quantity-control">
+                        <button
+                          className="qty-btn"
+                          disabled={product.quantity <= 1}
+                          onClick={() => updateQuantity(product.cartId, product.quantity - 1)}
+                        >-</button>
+                        <span className="qty-value">{product.quantity}</span>
+                        <button
+                          className="qty-btn"
+                          onClick={() => updateQuantity(product.cartId, product.quantity + 1)}
+                        >+</button>
+                      </div>
+                    </div>
 
-                  <button
-                    className="cart-btn-delete"
-                    onClick={() => handleDelete(product.cartId)}
-                    title={t('delete')}
-                  >
-                    <DeleteOutlined />
-                  </button>
-                </div>
-              ))
+                    <div className="cart-col-total cart-item-total">
+                      {(effectivePrice * product.quantity).toLocaleString("vi-VN")}đ
+                    </div>
+
+                    <button className="cart-btn-delete" onClick={() => handleDelete(product.cartId)} title={t('delete')}>
+                      <DeleteOutlined />
+                    </button>
+                  </div>
+                );
+              })
             )}
           </div>
         </div>
@@ -190,36 +181,10 @@ export default function Cart() {
         {products.length > 0 && (
           <div className="cart-summary-section">
             <div className="cart-summary-box">
-              <div className="promotion-section">
-                <h3>{t('promotion')}</h3>
-                <select
-                  className="promo-select"
-                  onChange={(e) => {
-                    const promo = PROMOTIONS.find(p => p.code === e.target.value);
-                    setSelectedPromo(promo || null);
-                  }}
-                >
-                  <option value="">{t('select_promo')}</option>
-                  {PROMOTIONS.map(p => (
-                    <option key={p.id} value={p.code}>{p.code} - {p.label}</option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="cart-divider"></div>
-
               <div className="cart-total-row">
                 <span className="total-label">{t('total')} ({selectedIds.size} {t('product')}):</span>
-                <div style={{ textAlign: 'right' }}>
-                  {selectedPromo && (
-                    <div style={{ fontSize: '0.9rem', color: '#2e7d32', marginBottom: '5px' }}>
-                      - {discountAmount.toLocaleString("vi-VN")}đ
-                    </div>
-                  )}
-                  <span className="total-amount">{total.toLocaleString("vi-VN")}đ</span>
-                </div>
+                <span className="total-amount">{subTotal.toLocaleString("vi-VN")}đ</span>
               </div>
-
               <button
                 className={`btn-checkout ${selectedIds.size === 0 ? 'disabled' : ''}`}
                 onClick={handleCheckout}

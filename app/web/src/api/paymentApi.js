@@ -6,7 +6,9 @@ class PaymentApi extends BaseApi {
     }
 
     checkStatus(orderId) {
-        return this.client.post(`${this.resource}/status`, { orderId }, { errorMessage: 'api_error_payment_status' });
+        return this.client.post(`${this.resource}/status`, { orderId }, { 
+            errorMessage: 'api_error_payment_status' 
+        });
     }
 }
 

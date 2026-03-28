@@ -1,13 +1,20 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import authApi from '../api/authApi';
-import { setAccessToken, clearAccessToken, getAccessToken } from '../api/tokenStorage';
+import { 
+    setAccessToken, 
+    clearAccessToken, 
+    getAccessToken,
+    setUserSession,
+    getUserSession,
+    clearUserSession
+} from '../api/tokenStorage';
 
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
 
 const decodeToken = (token) => {
-    if (!token || typeof token !== 'string' || !token.includes('.')) return {};
+    if (!token || typeof token !== 'string' || !token.includes('.')) return null;
     try {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
@@ -16,83 +23,62 @@ const decodeToken = (token) => {
         ).join(''));
         return JSON.parse(jsonPayload);
     } catch (e) {
-        return {};
+        return null;
     }
 };
 
 const extractUserFromToken = (accessToken) => {
-    const userData = decodeToken(accessToken);
-    const userRole = userData.user_role || (userData.realm_access?.roles?.includes('USER') ? 'USER' : 'UNKNOWN');
-    const role = userRole.toUpperCase() === 'USER' ? 'USER' : 'UNKNOWN';
+    const decodedPayload = decodeToken(accessToken);
+    if (!decodedPayload) throw new Error("Invalid token payload");
+
+    if (decodedPayload.user_role !== 'user') {
+        throw new Error('Access Denied: You do not have User privileges.');
+    }
 
     return {
-        id: userData.sub,
-        email: userData.email,
-        name: userData.name || userData.preferred_username,
-        user_role: role
+        id: decodedPayload.sub,
+        email: decodedPayload.email,
+        name: decodedPayload.name,
+        user_role: decodedPayload.user_role
     };
 };
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(() => {
-        const storedUser = sessionStorage.getItem('user');
-        return storedUser ? JSON.parse(storedUser) : null;
-    });
+    const [user, setUser] = useState(() => getUserSession());
     const [isInitializing, setIsInitializing] = useState(true);
 
-    const refreshAccessToken = useCallback(async () => {
-        try {
-            const response = await authApi.refresh();
-            const accessToken = response.data.accessToken || response.data.access_token || response.data.data?.accessToken;
-            
-            if (!accessToken) throw new Error('No access token returned');
-            const newUser = extractUserFromToken(accessToken);
-            if (newUser.user_role !== 'USER') {
-                clearAccessToken();
-                setUser(null);
-                sessionStorage.removeItem('user');
-                return false;
-            }
-
-            setAccessToken(accessToken);
-            setUser(newUser);
-            sessionStorage.setItem('user', JSON.stringify(newUser));
-            
-            return true;
-        } catch (error) {
-            if (error.response?.status === 401 || error.response?.status === 400) {
-                clearAccessToken();
-                setUser(null);
-                sessionStorage.removeItem('user');
-                return false;
-            }
-            return true; 
-        }
+    const handleSessionCleanup = useCallback(() => {
+        clearAccessToken();
+        clearUserSession();
+        setUser(null);
     }, []);
 
     useEffect(() => {
-        const initAuth = async () => {
-            if (sessionStorage.getItem('user') || getAccessToken()) {
-                await refreshAccessToken();
+        const initAuth = () => {
+            const token = getAccessToken();
+            const session = getUserSession();
+
+            if (!token || !session) {
+                handleSessionCleanup();
+            } else {
+                setUser(session);
             }
             setIsInitializing(false);
         };
         initAuth();
-    }, [refreshAccessToken]);
+    }, [handleSessionCleanup]);
 
-    const login = async (email, password) => {
-        const response = await authApi.login({ username: email, password });
-        const accessToken = response.data.accessToken || response.data.access_token || response.data.data?.accessToken;
+    const login = async (username, password) => {
+        const response = await authApi.login({ username, password });
+        const accessToken = response.data.accessToken;
         
+        if (!accessToken) throw new Error('Login failed: No access token');
+
         const newUser = extractUserFromToken(accessToken);
-        
-        if (newUser.user_role !== 'USER') {
-            throw new Error('Access Denied: Only User allowed');
-        }
 
         setAccessToken(accessToken);
+        setUserSession(newUser);
         setUser(newUser);
-        sessionStorage.setItem('user', JSON.stringify(newUser));
         
         return newUser;
     };
@@ -101,10 +87,9 @@ export const AuthProvider = ({ children }) => {
         try {
             await authApi.logout();
         } catch (error) {
+            console.error(error);
         } finally {
-            setUser(null);
-            clearAccessToken();
-            sessionStorage.removeItem('user');
+            handleSessionCleanup();
         }
     };
 
@@ -115,8 +100,7 @@ export const AuthProvider = ({ children }) => {
             user_role: user?.user_role,
             isInitializing,
             login,
-            logout,
-            refreshAccessToken
+            logout
         }}>
             {!isInitializing && children}
         </AuthContext.Provider>

@@ -10,7 +10,7 @@ import { useDebounce } from "../../hooks/useDebounce";
 import { useProducts } from "../../hooks/useProducts";
 
 export default function Product() {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const dropdownRef = useRef(null);
   const pageSize = 20;
 
@@ -18,55 +18,63 @@ export default function Product() {
   const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
   const [page, setPage] = useState(0);
   const [isPaginationMode, setIsPaginationMode] = useState(false);
-  
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOption, setSortOption] = useState('default');
   const [activeCategory, setActiveCategory] = useState(null);
 
   const debouncedSearch = useDebounce(searchTerm, 500);
-  const { products, isLoading, error, totalPages, fetchProducts } = useProducts(pageSize);
+  const { products, isLoading, error, totalPages, totalItems, fetchProducts } = useProducts(pageSize);
 
   useClickOutside(dropdownRef, () => setIsMobileCatOpen(false));
 
   useEffect(() => {
+    let isMounted = true;
     const fetchCategories = async () => {
       try {
         const res = await productApi.getCategories();
-        if (res.data) setCategories(res.data);
+        if (isMounted && res.data) setCategories(res.data);
       } catch (err) {}
     };
     fetchCategories();
+    return () => { isMounted = false };
   }, []);
 
   useEffect(() => {
     setPage(0);
-    const isFiltering = debouncedSearch.length > 0 || activeCategory !== null;
+    const isFiltering = debouncedSearch.length > 0 || activeCategory !== null || sortOption !== 'default';
     setIsPaginationMode(isFiltering);
     fetchProducts(0, false, debouncedSearch, activeCategory, sortOption);
   }, [debouncedSearch, activeCategory, sortOption, fetchProducts]);
 
   const handleCategorySelect = (id) => {
+    if (activeCategory === id) return;
     setActiveCategory(id);
     setIsMobileCatOpen(false);
   };
 
   const handleSortChange = (e) => {
-    setSortOption(e.target.value);
+    if (sortOption === e.target.value) return;
+    setSortOption(e.target.value);    
   };
 
   const handleLoadMore = () => {
+    if (page >= totalPages - 1 || isLoading) return;
     const nextPage = page + 1;
     setPage(nextPage);
     fetchProducts(nextPage, true, debouncedSearch, activeCategory, sortOption);
   };
 
   const handlePageChange = (newPage) => {
+    if (page === newPage || isLoading) return;
     setPage(newPage);
     fetchProducts(newPage, false, debouncedSearch, activeCategory, sortOption);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleSearchSubmit = () => {
+    console.log("Debounce: ", debouncedSearch);
+    console.log("SearchTerm: ", searchTerm);
+    if (debouncedSearch === searchTerm) return;
     setIsPaginationMode(true);
     setPage(0);
     fetchProducts(0, false, searchTerm, activeCategory, sortOption);
@@ -111,7 +119,7 @@ export default function Product() {
                 ))}
               </div>
               <div className="mega-promo">
-                <div className="promo-badge">HOT DEAL</div>
+                <div className="promo-badge">{t('hot_deals')}</div>
                 <h4>{t('mega_promo_title')}</h4>
                 <p>{t('mega_promo_desc')}</p>
                 <Link to="/product" className="promo-link">{t('explore_more')}</Link>
@@ -147,7 +155,7 @@ export default function Product() {
             <div className="product-header-bar product-header-flex">
               <div className="product-breadcrumb">
                 <span className="current">{getCurrentCategoryName()}</span>
-                <span className="count-badge">({products.length}{!isPaginationMode && products.length > 0 ? '+' : ''})</span>
+                <span className="count-badge">({totalItems})</span>
               </div>
               <div className="product-sort">
                 <select 
@@ -158,6 +166,8 @@ export default function Product() {
                   <option value="default">{t('default_sort')}</option>
                   <option value="price_asc">{t('price_low_high')}</option>
                   <option value="price_desc">{t('price_high_low')}</option>
+                  <option value="stock_desc">{t('stock_high_low')}</option>
+                  <option value="stock_asc">{t('stock_low_high')}</option>
                 </select>
               </div>
             </div>
@@ -183,16 +193,11 @@ export default function Product() {
             ) : (
               <>
                 <div className="product-grid">
-                  {products.map((product, idx) => (
+                  {products.map((product) => (
                     <ProductCard
-                      key={`${product.productId || product.id}-${idx}`}
+                      key={`${product.productId}`}
                       product={product}
                       t={t}
-                      language={language}
-                      onClickData={{
-                          category: getCurrentCategoryName(),
-                          from: '/product'
-                      }}
                     />
                   ))}
                 </div>
@@ -214,6 +219,8 @@ export default function Product() {
                     <Pagination
                       page={page}
                       totalPages={totalPages}
+                      totalItems={totalItems}
+                      pageSize={pageSize}
                       onPageChange={handlePageChange}
                     />
                   )}

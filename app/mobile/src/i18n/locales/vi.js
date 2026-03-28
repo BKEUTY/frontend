@@ -163,7 +163,6 @@ export default {
     price: "Giá",
     market_price: "Giá thị trường",
     ends_in: "KẾT THÚC TRONG",
-    vat_included: "đã bao gồm VAT",
     in_stock_label: "Trong kho",
     out_of_stock_btn: "Tạm hết hàng",
     items_available: "sản phẩm có sẵn",

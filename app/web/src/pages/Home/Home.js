@@ -13,27 +13,17 @@ import productApi from '../../api/productApi';
 const bannerImages = [banner1, banner2];
 
 const Home = () => {
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [currentBanner, setCurrentBanner] = useState(0);
 
     const fetchHomeData = async () => {
         try {
             const response = await productApi.getAll({ page: 0, size: 10 });
-            const data = response.data || response;
-            const rawContent = data.content || [];
+            const rawContent = response.data.content;
 
             return rawContent.map(p => ({
-                id: p.productId || p.id,
-                productId: p.productId || p.id,
-                name: p.variantName || p.name || '',
-                price: p.discountPrice ?? p.originPrice ?? p.price ?? 0,
-                originPrice: p.originPrice ?? p.oldPrice ?? p.price ?? 0,
-                discountPrice: p.discountPrice ?? p.minPrice ?? 0,
-                stockQuantity: p.stock ?? p.stockQuantity ?? 0,
-                image: p.imageUrl || p.image,
-                originalId: p.productId || p.id,
-                parentId: p.productId || p.id
+                ...p
             }));
         } catch (error) {
             return [];
@@ -116,11 +106,6 @@ const Home = () => {
                                 key={item.id}
                                 product={{ ...item, tag: t('best_sellers') }}
                                 t={t}
-                                language={language}
-                                onClickData={{
-                                    category: t('best_sellers'),
-                                    from: '/'
-                                }}
                             />
                         )))}
                 </div>
@@ -129,16 +114,11 @@ const Home = () => {
             <section className="section-full-width bg-gray animate-slide-up delay-200">
                 <h2 className="home-section-title">{t('section_suggested')}</h2>
                 <div className="suggested-grid">
-                    {suggestedProducts.map((item, index) => (
+                    {suggestedProducts.map((item) => (
                         <ProductCard
-                            key={`${item.id}-${index}`}
+                            key={item.id}
                             product={{ ...item, tag: t('hot_deals') }}
                             t={t}
-                            language={language}
-                            onClickData={{
-                                category: t('hot_deals'),
-                                from: '/'
-                            }}
                         />
                     ))}
                 </div>

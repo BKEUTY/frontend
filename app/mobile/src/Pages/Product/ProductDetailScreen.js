@@ -244,7 +244,6 @@ const ProductDetailScreen = ({ route, navigation }) => {
                             <Text style={styles.currentPrice}>
                                 {(currentVariant ? currentVariant.price : (productDetail.price || 0)).toLocaleString("vi-VN")}đ
                             </Text>
-                            <Text style={styles.vatText}>{t('vat_included')}</Text>
                         </View>
                         <View style={styles.soldBox}>
                             <Text style={styles.soldText}>{t('sold_count')}: 1.2k</Text>

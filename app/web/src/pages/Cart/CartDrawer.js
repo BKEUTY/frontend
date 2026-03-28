@@ -18,6 +18,11 @@ const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.
 
 const { Text } = Typography;
 
+const getEffectivePrice = (item) =>
+    item.promotionPrice > 0 && item.promotionPrice < item.price
+        ? item.promotionPrice
+        : item.price;
+
 const CartDrawer = () => {
     const { isCartOpen, closeCart, cartItems, removeFromCart } = useCart();
     const { t } = useLanguage();
@@ -33,7 +38,7 @@ const CartDrawer = () => {
 
     const selectedTotal = cartItems
         .filter(item => selectedIds.has(item.cartId))
-        .reduce((sum, item) => sum + (typeof item.price === 'number' ? item.price : 0) * item.quantity, 0);
+        .reduce((sum, item) => sum + getEffectivePrice(item) * item.quantity, 0);
 
     const handleCheckout = () => {
         if (selectedIds.size === 0) return;
@@ -42,10 +47,13 @@ const CartDrawer = () => {
         navigate('/checkout', {
             state: {
                 cartIds: Array.from(selectedIds),
-                selectedProducts,
+                selectedProducts: selectedProducts.map(p => ({
+                    ...p,
+                    effectivePrice: getEffectivePrice(p),
+                })),
                 subTotal: selectedTotal,
                 discount: 0,
-                total: selectedTotal
+                total: selectedTotal,
             }
         });
     };
@@ -57,21 +65,10 @@ const CartDrawer = () => {
                 <span className="total-amount">{selectedTotal.toLocaleString('vi-VN')}đ</span>
             </div>
             <Space direction="vertical" className="cart-drawer-btn-space">
-                <CButton
-                    type="primary"
-                    block
-                    size="large"
-                    onClick={handleCheckout}
-                    disabled={selectedIds.size === 0}
-                >
+                <CButton type="primary" block size="large" onClick={handleCheckout} disabled={selectedIds.size === 0}>
                     {t('checkout_now')} ({selectedIds.size})
                 </CButton>
-                <CButton 
-                    type="secondary"
-                    block 
-                    size="large" 
-                    onClick={() => { closeCart(); navigate('/cart'); }}
-                >
+                <CButton type="secondary" block size="large" onClick={() => { closeCart(); navigate('/cart'); }}>
                     {t('view_cart')}
                 </CButton>
             </Space>
@@ -90,7 +87,7 @@ const CartDrawer = () => {
         >
             {cartItems.length === 0 ? (
                 <div className="cart-empty-container">
-                    <EmptyState 
+                    <EmptyState
                         icon={<ShoppingCartOutlined className="cart-empty-icon" />}
                         title={t('cart_empty')}
                         description={t('cart_empty_desc')}
@@ -102,40 +99,56 @@ const CartDrawer = () => {
                 <List
                     itemLayout="horizontal"
                     dataSource={cartItems}
-                    renderItem={item => (
-                        <List.Item
-                            actions={[
-                                <Button
-                                    type="text"
-                                    danger
-                                    icon={<DeleteOutlined />}
-                                    onClick={() => removeFromCart(item.cartId)}
-                                    className="cart-drawer-delete-btn"
-                                />
-                            ]}
-                        >
-                            <List.Item.Meta
-                                avatar={
-                                    <div className="cart-drawer-avatar-wrap">
-                                        <Checkbox
-                                            checked={selectedIds.has(item.cartId)}
-                                            onChange={() => toggleSelect(item.cartId)}
-                                        />
-                                        <Avatar shape="square" size={64} src={item.image || getRandomImage()} />
-                                    </div>
-                                }
-                                title={<Text ellipsis={{ tooltip: item.name }} className="cart-drawer-item-title">{item.name}</Text>}
-                                description={
-                                    <div className="cart-drawer-item-desc">
-                                        <Text type="secondary">x{item.quantity}</Text>
-                                        <Text strong className="cart-drawer-item-price">
-                                            {item.price?.toLocaleString('vi-VN')}đ
+                    renderItem={item => {
+                        const hasDiscount = item.promotionPrice > 0 && item.promotionPrice < item.price;
+                        const effectivePrice = hasDiscount ? item.promotionPrice : item.price;
+
+                        return (
+                            <List.Item
+                                actions={[
+                                    <Button
+                                        type="text"
+                                        danger
+                                        icon={<DeleteOutlined />}
+                                        onClick={() => removeFromCart(item.cartId)}
+                                        className="cart-drawer-delete-btn"
+                                    />
+                                ]}
+                            >
+                                <List.Item.Meta
+                                    avatar={
+                                        <div className="cart-drawer-avatar-wrap">
+                                            <Checkbox
+                                                checked={selectedIds.has(item.cartId)}
+                                                onChange={() => toggleSelect(item.cartId)}
+                                            />
+                                            <Avatar shape="square" size={64} src={item.image || getRandomImage()} />
+                                        </div>
+                                    }
+                                    title={
+                                        <Text ellipsis={{ tooltip: item.name }} className="cart-drawer-item-title">
+                                            {item.name}
                                         </Text>
-                                    </div>
-                                }
-                            />
-                        </List.Item>
-                    )}
+                                    }
+                                    description={
+                                        <div className="cart-drawer-item-desc">
+                                            <Text type="secondary">x{item.quantity}</Text>
+                                            <div className="cart-drawer-price-row">
+                                                <Text strong className="cart-drawer-item-price">
+                                                    {effectivePrice.toLocaleString('vi-VN')}đ
+                                                </Text>
+                                                {hasDiscount && (
+                                                    <Text delete className="cart-drawer-item-old-price">
+                                                        {item.price.toLocaleString('vi-VN')}đ
+                                                    </Text>
+                                                )}
+                                            </div>
+                                        </div>
+                                    }
+                                />
+                            </List.Item>
+                        );
+                    }}
                 />
             )}
         </Drawer>

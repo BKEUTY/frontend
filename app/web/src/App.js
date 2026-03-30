@@ -1,4 +1,5 @@
 import "./App.css";
+import React, { Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { NotificationProvider } from "./Context/NotificationContext";
 import { LanguageProvider } from "./i18n/LanguageContext";
@@ -10,8 +11,8 @@ import { AuthProvider } from "./Context/AuthContext";
 import { authRoutes, errorRoutes } from "./routes/authRoutes";
 import { userRoutes } from "./routes/userRoutes";
 import ErrorBoundary from "./Component/ErrorBoundary/ErrorBoundary";
-import React, { Suspense } from 'react';
 import Skeleton from "./Component/Common/Skeleton";
+import { ConfigProvider, App as AntApp } from "antd"; 
 
 function Layout() {
   const location = useLocation();
@@ -23,48 +24,52 @@ function Layout() {
   const showFooter = !isAuth;
 
   return (
-    <div className="App">
-      {showHeader && <Header />}
+    <AntApp>
+      <div className="App">
+        {showHeader && <Header />}
 
-      <main className={isAuth ? "" : "main_content"}>
-        <ErrorBoundary>
-          <Suspense fallback={<div style={{ padding: '20px' }}><Skeleton width="100%" height="400px" /></div>}>
-            <Routes>
-              {authRoutes.map((route, index) => (
-                <Route key={index} path={route.path} element={route.element} index={route.index} />
-              ))}
+        <main className={isAuth ? "" : "main_content"}>
+          <ErrorBoundary>
+            <Suspense fallback={<div style={{ padding: '20px' }}><Skeleton width="100%" height="400px" /></div>}>
+              <Routes>
+                {authRoutes.map((route, index) => (
+                  <Route key={index} path={route.path} element={route.element} index={route.index} />
+                ))}
 
-              {userRoutes.map((route, index) => (
-                <Route key={index} path={route.path} element={route.element} />
-              ))}
+                {userRoutes.map((route, index) => (
+                  <Route key={index} path={route.path} element={route.element} />
+                ))}
 
-              {errorRoutes.map((route, index) => (
-                <Route key={index} path={route.path} element={route.element} />
-              ))}
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </main>
+                {errorRoutes.map((route, index) => (
+                  <Route key={index} path={route.path} element={route.element} />
+                ))}
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+        </main>
 
-      {showFooter && <Footer />}
-      {showHeader && <CartDrawer />}
-    </div>
+        {showFooter && <Footer />}
+        {showHeader && <CartDrawer />}
+      </div>
+    </AntApp>
   );
 }
 
 function App() {
   return (
-    <LanguageProvider>
-      <NotificationProvider>
-        <Router>
-          <AuthProvider>
-            <CartProvider>
-              <Layout />
-            </CartProvider>
-          </AuthProvider>
-        </Router>
-      </NotificationProvider>
-    </LanguageProvider>
+    <ConfigProvider theme={{ cssVar: true, hashed: false }}>
+      <LanguageProvider>
+        <NotificationProvider>
+          <Router>
+            <AuthProvider>
+              <CartProvider>
+                <Layout />
+              </CartProvider>
+            </AuthProvider>
+          </Router>
+        </NotificationProvider>
+      </LanguageProvider>
+    </ConfigProvider>
   );
 }
 

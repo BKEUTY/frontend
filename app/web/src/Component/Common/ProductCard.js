@@ -26,7 +26,7 @@ const ProductCard = ({ product, t }) => {
     const productId = product.productId;
 
     const handleClick = () => {
-        navigate(`/product/${product.variantName}`, { state: {productId} });
+        navigate(`/product/${product.variantName}`, { state: { productId } });
     };
 
     const CardContent = (

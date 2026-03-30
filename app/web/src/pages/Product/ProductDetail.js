@@ -6,6 +6,7 @@ import { useCart } from '../../Context/CartContext';
 import './ProductDetail.css';
 import { StarFilled, CheckCircleFilled, HeartOutlined, MessageOutlined, ShoppingOutlined } from '@ant-design/icons';
 import { CButton, Pagination, ProductCard, Skeleton } from '../../Component/Common';
+import { Tag } from 'antd';
 import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
@@ -79,9 +80,7 @@ export default function ProductDetail() {
                     responseData = (await productApi.getByName(slug)).data;
                 }
 
-                if (!responseData) {
-                    throw new Error('Product not found');
-                }
+                if (!responseData) throw new Error('Product not found');
 
                 setCurrentPrice({
                     originPrice: responseData.originPrice,
@@ -95,12 +94,10 @@ export default function ProductDetail() {
                     reviews_count: 0,
                     content: {
                         en: {
-                            details: 'High-quality BKEUTY skincare product.',
                             application: '1. Cleanse your skin.\n2. Apply a proper amount.',
                             ingredients: 'Aqua, Glycerin, Botanical Extracts.',
                         },
                         vi: {
-                            details: 'Sản phẩm chăm sóc da cao cấp từ BKEUTY.',
                             application: '1. Làm sạch da.\n2. Thoa một lượng vừa đủ.',
                             ingredients: 'Nước khoáng, Glycerin, Chiết xuất thảo mộc.',
                         },
@@ -129,7 +126,7 @@ export default function ProductDetail() {
         const normalize = (val) => val?.toString().toLowerCase().trim();
         return productData.variants.find(v => {
             if (!v.variantOptions) return false;
-            return Object.entries(options).every(([key, value]) => 
+            return Object.entries(options).every(([key, value]) =>
                 normalize(v.variantOptions[key]) === normalize(value)
             );
         });
@@ -160,7 +157,7 @@ export default function ProductDetail() {
     };
 
     const displayName = productData?.name;
-    const isOutOfStock = stockQuantity <= 0;
+    const isOutOfStock = stockQuantity <= 0 || productData?.status === 'INACTIVE';
     const shownPrice = currentPrice.hasDiscount ? currentPrice.promotionPrice : currentPrice.originPrice;
 
     const totalReviewPages = productData?.reviews ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
@@ -236,7 +233,14 @@ export default function ProductDetail() {
                 </div>
 
                 <div className="product-info-side">
-                    <div className="brand-label">{productData.brand}</div>
+                    <div className="brand-label">
+                        {productData.brand}
+                        {productData.status && (
+                            <Tag color={productData.status === 'ACTIVE' ? 'processing' : 'default'} style={{ marginLeft: 10 }}>
+                                {productData.status}
+                            </Tag>
+                        )}
+                    </div>
                     <h1 className="detail-title">{displayName}</h1>
 
                     {productData.categories?.length > 0 && (
@@ -318,10 +322,10 @@ export default function ProductDetail() {
 
                     <div className="actions-wrapper">
                         <CButton type="primary" disabled={isOutOfStock} onClick={() => notify(t('feature_developing_title'), 'info')} className="btn-action-buy">
-                            <span>{isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
+                            <span>{productData.status === 'INACTIVE' ? t('inactive') : isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
                         </CButton>
                         <CButton type="outline" disabled={isOutOfStock} onClick={handleAddToCart} icon={<ShoppingOutlined />} className="btn-action-cart">
-                            {isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
+                            {productData.status === 'INACTIVE' ? t('inactive') : isOutOfStock ? t('out_of_stock_btn') : t('add_to_cart')}
                         </CButton>
                     </div>
                 </div>
@@ -339,7 +343,7 @@ export default function ProductDetail() {
                     {activeTab === 'details' && (
                         <div className="tab-content">
                             <h3>{t('product_details')}</h3>
-                            <p>{getLocalContent('details')}</p>
+                            <p>{productData.description}</p>
                         </div>
                     )}
                     {activeTab === 'application' && (

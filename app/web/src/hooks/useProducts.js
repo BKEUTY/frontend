@@ -14,7 +14,8 @@ export const useProducts = (pageSize = 20) => {
         try {
             const params = { 
                 page: pageIndex, 
-                size: pageSize 
+                size: pageSize,
+                status: 'ACTIVE'
             };
 
             if (searchTerm) {

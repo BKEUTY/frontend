@@ -43,7 +43,7 @@ export default function Product() {
     setPage(0);
     const isFiltering = debouncedSearch.length > 0 || activeCategory !== null || sortOption !== 'default';
     setIsPaginationMode(isFiltering);
-    fetchProducts(0, false, debouncedSearch, activeCategory, sortOption);
+    fetchProducts(0, false, debouncedSearch, activeCategory, sortOption); 
   }, [debouncedSearch, activeCategory, sortOption, fetchProducts]);
 
   const handleCategorySelect = (id) => {
@@ -72,8 +72,6 @@ export default function Product() {
   };
 
   const handleSearchSubmit = () => {
-    console.log("Debounce: ", debouncedSearch);
-    console.log("SearchTerm: ", searchTerm);
     if (debouncedSearch === searchTerm) return;
     setIsPaginationMode(true);
     setPage(0);

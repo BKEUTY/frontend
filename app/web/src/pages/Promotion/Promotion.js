@@ -29,7 +29,6 @@ export default function Promotion() {
                 setTotalItems(res.data.totalElements || 0);
             }
         } catch (error) {
-            console.error("Fetch promotions error:", error);
         } finally {
             setLoading(false);
         }
@@ -42,8 +41,7 @@ export default function Promotion() {
     const filteredData = useMemo(() => {
         return promotions.filter(item => {
             const searchMatch =
-                (item.title || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (item.id || "").toString().includes(searchTerm.toLowerCase());
+                (item.title || "").toLowerCase().includes(searchTerm.toLowerCase());
 
             if (!searchMatch) return false;
 
@@ -131,12 +129,6 @@ export default function Promotion() {
                         >
                             {t('promo_tab_ENDED')}
                         </button>
-                        <button
-                            className={`filter-tab ${filterType === 'applicable' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('applicable'); setCurrentPage(0); }}
-                        >
-                            {t('promo_tab_applicable')}
-                        </button>
                     </div>
                 </div>
 
@@ -148,7 +140,6 @@ export default function Promotion() {
                             <thead>
                                 <tr>
                                     <th>{t('promo_col_name')}</th>
-                                    <th>ID</th>
                                     <th>{t('promo_col_discount')}</th>
                                     <th>
                                         {t('promo_col_target')}
@@ -168,12 +159,9 @@ export default function Promotion() {
                                         >
                                             <td>{item.title}</td>
                                             <td>
-                                                <span className="code-highlight">#{item.id}</span>
-                                            </td>
-                                            <td>
                                                 <span className="discount-tag">{formatDiscount(item)}</span>
                                             </td>
-                                            <td>{item.promotionType || 'ALL'}</td>
+                                            <td>{item.promotionType}</td>
                                             <td>{formatDate(item.startAt)} - {formatDate(item.endAt)}</td>
                                             <td style={{ textAlign: 'center' }}>
                                                 <span className={`status-badge status-${item.status}`}>
@@ -184,7 +172,7 @@ export default function Promotion() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" style={{ padding: '40px 0' }}>
+                                        <td colSpan="5" style={{ padding: '40px 0' }}>
                                             <EmptyState title={t('no_promos_found')} />
                                         </td>
                                     </tr>
@@ -206,7 +194,6 @@ export default function Promotion() {
                             >
                                 <div className="card-header">
                                     <div className="card-title">{item.title}</div>
-                                    <span className="card-code">#{item.id}</span>
                                 </div>
                                 <div className="card-row">
                                     <span className="card-label">{t('promo_col_discount')}</span>
@@ -217,7 +204,7 @@ export default function Promotion() {
                                         {t('promo_col_target')}
                                         <InfoIcon />
                                     </span>
-                                    <span className="card-value">{item.promotionType || 'ALL'}</span>
+                                    <span className="card-value">{item.promotionType}</span>
                                 </div>
                                 <div className="card-row">
                                     <span className="card-label">{t('promo_col_time')}</span>
@@ -262,23 +249,41 @@ export default function Promotion() {
                                 <span>{selectedPromo.title}</span>
                             </div>
                             <div className="detail-item">
-                                <label>ID:</label>
-                                <span className="modal-code">#{selectedPromo.id}</span>
-                            </div>
-                            <div className="detail-item">
                                 <label>{t('promo_col_discount')}:</label>
                                 <span className="modal-discount">{formatDiscount(selectedPromo)}</span>
                             </div>
                             {selectedPromo.maxDiscount > 0 && (
                                 <div className="detail-item">
-                                    <label>Giảm tối đa:</label>
+                                    <label>{t('promo_label_max_discount')}:</label>
                                     <span>{new Intl.NumberFormat('vi-VN').format(selectedPromo.maxDiscount)}đ</span>
                                 </div>
                             )}
                             <div className="detail-item">
                                 <label>{t('promo_col_target')}:</label>
-                                <span>{selectedPromo.promotionType || 'ALL'}</span>
+                                <span>{selectedPromo.promotionType}</span>
                             </div>
+
+                            {selectedPromo.categoryIds?.length > 0 && (
+                                <div className="detail-item">
+                                    <label>{t('categories')}:</label>
+                                    <span className="array-values">{selectedPromo.categoryIds.join(', ')}</span>
+                                </div>
+                            )}
+
+                            {selectedPromo.brandIds?.length > 0 && (
+                                <div className="detail-item">
+                                    <label>{t('brands')}:</label>
+                                    <span className="array-values">{selectedPromo.brandIds.join(', ')}</span>
+                                </div>
+                            )}
+
+                            {selectedPromo.productIds?.length > 0 && (
+                                <div className="detail-item">
+                                    <label>{t('product')}:</label>
+                                    <span className="array-values">{selectedPromo.productIds.join(', ')}</span>
+                                </div>
+                            )}
+
                             <div className="detail-item">
                                 <label>{t('promo_col_time')}:</label>
                                 <span>{formatDate(selectedPromo.startAt)} - {formatDate(selectedPromo.endAt)}</span>

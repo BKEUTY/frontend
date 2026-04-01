@@ -4,8 +4,6 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { Table, Tag, Button, Typography, Tooltip, Space } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
 import { useOrders } from '../../hooks/useOrders';
-import { EmptyState } from '../../Component/Common';
-import '../../Component/Common/List.css';
 
 const { Text } = Typography;
 
@@ -15,11 +13,11 @@ const MyOrders = () => {
     const { orders, loading } = useOrders();
 
     const getStatusColor = (status) => {
-        switch (status?.toUpperCase()) {
+        switch (status) {
             case 'PAID':
             case 'COMPLETED': return 'success';
             case 'UNPAID':
-            case 'PENDING': return 'warning';
+            case 'IN_PROGRESS': return 'warning';
             case 'CANCELLED': return 'error';
             default: return 'default';
         }
@@ -30,10 +28,15 @@ const MyOrders = () => {
             title: t('order_id'),
             dataIndex: 'id',
             key: 'id',
-            width: 120,
+            width: 100,
             align: 'center',
             render: (id, record) => (
-                <Link to={`/account/orders/${id}`} state={{ order: record }} className="admin-table-id" style={{ color: 'var(--color_main_title)', cursor: 'pointer', textDecoration: 'none' }}>
+                <Link 
+                    to={`/account/orders/${id}`} 
+                    state={{ order: record }} 
+                    className="admin-table-id" 
+                    style={{ color: 'var(--color_main_title)', cursor: 'pointer', textDecoration: 'none', fontWeight: 'bold' }}
+                >
                     #{id}
                 </Link>
             ),
@@ -42,38 +45,51 @@ const MyOrders = () => {
             title: t('order_date'),
             dataIndex: 'formattedDate',
             key: 'orderDate',
-            width: 150,
+            width: 120,
             render: (date) => <Text>{date}</Text>,
         },
         {
             title: t('total'),
             dataIndex: 'formattedTotal',
             key: 'total',
-            width: 150,
+            width: 130,
             render: (total) => <Text strong style={{ color: '#10b981' }}>{total}</Text>,
+        },
+        {
+            title: t('payment_method'),
+            dataIndex: 'paymentMethod',
+            key: 'paymentMethod',
+            width: 120,
+            align: 'center',
+            render: (method) => <Text type="secondary">{method}</Text>,
         },
         {
             title: t('status'),
             dataIndex: 'status',
             key: 'status',
-            width: 130,
+            width: 120,
             align: 'center',
             render: (status) => (
                 <Tag color={getStatusColor(status)} style={{ margin: 0, padding: '2px 10px', borderRadius: '4px' }}>
-                    {t(status)}
+                    {t(`order_status_${status}`)}
                 </Tag>
             ),
         },
         {
             title: t('actions_col'),
             key: 'action',
-            width: 100,
+            width: 80,
             align: 'center',
             fixed: 'right',
             render: (_, record) => (
                 <Space size="middle">
-                    <Tooltip title={t('view')}>
-                        <Button type="text" className="admin-action-btn edit-btn" icon={<EyeOutlined />} onClick={() => navigate(`/account/orders/${record.id}`, { state: { order: record } })} />
+                    <Tooltip title={t('view_detail')}>
+                        <Button 
+                            type="text" 
+                            className="admin-action-btn edit-btn" 
+                            icon={<EyeOutlined />} 
+                            onClick={() => navigate(`/account/orders/${record.id}`, { state: { order: record } })} 
+                        />
                     </Tooltip>
                 </Space>
             ),

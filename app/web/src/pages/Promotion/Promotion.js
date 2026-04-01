@@ -22,7 +22,7 @@ export default function Promotion() {
     const fetchPromotions = useCallback(async (page = 0) => {
         setLoading(true);
         try {
-            const res = await promotionApi.getPromotions(page);
+            const res = await promotionApi.getAll({ page, size: itemsPerPage });
             if (res.data) {
                 setPromotions(res.data.content || []);
                 setTotalPages(res.data.totalPages || 0);
@@ -122,6 +122,12 @@ export default function Promotion() {
                             onClick={() => { setFilterType('INCOMING'); setCurrentPage(0); }}
                         >
                             {t('promo_tab_INCOMING')}
+                        </button>
+                        <button
+                            className={`filter-tab ${filterType === 'DISABLED' ? 'active' : ''}`}
+                            onClick={() => { setFilterType('DISABLED'); setCurrentPage(0); }}
+                        >
+                            {t('promo_tab_DISABLED')}
                         </button>
                         <button
                             className={`filter-tab ${filterType === 'ENDED' ? 'active' : ''}`}

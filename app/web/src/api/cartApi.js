@@ -5,16 +5,16 @@ class CartApi extends BaseApi {
         super('/api/cart');
     }
 
-    getAll(config = {}) {
-        return this.client.get(this.resource, { 
+    getAll(params = {}, config = {}) {
+        return super.getAll(params, { 
             errorMessage: 'api_error_fetch_cart',
             skipGlobalErrorHandler: true,
             ...config
         });
     }
 
-    add(data, config = {}) {
-        return this.client.post(this.resource, data, { 
+    create(data, config = {}) {
+        return super.create(data, { 
             errorMessage: 'api_error_add_cart',
             skipGlobalErrorHandler: true,
             ...config

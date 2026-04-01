@@ -225,7 +225,6 @@ export default {
     continue_payment: "Tiếp tục thanh toán",
     place_order: "Đặt hàng",
     order_success: "Đặt hàng thành công!",
-    order_placed_success: "Đặt hàng thành công",
     order_placed_desc: "Đơn hàng của bạn đã được đặt và đang được xử lý.",
     payment_error_try_again: "Có lỗi xảy ra, vui lòng thử lại.",
     no_products_payment: "Không có sản phẩm nào để thanh toán!",

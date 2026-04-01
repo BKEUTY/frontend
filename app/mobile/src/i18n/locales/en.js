@@ -224,7 +224,6 @@ export default {
     continue_payment: "Continue Payment",
     place_order: "Place Order",
     order_success: "Order placed successfully!",
-    order_placed_success: "Order placed successfully",
     order_placed_desc: "Your order has been placed and is being processed.",
     payment_error_try_again: "An error occurred, please try again.",
     no_products_payment: "No items to pay for!",

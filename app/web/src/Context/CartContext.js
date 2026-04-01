@@ -1,7 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import cartApi from '../api/cartApi';
-import axiosClient from '../api/axiosClient';
 
 const CartContext = createContext();
 
@@ -42,7 +41,7 @@ export const CartProvider = ({ children }) => {
                 if (localCart.length > 0) {
                     await Promise.all(
                         localCart.map(({ productVariantId, quantity }) =>
-                            cartApi.add({ productVariantId, quantity }).catch(console.error)
+                            cartApi.create({ productVariantId, quantity }).catch(console.error)
                         )
                     );
                     clearLocalCart();
@@ -63,7 +62,7 @@ export const CartProvider = ({ children }) => {
 
         if (isAuthenticated) {
             try {
-                await cartApi.add({ productVariantId, quantity });
+                await cartApi.create({ productVariantId, quantity });
                 await fetchCart();
             } catch (error) {
                 console.error(error);
@@ -103,7 +102,7 @@ export const CartProvider = ({ children }) => {
             setCartItems(prev => prev.map(item => item.cartId === cartId ? { ...item, quantity } : item));
             try {
                 if (isIncreasing) {
-                    await cartApi.add({
+                    await cartApi.create({
                         productVariantId: currentItem.productVariantId,
                         quantity: diff
                     });
@@ -128,7 +127,7 @@ export const CartProvider = ({ children }) => {
         if (isAuthenticated) {
             setCartItems(prev => prev.filter(item => item.cartId !== cartId));
             try {
-                await axiosClient.delete(`/api/cart/${cartId}`);
+                await cartApi.delete(cartId);
             } catch (error) {
                 await fetchCart();
             }

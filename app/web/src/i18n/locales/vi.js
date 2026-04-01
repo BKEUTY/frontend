@@ -71,7 +71,7 @@ export default {
     back_to_login: "Quay lại đăng nhập",
     full_name: "Họ và tên",
     username: "Tên hiển thị",
-    
+
     step_email: "Email",
     step_otp: "Xác thực OTP",
     step_new_pass: "Mật khẩu mới",
@@ -225,7 +225,11 @@ export default {
     continue_payment: "Tiếp tục thanh toán",
     place_order: "Đặt hàng",
     order_success: "Đặt hàng thành công!",
-    order_placed_success: "Đặt hàng thành công",
+    order_status_UNPAID: "Chưa thanh toán",
+    order_status_PAID: "Đã thanh toán",
+    order_status_CANCELLED: "Đã hủy",
+    order_status_IN_PROGRESS: "Đang xử lý",
+    order_status_COMPLETED: "Đã hoàn thành",
     order_placed_desc: "Đơn hàng của bạn đã được đặt và đang được xử lý.",
     payment_error_try_again: "Có lỗi xảy ra, vui lòng thử lại.",
     no_products_payment: "Không có sản phẩm nào để thanh toán!",
@@ -335,7 +339,7 @@ export default {
     terms_2_content: "Chúng tôi cam kết bảo vệ quyền riêng tư và thông tin cá nhân của bạn theo Chính sách bảo mật.",
     terms_3_title: "3. Chính sách đổi trả",
     terms_3_content: "Sản phẩm có thể được đổi trả trong vòng 7 ngày kể từ ngày nhận, với điều kiện còn nguyên vẹn.",
-    
+
     footer_support: "Hỗ trợ khách hàng",
     support_team: "Hỗ trợ khách hàng",
     footer_connect: "Kết nối với BKEUTY",
@@ -391,6 +395,7 @@ export default {
     promo_tab_all: "Tất cả",
     promo_tab_STARTING: "Đang diễn ra",
     promo_tab_INCOMING: "Sắp diễn ra",
+    promo_tab_DISABLED: "Đã tạm dừng",
     promo_tab_ENDED: "Đã kết thúc",
     promo_col_name: "Tên chương trình",
     promo_col_code: "Mã khuyến mãi",

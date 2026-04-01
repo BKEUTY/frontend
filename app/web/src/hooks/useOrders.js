@@ -6,30 +6,22 @@ export const useOrders = () => {
         queryKey: ['myOrders'],
         queryFn: async () => {
             const response = await orderApi.getHistory();
-            const rawData = Array.isArray(response) ? response : response?.data;
-
-            if (!Array.isArray(rawData)) return [];
-
-            return rawData.map((order, index) => {
-                const formattedDate = order.orderDate 
-                    ? new Date(order.orderDate).toLocaleDateString('vi-VN') 
-                    : '---';
-
-                return {
-                    id: order.orderId || order.id || `ORD-${index + 1}`,
-                    date: formattedDate,
-                    total: order.total ? Number(order.total).toLocaleString("vi-VN") + 'đ' : '0đ',
-                    status: (order.paymentMethod === 'Banking' && !order.qrCodeLink && order.total > 0) 
-                        ? 'completed' 
-                        : 'pending'
-                };
-            });
+            
+            return response.data.map((order) => ({
+                ...order,
+                id: order.orderId,
+                formattedDate: new Date(order.orderDate).toLocaleDateString('vi-VN'),
+                formattedTotal: Number(order.total).toLocaleString("vi-VN") + 'đ',
+                status: order.paymentMethod === 'Banking' && !order.qrCodeLink && order.total > 0 
+                    ? 'completed' 
+                    : 'pending'
+            }));
         },
         retry: false,
     });
 
     return {
-        orders: data || [],
+        orders: data ?? [],
         loading: isPending,
         error,
         refetch

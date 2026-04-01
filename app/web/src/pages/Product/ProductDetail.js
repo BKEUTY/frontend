@@ -173,16 +173,14 @@ export default function ProductDetail() {
 
     const handleAddToCart = () => {
         addToCart({
-            cartId: `local_${Date.now()}`,
             productVariantId: productData.id,
-            id: productData.id,
-            productId: productData.id,
             name: displayName,
-            price: shownPrice,
+            price: currentPrice.originPrice,
+            promotionPrice: currentPrice.promotionPrice,
             image: mainImage,
-            quantity,
-            variantDisplay: selectedOptions ? Object.values(selectedOptions).join(' - ') : '',
+            quantity
         });
+        
         notify(t('add_cart_success'), 'success');
     };
 

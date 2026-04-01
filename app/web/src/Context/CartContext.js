@@ -13,14 +13,8 @@ const getLocalCart = () => JSON.parse(localStorage.getItem(LOCAL_CART_KEY)) || [
 const saveLocalCart = (items) => localStorage.setItem(LOCAL_CART_KEY, JSON.stringify(items));
 const clearLocalCart = () => localStorage.removeItem(LOCAL_CART_KEY);
 
-const mapCartItem = (item) => ({
-    cartId: item.cartId,
-    productVariantId: item.productVariantId,
-    name: item.name || '',
-    price: item.price ?? 0,
-    promotionPrice: item.promotionPrice ?? item.price ?? 0,
-    image: item.image || 'placeholder',
-    quantity: item.quantity,
+const mapCartItem = ({ cartId, productVariantId, name, price, promotionPrice, image, quantity }) => ({
+    cartId, productVariantId, name, price, promotionPrice, image, quantity
 });
 
 export const CartProvider = ({ children }) => {
@@ -32,10 +26,9 @@ export const CartProvider = ({ children }) => {
         if (isAuthenticated) {
             try {
                 const res = await cartApi.getAll();
-                const data = res.data || [];
-                setCartItems(data.map(mapCartItem));
+                setCartItems(res.data.map(mapCartItem));
             } catch (error) {
-                console.error("Failed to fetch cart:", error);
+                console.error(error);
             }
         } else {
             setCartItems(getLocalCart());
@@ -43,33 +36,22 @@ export const CartProvider = ({ children }) => {
     }, [isAuthenticated]);
 
     useEffect(() => {
-        const syncCartOnLogin = async () => {
-            if (!isAuthenticated || user_role !== 'USER') return;
-
-            const localCart = getLocalCart();
-            if (localCart.length > 0) {
-                for (const item of localCart) {
-                    try {
-                        await cartApi.add({
-                            productVariantId: item.productVariantId,
-                            quantity: item.quantity,
-                        });
-                    } catch (e) {
-                        console.error("Failed to sync cart item:", e);
-                    }
+        const initCart = async () => {
+            if (isAuthenticated && user_role === 'USER') {
+                const localCart = getLocalCart();
+                if (localCart.length > 0) {
+                    await Promise.all(
+                        localCart.map(({ productVariantId, quantity }) =>
+                            cartApi.add({ productVariantId, quantity }).catch(console.error)
+                        )
+                    );
+                    clearLocalCart();
                 }
-                clearLocalCart();
             }
             await fetchCart();
         };
-        syncCartOnLogin();
+        initCart();
     }, [isAuthenticated, user_role, fetchCart]);
-
-    useEffect(() => {
-        if (!isAuthenticated) {
-            setCartItems(getLocalCart());
-        }
-    }, [isAuthenticated]);
 
     const toggleCart = () => setIsCartOpen(prev => !prev);
     const openCart = () => setIsCartOpen(true);
@@ -77,32 +59,30 @@ export const CartProvider = ({ children }) => {
 
     const addToCart = async (product) => {
         setIsCartOpen(true);
-        const quantityToAdd = product.quantity || 1;
+        const { productVariantId, quantity, name, price, promotionPrice, image } = product;
 
         if (isAuthenticated) {
             try {
-                await cartApi.add({
-                    productVariantId: product.productVariantId,
-                    quantity: quantityToAdd,
-                });
+                await cartApi.add({ productVariantId, quantity });
                 await fetchCart();
             } catch (error) {
-                console.error("Failed to add to cart:", error);
+                console.error(error);
             }
         } else {
             const localCart = getLocalCart();
-            const existingIdx = localCart.findIndex(item => item.productVariantId === product.productVariantId);
+            const existingIdx = localCart.findIndex(item => item.productVariantId === productVariantId);
+            
             if (existingIdx > -1) {
-                localCart[existingIdx].quantity += quantityToAdd;
+                localCart[existingIdx].quantity += quantity;
             } else {
                 localCart.push({
                     cartId: `local_${Date.now()}`,
-                    productVariantId: product.productVariantId,
-                    quantity: quantityToAdd,
-                    name: product.name,
-                    price: product.price,
-                    promotionPrice: product.promotionPrice || product.price,
-                    image: product.image || 'placeholder',
+                    productVariantId,
+                    name,
+                    price,
+                    promotionPrice,
+                    image,
+                    quantity
                 });
             }
             saveLocalCart(localCart);

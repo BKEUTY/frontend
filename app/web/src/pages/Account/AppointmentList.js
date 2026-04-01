@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { FiEdit3, FiTrash2 } from "react-icons/fi";
 import { SearchOutlined } from '@ant-design/icons';
-import { Skeleton, Pagination, EmptyState, PageWrapper } from '../../Component/Common';
+import { PageWrapper } from '../../Component/Common';
+import { Table, Tag, Button, Typography, Tooltip, Space } from 'antd';
+import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import '../../Component/Common/List.css';
 import './AppointmentList.css';
+
+const { Text } = Typography;
 
 const AppointmentList = () => {
     const { t } = useLanguage();
@@ -33,9 +37,86 @@ const AppointmentList = () => {
         item.branch.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const totalPages = Math.ceil(filteredAppointments.length / itemsPerPage);
-    const startIndex = currentPage * itemsPerPage;
-    const currentAppointments = filteredAppointments.slice(startIndex, startIndex + itemsPerPage);
+    const columns = [
+        {
+            title: '#',
+            dataIndex: 'id',
+            key: 'id',
+            width: 80,
+            align: 'center',
+            render: (id) => <span className="admin-table-id">#{id}</span>,
+        },
+        {
+            title: t('service_col'),
+            key: 'service',
+            width: 250,
+            render: (_, record) => (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <Text strong style={{ color: '#0f172a' }}>{t(record.serviceKey)}</Text>
+                    <Text type="secondary" style={{ fontSize: '13px', color: record.statusKey === 'completed_status' ? '#10b981' : '#f59e0b' }}>
+                        {t(record.statusKey)}
+                    </Text>
+                </div>
+            ),
+        },
+        {
+            title: t('branch_col'),
+            dataIndex: 'branch',
+            key: 'branch',
+            width: 180,
+            render: (text) => <Text>{text}</Text>,
+        },
+        {
+            title: t('time_col'),
+            dataIndex: 'schedule',
+            key: 'schedule',
+            width: 150,
+            render: (schedule) => {
+                const parts = schedule.split(' - ');
+                return (
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <Text strong style={{ color: 'var(--color_main_title)' }}>{parts[1]}</Text>
+                        <Text type="secondary" style={{ fontSize: '12px' }}>{parts[0]}</Text>
+                    </div>
+                );
+            },
+        },
+        {
+            title: t('staff_col'),
+            dataIndex: 'staff',
+            key: 'staff',
+            width: 120,
+            render: (staff) => (
+                <Tag color="blue" style={{ borderRadius: '12px', margin: 0 }}>
+                    {staff}
+                </Tag>
+            ),
+        },
+        {
+            title: t('price'),
+            dataIndex: 'price',
+            key: 'price',
+            width: 130,
+            render: (price) => <Text strong style={{ color: '#111827' }}>{price.toLocaleString()}đ</Text>,
+        },
+        {
+            title: t('actions_col'),
+            key: 'actions',
+            width: 100,
+            align: 'center',
+            fixed: 'right',
+            render: () => (
+                <Space size="small">
+                    <Tooltip title={t('edit_tooltip') || 'Edit'}>
+                        <Button type="text" className="admin-action-btn edit-btn" icon={<EditOutlined />} />
+                    </Tooltip>
+                    <Tooltip title={t('cancel_tooltip') || 'Cancel'}>
+                        <Button type="text" className="admin-action-btn delete-btn" icon={<DeleteOutlined />} />
+                    </Tooltip>
+                </Space>
+            ),
+        },
+    ];
 
     return (
         <PageWrapper
@@ -55,97 +136,26 @@ const AppointmentList = () => {
                 </div>
             }
         >
-            <div className="appointment-table-wrapper">
-                <table className="appointment-table">
-                    <thead>
-                        <tr>
-                            <th width="5%">#</th>
-                            <th width="25%">{t('service_col')}</th>
-                            <th width="20%">{t('branch_col')}</th>
-                            <th width="15%">{t('time_col')}</th>
-                            <th width="10%">{t('staff_col')}</th>
-                            <th width="15%">{t('price')}</th>
-                            <th width="10%" className="text-center">{t('actions_col')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {isLoading ? (
-                            Array(5).fill(0).map((_, i) => (
-                                <tr key={i}>
-                                    <td><Skeleton width="20px" height="20px" /></td>
-                                    <td>
-                                        <div className="service-info">
-                                            <Skeleton width="120px" height="20px" style={{ marginBottom: '5px' }} />
-                                            <Skeleton width="80px" height="15px" />
-                                        </div>
-                                    </td>
-                                    <td><Skeleton width="100px" height="20px" /></td>
-                                    <td>
-                                        <div className="date-time">
-                                            <Skeleton width="50px" height="20px" style={{ marginBottom: '5px' }} />
-                                            <Skeleton width="70px" height="14px" />
-                                        </div>
-                                    </td>
-                                    <td><Skeleton width="50px" height="24px" borderRadius="12px" /></td>
-                                    <td><Skeleton width="80px" height="20px" /></td>
-                                    <td className="action-cell">
-                                        <Skeleton width="24px" height="24px" borderRadius="4px" style={{ display: 'inline-block', marginRight: '5px' }} />
-                                        <Skeleton width="24px" height="24px" borderRadius="4px" style={{ display: 'inline-block' }} />
-                                    </td>
-                                </tr>
-                            ))
-                        ) : currentAppointments.length > 0 ? (
-                            currentAppointments.map((apt) => (
-                                <tr key={apt.id}>
-                                    <td data-label="#"><span className="id-badge">#{apt.id}</span></td>
-                                    <td data-label={t('service_col')}>
-                                        <div className="service-info">
-                                            <span className="service-name">{t(apt.serviceKey)}</span>
-                                            <span className={`payment-status ${apt.statusKey === 'completed_status' ? 'text-green' : 'text-orange'}`}>
-                                                {t(apt.statusKey)}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td data-label={t('branch_col')}>{apt.branch}</td>
-                                    <td data-label={t('time_col')}>
-                                        <div className="date-time">
-                                            <span className="time-highlight">{apt.schedule.split(' - ')[1]}</span>
-                                            <span className="date-sub">{apt.schedule.split(' - ')[0]}</span>
-                                        </div>
-                                    </td>
-                                    <td data-label={t('staff_col')}>
-                                        <div className="staff-tag">{apt.staff}</div>
-                                    </td>
-                                    <td data-label={t('price')} className="price-text">{apt.price.toLocaleString()}đ</td>
-                                    <td data-label={t('actions_col')} className="action-cell">
-                                        <button className="btn-icon btn-edit" title={t('edit_tooltip')}>
-                                            <FiEdit3 />
-                                        </button>
-                                        <button className="btn-icon btn-delete" title={t('cancel_tooltip')}>
-                                            <FiTrash2 />
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))
-                        ) : (
-                            <tr>
-                                <td colSpan="7">
-                                    <EmptyState title={t('no_appointments_found')} />
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="appointment-footer">
-                <Pagination 
-                    page={currentPage} 
-                    totalPages={totalPages} 
-                    totalItems={filteredAppointments.length} 
-                    pageSize={itemsPerPage} 
-                    onPageChange={setCurrentPage} 
-                />
+            <div className="admin-list-container" style={{ padding: '0', backgroundColor: 'transparent' }}>
+                <div className="admin-table-wrapper" style={{ boxShadow: 'none' }}>
+                    <Table
+                        columns={columns}
+                        dataSource={filteredAppointments}
+                        rowKey="id"
+                        className="beauty-table"
+                        loading={isLoading}
+                        scroll={{ x: 'max-content' }}
+                        pagination={{
+                            current: currentPage + 1,
+                            pageSize: itemsPerPage,
+                            total: filteredAppointments.length,
+                            onChange: (page) => setCurrentPage(page - 1),
+                            showSizeChanger: false,
+                            className: 'admin-custom-pagination',
+                            style: { margin: '20px 0 0 0', padding: '16px 24px', borderTop: '1px solid #f1f5f9' }
+                        }}
+                    />
+                </div>
             </div>
         </PageWrapper>
     );

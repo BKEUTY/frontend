@@ -18,7 +18,9 @@ export default function Cart() {
 
   const [selectedIds, setSelectedIds] = useState(new Set());
 
-  useEffect(() => { fetchCart(); }, [fetchCart]);
+  useEffect(() => { 
+    fetchCart(); 
+  }, [fetchCart]);
 
   const handleSelectOne = (id) => {
     const newSelected = new Set(selectedIds);
@@ -86,7 +88,7 @@ export default function Cart() {
                 <input
                   type="checkbox"
                   onChange={handleSelectAll}
-                  checked={products.length > 0 && selectedIds.size === products.length}
+                  checked={selectedIds.size === products.length}
                   className="cart-checkbox"
                 />
               </div>
@@ -127,16 +129,13 @@ export default function Cart() {
                         <img
                           className="cart-product-img"
                           loading="lazy"
-                          src={product.image && product.image !== 'placeholder' ? getImageUrl(product.image) : product_cart_image}
+                          src={product.image ? getImageUrl(product.image) : product_cart_image}
                           alt="product"
                           onError={(e) => { e.target.src = product_cart_image }}
                         />
                       </div>
                       <div className="cart-product-details">
                         <p className="cart-product-name">{product.name}</p>
-                        <p className="cart-product-desc">
-                          {t('description')}: {product.description || product.variantDisplay}
-                        </p>
                       </div>
                     </div>
 
@@ -190,7 +189,7 @@ export default function Cart() {
                 onClick={handleCheckout}
                 disabled={selectedIds.size === 0}
               >
-                {t('continue') || t('checkout')}
+                {t('checkout')}
               </button>
             </div>
           </div>

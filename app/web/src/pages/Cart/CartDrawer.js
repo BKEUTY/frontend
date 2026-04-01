@@ -6,15 +6,8 @@ import { useCart } from '../../Context/CartContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { CButton, EmptyState } from '../../Component/Common';
 import './CartDrawer.css';
-
-import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
-import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
-import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
-import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
-import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
-
-const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
-const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
+import product_cart_image from "../../Assets/Images/Products/product_placeholder_rect.svg";
+import { getImageUrl } from "../../api/axiosClient";
 
 const { Text } = Typography;
 
@@ -122,7 +115,11 @@ const CartDrawer = () => {
                                                 checked={selectedIds.has(item.cartId)}
                                                 onChange={() => toggleSelect(item.cartId)}
                                             />
-                                            <Avatar shape="square" size={64} src={item.image || getRandomImage()} />
+                                            <Avatar 
+                                                shape="square" 
+                                                size={64} 
+                                                src={item.image ? getImageUrl(item.image) : product_cart_image} 
+                                            />
                                         </div>
                                     }
                                     title={

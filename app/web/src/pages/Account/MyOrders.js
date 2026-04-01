@@ -1,100 +1,113 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
-import Skeleton from '../../Component/Common/Skeleton';
-import { FiEye } from "react-icons/fi";
+import { Table, Tag, Button, Typography, Tooltip, Space } from 'antd';
+import { EyeOutlined } from '@ant-design/icons';
 import { useOrders } from '../../hooks/useOrders';
+import { EmptyState } from '../../Component/Common';
+import '../../Component/Common/List.css';
+
+const { Text } = Typography;
 
 const MyOrders = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const { orders, loading } = useOrders();
 
-    if (loading) {
-        return (
-            <div className="my-orders-page">
-                <h2>{t('my_orders')}</h2>
-                <table className="orders-table">
-                    <thead>
-                        <tr>
-                            <th>{t('order_id')}</th>
-                            <th>{t('order_date')}</th>
-                            <th>{t('total')}</th>
-                            <th>{t('status')}</th>
-                            <th className="text-center">{t('actions_col')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {Array(5).fill(0).map((_, i) => (
-                            <tr key={i}>
-                                <td><Skeleton width="60px" height="20px" /></td>
-                                <td><Skeleton width="100px" height="20px" /></td>
-                                <td><Skeleton width="80px" height="20px" /></td>
-                                <td><Skeleton width="90px" height="24px" borderRadius="12px" /></td>
-                                <td className="text-center"><Skeleton width="24px" height="24px" /></td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-        );
-    }
+    const getStatusColor = (status) => {
+        switch (status?.toUpperCase()) {
+            case 'PAID':
+            case 'COMPLETED': return 'success';
+            case 'UNPAID':
+            case 'PENDING': return 'warning';
+            case 'CANCELLED': return 'error';
+            default: return 'default';
+        }
+    };
+
+    const columns = [
+        {
+            title: t('order_id'),
+            dataIndex: 'id',
+            key: 'id',
+            width: 120,
+            align: 'center',
+            render: (id, record) => (
+                <Link to={`/account/orders/${id}`} state={{ order: record }} className="admin-table-id" style={{ color: 'var(--color_main_title)', cursor: 'pointer', textDecoration: 'none' }}>
+                    #{id}
+                </Link>
+            ),
+        },
+        {
+            title: t('order_date'),
+            dataIndex: 'formattedDate',
+            key: 'orderDate',
+            width: 150,
+            render: (date) => <Text>{date}</Text>,
+        },
+        {
+            title: t('total'),
+            dataIndex: 'formattedTotal',
+            key: 'total',
+            width: 150,
+            render: (total) => <Text strong style={{ color: '#10b981' }}>{total}</Text>,
+        },
+        {
+            title: t('status'),
+            dataIndex: 'status',
+            key: 'status',
+            width: 130,
+            align: 'center',
+            render: (status) => (
+                <Tag color={getStatusColor(status)} style={{ margin: 0, padding: '2px 10px', borderRadius: '4px' }}>
+                    {t(status)}
+                </Tag>
+            ),
+        },
+        {
+            title: t('actions_col'),
+            key: 'action',
+            width: 100,
+            align: 'center',
+            fixed: 'right',
+            render: (_, record) => (
+                <Space size="middle">
+                    <Tooltip title={t('view')}>
+                        <Button type="text" className="admin-action-btn edit-btn" icon={<EyeOutlined />} onClick={() => navigate(`/account/orders/${record.id}`, { state: { order: record } })} />
+                    </Tooltip>
+                </Space>
+            ),
+        },
+    ];
 
     return (
-        <div className="my-orders-page">
-            <h2>{t('my_orders')}</h2>
-            <br />
-            {orders.length === 0 ? (
-                <div className="empty-orders" style={{ textAlign: 'center', padding: '40px 0' }}>
-                    <p style={{ color: '#666', marginBottom: '20px' }}>{t('no_orders')}</p>
-                    <button 
-                        className="btn-continue-shopping" 
-                        onClick={() => navigate('/product')}
-                        style={{ padding: '10px 24px', background: 'var(--color_main_title)', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
-                    >
-                        {t('continue_shopping')}
-                    </button>
-                </div>
-            ) : (
-                <table className="orders-table">
-                    <thead>
-                        <tr>
-                            <th>{t('order_id')}</th>
-                            <th>{t('order_date')}</th>
-                            <th>{t('total')}</th>
-                            <th>{t('status')}</th>
-                            <th className="text-center">{t('actions_col')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {orders.map(order => (
-                            <tr key={order.id}>
-                                <td data-label={t('order_id')}>
-                                    <Link to={`/account/orders/${order.id}`} style={{ color: 'var(--color_main_title)', fontWeight: 'bold' }}>
-                                        #{order.id}
-                                    </Link>
-                                </td>
-                                <td data-label={t('order_date')}>{order.date}</td>
-                                <td data-label={t('total')} style={{ fontWeight: '500' }}>{order.total}</td>
-                                <td data-label={t('status')}>
-                                    <span className={`order-status status-${order.status}`}>
-                                        {order.status === 'completed' ? t('completed') : t('pending')}
-                                    </span>
-                                </td>
-                                <td data-label={t('actions_col')} className="text-center">
-                                    <button
-                                        className="btn-icon"
-                                        onClick={() => navigate(`/account/orders/${order.id}`)}
-                                        style={{ color: 'var(--color_main_title)', fontSize: '18px', background: 'none', border: 'none', cursor: 'pointer' }}
-                                    >
-                                        <FiEye />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            )}
+        <div className="my-orders-page admin-list-container" style={{ padding: '0', backgroundColor: 'transparent', minHeight: 'auto' }}>
+            <h2 style={{ marginBottom: '20px' }}>{t('my_orders')}</h2>
+            
+            <div className="admin-table-wrapper">
+                <Table
+                    columns={columns}
+                    dataSource={orders}
+                    rowKey="id"
+                    className="beauty-table"
+                    pagination={false}
+                    loading={loading}
+                    scroll={{ x: 'max-content' }}
+                    locale={{
+                        emptyText: (
+                            <div style={{ padding: '40px 0' }}>
+                                <p style={{ color: '#666', marginBottom: '20px' }}>{t('no_orders')}</p>
+                                <button 
+                                    onClick={() => navigate('/product')}
+                                    style={{ padding: '10px 24px', background: 'var(--color_main_title)', color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}
+                                >
+                                    {t('continue_shopping')}
+                                </button>
+                            </div>
+                        )
+                    }}
+                />
+            </div>
         </div>
     );
 };

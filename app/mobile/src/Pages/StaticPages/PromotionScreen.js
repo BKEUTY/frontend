@@ -124,11 +124,10 @@ const PromotionScreen = ({ navigation }) => {
         );
     };
 
-
     return (
         <View style={styles.container}>
             <View style={styles.filters}>
-                <Text style={styles.headerTitle}>{t('promo_list_title')}</Text>
+                <Text style={styles.headerTitle}>{t('admin_home_promotions_title')}</Text>
                 <View style={styles.searchContainer}>
                     <Ionicons name="search-outline" size={20} color="#999" style={styles.searchIcon} />
                     <TextInput
@@ -172,7 +171,6 @@ const PromotionScreen = ({ navigation }) => {
                 />
             )}
 
-            {/* Promo Detail Modal */}
             <Modal
                 visible={!!selectedPromo}
                 transparent={true}
@@ -209,6 +207,28 @@ const PromotionScreen = ({ navigation }) => {
                                     <Text style={styles.modalLabel}>{t('promo_col_target')}:</Text>
                                     <Text style={styles.modalValue}>{selectedPromo.promotionType || 'Tất cả'}</Text>
                                 </View>
+
+                                {selectedPromo.categoryIds?.length > 0 && (
+                                    <View style={styles.modalDetailRow}>
+                                        <Text style={styles.modalLabel}>{t('categories') || 'Danh mục'}:</Text>
+                                        <Text style={styles.modalValue}>{selectedPromo.categoryIds.join(', ')}</Text>
+                                    </View>
+                                )}
+
+                                {selectedPromo.brandIds?.length > 0 && (
+                                    <View style={styles.modalDetailRow}>
+                                        <Text style={styles.modalLabel}>{t('brands') || 'Thương hiệu'}:</Text>
+                                        <Text style={styles.modalValue}>{selectedPromo.brandIds.join(', ')}</Text>
+                                    </View>
+                                )}
+
+                                {selectedPromo.productIds?.length > 0 && (
+                                    <View style={styles.modalDetailRow}>
+                                        <Text style={styles.modalLabel}>{t('products') || 'Sản phẩm'}:</Text>
+                                        <Text style={styles.modalValue}>{selectedPromo.productIds.join(', ')}</Text>
+                                    </View>
+                                )}
+
                                 <View style={styles.modalDetailRow}>
                                     <Text style={styles.modalLabel}>{t('promo_col_time')}:</Text>
                                     <Text style={styles.modalValue}>
@@ -232,7 +252,6 @@ const PromotionScreen = ({ navigation }) => {
                 </Pressable>
             </Modal>
 
-            {/* VIP Info Modal */}
             <Modal
                 visible={showVipInfo}
                 transparent={true}
@@ -485,7 +504,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
     },
-    // New Styles
     infoIconTouch: {
         marginLeft: 6,
         padding: 2,
@@ -596,6 +614,5 @@ const styles = StyleSheet.create({
         marginBottom: 12,
     }
 });
-
 
 export default PromotionScreen;

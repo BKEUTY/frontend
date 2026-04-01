@@ -25,6 +25,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
     const [variants, setVariants] = useState([]);
     const [selectedOptions, setSelectedOptions] = useState({});
     const [currentVariant, setCurrentVariant] = useState(null);
+    const [currentPrice, setCurrentPrice] = useState({ originPrice: 0, promotionPrice: 0, hasDiscount: false });
     const [quantity, setQuantity] = useState(1);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
     const [activeTab, setActiveTab] = useState('details');
@@ -67,6 +68,13 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
                 setProductDetail(found);
                 setVariants(mappedVariants);
+
+                const resolveHasDiscount = (origin, promo) => origin > 0 && promo > 0 && promo < origin;
+                setCurrentPrice({
+                    originPrice: found.originPrice || 0,
+                    promotionPrice: found.promotionPrice || 0,
+                    hasDiscount: resolveHasDiscount(found.originPrice, found.promotionPrice)
+                });
 
                 if (found.options?.length > 0) {
                     const initialSelected = {};
@@ -139,13 +147,19 @@ const ProductDetailScreen = ({ route, navigation }) => {
             id: selectedVariantId,
             cartId: `local_${Date.now()}`,
             name: currentVariant ? `${productDetail.name} - ${currentVariant.productVariantName}` : productDetail.name,
-            price: currentVariant ? currentVariant.price : (productDetail.price || 0),
+            price: currentPrice.originPrice || currentVariant?.price || productDetail.price || 0,
+            promotionPrice: currentPrice.promotionPrice,
             image: (currentVariant && currentVariant.productImageUrl) ? currentVariant.productImageUrl : images[0],
             quantity: quantity,
             isVariant: !!currentVariant
         };
         addToCart(itemToCart);
         Alert.alert(t('success'), t('add_cart_success'));
+    };
+
+    const handleBuyNow = () => {
+        handleAddToCart();
+        navigation.navigate('Cart');
     };
 
     const isOutOfStock = currentVariant ? currentVariant.stockQuantity === 0 : false;
@@ -214,7 +228,14 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         scrollEventThrottle={16}
                     >
                         {images.map((img, index) => (
-                            <Image key={index} source={{ uri: getImageUrl(img) }} style={styles.mainImage} resizeMode="cover" />
+                            <View key={index} style={styles.imageWrapper}>
+                                <Image source={{ uri: getImageUrl(img) }} style={styles.mainImage} resizeMode="cover" />
+                                {currentPrice.hasDiscount && (
+                                    <View style={styles.discountBadge}>
+                                        <Text style={styles.discountBadgeText}>{t('promotion')}</Text>
+                                    </View>
+                                )}
+                            </View>
                         ))}
                     </ScrollView>
                     <View style={styles.galleryDots}>
@@ -235,15 +256,22 @@ const ProductDetailScreen = ({ route, navigation }) => {
                     <Text style={styles.name}>{productDetail.name}</Text>
 
                     <LinearGradient
-                        colors={['#fff1f2', '#fff']}
+                        colors={['#fff', '#fff']}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
-                        style={styles.priceContainer}
+                        style={[styles.priceContainer, { paddingHorizontal: 0, backgroundColor: 'transparent' }]}
                     >
                         <View style={styles.priceBox}>
-                            <Text style={styles.currentPrice}>
-                                {(currentVariant ? currentVariant.price : (productDetail.price || 0)).toLocaleString("vi-VN")}đ
-                            </Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                                <Text style={styles.currentPrice}>
+                                    {(currentPrice.hasDiscount ? currentPrice.promotionPrice : currentPrice.originPrice).toLocaleString("vi-VN")}đ
+                                </Text>
+                                {currentPrice.hasDiscount && (
+                                    <Text style={styles.oldPrice}>
+                                        {currentPrice.originPrice.toLocaleString("vi-VN")}đ
+                                    </Text>
+                                )}
+                            </View>
                         </View>
                         <View style={styles.soldBox}>
                             <Text style={styles.soldText}>{t('sold_count')}: 1.2k</Text>
@@ -361,9 +389,10 @@ const styles = StyleSheet.create({
     ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#fef3c7', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 12 },
     ratingText: { color: '#92400e', fontSize: 12, fontWeight: '700' },
     name: { fontSize: 22, fontWeight: '800', color: '#111827', marginBottom: 16, lineHeight: 30 },
-    priceContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: 16, borderRadius: 16, marginBottom: 24 },
+    priceContainer: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderRadius: 16, marginBottom: 24 },
     priceBox: { flex: 1 },
     currentPrice: { fontSize: 28, fontWeight: '900', color: COLORS.mainTitle },
+    oldPrice: { fontSize: 16, fontWeight: '600', color: '#9ca3af', textDecorationLine: 'line-through' },
     vatText: { fontSize: 11, color: '#9ca3af', marginTop: 2 },
     soldBox: { backgroundColor: 'rgba(0,0,0,0.05)', paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20 },
     soldText: { fontSize: 12, color: '#4b5563', fontWeight: '600' },
@@ -409,6 +438,9 @@ const styles = StyleSheet.create({
     buyActionBtn: { flex: 1.5, height: 52, borderRadius: 12, backgroundColor: COLORS.mainTitle, justifyContent: 'center', alignItems: 'center' },
     buyActionText: { color: 'white', fontWeight: '700', fontSize: 16 },
     disabledBtn: { backgroundColor: '#f3f4f6', borderColor: '#f3f4f6' },
+    imageWrapper: { width: width, height: width, position: 'relative' },
+    discountBadge: { position: 'absolute', top: 20, right: 20, backgroundColor: COLORS.mainTitle, paddingHorizontal: 12, paddingVertical: 6, borderRadius: 6 },
+    discountBadgeText: { color: 'white', fontWeight: 'bold', fontSize: 12, textTransform: 'uppercase' },
 });
 
 export default ProductDetailScreen;

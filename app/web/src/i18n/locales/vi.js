@@ -464,5 +464,26 @@ export default {
     pagination_of: "trong số",
     pagination_results: "kết quả",
     total_original_price: "Tổng giá gốc",
-    total_discount: "Tổng giảm giá"
+    total_discount: "Tổng giá giảm",
+
+    // Review
+    reviews: "Đánh giá",
+    write_review: "Viết đánh giá",
+    edit_review: "Sửa đánh giá",
+    rating: "sao",
+    comment_review: "Nội dung nhận xét",
+    no_reviews: "Chưa có đánh giá nào cho sản phẩm này.",
+    upload_images: "Tải ảnh lên",
+    submit_review: "Gửi đánh giá",
+    review_success: "Đánh giá của bạn đã được gửi thành công!",
+    review_update_success: "Cập nhật đánh giá thành công!",
+    review_delete_success: "Đã xóa đánh giá.",
+    admin_reply: "Phản hồi từ BKEUTY",
+    all_ratings: "Tất cả đánh giá",
+    with_images: "Có hình ảnh",
+    review_policy: "Chỉ những khách hàng đã mua và nhận hàng mới có thể gửi đánh giá.",
+    is_replied: "Đã phản hồi",
+    not_replied: "Chưa phản hồi",
+    latest_reviews: "Đánh giá mới nhất",
+    view_all_reviews: "Xem tất cả đánh giá",
 };

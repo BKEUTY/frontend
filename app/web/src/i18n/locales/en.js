@@ -462,6 +462,28 @@ export default {
     pagination_showing: "Showing",
     pagination_of: "of",
     pagination_results: "results",
+
+    // Review
+    reviews: "Reviews",
+    write_review: "Write a review",
+    edit_review: "Edit review",
+    rating: "stars",
+    comment_review: "Comment content",
+    no_reviews: "No reviews yet for this product.",
+    upload_images: "Upload images",
+    submit_review: "Submit review",
+    review_success: "Your review has been submitted successfully!",
+    review_update_success: "Review updated successfully!",
+    review_delete_success: "Review deleted.",
+    admin_reply: "Reply from BKEUTY",
+    all_ratings: "All ratings",
+    with_images: "With images",
+    review_policy: "Only customers who have purchased and received the item can submit a review.",
+    is_replied: "Replied",
+    not_replied: "Not replied",
+    latest_reviews: "Latest Reviews",
+    view_all_reviews: "View All Reviews",
+
     total_original_price: "Total original price",
     total_discount: "Total discount"
 };

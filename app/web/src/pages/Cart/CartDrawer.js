@@ -11,11 +11,6 @@ import { getImageUrl } from "../../api/axiosClient";
 
 const { Text } = Typography;
 
-const getEffectivePrice = (item) =>
-    item.promotionPrice > 0 && item.promotionPrice < item.price
-        ? item.promotionPrice
-        : item.price;
-
 const CartDrawer = () => {
     const { isCartOpen, closeCart, cartItems, removeFromCart } = useCart();
     const { t } = useLanguage();
@@ -31,7 +26,7 @@ const CartDrawer = () => {
 
     const selectedTotal = cartItems
         .filter(item => selectedIds.has(item.cartId))
-        .reduce((sum, item) => sum + getEffectivePrice(item) * item.quantity, 0);
+        .reduce((sum, item) => sum + item.promotionPrice * item.quantity, 0);
 
     const handleCheckout = () => {
         if (selectedIds.size === 0) return;
@@ -42,7 +37,7 @@ const CartDrawer = () => {
                 cartIds: Array.from(selectedIds),
                 selectedProducts: selectedProducts.map(p => ({
                     ...p,
-                    effectivePrice: getEffectivePrice(p),
+                    effectivePrice: p.promotionPrice,
                 })),
                 subTotal: selectedTotal,
                 discount: 0,
@@ -94,7 +89,6 @@ const CartDrawer = () => {
                     dataSource={cartItems}
                     renderItem={item => {
                         const hasDiscount = item.promotionPrice > 0 && item.promotionPrice < item.price;
-                        const effectivePrice = hasDiscount ? item.promotionPrice : item.price;
 
                         return (
                             <List.Item
@@ -132,7 +126,7 @@ const CartDrawer = () => {
                                             <Text type="secondary">x{item.quantity}</Text>
                                             <div className="cart-drawer-price-row">
                                                 <Text strong className="cart-drawer-item-price">
-                                                    {effectivePrice.toLocaleString('vi-VN')}đ
+                                                    {item.promotionPrice.toLocaleString('vi-VN')}đ
                                                 </Text>
                                                 {hasDiscount && (
                                                     <Text delete className="cart-drawer-item-old-price">

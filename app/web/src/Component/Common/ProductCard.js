@@ -21,7 +21,6 @@ const ProductCard = ({ product, t }) => {
 
     const image = product.imgUrl ? getImageUrl(product.imgUrl) : fallbackImg;
     const hasDiscount = product.originPrice > 0 && product.discountPrice > 0 && product.discountPrice < product.originPrice;
-    const rating = parseFloat(product.rating || 4.8);
     const tag = hasDiscount ? t('promotion') : product.tag;
     const productId = product.productId;
 
@@ -64,7 +63,8 @@ const ProductCard = ({ product, t }) => {
                 )}
 
                 <Space size="small" align="center" className="card-rating">
-                    <Rate disabled defaultValue={rating} allowHalf className="card-rating-stars" />
+                    <Rate disabled defaultValue={product.averageRating} allowHalf className="card-rating-stars" />
+                    <Text type="secondary" className="card-review-count"> ({product.reviewCount} {t('reviews')}) </Text>
                     {/* <Text type="secondary" className="card-sold-count">({product.sold})</Text> */}
                 </Space>
 

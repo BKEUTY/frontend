@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import { Space } from "antd";
 import { FiTruck, FiCreditCard } from "react-icons/fi";
 import { useNotification } from "../../Context/NotificationContext";
@@ -14,6 +15,7 @@ export default function Checkout() {
     const navigate = useNavigate();
     const notify = useNotification();
     const { t } = useLanguage();
+    const queryClient = useQueryClient();
 
     const cartIds = state?.cartIds || [];
     const selectedProducts = state?.selectedProducts || [];
@@ -44,8 +46,10 @@ export default function Checkout() {
 
     const handlePaymentSuccess = useCallback(() => {
         notify(t('payment_success_msg'), "success");
+        queryClient.invalidateQueries({ queryKey: ['myOrders'] });
+        queryClient.invalidateQueries({ queryKey: ['cartItems'] });
         setTimeout(() => navigate('/account/orders'), 2000);
-    }, [notify, navigate, t]);
+    }, [notify, navigate, t, queryClient]);
 
     const { checkPaymentStatus } = usePaymentPolling(orderData?.orderId, showQR, handlePaymentSuccess);
 
@@ -76,6 +80,8 @@ export default function Checkout() {
                 setShowQR(true);
             } else {
                 notify(t('order_success'), "success");
+                queryClient.invalidateQueries({ queryKey: ['myOrders'] });
+                queryClient.invalidateQueries({ queryKey: ['cartItems'] });
                 setTimeout(() => navigate('/account/orders'), 2000);
             }
         } catch {

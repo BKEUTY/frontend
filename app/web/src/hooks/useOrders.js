@@ -16,6 +16,7 @@ export const useOrders = () => {
             }));
         },
         retry: false,
+        staleTime: 0,
     });
 
     return {

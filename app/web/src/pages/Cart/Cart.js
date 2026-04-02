@@ -1,6 +1,6 @@
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNotification } from "../../Context/NotificationContext";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { useCart } from "../../Context/CartContext";
@@ -13,14 +13,10 @@ export default function Cart() {
   const navigate = useNavigate();
   const notify = useNotification();
   const { t } = useLanguage();
-  const { cartItems: products, fetchCart, updateQuantity, removeFromCart } = useCart();
+  const { cartItems: products, updateQuantity, removeFromCart } = useCart();
   const { isAuthenticated } = useAuth();
 
   const [selectedIds, setSelectedIds] = useState(new Set());
-
-  useEffect(() => { 
-    fetchCart(); 
-  }, [fetchCart]);
 
   const handleSelectOne = (id) => {
     const newSelected = new Set(selectedIds);
@@ -33,11 +29,8 @@ export default function Cart() {
     setSelectedIds(e.target.checked ? new Set(products.map(p => p.cartId)) : new Set());
   };
 
-  const getEffectivePrice = (p) =>
-    p.promotionPrice > 0 && p.promotionPrice < p.price ? p.promotionPrice : p.price;
-
   const selectedProducts = products.filter(p => selectedIds.has(p.cartId));
-  const subTotal = selectedProducts.reduce((sum, p) => sum + getEffectivePrice(p) * p.quantity, 0);
+  const subTotal = selectedProducts.reduce((sum, p) => sum + p.promotionPrice * p.quantity, 0);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -54,7 +47,7 @@ export default function Cart() {
         cartIds: Array.from(selectedIds),
         selectedProducts: selectedProducts.map(p => ({
           ...p,
-          effectivePrice: getEffectivePrice(p),
+          effectivePrice: p.promotionPrice,
         })),
         subTotal,
         discount: 0,
@@ -111,7 +104,6 @@ export default function Cart() {
             ) : (
               products.map((product) => {
                 const hasDiscount = product.promotionPrice > 0 && product.promotionPrice < product.price;
-                const effectivePrice = hasDiscount ? product.promotionPrice : product.price;
 
                 return (
                   <div id={product.cartId} className="cart-item-row" key={product.cartId}>
@@ -141,7 +133,7 @@ export default function Cart() {
 
                     <div className="cart-col-price">
                       <div className="cart-price-wrapper">
-                        <span className="cart-current-price">{effectivePrice.toLocaleString("vi-VN")}đ</span>
+                        <span className="cart-current-price">{product.promotionPrice.toLocaleString("vi-VN")}đ</span>
                         {hasDiscount && (
                           <span className="cart-old-price">{product.price.toLocaleString("vi-VN")}đ</span>
                         )}
@@ -164,7 +156,7 @@ export default function Cart() {
                     </div>
 
                     <div className="cart-col-total cart-item-total">
-                      {(effectivePrice * product.quantity).toLocaleString("vi-VN")}đ
+                      {(product.promotionPrice * product.quantity).toLocaleString("vi-VN")}đ
                     </div>
 
                     <button className="cart-btn-delete" onClick={() => handleDelete(product.cartId)} title={t('delete')}>

@@ -10,6 +10,7 @@ import { Tag } from 'antd';
 import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
+import ProductReviews from './ProductReviews';
 
 import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
 import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
@@ -87,11 +88,10 @@ export default function ProductDetail() {
                     promotionPrice: responseData.promotionPrice,
                     hasDiscount: resolveHasDiscount(responseData.originPrice, responseData.promotionPrice),
                 });
+                console.log("Res: ", responseData);
 
                 const mergedData = {
                     ...responseData,
-                    rating: 4.8,
-                    reviews_count: 0,
                     content: {
                         en: {
                             application: '1. Cleanse your skin.\n2. Apply a proper amount.',
@@ -101,8 +101,7 @@ export default function ProductDetail() {
                             application: '1. Làm sạch da.\n2. Thoa một lượng vừa đủ.',
                             ingredients: 'Nước khoáng, Glycerin, Chiết xuất thảo mộc.',
                         },
-                    },
-                    reviews: [],
+                    }
                 };
 
                 setProductData(mergedData);
@@ -156,22 +155,24 @@ export default function ProductDetail() {
         }
     };
 
+    
     const displayName = productData?.name;
     const isOutOfStock = stockQuantity <= 0 || productData?.status === 'INACTIVE';
-    const shownPrice = currentPrice.hasDiscount ? currentPrice.promotionPrice : currentPrice.originPrice;
-
-    const totalReviewPages = productData?.reviews ? Math.ceil(productData.reviews.length / reviewsPerPage) : 0;
-    const displayedReviews = productData?.reviews
-        ? productData.reviews.slice(reviewPage * reviewsPerPage, (reviewPage + 1) * reviewsPerPage)
-        : [];
 
     const getLocalContent = (key) => productData?.content?.[language === 'vi' ? 'vi' : 'en']?.[key] || '';
 
-    const handleQuantityChange = (val) => {
-        if (quantity + val >= 1) setQuantity(q => q + val);
+    const handleQuantityChange = (delta) => {
+        setQuantity(prev => {
+            const newVal = prev + delta;
+            return newVal < 1 ? 1 : (newVal > stockQuantity ? stockQuantity : newVal);
+        });
     };
 
     const handleAddToCart = () => {
+        if (stockQuantity <= 0) {
+            notify(t('out_of_stock_msg'), 'error');
+            return;
+        }
         addToCart({
             productVariantId: productData.id,
             name: displayName,
@@ -188,13 +189,13 @@ export default function ProductDetail() {
     if (isLoading || !productData) return (
         <div className="product-detail-page">
             <div className="product-top-section">
-                <Skeleton width="45%" height="450px" className="detail-skeleton-img" />
-                <div className="detail-skeleton-info">
-                    <Skeleton width="30%" height="20px" className="mb-15" />
-                    <Skeleton width="80%" height="40px" className="mb-20" />
-                    <Skeleton width="40%" height="30px" className="mb-30" />
-                    <Skeleton width="100%" height="80px" className="mb-30" />
-                    <Skeleton width="100%" height="60px" />
+                <Skeleton width="45%" height="450px" borderRadius="16px" className="skeleton-img" />
+                <div className="skeleton-info">
+                    <Skeleton width="30%" height="20px" borderRadius="4px" className="mb15" />
+                    <Skeleton width="80%" height="40px" borderRadius="8px" className="mb20" />
+                    <Skeleton width="40%" height="30px" borderRadius="6px" className="mb30" />
+                    <Skeleton width="100%" height="80px" borderRadius="12px" className="mb30" />
+                    <Skeleton width="100%" height="60px" borderRadius="12px" />
                 </div>
             </div>
         </div>
@@ -204,7 +205,7 @@ export default function ProductDetail() {
         { id: 'details', label: t('product_details') },
         { id: 'application', label: t('how_to_apply') },
         { id: 'ingredients', label: t('ingredients') },
-        { id: 'reviews', label: `${t('reviews')} (${productData.reviews_count})` },
+        { id: 'reviews', label: `${t('reviews')} (${productData.reviewCount})` },
     ];
 
     return (
@@ -255,14 +256,14 @@ export default function ProductDetail() {
                     <div className="detail-tags">
                         <div className="rating-container">
                             <StarFilled className="bkeuty-star" />
-                            <strong>{productData.rating}</strong>/5 ({productData.reviews_count} {t('reviews')})
+                            {productData.averageRating}/5 ({productData.reviewCount} {t('reviews')})
                         </div>
                     </div>
 
                     <div className="price-box">
                         <div className="product-current-price-wrapper">
                             <div className="product-current-price">
-                                {`${shownPrice.toLocaleString('vi-VN')}đ`}
+                                {`${currentPrice.promotionPrice.toLocaleString('vi-VN')}đ`}
                             </div>
                             {currentPrice.hasDiscount && (
                                 <div className="product-old-price-wrapper">
@@ -274,7 +275,7 @@ export default function ProductDetail() {
                         </div>
                     </div>
 
-                    <div className="product-options-section">
+                    <div className="options-section">
                         {productData.options?.map((opt, idx) => (
                             <div key={idx} className="option-group">
                                 <span className="option-label">{opt.name.toUpperCase()}:</span>
@@ -356,76 +357,16 @@ export default function ProductDetail() {
                             <p>{getLocalContent('ingredients')}</p>
                         </div>
                     )}
-                    {activeTab === 'reviews' && (
-                        <div className="tab-content review-tab-content">
-                            <div className="review-dashboard">
-                                <div className="rating-overview">
-                                    <span className="big-score">{productData.rating}</span>
-                                    <div className="star-stack">
-                                        <div className="star-row">
-                                            {[...Array(5)].map((_, i) => <StarFilled key={i} className="bkeuty-star" />)}
-                                        </div>
-                                        <span className="total-reviews">{productData.reviews_count} {t('reviews')}</span>
-                                    </div>
-                                </div>
-                                <div className="rating-bars">
-                                    {[5, 4, 3, 2, 1].map((star) => (
-                                        <div key={star} className="bar-row">
-                                            <span className="star-label">{star} <StarFilled style={{ fontSize: '12px' }} className="bkeuty-star" /></span>
-                                            <div className="progress-bg">
-                                                <div className="progress-fi" style={{ width: star === 5 ? '70%' : star === 4 ? '20%' : '5%' }} />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                                <button className="btn-write-review">{t('write_review')}</button>
-                            </div>
-
-                            <div className="review-filters">
-                                <button className="filter-chip active">{t('all')}</button>
-                                <button className="filter-chip">{t('filter_with_media')} (0)</button>
-                                <button className="filter-chip">{t('filter_5_star')} (0)</button>
-                            </div>
-
-                            <div className="review-list-container">
-                                {displayedReviews.map((rev, i) => (
-                                    <div key={i} className="review-card">
-                                        <div className="review-user-avatar">{rev.user.charAt(0)}</div>
-                                        <div className="review-content-body">
-                                            <div className="review-header-row">
-                                                <span className="reviewer-name">{rev.user}</span>
-                                                <span className="review-time">{rev.date}</span>
-                                            </div>
-                                            <div className="review-stars-row">
-                                                {[...Array(5)].map((_, starIdx) => (
-                                                    <span key={starIdx} className={`rv-star ${starIdx < rev.rating ? 'filled' : ''}`}>
-                                                        <StarFilled className="bkeuty-star" />
-                                                    </span>
-                                                ))}
-                                                {rev.verified && (
-                                                    <span className="verified-tag">
-                                                        <CheckCircleFilled className="icon-check" /> {t('verified_purchase')}
-                                                    </span>
-                                                )}
-                                            </div>
-                                            <div className="review-text">{rev.content}</div>
-                                            <div className="review-actions">
-                                                <button className="action-btn"><HeartOutlined className="icon-action" /> {t('like')}</button>
-                                                <button className="action-btn"><MessageOutlined className="icon-action" /> {t('comment')}</button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                            <Pagination
-                                page={reviewPage}
-                                totalPages={totalReviewPages}
-                                totalItems={productData.reviews.length}
-                                pageSize={reviewsPerPage}
-                                onPageChange={setReviewPage}
+                    {activeTab === 'reviews' && (() => {
+                        return (
+                            <ProductReviews 
+                                variantId={productData.id} 
+                                averageRating={productData.averageRating}
+                                reviewCount={productData.reviewCount}
+                                initialReviews={productData.latestReviews}
                             />
-                        </div>
-                    )}
+                        );
+                    })()}
                 </div>
             </div>
 

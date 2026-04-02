@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
 
     useEffect(() => {
         const initCart = async () => {
-            if (isAuthenticated && user_role === 'USER') {
+            if (isAuthenticated) {
                 const localCart = getLocalCart();
                 if (localCart.length > 0) {
                     await Promise.all(
@@ -50,7 +50,7 @@ export const CartProvider = ({ children }) => {
             await fetchCart();
         };
         initCart();
-    }, [isAuthenticated, user_role, fetchCart]);
+    }, [isAuthenticated, fetchCart]);
 
     const toggleCart = () => setIsCartOpen(prev => !prev);
     const openCart = () => setIsCartOpen(true);

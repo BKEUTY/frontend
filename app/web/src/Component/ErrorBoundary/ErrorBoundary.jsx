@@ -26,7 +26,7 @@ class ErrorBoundary extends Component {
                     <p style={{ color: '#ff4d4f', fontSize: '16px', fontWeight: 'bold' }}>
                         {getTranslation('api_error_general') || 'Error loading content'}
                     </p>
-                    {process.env.NODE_ENV === 'development' && (
+                    {import.meta.env.DEV && (
                         <div style={{ marginTop: '15px', padding: '10px', background: '#fff1f0', border: '1px solid #ffa39e', borderRadius: '4px', display: 'inline-block', textAlign: 'left' }}>
                             <code style={{ fontSize: '12px', color: '#cf1322' }}>
                                 {this.state.error?.toString()}
@@ -42,3 +42,4 @@ class ErrorBoundary extends Component {
 }
 
 export default ErrorBoundary;
+

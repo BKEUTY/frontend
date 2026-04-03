@@ -13,6 +13,10 @@ class ReviewApi extends BaseApi {
         });
     }
 
+    getStatsByVariantId(variantId) {
+        return publicAxiosClient.get(`/api/reviews/product/${variantId}/stats`);
+    }
+
     uploadImage(formData, config = {}) {
         return this.client.post(`${this.resource}/upload-image`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },

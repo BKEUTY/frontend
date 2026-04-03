@@ -40,9 +40,7 @@ export default function Promotion() {
 
     const filteredData = useMemo(() => {
         return promotions.filter(item => {
-            const searchMatch =
-                (item.title || "").toLowerCase().includes(searchTerm.toLowerCase());
-
+            const searchMatch = (item.title || "").toLowerCase().includes(searchTerm.toLowerCase());
             if (!searchMatch) return false;
 
             if (filterType === 'all') return true;
@@ -55,8 +53,7 @@ export default function Promotion() {
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '';
-        const date = new Date(dateStr);
-        return date.toLocaleDateString('vi-VN');
+        return new Date(dateStr).toLocaleDateString('vi-VN');
     };
 
     const formatDiscount = (item) => {
@@ -68,15 +65,9 @@ export default function Promotion() {
 
     const InfoIcon = () => (
         <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="info-icon-svg"
+            width="16" height="16" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+            className="prm-info-icon"
             onClick={(e) => {
                 e.stopPropagation();
                 setShowVipInfo(true);
@@ -90,47 +81,47 @@ export default function Promotion() {
     );
 
     return (
-        <div className="promotion-page">
+        <div className="prm-container">
             <PageWrapper title={t('promo_list_title')} noCard>
-                <div className="promotion-controls">
-                    <div className="promo-search-bar">
-                        <SearchOutlined className="promo-search-icon" style={{ fontSize: '20px' }} />
+                <div className="prm-controls">
+                    <div className="prm-search-box">
+                        <SearchOutlined className="prm-search-icon" />
                         <input
                             type="text"
-                            className="promo-search-input"
+                            className="prm-search-input"
                             placeholder={t('promo_search_placeholder')}
                             value={searchTerm}
                             onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
                         />
                     </div>
 
-                    <div className="filter-tabs">
+                    <div className="prm-tabs">
                         <button
-                            className={`filter-tab ${filterType === 'all' ? 'active' : ''}`}
+                            className={`prm-tab ${filterType === 'all' ? 'active' : ''}`}
                             onClick={() => { setFilterType('all'); setCurrentPage(0); }}
                         >
                             {t('promo_tab_all')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'STARTING' ? 'active' : ''}`}
+                            className={`prm-tab ${filterType === 'STARTING' ? 'active' : ''}`}
                             onClick={() => { setFilterType('STARTING'); setCurrentPage(0); }}
                         >
                             {t('promo_tab_STARTING')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'INCOMING' ? 'active' : ''}`}
+                            className={`prm-tab ${filterType === 'INCOMING' ? 'active' : ''}`}
                             onClick={() => { setFilterType('INCOMING'); setCurrentPage(0); }}
                         >
                             {t('promo_tab_INCOMING')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'DISABLED' ? 'active' : ''}`}
+                            className={`prm-tab ${filterType === 'DISABLED' ? 'active' : ''}`}
                             onClick={() => { setFilterType('DISABLED'); setCurrentPage(0); }}
                         >
                             {t('promo_tab_DISABLED')}
                         </button>
                         <button
-                            className={`filter-tab ${filterType === 'ENDED' ? 'active' : ''}`}
+                            className={`prm-tab ${filterType === 'ENDED' ? 'active' : ''}`}
                             onClick={() => { setFilterType('ENDED'); setCurrentPage(0); }}
                         >
                             {t('promo_tab_ENDED')}
@@ -138,11 +129,11 @@ export default function Promotion() {
                     </div>
                 </div>
 
-                <div className="promotion-table-container">
+                <div className="prm-table-wrapper">
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '50px' }}><Spin size="large" /></div>
+                        <div className="prm-loading"><Spin size="large" /></div>
                     ) : (
-                        <table className="promotion-table">
+                        <table className="prm-table">
                             <thead>
                                 <tr>
                                     <th>{t('promo_col_name')}</th>
@@ -160,17 +151,15 @@ export default function Promotion() {
                                     currentData.map((item) => (
                                         <tr
                                             key={item.id}
-                                            className={`promo-row ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled-row' : ''}`}
+                                            className={`prm-row ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled' : ''}`}
                                             onClick={() => setSelectedPromo(item)}
                                         >
-                                            <td>{item.title}</td>
-                                            <td>
-                                                <span className="discount-tag">{formatDiscount(item)}</span>
-                                            </td>
+                                            <td className="prm-title-col">{item.title}</td>
+                                            <td><span className="prm-badge-discount">{formatDiscount(item)}</span></td>
                                             <td>{item.promotionType}</td>
                                             <td>{formatDate(item.startAt)} - {formatDate(item.endAt)}</td>
-                                            <td style={{ textAlign: 'center' }}>
-                                                <span className={`status-badge status-${item.status}`}>
+                                            <td align="center">
+                                                <span className={`prm-status prm-status-${item.status}`}>
                                                     {t(`promo_status_${item.status}`)}
                                                 </span>
                                             </td>
@@ -178,7 +167,7 @@ export default function Promotion() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" style={{ padding: '40px 0' }}>
+                                        <td colSpan="5" className="prm-empty-td">
                                             <EmptyState title={t('no_promos_found')} />
                                         </td>
                                     </tr>
@@ -188,46 +177,44 @@ export default function Promotion() {
                     )}
                 </div>
 
-                <div className="mobile-card-view">
+                <div className="prm-mobile-list">
                     {loading ? (
-                        <div style={{ textAlign: 'center', padding: '50px' }}><Spin size="large" /></div>
+                        <div className="prm-loading"><Spin size="large" /></div>
                     ) : currentData.length > 0 ? (
                         currentData.map((item) => (
                             <div
-                                className={`promotion-card ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled-card' : ''}`}
+                                className={`prm-card ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled' : ''}`}
                                 key={item.id}
                                 onClick={() => setSelectedPromo(item)}
                             >
-                                <div className="card-header">
-                                    <div className="card-title">{item.title}</div>
+                                <div className="prm-card-header">
+                                    <span className="prm-card-title">{item.title}</span>
                                 </div>
-                                <div className="card-row">
-                                    <span className="card-label">{t('promo_col_discount')}</span>
-                                    <span className="card-value highlight-discount">{formatDiscount(item)}</span>
+                                <div className="prm-card-row">
+                                    <span className="prm-card-label">{t('promo_col_discount')}</span>
+                                    <span className="prm-card-value prm-highlight">{formatDiscount(item)}</span>
                                 </div>
-                                <div className="card-row">
-                                    <span className="card-label">
+                                <div className="prm-card-row">
+                                    <span className="prm-card-label">
                                         {t('promo_col_target')}
                                         <InfoIcon />
                                     </span>
-                                    <span className="card-value">{item.promotionType}</span>
+                                    <span className="prm-card-value">{item.promotionType}</span>
                                 </div>
-                                <div className="card-row">
-                                    <span className="card-label">{t('promo_col_time')}</span>
-                                    <span className="card-value">{formatDate(item.startAt)} - {formatDate(item.endAt)}</span>
+                                <div className="prm-card-row">
+                                    <span className="prm-card-label">{t('promo_col_time')}</span>
+                                    <span className="prm-card-value">{formatDate(item.startAt)} - {formatDate(item.endAt)}</span>
                                 </div>
-                                <div className="card-row">
-                                    <span className="card-label">{t('promo_col_status')}</span>
-                                    <span className="card-value">
-                                        <span className={`status-badge status-${item.status}`}>
-                                            {t(`promo_status_${item.status}`)}
-                                        </span>
+                                <div className="prm-card-row">
+                                    <span className="prm-card-label">{t('promo_col_status')}</span>
+                                    <span className={`prm-status prm-status-${item.status}`}>
+                                        {t(`promo_status_${item.status}`)}
                                     </span>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        <div style={{ padding: '40px 0' }}>
+                        <div className="prm-empty-td">
                             <EmptyState title={t('no_promos_found')} />
                         </div>
                     )}
@@ -243,63 +230,63 @@ export default function Promotion() {
             </PageWrapper>
 
             {selectedPromo && (
-                <div className="promo-modal-overlay" onClick={() => setSelectedPromo(null)}>
-                    <div className="promo-modal-content" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className="prm-overlay" onClick={() => setSelectedPromo(null)}>
+                    <div className="prm-modal" onClick={e => e.stopPropagation()}>
+                        <div className="prm-modal-header">
                             <h3>{t('promo_info_title')}</h3>
-                            <button className="close-modal" onClick={() => setSelectedPromo(null)}>&times;</button>
+                            <button className="prm-modal-close" onClick={() => setSelectedPromo(null)}>&times;</button>
                         </div>
-                        <div className="modal-body">
-                            <div className="detail-item">
+                        <div className="prm-modal-body">
+                            <div className="prm-modal-row">
                                 <label>{t('promo_col_name')}:</label>
                                 <span>{selectedPromo.title}</span>
                             </div>
-                            <div className="detail-item">
+                            <div className="prm-modal-row">
                                 <label>{t('promo_col_discount')}:</label>
-                                <span className="modal-discount">{formatDiscount(selectedPromo)}</span>
+                                <span className="prm-highlight-large">{formatDiscount(selectedPromo)}</span>
                             </div>
                             {selectedPromo.maxDiscount > 0 && (
-                                <div className="detail-item">
+                                <div className="prm-modal-row">
                                     <label>{t('promo_label_max_discount')}:</label>
                                     <span>{new Intl.NumberFormat('vi-VN').format(selectedPromo.maxDiscount)}đ</span>
                                 </div>
                             )}
-                            <div className="detail-item">
+                            <div className="prm-modal-row">
                                 <label>{t('promo_col_target')}:</label>
                                 <span>{selectedPromo.promotionType}</span>
                             </div>
 
                             {selectedPromo.categoryIds?.length > 0 && (
-                                <div className="detail-item">
+                                <div className="prm-modal-row">
                                     <label>{t('categories')}:</label>
-                                    <span className="array-values">{selectedPromo.categoryIds.join(', ')}</span>
+                                    <span className="prm-text-wrap">{selectedPromo.categoryIds.join(', ')}</span>
                                 </div>
                             )}
 
                             {selectedPromo.brandIds?.length > 0 && (
-                                <div className="detail-item">
+                                <div className="prm-modal-row">
                                     <label>{t('brands')}:</label>
-                                    <span className="array-values">{selectedPromo.brandIds.join(', ')}</span>
+                                    <span className="prm-text-wrap">{selectedPromo.brandIds.join(', ')}</span>
                                 </div>
                             )}
 
                             {selectedPromo.productIds?.length > 0 && (
-                                <div className="detail-item">
+                                <div className="prm-modal-row">
                                     <label>{t('product')}:</label>
-                                    <span className="array-values">{selectedPromo.productIds.join(', ')}</span>
+                                    <span className="prm-text-wrap">{selectedPromo.productIds.join(', ')}</span>
                                 </div>
                             )}
 
-                            <div className="detail-item">
+                            <div className="prm-modal-row">
                                 <label>{t('promo_col_time')}:</label>
                                 <span>{formatDate(selectedPromo.startAt)} - {formatDate(selectedPromo.endAt)}</span>
                             </div>
-                            <div className="description-section">
+                            <div className="prm-modal-desc">
                                 <label>{t('description')}:</label>
                                 <p>{selectedPromo.description}</p>
                             </div>
                         </div>
-                        <div className="modal-footer">
+                        <div className="prm-modal-footer">
                             <CButton type="primary" block onClick={() => setSelectedPromo(null)}>
                                 {t('confirm')}
                             </CButton>
@@ -309,20 +296,20 @@ export default function Promotion() {
             )}
 
             {showVipInfo && (
-                <div className="promo-modal-overlay" onClick={() => setShowVipInfo(false)}>
-                    <div className="promo-modal-content vip-info-modal" onClick={e => e.stopPropagation()}>
-                        <div className="modal-header">
+                <div className="prm-overlay" onClick={() => setShowVipInfo(false)}>
+                    <div className="prm-modal prm-modal-sm" onClick={e => e.stopPropagation()}>
+                        <div className="prm-modal-header">
                             <h3>{t('vip_condition_title')}</h3>
-                            <button className="close-modal" onClick={() => setShowVipInfo(false)}>&times;</button>
+                            <button className="prm-modal-close" onClick={() => setShowVipInfo(false)}>&times;</button>
                         </div>
-                        <div className="modal-body">
-                            <div className="vip-conditions">
+                        <div className="prm-modal-body">
+                            <div className="prm-vip-text">
                                 {t('vip_condition_content').split('\n').map((line, i) => (
                                     <p key={i}>{line}</p>
                                 ))}
                             </div>
                         </div>
-                        <div className="modal-footer">
+                        <div className="prm-modal-footer">
                             <CButton type="primary" block onClick={() => setShowVipInfo(false)}>
                                 {t('close_hint')}
                             </CButton>

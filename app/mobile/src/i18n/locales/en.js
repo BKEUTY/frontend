@@ -178,7 +178,7 @@ export default {
     recommended_routine: "Recommended Skincare Routine",
     like: "Like",
     comment: "Comment",
-    verified_purchase: "Verified Purchase",
+    verified_purchase: "Purchased",
     read_more: "Read More",
     show_less: "Show Less",
     star: "star",

@@ -166,6 +166,10 @@ export default function Product() {
                   <option value="price_desc">{t('price_high_low')}</option>
                   <option value="stock_desc">{t('stock_high_low')}</option>
                   <option value="stock_asc">{t('stock_low_high')}</option>
+                  <option value="rating_desc">{t('rating_high_low')}</option>
+                  <option value="rating_asc">{t('rating_low_high')}</option>
+                  <option value="reviews_desc">{t('reviews_high_low')}</option>
+                  <option value="reviews_asc">{t('reviews_low_high')}</option>
                 </select>
               </div>
             </div>

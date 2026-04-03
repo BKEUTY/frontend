@@ -1,0 +1,361 @@
+.pr-container {
+    color: #334155;
+    font-size: 1rem;
+}
+
+.pr-dashboard {
+    display: flex;
+    flex-wrap: wrap;
+    background: #f8fafc;
+    padding: 32px;
+    border-radius: 16px;
+    gap: 32px;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    border: 1px solid #f1f5f9;
+}
+
+.pr-overview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 120px;
+}
+
+.pr-score {
+    font-size: 3.5rem;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1;
+}
+
+.pr-stars {
+    margin: 8px 0;
+    display: flex;
+    gap: 4px;
+}
+
+.pr-star-icon {
+    font-size: 16px;
+}
+
+.pr-star-icon.filled,
+.pr-star-icon.filled svg,
+.pr-star-icon.filled svg path {
+    color: #ffb800 !important;
+    fill: #ffb800 !important;
+}
+
+.pr-star-icon.empty,
+.pr-star-icon.empty svg,
+.pr-star-icon.empty svg path {
+    color: #e2e8f0 !important;
+    fill: #e2e8f0 !important;
+}
+
+.pr-total {
+    color: #64748b;
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+.pr-bars-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 250px;
+}
+
+.pr-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    position: relative;
+}
+
+.pr-bar-label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 32px;
+    color: #475569;
+}
+
+.pr-bar-star,
+.pr-bar-star svg,
+.pr-bar-star svg path {
+    color: #94a3b8 !important;
+    fill: #94a3b8 !important;
+}
+
+.pr-progress-track {
+    flex: 1;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pr-progress-fill {
+    height: 100%;
+    background: #ffb800;
+    border-radius: 8px;
+    transition: width 0.3s ease;
+}
+
+.pr-bar-row::after {
+    content: attr(data-count);
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #1e293b;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+.pr-bar-row::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 5px solid transparent;
+    border-top-color: #1e293b;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+.pr-bar-row:hover::after { opacity: 1; visibility: visible; top: -26px; }
+.pr-bar-row:hover::before { opacity: 1; visibility: visible; top: -2px; }
+
+.pr-write-action {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.pr-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.pr-filter-chip {
+    border-radius: 20px !important;
+}
+
+.pr-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.pr-empty {
+    padding: 60px 0;
+    text-align: center;
+    color: #94a3b8;
+    font-style: italic;
+}
+
+.pr-card {
+    display: flex;
+    gap: 20px;
+    padding: 24px 0;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.pr-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #475569;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.pr-content {
+    flex: 1;
+}
+
+.pr-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+}
+
+.pr-author {
+    font-weight: 700;
+    color: #0f172a;
+}
+
+.pr-date {
+    color: #94a3b8;
+    font-size: 0.85rem;
+}
+
+.pr-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.pr-user-stars {
+    display: flex;
+    gap: 2px;
+}
+
+.pr-verified {
+    font-size: 0.8rem;
+    color: #10b981;
+    font-weight: 600;
+    background: #ecfdf5;
+    padding: 2px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pr-text {
+    line-height: 1.6;
+    margin-bottom: 16px;
+    color: #334155;
+}
+
+.pr-gallery {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.pr-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.pr-reply {
+    background: #fdfaf3;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid #fef3c7;
+}
+
+.pr-reply-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.pr-reply-date {
+    font-size: 0.85rem;
+    color: #92400e;
+    opacity: 0.8;
+}
+
+.pr-reply-text {
+    color: #92400e;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.pr-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.pr-action-btn {
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+.pr-action-btn:hover {
+    color: var(--color_main_title) !important;
+}
+
+.pr-expand-wrap {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.pr-expand-btn {
+    font-weight: 700 !important;
+    color: var(--color_main) !important;
+}
+
+.pr-pagination {
+    margin-top: 24px;
+}
+
+.pr-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.pr-modal-rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+}
+
+.pr-rate-yellow .ant-rate-star {
+    color: #ffb800 !important;
+}
+
+@media (max-width: 768px) {
+    .pr-dashboard {
+        flex-direction: column;
+        gap: 24px;
+        padding: 24px 16px;
+        text-align: center;
+    }
+
+    .pr-write-action {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .pr-bars-wrapper {
+        width: 100%;
+    }
+    
+    .pr-card {
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .pr-avatar {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+}

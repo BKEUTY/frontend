@@ -9,7 +9,6 @@ class ProductApi extends BaseApi {
     getCategories() {
         return this.client.get(`${this.resource}/categories`);
     }
-
 }
 
 const productApi = new ProductApi();

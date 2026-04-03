@@ -4,8 +4,8 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { useNotification } from '../../Context/NotificationContext';
 import { useCart } from '../../Context/CartContext';
 import './ProductDetail.css';
-import { StarFilled, CheckCircleFilled, HeartOutlined, MessageOutlined, ShoppingOutlined } from '@ant-design/icons';
-import { CButton, Pagination, ProductCard, Skeleton } from '../../Component/Common';
+import { StarFilled, ShoppingOutlined } from '@ant-design/icons';
+import { CButton, Skeleton } from '../../Component/Common';
 import { Tag } from 'antd';
 import productApi from '../../api/productApi';
 import { getImageUrl } from '../../api/axiosClient';
@@ -88,25 +88,9 @@ export default function ProductDetail() {
                     promotionPrice: responseData.promotionPrice,
                     hasDiscount: resolveHasDiscount(responseData.originPrice, responseData.promotionPrice),
                 });
-                console.log("Res: ", responseData);
+                setProductData(responseData);
 
-                const mergedData = {
-                    ...responseData,
-                    content: {
-                        en: {
-                            application: '1. Cleanse your skin.\n2. Apply a proper amount.',
-                            ingredients: 'Aqua, Glycerin, Botanical Extracts.',
-                        },
-                        vi: {
-                            application: '1. Làm sạch da.\n2. Thoa một lượng vừa đủ.',
-                            ingredients: 'Nước khoáng, Glycerin, Chiết xuất thảo mộc.',
-                        },
-                    }
-                };
-
-                setProductData(mergedData);
-
-                const targetVariant = mergedData.variants?.find(v => v.id === mergedData.id) || mergedData.variants?.[0];
+                const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
                 setSelectedOptions(targetVariant?.variantOptions || {});
                 setStockQuantity(targetVariant?.stockQuantity || 0);
 
@@ -159,8 +143,6 @@ export default function ProductDetail() {
     const displayName = productData?.name;
     const isOutOfStock = stockQuantity <= 0 || productData?.status === 'INACTIVE';
 
-    const getLocalContent = (key) => productData?.content?.[language === 'vi' ? 'vi' : 'en']?.[key] || '';
-
     const handleQuantityChange = (delta) => {
         setQuantity(prev => {
             const newVal = prev + delta;
@@ -203,8 +185,6 @@ export default function ProductDetail() {
 
     const tabs = [
         { id: 'details', label: t('product_details') },
-        { id: 'application', label: t('how_to_apply') },
-        { id: 'ingredients', label: t('ingredients') },
         { id: 'reviews', label: `${t('reviews')} (${productData.reviewCount})` },
     ];
 
@@ -345,25 +325,12 @@ export default function ProductDetail() {
                             <p>{productData.description}</p>
                         </div>
                     )}
-                    {activeTab === 'application' && (
-                        <div className="tab-content">
-                            <h3>{t('how_to_apply')}</h3>
-                            {getLocalContent('application').split('\n').map((line, i) => <p key={i}>{line}</p>)}
-                        </div>
-                    )}
-                    {activeTab === 'ingredients' && (
-                        <div className="tab-content">
-                            <h3>{t('ingredients')}</h3>
-                            <p>{getLocalContent('ingredients')}</p>
-                        </div>
-                    )}
                     {activeTab === 'reviews' && (() => {
                         return (
                             <ProductReviews 
                                 variantId={productData.id} 
                                 averageRating={productData.averageRating}
                                 reviewCount={productData.reviewCount}
-                                initialReviews={productData.latestReviews}
                             />
                         );
                     })()}

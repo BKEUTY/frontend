@@ -224,7 +224,7 @@ export default function Checkout() {
                             <span>{t('total')}</span>
                             <span className="total-price">{grandTotal.toLocaleString("vi-VN")}đ</span>
                         </div>
-                        <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                        <Space orientation="vertical" size={12} style={{ width: '100%' }}>
                             <CButton type="primary" block size="large" loading={isProcessing} disabled={isProcessing} onClick={handleCheckout}>
                                 {isProcessing ? t('loading') : (paymentMethod === 'banking' ? t('continue_payment') : t('place_order'))}
                             </CButton>

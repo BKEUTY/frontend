@@ -31,55 +31,56 @@ const ProductCard = ({ product, t }) => {
     const CardContent = (
         <Card
             hoverable
-            className="product-card-antd product-card"
+            className="product-card-wrapper product-card"
             cover={
-                <div className="card-image-wrapper">
+                <div className="card-img-container">
                     <img alt={product.variantName} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
                 </div>
             }
             onClick={handleClick}
-            bordered={false}
+            variant="outlined"
         >
-            <div className="card-info">
-                <Space size="small" className="card-brand-cat">
-                    <Text type="secondary" className="card-brand">{product.brand.toUpperCase()}</Text>
-                </Space>
+            <div className="card-body-content">
+                <div className="card-brand-wrap">
+                    <Text type="secondary" className="card-brand-text">{product.brand?.toUpperCase()}</Text>
+                </div>
 
-                <Title level={5} className="card-name" ellipsis={{ rows: 2 }}>{product.variantName}</Title>
+                <Title level={5} className="card-product-name" ellipsis={{ rows: 2 }}>{product.variantName}</Title>
 
                 {product.categories && product.categories.length > 0 && (
-                    <div className="card-categories-wrapper">
+                    <div className="card-cat-pills">
                         {product.categories.slice(0, 2).map((cat) => (
-                            <span key={cat.id} className="card-category-pill">
+                            <span key={cat.id} className="cat-pill">
                                 {cat.categoryName}
                             </span>
                         ))}
                         {product.categories.length > 2 && (
-                            <span className="card-category-pill plus-more">
+                            <span className="cat-pill plus-pill">
                                 +{product.categories.length - 2}
                             </span>
                         )}
                     </div>
                 )}
 
-                <Space size="small" align="center" className="card-rating">
-                    <Rate disabled defaultValue={product.averageRating} allowHalf className="card-rating-stars" />
-                    <Text type="secondary" className="card-review-count"> ({product.reviewCount} {t('reviews')}) </Text>
-                    {/* <Text type="secondary" className="card-sold-count">({product.sold})</Text> */}
-                </Space>
+                <div className="card-rating-wrap">
+                    <div className="card-stars-tooltip" data-rating={`${Number(product.averageRating || 0).toFixed(1)} ${t('rating')}`}>
+                        <Rate disabled defaultValue={product.averageRating} allowHalf className="card-stars" />
+                    </div>
+                    <Text type="secondary" className="card-review-txt">({product.reviewCount} {t('reviews')})</Text>
+                </div>
 
-                <div className="price-stock-row">
-                    <div className="price-col">
+                <div className="card-footer-row">
+                    <div className="card-price-col">
                         {hasDiscount && (
-                            <Text delete className="card-old-price">
+                            <Text delete className="card-price-old">
                                 {product.originPrice.toLocaleString('vi-VN')}đ
                             </Text>
                         )}
-                        <Text className="card-price">
+                        <Text className={`card-price-current ${hasDiscount ? 'is-discounted' : ''}`}>
                             {product.discountPrice.toLocaleString('vi-VN')}đ
                         </Text>
                     </div>
-                    <Tag color={product.stock > 0 ? 'green' : 'red'} className="stock-tag">
+                    <Tag color={product.stock > 0 ? 'green' : 'red'} className="card-stock-tag">
                         {product.stock > 0 ? `${t('in_stock')} ${product.stock}` : t('out_of_stock_btn')}
                     </Tag>
                 </div>

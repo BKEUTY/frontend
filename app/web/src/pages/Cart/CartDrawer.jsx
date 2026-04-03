@@ -52,7 +52,7 @@ const CartDrawer = () => {
                 <span className="total-label">{t('subtotal')}:</span>
                 <span className="total-amount">{selectedTotal.toLocaleString('vi-VN')}đ</span>
             </div>
-            <Space direction="vertical" className="cart-drawer-btn-space">
+            <Space orientation="vertical" className="cart-drawer-btn-space">
                 <CButton type="primary" block size="large" onClick={handleCheckout} disabled={selectedIds.size === 0}>
                     {t('checkout_now')} ({selectedIds.size})
                 </CButton>

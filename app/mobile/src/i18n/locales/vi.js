@@ -179,7 +179,7 @@ export default {
     recommended_routine: "Quy trình dưỡng da gợi ý",
     like: "Thích",
     comment: "Bình luận",
-    verified_purchase: "Mua hàng xác thực",
+    verified_purchase: "Đã mua hàng",
     read_more: "Xem thêm",
     show_less: "Thu gọn",
     star: "sao",

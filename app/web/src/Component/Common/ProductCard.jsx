@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Badge, Rate, Typography, Space, Tag } from 'antd';
+import { Card, Badge, Rate, Typography, Tag } from 'antd';
 import { getImageUrl } from '../../api/axiosClient';
 import './ProductCard.css';
+import { generateSlug } from '../../utils/helpers';
 
 import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
 import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
@@ -25,7 +26,8 @@ const ProductCard = ({ product, t }) => {
     const productId = product.productId;
 
     const handleClick = () => {
-        navigate(`/product/${product.variantName}`, { state: { productId } });
+        const slug = generateSlug(product.variantName, productId);
+        navigate(`/product/${slug}`, { state: { productId } });
     };
 
     const CardContent = (

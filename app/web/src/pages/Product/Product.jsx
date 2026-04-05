@@ -116,12 +116,6 @@ export default function Product() {
                   </div>
                 ))}
               </div>
-              <div className="mega-promo">
-                <div className="promo-badge">{t('hot_deals')}</div>
-                <h4>{t('mega_promo_title')}</h4>
-                <p>{t('mega_promo_desc')}</p>
-                <Link to="/product" className="promo-link">{t('explore_more')}</Link>
-              </div>
             </div>
           </div>
           

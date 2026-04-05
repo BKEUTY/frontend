@@ -1,3 +1,4 @@
+/* --- Header.css --- */
 .app-header {
     position: fixed;
     top: 0;
@@ -248,10 +249,22 @@
     background: white;
 }
 
-.mobile-drawer-footer .ant-btn:hover {
+.mobile-drawer-footer .ant-btn:hover:not(.drawer-logout-btn) {
     color: #ba1a56;
     border-color: #ba1a56;
     background-color: #fff0f5;
+}
+
+.drawer-logout-btn {
+    background-color: #fff1f0 !important;
+    color: #ff4d4f !important;
+    border: 1px solid #ffccc7 !important;
+}
+
+.drawer-logout-btn:hover {
+    background-color: #ff4d4f !important;
+    color: #ffffff !important;
+    border-color: #ff4d4f !important;
 }
 
 .scrolled {

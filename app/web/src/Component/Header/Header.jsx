@@ -13,7 +13,8 @@ import {
   AppstoreOutlined,
   GiftOutlined,
   ShopOutlined,
-  HeartOutlined
+  HeartOutlined,
+  LogoutOutlined
 } from '@ant-design/icons';
 import logo_image from "../../Assets/Images/logo.svg";
 import "./Header.css";
@@ -25,7 +26,7 @@ export default function Header() {
   const { cartItems } = useCart();
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -54,6 +55,16 @@ export default function Header() {
   const handleMenuClick = ({ key }) => {
     navigate(key);
     setMobileMenuOpen(false);
+  };
+
+  const handleLogout = async () => {
+    try {
+      if (logout) await logout();
+      navigate('/');
+      setMobileMenuOpen(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -138,9 +149,20 @@ export default function Header() {
           >
             {language === 'vi' ? 'Tiếng Việt' : 'English'}
           </Button>
+
+          {isAuthenticated && (
+            <Button
+              block
+              danger
+              icon={<LogoutOutlined />}
+              onClick={handleLogout}
+              className="drawer-logout-btn"
+            >
+              {t('logout') || 'Đăng xuất'}
+            </Button>
+          )}
         </div>
       </Drawer>
     </AntHeader>
   );
 }
-

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
-import './Home.css';
 import { Skeleton, ProductCard } from '../../Component/Common';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useProducts } from '../../hooks/useProducts';
 import banner1 from '../../Assets/Images/Banners/banner_home_1.png';
 import banner2 from '../../Assets/Images/Banners/banner_home_2.png';
 import about_image from "../../Assets/Images/Banners/banner_about_us.svg";
+import './Home.css';
 
 const bannerImages = [banner1, banner2];
 
@@ -29,10 +29,10 @@ const Home = () => {
     }, []);
 
     const sectionsConfig = [
-        { id: 'rating', hook: topRatedApi, title: t('top_rated'), tag: t('tag_top_rated') },
-        { id: 'reviews', hook: mostReviewedApi, title: t('most_reviewed'), tag: t('tag_hot') },
-        { id: 'price', hook: premiumApi, title: t('premium_products'), tag: t('tag_premium') },
-        { id: 'stock', hook: availableApi, title: t('top_in_stock'), tag: t('tag_available') }
+        { id: 'rating', hook: topRatedApi, title: t('top_rated') },
+        { id: 'reviews', hook: mostReviewedApi, title: t('most_reviewed') },
+        { id: 'price', hook: premiumApi, title: t('premium_products') },
+        { id: 'stock', hook: availableApi, title: t('top_in_stock') }
     ];
 
     useEffect(() => {
@@ -69,10 +69,10 @@ const Home = () => {
                     </button>
                 </div>
 
-                <button className="slider-arrow left" onClick={prevBanner} aria-label="Previous banner">
+                <button className="slider-arrow left" onClick={prevBanner}>
                     <LeftOutlined />
                 </button>
-                <button className="slider-arrow right" onClick={nextBanner} aria-label="Next banner">
+                <button className="slider-arrow right" onClick={nextBanner}>
                     <RightOutlined />
                 </button>
 
@@ -91,44 +91,48 @@ const Home = () => {
                 const { products, isLoading } = section.hook;
                 
                 return (
-                    <section key={section.id} className={`section-full-width ${idx % 2 !== 0 ? 'bg-gray' : ''} animate-slide-up delay-${(idx + 1) * 100}`}>
-                        <h2 className="home-section-title">{section.title}</h2>
-                        <div className="home-product-grid">
-                            {isLoading ? (
-                                Array(5).fill(0).map((_, i) => (
-                                    <div key={i} className="product-card skeleton-card">
-                                        <Skeleton width="100%" height="220px" />
-                                        <div className="skeleton-info-wrap">
-                                            <Skeleton width="60%" height="20px" style={{ marginBottom: '8px' }} />
-                                            <Skeleton width="80%" height="20px" style={{ marginBottom: '8px' }} />
-                                            <Skeleton width="40%" height="20px" />
+                    <section key={section.id} className={`home-section ${idx % 2 !== 0 ? 'bg-light' : ''}`}>
+                        <div className="home-section-content">
+                            <div className="home-section-header">
+                                <h2 className="home-section-title">{section.title}</h2>
+                            </div>
+                            <div className="home-product-grid">
+                                {isLoading ? (
+                                    Array(5).fill(0).map((_, i) => (
+                                        <div key={i} className="product-card skeleton-card">
+                                            <Skeleton width="100%" height="240px" />
+                                            <div className="skeleton-info-wrap">
+                                                <Skeleton width="70%" height="20px" style={{ marginBottom: '12px' }} />
+                                                <Skeleton width="90%" height="20px" style={{ marginBottom: '16px' }} />
+                                                <Skeleton width="50%" height="24px" />
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
-                            ) : (
-                                products.map((item) => (
-                                    <ProductCard
-                                        key={item.id}
-                                        product={{ ...item, tag: section.tag }}
-                                        t={t}
-                                    />
-                                ))
-                            )}
+                                    ))
+                                ) : (
+                                    products.map((item) => (
+                                        <ProductCard
+                                            key={item.id}
+                                            product={item}
+                                            t={t}
+                                        />
+                                    ))
+                                )}
+                            </div>
                         </div>
                     </section>
                 );
             })}
 
-            <section className="section4 animate-slide-up delay-500">
-                <div className="section4-content">
-                    <div className="section4-text">
+            <section className="home-brand-section">
+                <div className="brand-content-wrapper">
+                    <div className="brand-text-box">
                         <h2>{t('brand_story')}</h2>
                         <p>{t('brand_desc')}</p>
                         <button className="btn-explore-brand" onClick={() => navigate('/about')}>
                             {t('explore_more')}
                         </button>
                     </div>
-                    <div className="section4-image">
+                    <div className="brand-image-box">
                         <img src={about_image} alt={t('about_us_alt')} />
                     </div>
                 </div>

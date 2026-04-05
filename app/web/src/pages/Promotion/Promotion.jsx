@@ -1,9 +1,9 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { useLanguage } from "../../i18n/LanguageContext";
-import { Pagination, EmptyState, CButton, PageWrapper } from '../../Component/Common';
+import { Pagination, EmptyState, CButton } from '../../Component/Common';
 import { SearchOutlined } from '@ant-design/icons';
+import { Input, Select, Spin } from 'antd';
 import promotionApi from '../../api/promotionApi';
-import { Spin } from 'antd';
 import "./Promotion.css";
 
 export default function Promotion() {
@@ -81,52 +81,34 @@ export default function Promotion() {
     );
 
     return (
-        <div className="prm-container">
-            <PageWrapper title={t('promo_list_title')} noCard>
+        <div className="prm-page-container">
+            <div className="prm-page-header">
+                <h1 className="prm-page-title">{t('promo_list_title')}</h1>
+            </div>
+            
+            <div className="prm-page-content">
                 <div className="prm-controls">
-                    <div className="prm-search-box">
-                        <SearchOutlined className="prm-search-icon" />
-                        <input
-                            type="text"
-                            className="prm-search-input"
-                            placeholder={t('promo_search_placeholder')}
-                            value={searchTerm}
-                            onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
-                        />
-                    </div>
-
-                    <div className="prm-tabs">
-                        <button
-                            className={`prm-tab ${filterType === 'all' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('all'); setCurrentPage(0); }}
-                        >
-                            {t('promo_tab_all')}
-                        </button>
-                        <button
-                            className={`prm-tab ${filterType === 'STARTING' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('STARTING'); setCurrentPage(0); }}
-                        >
-                            {t('promo_tab_STARTING')}
-                        </button>
-                        <button
-                            className={`prm-tab ${filterType === 'INCOMING' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('INCOMING'); setCurrentPage(0); }}
-                        >
-                            {t('promo_tab_INCOMING')}
-                        </button>
-                        <button
-                            className={`prm-tab ${filterType === 'DISABLED' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('DISABLED'); setCurrentPage(0); }}
-                        >
-                            {t('promo_tab_DISABLED')}
-                        </button>
-                        <button
-                            className={`prm-tab ${filterType === 'ENDED' ? 'active' : ''}`}
-                            onClick={() => { setFilterType('ENDED'); setCurrentPage(0); }}
-                        >
-                            {t('promo_tab_ENDED')}
-                        </button>
-                    </div>
+                    <Input
+                        size="large"
+                        placeholder={t('promo_search_placeholder')}
+                        prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+                        value={searchTerm}
+                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
+                        className="prm-search-input"
+                    />
+                    <Select
+                        size="large"
+                        value={filterType}
+                        onChange={(value) => { setFilterType(value); setCurrentPage(0); }}
+                        className="prm-status-select"
+                        options={[
+                            { value: 'all', label: t('promo_tab_all') },
+                            { value: 'STARTING', label: t('promo_tab_STARTING') },
+                            { value: 'INCOMING', label: t('promo_tab_INCOMING') },
+                            { value: 'DISABLED', label: t('promo_tab_DISABLED') },
+                            { value: 'ENDED', label: t('promo_tab_ENDED') },
+                        ]}
+                    />
                 </div>
 
                 <div className="prm-table-wrapper">
@@ -159,7 +141,7 @@ export default function Promotion() {
                                             <td>{item.promotionType}</td>
                                             <td>{formatDate(item.startAt)} - {formatDate(item.endAt)}</td>
                                             <td align="center">
-                                                <span className={`prm-status prm-status-${item.status}`}>
+                                                <span className={`prm-status-badge ${item.status.toLowerCase()}`}>
                                                     {t(`promo_status_${item.status}`)}
                                                 </span>
                                             </td>
@@ -207,7 +189,7 @@ export default function Promotion() {
                                 </div>
                                 <div className="prm-card-row">
                                     <span className="prm-card-label">{t('promo_col_status')}</span>
-                                    <span className={`prm-status prm-status-${item.status}`}>
+                                    <span className={`prm-status-badge ${item.status.toLowerCase()}`}>
                                         {t(`promo_status_${item.status}`)}
                                     </span>
                                 </div>
@@ -220,14 +202,18 @@ export default function Promotion() {
                     )}
                 </div>
 
-                <Pagination 
-                    page={currentPage} 
-                    totalPages={totalPages} 
-                    totalItems={totalItems} 
-                    pageSize={itemsPerPage} 
-                    onPageChange={setCurrentPage} 
-                />
-            </PageWrapper>
+                {totalPages > 1 && (
+                    <div className="pagination-wrapper">
+                        <Pagination 
+                            page={currentPage} 
+                            totalPages={totalPages} 
+                            totalItems={totalItems} 
+                            pageSize={itemsPerPage} 
+                            onPageChange={setCurrentPage} 
+                        />
+                    </div>
+                )}
+            </div>
 
             {selectedPromo && (
                 <div className="prm-overlay" onClick={() => setSelectedPromo(null)}>

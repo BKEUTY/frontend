@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { StarFilled, CheckCircleFilled, MessageOutlined, HeartOutlined, DownOutlined, EditOutlined, DeleteOutlined, UploadOutlined } from '@ant-design/icons';
-import { Tag, Modal, Input, Rate, notification, Upload } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { StarFilled, CheckCircleFilled, MessageOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownOutlined, HeartOutlined } from '@ant-design/icons';
+import { Modal, Input, Rate, notification, Upload, Space, Avatar } from 'antd';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { Pagination, Skeleton, CButton } from '../../Component/Common';
 import { useReviews } from '../../hooks/useReviews';
@@ -47,15 +47,9 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
     const handleFilterChange = (type, value) => {
         if (!isExpanded) setIsExpanded(true);
         setPage(0);
-        
-        if (type === 'rating') {
-            setRatingFilter(prev => prev === value ? null : value);
-        } else if (type === 'media') {
-            setHasImageFilter(prev => prev ? null : true);
-        } else if (type === 'all') {
-            setRatingFilter(null);
-            setHasImageFilter(null);
-        }
+        if (type === 'rating') setRatingFilter(prev => prev === value ? null : value);
+        else if (type === 'media') setHasImageFilter(prev => prev ? null : true);
+        else if (type === 'all') { setRatingFilter(null); setHasImageFilter(null); }
     };
 
     const handleOpenReviewModal = (review = null) => {
@@ -81,7 +75,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             const formData = new FormData();
             formData.append('file', file);
             const res = await uploadImage(formData);
-            if(res.data && res.data.url) {
+            if(res.data?.url) {
                 setReviewForm(prev => ({ ...prev, images: [...prev.images, res.data.url] }));
                 onSuccess("Ok");
             }
@@ -110,11 +104,11 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             }
             setIsReviewModalVisible(false);
         } catch (error) {
-            if (error.response?.status === 403 || error.response?.status === 400) {
-                notification.error({ message: t('error'), description: t('review_not_eligible_msg') });
-            } else {
-                notification.error({ message: t('error'), description: error.response?.data?.message || t('api_error_general') });
-            }
+            const status = error.response?.status;
+            notification.error({ 
+                message: t('error'), 
+                description: (status === 403 || status === 400) ? t('review_not_eligible_msg') : (error.response?.data?.message || t('api_error_general'))
+            });
         }
     };
 
@@ -140,34 +134,30 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
         <div className="pr-container">
             <div className="pr-dashboard">
                 <div className="pr-overview">
-                    <span className="pr-score">{Number(averageRating || 0).toFixed(1)}</span>
-                    <div className="pr-stars">
-                        {[...Array(5)].map((_, i) => (
-                            <StarFilled 
-                                key={i} 
-                                className={`pr-star-icon ${i < Math.round(Number(averageRating || 0)) ? 'filled' : 'empty'}`} 
-                            />
-                        ))}
+                    <span className="pr-big-score">{Number(averageRating || 0).toFixed(1)}</span>
+                    <div className="pr-star-stack">
+                        <div className="pr-star-row">
+                            {[...Array(5)].map((_, i) => (
+                                <StarFilled 
+                                    key={i} 
+                                    style={{ color: i < Math.round(Number(averageRating || 0)) ? '#f59e0b' : '#e2e8f0' }} 
+                                />
+                            ))}
+                        </div>
+                        <span className="pr-total-text">{reviewCount || 0} {t('reviews')}</span>
                     </div>
-                    <span className="pr-total">{reviewCount || 0} {t('reviews')}</span>
                 </div>
-                <div className="pr-bars-wrapper">
+                <div className="pr-bars-container">
                     {[5, 4, 3, 2, 1].map((star) => {
                         const count = currentRatingCounts[star] || 0;
                         const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
                         return (
-                            <div 
-                                key={star} 
-                                className={`pr-bar-row ${ratingFilter === star ? 'active' : ''}`} 
-                                onClick={() => handleFilterChange('rating', star)} 
-                                data-count={count}
-                            >
-                                <span className="pr-bar-label">
-                                    {star} <StarFilled className="pr-bar-star" />
-                                </span>
-                                <div className="pr-progress-track">
+                            <div key={star} className={`pr-bar-row ${ratingFilter === star ? 'active' : ''}`} onClick={() => handleFilterChange('rating', star)}>
+                                <span className="pr-bar-label">{star} <StarFilled style={{ fontSize: '12px', color: '#f59e0b' }} /></span>
+                                <div className="pr-progress-bg">
                                     <div className="pr-progress-fill" style={{ width: `${percentage}%` }} /> 
                                 </div>
+                                <span className="pr-bar-count">{count}</span>
                             </div>
                         );
                     })}
@@ -181,137 +171,75 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
 
             {isExpanded && (
                 <div className="pr-filters">
-                    <CButton 
-                        type={!ratingFilter && !hasImageFilter ? 'primary' : 'outline'}
-                        className="pr-filter-chip"
-                        onClick={() => handleFilterChange('all')}
-                        style={!ratingFilter && !hasImageFilter ? { color: '#fff' } : {}}
-                    >
-                        {t('all')}
-                    </CButton>
-                    <CButton 
-                        type={hasImageFilter ? 'primary' : 'outline'}
-                        className="pr-filter-chip"
-                        onClick={() => handleFilterChange('media')}
-                        style={hasImageFilter ? { color: '#fff' } : {}}
-                    >
-                        {t('with_images')}
-                    </CButton>
+                    <button className={`pr-filter-chip ${!ratingFilter && !hasImageFilter ? 'active' : ''}`} onClick={() => handleFilterChange('all')}>{t('all')}</button>
+                    <button className={`pr-filter-chip ${hasImageFilter ? 'active' : ''}`} onClick={() => handleFilterChange('media')}>{t('with_images')}</button>
                     {[5, 4, 3, 2, 1].map(star => (
-                        <CButton 
-                            key={star}
-                            type={ratingFilter === star ? 'primary' : 'outline'}
-                            className="pr-filter-chip"
-                            onClick={() => handleFilterChange('rating', star)}
-                            style={ratingFilter === star ? { color: '#fff' } : {}}
-                        >
-                            {star} {t('rating')}
-                        </CButton>
+                        <button key={star} className={`pr-filter-chip ${ratingFilter === star ? 'active' : ''}`} onClick={() => handleFilterChange('rating', star)}>{star} {t('rating')}</button>
                     ))}
                 </div>
             )}
 
             <div className="pr-list">
                 {isLoading && isExpanded ? (
-                    <Skeleton width="100%" height="200px" />
+                    <Skeleton width="100%" height="150px" borderRadius="12px" />
                 ) : (reviewsToShow.length === 0 && isExpanded) ? (
-                    <div className="pr-empty">{t('no_reviews')}</div>
+                    <div className="pr-empty-state">{t('no_reviews')}</div>
                 ) : (
-                    reviewsToShow.map((rev) => {
-                        const validImages = rev.images?.filter(img => img && img.trim() !== "") || [];
-                        const isMyReview = user && user.id === rev.userId;
-
-                        return (
-                            <div key={rev.id} className="pr-card">
-                                <div className="pr-avatar">{rev.userName?.charAt(0) || 'U'}</div>
-                                <div className="pr-content">
-                                    <div className="pr-header">
-                                        <span className="pr-author">{rev.userName || 'User'}</span>
-                                        <span className="pr-date">
-                                            {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('vi-VN') : ''}
-                                        </span>
+                    reviewsToShow.map((rev) => (
+                        <div key={rev.id} className="pr-card">
+                            <Avatar className="pr-user-avatar" style={{ backgroundColor: 'var(--color_main_title)' }}>{rev.userName?.charAt(0) || 'U'}</Avatar>
+                            <div className="pr-main-content">
+                                <div className="pr-card-header">
+                                    <span className="pr-user-name">{rev.userName || 'User'}</span>
+                                    <span className="pr-post-date">{rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('vi-VN') : ''}</span>
+                                </div>
+                                <div className="pr-rating-meta">
+                                    <Rate disabled defaultValue={rev.rating} style={{ fontSize: '13px', color: '#f59e0b' }} />
+                                    <span className="pr-verified-tag"><CheckCircleFilled /> {t('verified_purchase')}</span>
+                                </div>
+                                <div className="pr-comment-text">{rev.comment}</div>
+                                {rev.images?.length > 0 && (
+                                    <div className="pr-image-gallery">
+                                        {rev.images.filter(img => img?.trim()).map((img, idx) => (
+                                            <img key={idx} src={img} alt="review" className="pr-review-img" onClick={() => window.open(img, '_blank')} />
+                                        ))}
                                     </div>
-                                    <div className="pr-meta">
-                                        <div className="pr-user-stars">
-                                            {[...Array(5)].map((_, starIdx) => (
-                                                <StarFilled 
-                                                    key={starIdx} 
-                                                    className={`pr-star-icon ${starIdx < rev.rating ? 'filled' : 'empty'}`} 
-                                                />
-                                            ))}
+                                )}
+                                {rev.reply && (
+                                    <div className="pr-admin-reply">
+                                        <div className="pr-reply-header">
+                                            <span className="pr-reply-label">{t('admin_reply').toUpperCase()}</span>
+                                            <span className="pr-reply-date">{new Date(rev.reply.repliedAt).toLocaleDateString('vi-VN')}</span>
                                         </div>
-                                        <span className="pr-verified">
-                                            <CheckCircleFilled className="pr-verified-icon" /> {t('verified_purchase')}
-                                        </span>
+                                        <div className="pr-reply-body">{rev.reply.comment}</div>
                                     </div>
-                                    <div className="pr-text">{rev.comment}</div>
-                                    
-                                    {validImages.length > 0 && (
-                                        <div className="pr-gallery">
-                                            {validImages.map((img, idx) => (
-                                                <img key={idx} src={img} alt="review" className="pr-img" />
-                                            ))}
-                                        </div>
+                                )}
+                                <div className="pr-card-actions">
+                                    <CButton type="text" className="pr-btn-action" icon={<HeartOutlined />}>{t('like')}</CButton>
+                                    {user?.id === rev.userId && (
+                                        <>
+                                            <CButton type="text" className="pr-btn-action" icon={<EditOutlined />} onClick={() => handleOpenReviewModal(rev)}>{t('edit')}</CButton>
+                                            <CButton type="text" className="pr-btn-action danger" icon={<DeleteOutlined />} onClick={() => handleDeleteReview(rev.id)} loading={isDeleting}>{t('delete')}</CButton>
+                                        </>
                                     )}
-                                    
-                                    {rev.reply && (
-                                        <div className="pr-reply">
-                                            <div className="pr-reply-header">
-                                                <Tag color="gold">{t('admin_reply')}</Tag>
-                                                <span className="pr-reply-date">
-                                                    {rev.reply.repliedAt ? new Date(rev.reply.repliedAt).toLocaleDateString('vi-VN') : ''}
-                                                </span>
-                                            </div>
-                                            <div className="pr-reply-text">
-                                                {rev.reply.comment}
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div className="pr-actions">
-                                        <CButton type="text" className="pr-action-btn" icon={<HeartOutlined />}>
-                                            {t('like')}
-                                        </CButton>
-                                        
-                                        {isMyReview && (
-                                            <>
-                                                <CButton type="text" className="pr-action-btn" icon={<EditOutlined />} onClick={() => handleOpenReviewModal(rev)}>
-                                                    {t('edit')}
-                                                </CButton>
-                                                <CButton type="text" className="pr-action-btn" icon={<DeleteOutlined />} onClick={() => handleDeleteReview(rev.id)} loading={isDeleting}>
-                                                    {t('delete')}
-                                                </CButton>
-                                            </>
-                                        )}
-                                    </div>
                                 </div>
                             </div>
-                        );
-                    })
+                        </div>
+                    ))
                 )}
 
                 {!isExpanded && reviewCount > 0 && (
-                    <div className="pr-expand-wrap">
-                        <CButton 
-                            type="text"
-                            className="pr-expand-btn" 
-                            onClick={() => setIsExpanded(true)}
-                        >
-                            {t('view_all_reviews')} <DownOutlined style={{ fontSize: '12px', marginLeft: '4px' }} />
+                    <div className="pr-expand-footer">
+                        <CButton type="text" className="pr-btn-expand" onClick={() => setIsExpanded(true)}>
+                            {t('view_all_reviews')} <DownOutlined style={{ fontSize: '11px' }} />
                         </CButton>
                     </div>
                 )}
             </div>
             
             {isExpanded && totalPages > 1 && (
-                <div className="pr-pagination">
-                    <Pagination
-                        page={page}
-                        totalPages={totalPages}
-                        totalItems={totalElements}
-                        pageSize={pageSize}
-                        onPageChange={setPage}
-                    />
+                <div className="pr-pagination-wrap">
+                    <Pagination page={page} totalPages={totalPages} totalItems={totalElements} pageSize={pageSize} onPageChange={setPage} />
                 </div>
             )}
 
@@ -323,37 +251,17 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                 confirmLoading={isCreating || isUpdating}
                 okText={t('save')}
                 cancelText={t('cancel')}
+                centered
                 destroyOnClose
             >
-                <div className="pr-modal-form">
-                    <div className="pr-modal-rating">
+                <div className="pr-modal-body">
+                    <div className="pr-modal-rate-row">
                         <span>{t('rating')}:</span>
-                        <Rate 
-                            value={reviewForm.rating} 
-                            onChange={(val) => setReviewForm(prev => ({ ...prev, rating: val }))} 
-                            className="pr-rate-yellow"
-                        />
+                        <Rate value={reviewForm.rating} onChange={(val) => setReviewForm(prev => ({ ...prev, rating: val }))} style={{ color: '#ffb800' }} />
                     </div>
-                    <TextArea 
-                        rows={4} 
-                        placeholder={t('review_placeholder')} 
-                        value={reviewForm.comment}
-                        onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))}
-                    />
-                    <Upload
-                        listType="picture-card"
-                        fileList={fileList}
-                        onChange={({ fileList: newFileList }) => setFileList(newFileList)}
-                        customRequest={handleUploadImage}
-                        onRemove={handleRemoveImage}
-                        accept="image/*"
-                    >
-                        {fileList.length >= 5 ? null : (
-                            <div>
-                                <UploadOutlined />
-                                <div style={{ marginTop: 8 }}>{t('upload')}</div>
-                            </div>
-                        )}
+                    <TextArea rows={4} placeholder={t('review_placeholder')} value={reviewForm.comment} onChange={(e) => setReviewForm(prev => ({ ...prev, comment: e.target.value }))} style={{ borderRadius: '8px' }} />
+                    <Upload listType="picture-card" fileList={fileList} onChange={({ fileList: n }) => setFileList(n)} customRequest={handleUploadImage} onRemove={handleRemoveImage} accept="image/*">
+                        {fileList.length < 5 && <div><UploadOutlined /><div style={{ marginTop: 8 }}>{t('upload')}</div></div>}
                     </Upload>
                 </div>
             </Modal>

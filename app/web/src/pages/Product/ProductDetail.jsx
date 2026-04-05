@@ -45,8 +45,6 @@ export default function ProductDetail() {
     const [stockQuantity, setStockQuantity] = useState(0);
     const [mainImage, setMainImage] = useState(fallbackImg);
     const [quantity, setQuantity] = useState(1);
-    const [reviewPage, setReviewPage] = useState(0);
-    const reviewsPerPage = 5;
 
     const [currentPrice, setCurrentPrice] = useState({ originPrice: 0, promotionPrice: 0, hasDiscount: false });
 
@@ -74,7 +72,6 @@ export default function ProductDetail() {
             setIsLoading(true);
             try {
                 let responseData = null;
-
                 if (productId) {
                     responseData = (await productApi.getById(productId)).data;
                 } else if (slug) {
@@ -100,7 +97,6 @@ export default function ProductDetail() {
                 setIsLoading(false);
             }
         };
-
         fetchProduct();
     }, [productId, slug, fallbackImg]);
 
@@ -117,29 +113,22 @@ export default function ProductDetail() {
 
     const handleOptionSelect = (optName, val) => {
         if (!productData?.variants) return;
-
         const newSelectedOptions = { ...selectedOptions, [optName]: val };
         setSelectedOptions(newSelectedOptions);
-
         const matchedVariant = findMatchedVariant(newSelectedOptions);
 
         if (matchedVariant) {
             setStockQuantity(matchedVariant.stockQuantity);
-            
             if (matchedVariant.id !== productData.id) {
                 const combinedName = matchedVariant.productVariantName || productData.name;
                 navigate(`/product/${combinedName}`, {
                     replace: true,
-                    state: {
-                        ...location.state,
-                        productId: matchedVariant.id
-                    }
+                    state: { ...location.state, productId: matchedVariant.id }
                 });
             }
         }
     };
 
-    
     const displayName = productData?.name;
     const isOutOfStock = stockQuantity <= 0 || productData?.status === 'INACTIVE';
 
@@ -163,7 +152,6 @@ export default function ProductDetail() {
             image: mainImage,
             quantity
         });
-        
         notify(t('add_cart_success'), 'success');
     };
 
@@ -233,11 +221,9 @@ export default function ProductDetail() {
                         </div>
                     )}
 
-                    <div className="detail-tags">
-                        <div className="rating-container">
-                            <StarFilled className="bkeuty-star" />
-                            {productData.averageRating}/5 ({productData.reviewCount} {t('reviews')})
-                        </div>
+                    <div className="rating-container">
+                        <StarFilled className="bkeuty-star" />
+                        {productData.averageRating}/5 ({productData.reviewCount} {t('reviews')})
                     </div>
 
                     <div className="price-box">
@@ -320,20 +306,19 @@ export default function ProductDetail() {
                 </div>
                 <div className="tab-body">
                     {activeTab === 'details' && (
-                        <div className="tab-content">
-                            <h3>{t('product_details')}</h3>
-                            <p>{productData.description}</p>
+                        <div className="tab-content animate-fade-in">
+                            <p className="description-text">{productData.description}</p>
                         </div>
                     )}
-                    {activeTab === 'reviews' && (() => {
-                        return (
+                    {activeTab === 'reviews' && (
+                        <div className="tab-content animate-fade-in">
                             <ProductReviews 
                                 variantId={productData.id} 
                                 averageRating={productData.averageRating}
                                 reviewCount={productData.reviewCount}
                             />
-                        );
-                    })()}
+                        </div>
+                    )}
                 </div>
             </div>
 

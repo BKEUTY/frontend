@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { Space } from "antd";
 import { FiTruck, FiCreditCard } from "react-icons/fi";
 import { useNotification } from "../../Context/NotificationContext";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { usePaymentPolling } from "../../hooks/usePaymentPolling";
-import { CButton } from "../../Component/Common";
+import { CButton, CInput } from "../../Component/Common";
 import orderApi from '../../api/orderApi';
 import "./Checkout.css";
 
@@ -48,8 +47,8 @@ export default function Checkout() {
         notify(t('payment_success_msg'), "success");
         queryClient.invalidateQueries({ queryKey: ['myOrders'] });
         queryClient.invalidateQueries({ queryKey: ['cartItems'] });
-        setTimeout(() => navigate('/account/orders'), 2000);
-    }, [notify, navigate, t, queryClient]);
+        setTimeout(() => navigate('/thank-you', { state: { orderId: orderData?.orderId } }), 1500);
+    }, [notify, navigate, t, queryClient, orderData]);
 
     const { checkPaymentStatus } = usePaymentPolling(orderData?.orderId, showQR, handlePaymentSuccess);
 
@@ -82,7 +81,7 @@ export default function Checkout() {
                 notify(t('order_success'), "success");
                 queryClient.invalidateQueries({ queryKey: ['myOrders'] });
                 queryClient.invalidateQueries({ queryKey: ['cartItems'] });
-                setTimeout(() => navigate('/account/orders'), 2000);
+                setTimeout(() => navigate('/thank-you', { state: { orderId: actualData?.orderId } }), 1500);
             }
         } catch {
             notify(t('payment_error_try_again'), "error");
@@ -127,7 +126,7 @@ export default function Checkout() {
                         <CButton type="primary" block size="large" loading={isCheckingPayment} onClick={handleManualCheck}>
                             {isCheckingPayment ? t('payment_checking') : t('paid_confirm')}
                         </CButton>
-                        <CButton type="secondary" block size="large" onClick={() => setShowQR(false)}>
+                        <CButton type="outline" block size="large" onClick={() => setShowQR(false)} style={{ marginTop: 12 }}>
                             {t('back')}
                         </CButton>
                     </div>
@@ -144,22 +143,40 @@ export default function Checkout() {
                     <div className="checkout-section">
                         <h2 className="section-header">{t('delivery_info')}</h2>
                         <div className="form-grid">
-                            <div className="form-group">
-                                <label>{t('full_name')}</label>
-                                <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} placeholder={t('full_name_placeholder')} />
+                            <CInput 
+                                label={t('full_name')} 
+                                name="fullName" 
+                                value={formData.fullName} 
+                                onChange={handleInputChange} 
+                                placeholder={t('full_name_placeholder')} 
+                            />
+                            <CInput 
+                                label={t('phone')} 
+                                type="tel" 
+                                name="phone" 
+                                value={formData.phone} 
+                                onChange={handleInputChange} 
+                                placeholder={t('phone_placeholder')} 
+                            />
+                            <div className="form-group full-width">
+                                <CInput 
+                                    label={t('address')} 
+                                    name="address" 
+                                    value={formData.address} 
+                                    onChange={handleInputChange} 
+                                    placeholder={t('address_placeholder')} 
+                                />
                             </div>
-                            <div className="form-group">
-                                <label>{t('phone')}</label>
-                                <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} placeholder={t('phone_placeholder')} />
+                            <div className="form-group full-width">
+                                <label className="c-input-label">{t('note')}</label>
+                                <textarea 
+                                    className="c-input-field c-textarea" 
+                                    name="note" 
+                                    value={formData.note} 
+                                    onChange={handleInputChange} 
+                                    placeholder={t('note_placeholder')} 
+                                />
                             </div>
-                        </div>
-                        <div className="form-group">
-                            <label>{t('address')}</label>
-                            <input type="text" name="address" value={formData.address} onChange={handleInputChange} placeholder={t('address_placeholder')} />
-                        </div>
-                        <div className="form-group">
-                            <label>{t('note')}</label>
-                            <textarea name="note" value={formData.note} onChange={handleInputChange} placeholder={t('note_placeholder')} />
                         </div>
                     </div>
 
@@ -210,12 +227,12 @@ export default function Checkout() {
                         </div>
                         <div className="summary-divider"></div>
                         <div className="summary-row">
-                            <span>{t('total_original_price') || 'Tổng giá gốc'}</span>
+                            <span>{t('total_original_price')}</span>
                             <span>{totalOriginalPrice.toLocaleString("vi-VN")}đ</span>
                         </div>
                         {totalDiscount > 0 && (
                             <div className="summary-row discount">
-                                <span>{t('total_discount') || 'Tổng giá giảm'}</span>
+                                <span>{t('total_discount')}</span>
                                 <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
                             </div>
                         )}
@@ -224,14 +241,15 @@ export default function Checkout() {
                             <span>{t('total')}</span>
                             <span className="total-price">{grandTotal.toLocaleString("vi-VN")}đ</span>
                         </div>
-                        <Space orientation="vertical" size={12} style={{ width: '100%' }}>
+                        
+                        <div className="checkout-actions">
                             <CButton type="primary" block size="large" loading={isProcessing} disabled={isProcessing} onClick={handleCheckout}>
                                 {isProcessing ? t('loading') : (paymentMethod === 'banking' ? t('continue_payment') : t('place_order'))}
                             </CButton>
-                            <CButton type="secondary" block size="large" onClick={() => navigate('/cart')}>
+                            <CButton type="outline" block size="large" onClick={() => navigate('/cart')}>
                                 {t('back_to_cart')}
                             </CButton>
-                        </Space>
+                        </div>
                     </div>
                 </div>
             </div>

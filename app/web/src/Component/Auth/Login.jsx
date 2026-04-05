@@ -44,7 +44,7 @@ const Login = () => {
                 <div className="auth-image-overlay">
                     <div className="auth-brand-section">
                         <h1 className="auth-brand-logo">BKEUTY</h1>
-                        <p className="auth-brand-tagline">Nâng tầm vẻ đẹp của bạn</p>
+                        <p className="auth-brand-tagline">{t('brand_tagline')}</p>
                     </div>
                 </div>
             </div>
@@ -61,7 +61,7 @@ const Login = () => {
                 </div>
                 <div className="auth-mobile-logo">
                     <h1>BKEUTY</h1>
-                    <p>Nâng tầm vẻ đẹp của bạn</p>
+                    <p>{t('brand_tagline')}</p>
                 </div>
                 <div className="auth-form-container">
                     <div className="auth-header">

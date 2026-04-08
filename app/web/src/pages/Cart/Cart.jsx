@@ -31,6 +31,7 @@ export default function Cart() {
 
   const selectedProducts = products.filter(p => selectedIds.has(p.cartId));
   const subTotal = selectedProducts.reduce((sum, p) => sum + p.promotionPrice * p.quantity, 0);
+  const totalSelectedItemsCount = selectedProducts.reduce((sum, p) => sum + (p.quantity || 1), 0);
 
   const handleCheckout = () => {
     if (!isAuthenticated) {
@@ -173,7 +174,7 @@ export default function Cart() {
           <div className="cart-summary-section">
             <div className="cart-summary-box">
               <div className="cart-total-row">
-                <span className="total-label">{t('total')} ({selectedIds.size} {t('product')}):</span>
+                <span className="total-label">{t('total')} ({totalSelectedItemsCount} {t('product')}):</span>
                 <span className="total-amount">{subTotal.toLocaleString("vi-VN")}đ</span>
               </div>
               <button

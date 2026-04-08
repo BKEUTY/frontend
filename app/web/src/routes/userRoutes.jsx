@@ -47,7 +47,7 @@ export const userRoutes = [
         element: <Checkout />
     },
     {
-        path: "checkout/thank-you",
+        path: "thank-you",
         element: <ThankYou />
     },
     {

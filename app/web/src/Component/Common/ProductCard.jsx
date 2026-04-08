@@ -21,7 +21,7 @@ const ProductCard = ({ product, t }) => {
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
     const image = product.imgUrl ? getImageUrl(product.imgUrl) : fallbackImg;
-    const hasDiscount = product.originPrice > 0 && product.discountPrice > 0 && product.discountPrice < product.originPrice;
+    const hasDiscount = product.discountPrice < product.originPrice;
     const tag = hasDiscount ? t('promotion') : product.tag;
     const productId = product.productId;
 

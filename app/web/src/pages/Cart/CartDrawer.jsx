@@ -28,6 +28,12 @@ const CartDrawer = () => {
         .filter(item => selectedIds.has(item.cartId))
         .reduce((sum, item) => sum + item.promotionPrice * item.quantity, 0);
 
+    const selectedTotalItemsCount = cartItems
+        .filter(item => selectedIds.has(item.cartId))
+        .reduce((sum, item) => sum + (item.quantity || 1), 0);
+
+    const totalItemsInCart = cartItems.reduce((sum, item) => sum + (item.quantity || 1), 0);
+
     const handleCheckout = () => {
         if (selectedIds.size === 0) return;
         closeCart();
@@ -54,7 +60,7 @@ const CartDrawer = () => {
             </div>
             <Space orientation="vertical" className="cart-drawer-btn-space">
                 <CButton type="primary" block size="large" onClick={handleCheckout} disabled={selectedIds.size === 0}>
-                    {t('checkout_now')} ({selectedIds.size})
+                    {t('checkout_now')} ({selectedTotalItemsCount})
                 </CButton>
                 <CButton type="secondary" block size="large" onClick={() => { closeCart(); navigate('/cart'); }}>
                     {t('view_cart')}
@@ -65,7 +71,7 @@ const CartDrawer = () => {
 
     return (
         <Drawer
-            title={`${t('cart')} (${cartItems.length})`}
+            title={`${t('cart')} (${totalItemsInCart})`}
             placement="right"
             onClose={closeCart}
             open={isCartOpen}

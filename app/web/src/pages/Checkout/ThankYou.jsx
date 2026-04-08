@@ -35,8 +35,8 @@ export default function ThankYou() {
                     <CButton type="primary" onClick={() => navigate('/account/orders')} className="btn-action">
                         {t('view_orders')}
                     </CButton>
-                    <CButton type="outline" onClick={() => navigate('/')} className="btn-action">
-                        {t('back_to_home')}
+                    <CButton type="outline" onClick={() => navigate('/product')} className="btn-action">
+                        {t('continue_shopping')}
                     </CButton>
                 </div>
             </div>

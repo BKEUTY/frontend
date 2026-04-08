@@ -9,7 +9,7 @@ import './ProductReviews.css';
 
 const { TextArea } = Input;
 
-const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = {} }) => {
+const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = {}, onReviewChanged }) => {
     const { t } = useLanguage();
     const { user } = useAuth();
     const [page, setPage] = useState(0);
@@ -97,12 +97,13 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             const payload = { variantId, ...reviewForm };
             if (editingReview) {
                 await updateReview({ id: editingReview.id, data: payload });
-                notification.success({ message: t('success'), description: t('review_updated') });
+                notification.success({ message: t('success'), description: t('review_update_success') });
             } else {
                 await createReview(payload);
-                notification.success({ message: t('success'), description: t('review_created') });
+                notification.success({ message: t('success'), description: t('review_create_success') });
             }
             setIsReviewModalVisible(false);
+            if (onReviewChanged) onReviewChanged();
         } catch (error) {
             const status = error.response?.status;
             notification.error({ 
@@ -123,10 +124,22 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                 try {
                     await deleteReview(id);
                     notification.success({ message: t('success'), description: t('delete_success') });
+                    if (onReviewChanged) onReviewChanged();
                 } catch (error) {
                     notification.error({ message: t('error'), description: error.response?.data?.message || t('api_error_general') });
                 }
             }
+        });
+    };
+
+    const formatDateTime = (dateString) => {
+        if (!dateString) return '';
+        return new Date(dateString).toLocaleString('vi-VN', {
+            hour: '2-digit',
+            minute: '2-digit',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
         });
     };
 
@@ -144,7 +157,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                                 />
                             ))}
                         </div>
-                        <span className="pr-total-text">{reviewCount || 0} {t('reviews')}</span>
+                        <span className="pr-total-text">{reviewCount} {t('reviews')}</span>
                     </div>
                 </div>
                 <div className="pr-bars-container">
@@ -191,7 +204,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                             <div className="pr-main-content">
                                 <div className="pr-card-header">
                                     <span className="pr-user-name">{rev.userName || 'User'}</span>
-                                    <span className="pr-post-date">{rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('vi-VN') : ''}</span>
+                                    <span className="pr-post-date">{formatDateTime(rev.updatedAt)}</span>
                                 </div>
                                 <div className="pr-rating-meta">
                                     <Rate disabled defaultValue={rev.rating} style={{ fontSize: '13px', color: '#f59e0b' }} />
@@ -209,7 +222,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                                     <div className="pr-admin-reply">
                                         <div className="pr-reply-header">
                                             <span className="pr-reply-label">{t('admin_reply').toUpperCase()}</span>
-                                            <span className="pr-reply-date">{new Date(rev.reply.repliedAt).toLocaleDateString('vi-VN')}</span>
+                                            <span className="pr-reply-date">{formatDateTime(rev.reply.updatedAt)}</span>
                                         </div>
                                         <div className="pr-reply-body">{rev.reply.comment}</div>
                                     </div>

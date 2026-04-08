@@ -1,7 +1,8 @@
 import React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { FaCreditCard, FaMapLocationDot, FaArrowLeft } from "react-icons/fa6";
+import { generateSlug } from '../../utils/helpers';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
@@ -54,7 +55,9 @@ const OrderDetail = () => {
                                 <img src={item.productVariantImage || 'https://placehold.co/100x100?text=Product'} alt={item.productVariantName} />
                             </div>
                             <div className="od-item-details">
-                                <h4 className="od-item-name">{item.productVariantName}</h4>
+                                <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} className="od-item-link">
+                                    <h4 className="od-item-name">{item.productVariantName}</h4>
+                                </Link>
                                 <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>
                             </div>
                             <div className="od-item-pricing">
@@ -75,23 +78,33 @@ const OrderDetail = () => {
                 </div>
                 <div className="od-info-card">
                     <h3 className="od-info-title"><FaMapLocationDot /> {t('delivery_header')}</h3>
-                    <p className="od-info-text">{orderData.address}</p>
+                    <p className="od-info-text">
+                        {`${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}`}
+                    </p>
                 </div>
             </div>
 
             <div className="od-summary-wrapper animate-slide-up delay-300">
                 <div className="od-summary-card">
                     <h3 className="od-summary-title">{t('order_overview')}</h3>
+                    
                     <div className="od-summary-row">
                         <span>{t('subtotal')}</span>
                         <span>{subtotal.toLocaleString("vi-VN")}đ</span>
                     </div>
+                    
                     {totalDiscount > 0 && (
                         <div className="od-summary-row od-discount-row">
                             <span>{t('discount')}</span>
                             <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
                         </div>
                     )}
+                    
+                    <div className="od-summary-row">
+                        <span>{t('shipping_fee')}</span>
+                        <span>+{orderData.shippingFee.toLocaleString("vi-VN")}đ</span>
+                    </div>
+
                     <div className="od-summary-row od-total-row">
                         <span>{t('total')}</span>
                         <span>{orderData.total.toLocaleString("vi-VN")}đ</span>

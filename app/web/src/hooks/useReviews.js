@@ -23,27 +23,30 @@ export const useReviews = (variantId, params = {}, options = {}) => {
     });
 
     const createReviewMutation = useMutation({
-        mutationFn: (data) => reviewApi.create(data),
+        mutationFn: (data) => reviewApi.create(data, { skipGlobalErrorHandler: true }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['reviews', variantId] });
-            queryClient.invalidateQueries({ queryKey: ['reviews-stats', variantId] });
+            queryClient.invalidateQueries({ queryKey: ['reviews'] });
+            queryClient.invalidateQueries({ queryKey: ['reviews-stats'] });
+            queryClient.invalidateQueries({ queryKey: ['product'] });
             queryClient.invalidateQueries({ queryKey: ['myOrders'] });
         }
     });
 
     const updateReviewMutation = useMutation({
-        mutationFn: ({ id, data }) => reviewApi.update(id, data),
+        mutationFn: ({ id, data }) => reviewApi.update(id, data, { skipGlobalErrorHandler: true }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['reviews', variantId] });
-            queryClient.invalidateQueries({ queryKey: ['reviews-stats', variantId] });
+            queryClient.invalidateQueries({ queryKey: ['reviews'] });
+            queryClient.invalidateQueries({ queryKey: ['reviews-stats'] });
+            queryClient.invalidateQueries({ queryKey: ['product'] });
         }
     });
 
     const deleteReviewMutation = useMutation({
-        mutationFn: (id) => reviewApi.delete(id),
+        mutationFn: (id) => reviewApi.delete(id, { skipGlobalErrorHandler: true }),
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['reviews', variantId] });
-            queryClient.invalidateQueries({ queryKey: ['reviews-stats', variantId] });
+            queryClient.invalidateQueries({ queryKey: ['reviews'] });
+            queryClient.invalidateQueries({ queryKey: ['reviews-stats'] });
+            queryClient.invalidateQueries({ queryKey: ['product'] });
         }
     });
 

@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import authApi from '../../api/authApi';
 import { Link, useNavigate } from 'react-router-dom';
-import { Form, Input, Button, Checkbox, Typography } from 'antd';
-import { UserOutlined, MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Checkbox, Typography, Select } from 'antd';
+import { UserOutlined, MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined, HomeOutlined } from '@ant-design/icons';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { notifyError, notifySuccess } from '../../utils/NotificationService';
+import { useProvinces, useDistricts, useWards } from '../../hooks/useAddress';
+
 import './Auth.css';
 import auth_bg from '../../Assets/Images/Banners/auth_background.png';
 
@@ -12,8 +14,15 @@ const { Title, Text } = Typography;
 
 const Register = () => {
     const navigate = useNavigate();
+    const [form] = Form.useForm();
     const { t, language, changeLanguage } = useLanguage();
     const [loading, setLoading] = useState(false);
+
+    const [addrState, setAddrState] = useState({ province: null, district: null, ward: null });
+
+    const { data: provinces } = useProvinces();
+    const { data: districts } = useDistricts(addrState.province?.id);
+    const { data: wards } = useWards(addrState.district?.id);
 
     const onFinish = async (values) => {
         setLoading(true);
@@ -28,8 +37,14 @@ const Register = () => {
                 password: values.password,
                 firstName: firstName,
                 lastName: lastName,
-                phoneNumber: '0123456789',
-                mainAddress: 'Vietnam'
+                phoneNumber: values.phoneNumber,
+                dateOfBirth: '2000-01-01', // Default as discussed
+                address: {
+                    address: values.street,
+                    province: { provinceID: addrState.province.id, provinceName: addrState.province.name },
+                    district: { districtID: addrState.district.id, districtName: addrState.district.name },
+                    ward: { wardCode: addrState.ward.id, wardName: addrState.ward.name }
+                }
             };
 
             await authApi.register(data);
@@ -84,6 +99,7 @@ const Register = () => {
                     </div>
 
                     <Form
+                        form={form}
                         name="register"
                         onFinish={onFinish}
                         layout="vertical"
@@ -138,6 +154,7 @@ const Register = () => {
                             />
                         </Form.Item>
 
+                        
                         <Form.Item
                             name="confirmPassword"
                             label={t('confirm_password')}
@@ -162,6 +179,84 @@ const Register = () => {
                                 autoComplete="new-password"
                             />
                         </Form.Item>
+
+                        <div className="summary-divider" style={{ margin: '24px 0', background: '#f1f5f9' }}></div>
+                        <Title level={5} style={{ marginBottom: 16 }}>{t('delivery_address')}</Title>
+
+                        <Form.Item
+                            name="phoneNumber"
+                            label={t('phone')}
+                            rules={[{ required: true, message: t('phone_required') }]}
+                        >
+                            <Input placeholder={t('phone_placeholder')} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="street"
+                            label={t('address')}
+                            rules={[{ required: true, message: t('address_required') }]}
+                        >
+                            <Input 
+                                prefix={<HomeOutlined />} 
+                                placeholder={t('address_placeholder')} 
+                            />
+                        </Form.Item>
+
+                        <div className="addr-select-grid">
+                            <Form.Item 
+                                name="province" 
+                                label={t('province')}
+                                rules={[{ required: true, message: t('select_province') }]}
+                                className="select-item"
+                            >
+                                <Select
+                                    showSearch
+                                    placeholder={t('select_province')}
+                                    options={provinces?.map(p => ({ value: p.ProvinceID, label: p.ProvinceName }))}
+                                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                                    onChange={(val, opt) => {
+                                        setAddrState({ province: { id: val, name: opt.label }, district: null, ward: null });
+                                        form.setFieldsValue({ district: null, ward: null });
+                                    }}
+                                />
+                            </Form.Item>
+                            <Form.Item 
+                                name="district" 
+                                label={t('district')}
+                                rules={[{ required: true, message: t('select_district') }]}
+                                className="select-item"
+                            >
+                                <Select
+                                    showSearch
+                                    placeholder={t('select_district')}
+                                    options={districts?.map(d => ({ value: d.DistrictID, label: d.DistrictName }))}
+                                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                                    disabled={!addrState.province}
+                                    onChange={(val, opt) => {
+                                        setAddrState(prev => ({ ...prev, district: { id: val, name: opt.label }, ward: null }));
+                                        form.setFieldsValue({ ward: null });
+                                    }}
+                                />
+                            </Form.Item>
+                            <Form.Item 
+                                name="ward" 
+                                label={t('ward')}
+                                rules={[{ required: true, message: t('select_ward') }]}
+                                className="select-item"
+                                style={{ gridColumn: 'span 2' }}
+                            >
+                                <Select
+                                    showSearch
+                                    placeholder={t('select_ward')}
+                                    options={wards?.map(w => ({ value: w.WardCode, label: w.WardName }))}
+                                    filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+                                    disabled={!addrState.district}
+                                    onChange={(val, opt) => {
+                                        setAddrState(prev => ({ ...prev, ward: { id: val, name: opt.label } }));
+                                    }}
+                                />
+                            </Form.Item>
+                        </div>
 
                         <Form.Item
                             name="agreement"

@@ -1,6 +1,5 @@
 import "./Product.css";
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { Skeleton, Pagination, ProductCard, CButton } from "../../Component/Common";
 import { SearchOutlined, MenuOutlined, DownOutlined } from '@ant-design/icons';
@@ -8,6 +7,7 @@ import productApi from "../../api/productApi";
 import useClickOutside from "../../hooks/useClickOutside";
 import { useDebounce } from "../../hooks/useDebounce";
 import { useProducts } from "../../hooks/useProducts";
+import { useQueryParams } from "../../hooks/useQueryParams";
 
 export default function Product() {
   const { t } = useLanguage();
@@ -16,16 +16,32 @@ export default function Product() {
 
   const [categories, setCategories] = useState([]);
   const [isMobileCatOpen, setIsMobileCatOpen] = useState(false);
-  const [page, setPage] = useState(0);
   const [isPaginationMode, setIsPaginationMode] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [sortOption, setSortOption] = useState('default');
-  const [activeCategory, setActiveCategory] = useState(null);
 
-  const debouncedSearch = useDebounce(searchTerm, 500);
+  const [query, setQuery] = useQueryParams();
+
+  const activeCategory = query.categoryId || null;
+  const sortOption = query.sort || 'default';
+  const page = query.page ? Number(query.page) - 1 : 0;
+  const searchTermFromUrl = query.search || '';
+
+  const [searchInput, setSearchInput] = useState(searchTermFromUrl);
+  const debouncedSearch = useDebounce(searchInput, 500);
+
   const { products, isLoading, error, totalPages, totalItems, fetchProducts } = useProducts(pageSize);
+  console.log("Products: ", products);
 
   useClickOutside(dropdownRef, () => setIsMobileCatOpen(false));
+
+  useEffect(() => {
+    setSearchInput(searchTermFromUrl);
+  }, [searchTermFromUrl]);
+
+  useEffect(() => {
+    if (debouncedSearch !== searchTermFromUrl) {
+      setQuery({ search: debouncedSearch, page: 1 });
+    }
+  }, [debouncedSearch, searchTermFromUrl, setQuery]);
 
   useEffect(() => {
     let isMounted = true;
@@ -40,47 +56,36 @@ export default function Product() {
   }, []);
 
   useEffect(() => {
-    setPage(0);
-    const isFiltering = debouncedSearch.length > 0 || activeCategory !== null || sortOption !== 'default';
+    const isFiltering = searchTermFromUrl.length > 0 || activeCategory !== null || sortOption !== 'default';
     setIsPaginationMode(isFiltering);
-    fetchProducts(0, false, debouncedSearch, activeCategory, sortOption); 
-  }, [debouncedSearch, activeCategory, sortOption, fetchProducts]);
+    const shouldAppend = !isFiltering && page > 0;
+    fetchProducts(page, shouldAppend, searchTermFromUrl, activeCategory, sortOption); 
+  }, [page, searchTermFromUrl, activeCategory, sortOption, fetchProducts]);
 
   const handleCategorySelect = (id) => {
     if (activeCategory === id) return;
-    setActiveCategory(id);
+    setQuery({ categoryId: id, page: 1 });
     setIsMobileCatOpen(false);
   };
 
   const handleSortChange = (e) => {
     if (sortOption === e.target.value) return;
-    setSortOption(e.target.value);    
+    setQuery({ sort: e.target.value, page: 1 });
+  };
+
+  const handlePageChange = (newPage) => {
+    setQuery({ page: newPage + 1 });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLoadMore = () => {
     if (page >= totalPages - 1 || isLoading) return;
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchProducts(nextPage, true, debouncedSearch, activeCategory, sortOption);
-  };
-
-  const handlePageChange = (newPage) => {
-    if (page === newPage || isLoading) return;
-    setPage(newPage);
-    fetchProducts(newPage, false, debouncedSearch, activeCategory, sortOption);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleSearchSubmit = () => {
-    if (debouncedSearch === searchTerm) return;
-    setIsPaginationMode(true);
-    setPage(0);
-    fetchProducts(0, false, searchTerm, activeCategory, sortOption);
+    setQuery({ ...query, page: page + 2 }, { replace: true, scroll: true });
   };
 
   const getCurrentCategoryName = () => {
     if (!activeCategory) return t('all_products');
-    const cat = categories.find(c => c.id === activeCategory);
+    const cat = categories.find(c => c.id === Number(activeCategory));
     return cat ? cat.categoryName : t('all_products');
   };
 
@@ -89,10 +94,7 @@ export default function Product() {
       <div className="product-top-bar">
         <div className="top-bar-left">
           <div className="cat-dropdown-container" ref={dropdownRef}>
-            <div 
-              className="cat-dropdown-trigger"
-              onClick={() => setIsMobileCatOpen(!isMobileCatOpen)}
-            >
+            <div className="cat-dropdown-trigger" onClick={() => setIsMobileCatOpen(!isMobileCatOpen)}>
               <MenuOutlined className="menu-icon" />
               <span>{t('categories')}</span>
               <DownOutlined className={`arrow-icon ${isMobileCatOpen ? 'open' : ''}`} />
@@ -109,7 +111,7 @@ export default function Product() {
                 {categories.map(cat => (
                   <div
                     key={cat.id}
-                    className={`mega-item ${activeCategory === cat.id ? 'active' : ''}`}
+                    className={`mega-item ${Number(activeCategory) === cat.id ? 'active' : ''}`}
                     onClick={() => handleCategorySelect(cat.id)}
                   >
                     {cat.categoryName}
@@ -118,7 +120,6 @@ export default function Product() {
               </div>
             </div>
           </div>
-          
           <div className="quick-links">
             <span className="quick-link-item">{t('best_sellers')}</span>
             <span className="quick-link-item">{t('hot_deals')}</span>
@@ -127,16 +128,13 @@ export default function Product() {
         </div>
 
         <div className="prod-search-bar-wrapper">
-          <button className="prod-search-btn" onClick={handleSearchSubmit}>
-            <SearchOutlined className="prod-search-icon" />
-          </button>
+          <button className="prod-search-btn"><SearchOutlined className="prod-search-icon" /></button>
           <input
             type="text"
             placeholder={t('search_hint')}
             className="prod-search-input"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearchSubmit()}
+            value={searchInput}
+            onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
       </div>
@@ -150,11 +148,7 @@ export default function Product() {
                 <span className="count-badge">({totalItems})</span>
               </div>
               <div className="product-sort">
-                <select 
-                  value={sortOption} 
-                  onChange={handleSortChange}
-                  className="sort-select"
-                >
+                <select value={sortOption} onChange={handleSortChange} className="sort-select">
                   <option value="default">{t('default_sort')}</option>
                   <option value="price_asc">{t('price_low_high')}</option>
                   <option value="price_desc">{t('price_high_low')}</option>
@@ -174,10 +168,7 @@ export default function Product() {
                   <div key={i} className="product-card-skeleton" >
                     <Skeleton width="100%" height="220px" />
                     <div className="skeleton-info-wrap">
-                      <Skeleton width="40%" height="15px" className="skeleton-line-1" />
-                      <Skeleton width="90%" height="20px" className="skeleton-line-2" />
-                      <Skeleton width="60%" height="20px" className="skeleton-line-3" />
-                      <Skeleton width="100%" height="40px" />
+                      <Skeleton width="40%" height="15px" /><Skeleton width="90%" height="20px" /><Skeleton width="60%" height="20px" /><Skeleton width="100%" height="40px" />
                     </div>
                   </div>
                 ))}
@@ -190,11 +181,7 @@ export default function Product() {
               <>
                 <div className="product-grid">
                   {products.map((product) => (
-                    <ProductCard
-                      key={`${product.productId}`}
-                      product={product}
-                      t={t}
-                    />
+                    <ProductCard key={`${product.productId}`} product={product} t={t} />
                   ))}
                 </div>
 
@@ -205,20 +192,12 @@ export default function Product() {
                         <p>{t('loading')}</p>
                       ) : (
                         page < totalPages - 1 && (
-                          <CButton type="outline" onClick={handleLoadMore}>
-                            {t('load_more')}
-                          </CButton>
+                          <CButton type="outline" onClick={handleLoadMore}>{t('load_more')}</CButton>
                         )
                       )}
                     </div>
                   ) : (
-                    <Pagination
-                      page={page}
-                      totalPages={totalPages}
-                      totalItems={totalItems}
-                      pageSize={pageSize}
-                      onPageChange={handlePageChange}
-                    />
+                    <Pagination page={page} totalPages={totalPages} totalItems={totalItems} pageSize={pageSize} onPageChange={handlePageChange} />
                   )}
                 </div>
               </>

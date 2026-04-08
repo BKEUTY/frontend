@@ -111,7 +111,7 @@ const Home = () => {
                                 ) : (
                                     products.map((item) => (
                                         <ProductCard
-                                            key={item.id}
+                                            key={item.productId}
                                             product={item}
                                             t={t}
                                         />

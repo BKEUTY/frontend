@@ -17,7 +17,7 @@ export const NotificationProvider = ({ children }) => {
 
     const showNotification = useCallback((message, type = 'success', description = '') => {
         api[type]({
-            message: message,
+            title: message,
             description: description,
             placement: 'topRight',
             duration: 3,

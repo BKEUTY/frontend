@@ -46,6 +46,7 @@ const createAxiosClient = () => {
     client.interceptors.request.use(
         (config) => {
             const token = getAccessToken();
+            console.log("Token: ", token);
             if (token && !config.url?.includes('/api/auth/')) {
                 config.headers.Authorization = `Bearer ${token}`;
             }

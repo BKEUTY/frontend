@@ -1,8 +1,9 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useNotification } from '../../Context/NotificationContext';
 import { useCart } from '../../Context/CartContext';
+import { useAuth } from '../../Context/AuthContext';
 import './ProductDetail.css';
 import { StarFilled, ShoppingOutlined } from '@ant-design/icons';
 import { CButton, Skeleton } from '../../Component/Common';
@@ -12,6 +13,7 @@ import { getImageUrl } from '../../api/axiosClient';
 import NotFound from '../../Component/ErrorPages/NotFound';
 import ProductReviews from './ProductReviews';
 import { generateSlug, getIdFromSlug } from '../../utils/helpers';
+import cartApi from '../../api/cartApi';
 
 import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
 import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
@@ -26,15 +28,13 @@ export default function ProductDetail() {
     const { slug } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const { t, language } = useLanguage();
+    const { t } = useLanguage();
     const notify = useNotification();
-    const { addToCart } = useCart();
+    const { addToCart, fetchCart } = useCart();
+    const { isAuthenticated } = useAuth();
 
     const productId = location.state?.productId ?? getIdFromSlug(slug);
     const fallbackImg = useMemo(() => getRandomImage(), []);
-
-    const resolveHasDiscount = (originPrice, promotionPrice) =>
-        originPrice > 0 && promotionPrice > 0 && promotionPrice < originPrice;
 
     const [productData, setProductData] = useState(null);
     // const [relatedProducts, setRelatedProducts] = useState([]);
@@ -67,41 +67,42 @@ export default function ProductDetail() {
         if (galleryImages.length > 0) setMainImage(galleryImages[0]);
     }, [galleryImages]);
 
+    const fetchProduct = useCallback(async () => {
+        if (!productId) {
+            setIsError(true);
+            setIsLoading(false);
+            return;
+        }
+        setIsError(false);
+        try {
+            const responseData = (await productApi.getById(productId)).data;
+            if (!responseData) throw new Error('Product not found');
+
+            setCurrentPrice({
+                originPrice: responseData.originPrice,
+                promotionPrice: responseData.promotionPrice,
+                hasDiscount: responseData.promotionPrice < responseData.originPrice,
+            });
+            const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
+            const correctSlug = generateSlug(targetVariant.productVariantName, productId);
+            if (slug && slug !== correctSlug) {
+                throw new Error('Invalid product slug'); 
+            }
+            setProductData(responseData);
+            setSelectedOptions(targetVariant?.variantOptions || {});
+            setStockQuantity(targetVariant?.stockQuantity || 0);
+
+        } catch (err) {
+            setIsError(true);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [productId, slug]);
+
     useEffect(() => {
-        const fetchProduct = async () => {
-            if (!productId) {
-                setIsError(true);
-                setIsLoading(false);
-                return;
-            }
-            setIsError(false);
-            setIsLoading(true);
-            try {
-                const responseData = (await productApi.getById(productId)).data;
-                if (!responseData) throw new Error('Product not found');
-
-                setCurrentPrice({
-                    originPrice: responseData.originPrice,
-                    promotionPrice: responseData.promotionPrice,
-                    hasDiscount: resolveHasDiscount(responseData.originPrice, responseData.promotionPrice),
-                });
-                const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
-                const correctSlug = generateSlug(targetVariant.productVariantName, productId);
-                if (slug && slug !== correctSlug) {
-                    throw new Error('Invalid product slug'); 
-                }
-                setProductData(responseData);
-                setSelectedOptions(targetVariant?.variantOptions || {});
-                setStockQuantity(targetVariant?.stockQuantity || 0);
-
-            } catch (err) {
-                setIsError(true);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+        setIsLoading(true);
         fetchProduct();
-    }, [productId]);
+    }, [fetchProduct]);
 
     const findMatchedVariant = (options) => {
         if (!productData?.variants) return null;
@@ -143,20 +144,61 @@ export default function ProductDetail() {
         });
     };
 
-    const handleAddToCart = () => {
+    const handleAddToCart = async () => {
         if (stockQuantity <= 0) {
             notify(t('out_of_stock_msg'), 'error');
             return;
         }
-        addToCart({
-            productVariantId: productData.id,
-            name: displayName,
-            price: currentPrice.originPrice,
-            promotionPrice: currentPrice.promotionPrice,
-            image: mainImage,
-            quantity
-        });
-        notify(t('add_cart_success'), 'success');
+        try {
+            await addToCart({
+                productVariantId: productData.id,
+                quantity: quantity,
+                name: displayName,
+                price: currentPrice.originPrice,
+                promotionPrice: currentPrice.promotionPrice,
+                image: mainImage
+            });
+            notify(t('add_cart_success'), 'success');
+        } catch (err) {
+            notify(t('api_error_add_cart'), 'error');
+        }
+    };
+
+    const handleBuyNow = async () => {
+        if (!isAuthenticated) {
+            navigate('/login', { state: { from: location.pathname } });
+            return;
+        }
+        if (stockQuantity <= 0) {
+            notify(t('out_of_stock_msg'), 'error');
+            return;
+        }
+        try {
+            const response = await cartApi.create({ productVariantId: productData.id, quantity, buyNow: true });
+            fetchCart();
+            
+            const { cartId, price, promotionPrice, quantity: resQty } = response.data || response;
+            const finalPrice = promotionPrice && promotionPrice > 0 ? promotionPrice : price;
+            const grandTotal = finalPrice * resQty;
+            
+            navigate('/checkout', { 
+                state: { 
+                    cartIds: [cartId], 
+                    grandTotal,
+                    selectedProducts: [{
+                        id: productData.id,
+                        name: productData.name,
+                        price: price,
+                        promotionPrice: promotionPrice,
+                        quantity: resQty,
+                        image: mainImage,
+                        effectivePrice: finalPrice
+                    }]
+                } 
+            });
+        } catch (err) {
+            notify(t('api_error_add_cart'), 'error');
+        }
     };
 
     if (isError) return <NotFound />;
@@ -290,7 +332,7 @@ export default function ProductDetail() {
                     </div>
 
                     <div className="actions-wrapper">
-                        <CButton type="primary" disabled={isOutOfStock} onClick={() => notify(t('feature_developing_title'), 'info')} className="btn-action-buy">
+                        <CButton type="primary" disabled={isOutOfStock} onClick={handleBuyNow} className="btn-action-buy">
                             <span>{productData.status === 'INACTIVE' ? t('inactive') : isOutOfStock ? t('out_of_stock_btn') : t('buy_now')}</span>
                         </CButton>
                         <CButton type="outline" disabled={isOutOfStock} onClick={handleAddToCart} icon={<ShoppingOutlined />} className="btn-action-cart">
@@ -320,6 +362,7 @@ export default function ProductDetail() {
                                 variantId={productData.id} 
                                 averageRating={productData.averageRating}
                                 reviewCount={productData.reviewCount}
+                                onReviewChanged={fetchProduct}
                             />
                         </div>
                     )}

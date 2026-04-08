@@ -1,12 +1,16 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { FiTruck, FiCreditCard } from "react-icons/fi";
+import { FiTruck, FiCreditCard, FiTrash2, FiCalendar } from "react-icons/fi";
 import { useNotification } from "../../Context/NotificationContext";
 import { useLanguage } from "../../i18n/LanguageContext";
 import { usePaymentPolling } from "../../hooks/usePaymentPolling";
 import { CButton, CInput } from "../../Component/Common";
 import orderApi from '../../api/orderApi';
+import { useUserProfile, useUpdateProfile, useAddAddress, useDeleteAddress } from "../../hooks/useUser";
+import { useProvinces, useDistricts, useWards } from "../../hooks/useAddress";
+import { useShippingFee, useShippingLeadTime } from "../../hooks/useShipping";
+import { Modal, Select, Tag } from "antd";
 import "./Checkout.css";
 
 export default function Checkout() {
@@ -37,7 +41,80 @@ export default function Checkout() {
     const [orderData, setOrderData] = useState(null);
     const [isCheckingPayment, setIsCheckingPayment] = useState(false);
     const [isProcessing, setIsProcessing] = useState(false);
-    const [formData, setFormData] = useState({ fullName: "", phone: "", address: "", note: "" });
+    const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
+    const [isAddAddressModalOpen, setIsAddAddressModalOpen] = useState(false);
+    const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
+    const [formData, setFormData] = useState({ fullName: "", phone: "", email: "", note: "" });
+    const [newAddr, setNewAddr] = useState({ street: "", province: null, district: null, ward: null });
+
+    const { data: profile, isLoading: isProfileLoading } = useUserProfile();
+    const updateProfileMutation = useUpdateProfile();
+    const addAddressMutation = useAddAddress();
+    const deleteAddressMutation = useDeleteAddress();
+
+    const handleDeleteAddress = (addr, idx, e) => {
+        e.stopPropagation();
+        
+        if (!window.confirm(t('confirm_delete_message'))) return;
+        const payload = {
+            address: addr.address,
+            ward: {
+                wardCode: Number(addr.ward.wardCode),
+                wardName: addr.ward.wardName
+            },
+            district: {
+                districtID: Number(addr.district.districtID),
+                districtName: addr.district.districtName
+            },
+            province: {
+                provinceID: Number(addr.province.provinceID),
+                provinceName: addr.province.provinceName
+            }
+        };
+
+        deleteAddressMutation.mutate(payload, {
+            onSuccess: () => {
+                notify(t('delete_success'), "success");
+                if (selectedAddressIndex === idx) {
+                    setSelectedAddressIndex(0);
+                } else if (selectedAddressIndex > idx) {
+                    setSelectedAddressIndex(prev => prev - 1);
+                }
+            },
+            onError: () => {
+                notify(t('delete_failed'), "error");
+            }
+        });
+    };
+
+    const currentAddress = profile?.addresses?.[selectedAddressIndex];
+    console.log("Current Address: ", currentAddress);
+
+    const { data: provinces } = useProvinces();
+    const { data: districts } = useDistricts(newAddr.province?.id);
+    const { data: wards } = useWards(newAddr.district?.id);
+
+    const { data: shippingFee, isLoading: isFeeLoading } = useShippingFee({
+        toWardCode: currentAddress?.ward?.wardCode,
+        toDistrictId: currentAddress?.district?.districtID
+    });
+
+    const { data: shippingLeadTime, isLoading: isLeadTimeLoading } = useShippingLeadTime({
+        toWardCode: currentAddress?.ward?.wardCode,
+        toDistrictId: currentAddress?.district?.districtID
+    });
+
+    useEffect(() => {
+        if (profile) {
+            setFormData(prev => ({
+                ...prev,
+                fullName: `${profile.lastname || ""} ${profile.firstname || ""}`.trim(),
+                phone: profile.phoneNumber || "",
+                email: profile.email || ""
+            }));
+        }
+    }, [profile]);
+
 
     useEffect(() => {
         if (!state || cartIds.length === 0) navigate('/cart');
@@ -58,7 +135,7 @@ export default function Checkout() {
     };
 
     const handleCheckout = async () => {
-        if (!formData.fullName || !formData.phone || !formData.address) {
+        if (!formData.fullName || !formData.phone || !currentAddress) {
             notify(t('fill_delivery_info'), "error");
             return;
         }
@@ -66,12 +143,14 @@ export default function Checkout() {
         try {
             const response = await orderApi.placeOrder({
                 paymentMethod: paymentMethod === 'banking' ? 'Banking' : 'COD',
-                address: formData.address,
-                phone: formData.phone,
-                recipientName: formData.fullName,
-                note: formData.note,
+                address: currentAddress,
+                // phone: formData.phone,
+                // recipientName: formData.fullName,
+                // note: formData.note,
+                shippingFee: shippingFee || 0,
                 orderItems: cartIds.map(id => ({ cartItemId: id })),
             });
+
 
             const actualData = response.data || response;
             if (paymentMethod === 'banking') {
@@ -141,42 +220,70 @@ export default function Checkout() {
             <div className="checkout-container">
                 <div className="checkout-left">
                     <div className="checkout-section">
-                        <h2 className="section-header">{t('delivery_info')}</h2>
+                        <div className="section-head-with-action">
+                            <h2 className="section-header">{t('contact_info')}</h2>
+                            <CButton type="outline" size="small" onClick={() => {
+                                updateProfileMutation.mutate({
+                                    firstname: profile.firstname,
+                                    lastname: profile.lastname,
+                                    email: formData.email,
+                                    phoneNumber: formData.phone
+                                }, { onSuccess: () => notify(t('update_success'), "success") });
+                            }}>
+                                {t('save')}
+                            </CButton>
+                        </div>
                         <div className="form-grid">
-                            <CInput 
-                                label={t('full_name')} 
-                                name="fullName" 
-                                value={formData.fullName} 
-                                onChange={handleInputChange} 
-                                placeholder={t('full_name_placeholder')} 
-                            />
-                            <CInput 
-                                label={t('phone')} 
-                                type="tel" 
-                                name="phone" 
-                                value={formData.phone} 
-                                onChange={handleInputChange} 
-                                placeholder={t('phone_placeholder')} 
-                            />
+                            <CInput label={t('full_name')} value={formData.fullName} readOnly />
+                            <CInput label={t('phone')} name="phone" value={formData.phone} onChange={handleInputChange} />
                             <div className="form-group full-width">
-                                <CInput 
-                                    label={t('address')} 
-                                    name="address" 
-                                    value={formData.address} 
-                                    onChange={handleInputChange} 
-                                    placeholder={t('address_placeholder')} 
-                                />
+                                <CInput label={t('step_email')} name="email" value={formData.email} onChange={handleInputChange} />
                             </div>
-                            <div className="form-group full-width">
-                                <label className="c-input-label">{t('note')}</label>
-                                <textarea 
-                                    className="c-input-field c-textarea" 
-                                    name="note" 
-                                    value={formData.note} 
-                                    onChange={handleInputChange} 
-                                    placeholder={t('note_placeholder')} 
-                                />
+                        </div>
+                    </div>
+
+                    <div className="checkout-section mt-20">
+                        <div className="section-head-with-action">
+                            <h2 className="section-header">{t('delivery_address')}</h2>
+                            <CButton type="outline" size="small" onClick={() => setIsAddressModalOpen(true)}>
+                                {t('change')}
+                            </CButton>
+                        </div>
+                        {currentAddress ? (
+                            <div className="current-address-display">
+                                <div className="addr-main">{currentAddress.address?.replace(/^,\s*/, '')}</div>
+                                <div className="addr-sub">
+                                    {currentAddress.ward.wardName}, {currentAddress.district.districtName}, {currentAddress.province.provinceName}
+                                </div>
+                                <div className="shipping-info">
+                                    <div className="shipping-fee-notice">
+                                        <FiTruck style={{ marginRight: '6px', marginTop: '-2px' }}/>
+                                        {t('shipping_fee')}: <b>{isFeeLoading ? "..." : (shippingFee ? `${shippingFee.toLocaleString("vi-VN")}đ` : "Miễn phí")}</b>
+                                    </div>
+                                    
+                                    <div className="shipping-fee-notice" style={{ background: '#f0f9ff', borderColor: '#e0f2fe', color: '#0369a1' }}>
+                                        <FiCalendar style={{ marginRight: '6px', marginTop: '-2px' }}/>
+                                        Dự kiến giao: <b>
+                                            {isLeadTimeLoading ? "..." : (shippingLeadTime ? new Date(shippingLeadTime).toLocaleDateString('vi-VN') : "--/--/----")}
+                                        </b>
+                                    </div>
+                                </div>
                             </div>
+                        ) : (
+                            <div className="no-address-hint" onClick={() => setIsAddressModalOpen(true)}>
+                                {t('add_address_first')}
+                            </div>
+                        )}
+
+                        <div className="form-group full-width mt-15">
+                            <label className="c-input-label">{t('note')}</label>
+                            <textarea 
+                                className="c-input-field c-textarea" 
+                                name="note" 
+                                value={formData.note} 
+                                onChange={handleInputChange} 
+                                placeholder={t('note_placeholder')} 
+                            />
                         </div>
                     </div>
 
@@ -237,22 +344,151 @@ export default function Checkout() {
                             </div>
                         )}
                         <div className="summary-divider"></div>
+                        <div className="summary-row">
+                            <span>{t('shipping_fee')}</span>
+                            <span>{isFeeLoading ? "..." : (shippingFee ? `${shippingFee.toLocaleString("vi-VN")}đ` : "0đ")}</span>
+                        </div>
+
+                        <div className="summary-divider"></div>
                         <div className="summary-total">
                             <span>{t('total')}</span>
-                            <span className="total-price">{grandTotal.toLocaleString("vi-VN")}đ</span>
+                            <span className="total-price">{(grandTotal + (shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
                         </div>
+
                         
                         <div className="checkout-actions">
                             <CButton type="primary" block size="large" loading={isProcessing} disabled={isProcessing} onClick={handleCheckout}>
                                 {isProcessing ? t('loading') : (paymentMethod === 'banking' ? t('continue_payment') : t('place_order'))}
                             </CButton>
-                            <CButton type="outline" block size="large" onClick={() => navigate('/cart')}>
+                            <CButton type="outline" block size="large" onClick={() => navigate('/cart')} className="btn-back-cart">
                                 {t('back_to_cart')}
                             </CButton>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <Modal
+                title={t('delivery_address')}
+                open={isAddressModalOpen}
+                onCancel={() => setIsAddressModalOpen(false)}
+                footer={[
+                    <CButton key="add" type="outline" onClick={() => setIsAddAddressModalOpen(true)}>
+                        {t('add_new_address')}
+                    </CButton>,
+                    <CButton key="ok" type="primary" onClick={() => setIsAddressModalOpen(false)}>
+                        {t('confirm')}
+                    </CButton>
+                ]}
+                className="address-selection-modal"
+            >
+                <div className="address-list-container">
+                    {profile?.addresses?.map((addr, idx) => (
+                        <div 
+                            key={idx} 
+                            className={`address-item-card ${selectedAddressIndex === idx ? 'selected' : ''}`}
+                            onClick={() => setSelectedAddressIndex(idx)}
+                        >
+                            <div className="addr-check-circle"></div>
+                            <div className="addr-content">
+                                <div className="addr-street">{addr.address}</div>
+                                <div className="addr-full">{addr.ward.wardName}, {addr.district.districtName}, {addr.province.provinceName}</div>
+                            </div>
+
+                            {profile.addresses.length > 1 && (
+                                <button 
+                                    className="btn-delete-addr"
+                                    onClick={(e) => handleDeleteAddress(addr, idx, e)}
+                                    disabled={deleteAddressMutation.isPending}
+                                    title="Xóa địa chỉ"
+                                >
+                                    <FiTrash2 />
+                                </button>
+                            )}
+                        </div>
+                    ))}
+                </div>
+            </Modal>
+
+            <Modal
+                title={t('add_new_address')}
+                open={isAddAddressModalOpen}
+                onCancel={() => setIsAddAddressModalOpen(false)}
+                onOk={() => {
+                    if (!newAddr.street || !newAddr.ward) return;
+                    addAddressMutation.mutate({
+                        address: newAddr.street,
+                        province: { provinceID: newAddr.province.id, provinceName: newAddr.province.name },
+                        district: { districtID: newAddr.district.id, districtName: newAddr.district.name },
+                        ward: { wardCode: newAddr.ward.id, wardName: newAddr.ward.name }
+                    }, { 
+                        onSuccess: () => {
+                            setIsAddAddressModalOpen(false);
+                            setIsAddressModalOpen(false);
+                            notify(t('add_address_success'), "success");
+                            if (profile?.addresses) {
+                                setSelectedAddressIndex(profile.addresses.length);
+                            } else {
+                                setSelectedAddressIndex(0);
+                            }
+                        } 
+                    });
+
+                }}
+                okText={t('confirm')}
+                cancelText={t('back')}
+            >
+                <div className="add-addr-modal-body">
+                    <CInput 
+                        label={t('address')} 
+                        placeholder={t('address_placeholder')} 
+                        value={newAddr.street}
+                        onChange={(e) => setNewAddr(p => ({ ...p, street: e.target.value }))}
+                    />
+                    <div className="addr-select-grid">
+                        <div className="select-item">
+                            <label>{t('province')}</label>
+                            <Select
+                                style={{ width: '100%' }}
+                                placeholder={t('select_province')}
+                                value={newAddr.province?.id}
+                                options={provinces?.map((p, index) => ({ 
+                                    value: p.ProvinceID, 
+                                    key: index,
+                                    label: p.ProvinceName
+                                }))}
+                                onChange={(id, opt) => setNewAddr({ street: newAddr.street, province: { id, name: opt.label }, district: null, ward: null })}
+                                showSearch filterOption={(i, o) => o.label.toLowerCase().includes(i.toLowerCase())}
+                            />
+                        </div>
+                        <div className="select-item">
+                            <label>{t('district')}</label>
+                            <Select
+                                style={{ width: '100%' }}
+                                placeholder={t('select_district')}
+                                disabled={!newAddr.province}
+                                value={newAddr.district?.id}
+                                options={districts?.map(d => ({ value: d.DistrictID, label: d.DistrictName }))}
+                                onChange={(id, opt) => setNewAddr(p => ({ ...p, district: { id, name: opt.label }, ward: null }))}
+                                showSearch filterOption={(i, o) => o.label.toLowerCase().includes(i.toLowerCase())}
+                            />
+                        </div>
+                        <div className="select-item">
+                            <label>{t('ward')}</label>
+                            <Select
+                                style={{ width: '100%' }}
+                                placeholder={t('select_ward')}
+                                disabled={!newAddr.district}
+                                value={newAddr.ward?.id}
+                                options={wards?.map(w => ({ value: w.WardCode, label: w.WardName }))}
+                                onChange={(id, opt) => setNewAddr(p => ({ ...p, ward: { id, name: opt.label } }))}
+                                showSearch filterOption={(i, o) => o.label.toLowerCase().includes(i.toLowerCase())}
+                            />
+                        </div>
+                    </div>
+                </div>
+            </Modal>
         </main>
     );
 }
+

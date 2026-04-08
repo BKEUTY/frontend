@@ -1,28 +1,42 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from "../../i18n/LanguageContext";
 import { Pagination, EmptyState, CButton } from '../../Component/Common';
 import { SearchOutlined } from '@ant-design/icons';
 import { Input, Select, Spin } from 'antd';
 import promotionApi from '../../api/promotionApi';
+import { useQueryParams } from "../../hooks/useQueryParams";
+import { useDebounce } from "../../hooks/useDebounce";
 import "./Promotion.css";
+
+const itemsPerPage = 30;
 
 export default function Promotion() {
     const { t } = useLanguage();
-    const [filterType, setFilterType] = useState('all');
-    const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(0); 
+    const [query, setQuery] = useQueryParams();
+
+    const page = query.page ? Number(query.page) - 1 : 0;
+    const filterType = query.type || 'all';
+    const searchTermFromUrl = query.search || '';
+
+    const [searchInput, setSearchInput] = useState(searchTermFromUrl);
+    const debouncedSearch = useDebounce(searchInput, 500);
+
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
     const [promotions, setPromotions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
-    const itemsPerPage = 30;
 
-    const fetchPromotions = useCallback(async (page = 0) => {
+    const fetchPromotions = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await promotionApi.getAll({ page, size: itemsPerPage });
+            const res = await promotionApi.getAll({ 
+                page, 
+                size: itemsPerPage,
+                search: searchTermFromUrl,
+                status: filterType === 'all' ? '' : filterType
+            });
             if (res.data) {
                 setPromotions(res.data.content || []);
                 setTotalPages(res.data.totalPages || 0);
@@ -32,24 +46,30 @@ export default function Promotion() {
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [page, searchTermFromUrl, filterType]);
 
     useEffect(() => {
-        fetchPromotions(currentPage);
-    }, [currentPage, fetchPromotions]);
+        setSearchInput(searchTermFromUrl);
+    }, [searchTermFromUrl]);
 
-    const filteredData = useMemo(() => {
-        return promotions.filter(item => {
-            const searchMatch = (item.title || "").toLowerCase().includes(searchTerm.toLowerCase());
-            if (!searchMatch) return false;
+    useEffect(() => {
+        if (debouncedSearch !== searchTermFromUrl) {
+            setQuery({ search: debouncedSearch || null, page: 1 });
+        }
+    }, [debouncedSearch, searchTermFromUrl, setQuery]);
 
-            if (filterType === 'all') return true;
-            if (filterType === 'applicable') return item.status === 'STARTING';
-            return item.status === filterType;
-        });
-    }, [filterType, searchTerm, promotions]);
+    useEffect(() => {
+        fetchPromotions();
+    }, [fetchPromotions]);
 
-    const currentData = filteredData;
+    const handleFilterChange = (value) => {
+        setQuery({ type: value === 'all' ? null : value, page: 1 });
+    };
+
+    const handlePageChange = (newPage) => {
+        setQuery({ page: newPage + 1 });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '';
@@ -57,9 +77,7 @@ export default function Promotion() {
     };
 
     const formatDiscount = (item) => {
-        if (item.discountType === 'PERCENTAGE') {
-            return `${item.discountValue}%`;
-        }
+        if (item.discountType === 'PERCENTAGE') return `${item.discountValue}%`;
         return new Intl.NumberFormat('vi-VN').format(item.discountValue) + 'đ';
     };
 
@@ -92,14 +110,14 @@ export default function Promotion() {
                         size="large"
                         placeholder={t('promo_search_placeholder')}
                         prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                        value={searchTerm}
-                        onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(0); }}
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
                         className="prm-search-input"
                     />
                     <Select
                         size="large"
                         value={filterType}
-                        onChange={(value) => { setFilterType(value); setCurrentPage(0); }}
+                        onChange={handleFilterChange}
                         className="prm-status-select"
                         options={[
                             { value: 'all', label: t('promo_tab_all') },
@@ -129,8 +147,8 @@ export default function Promotion() {
                                 </tr>
                             </thead>
                             <tbody>
-                                {currentData.length > 0 ? (
-                                    currentData.map((item) => (
+                                {promotions.length > 0 ? (
+                                    promotions.map((item) => (
                                         <tr
                                             key={item.id}
                                             className={`prm-row ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled' : ''}`}
@@ -162,8 +180,8 @@ export default function Promotion() {
                 <div className="prm-mobile-list">
                     {loading ? (
                         <div className="prm-loading"><Spin size="large" /></div>
-                    ) : currentData.length > 0 ? (
-                        currentData.map((item) => (
+                    ) : promotions.length > 0 ? (
+                        promotions.map((item) => (
                             <div
                                 className={`prm-card ${item.status === 'ENDED' || item.status === 'DISABLED' ? 'disabled' : ''}`}
                                 key={item.id}
@@ -205,11 +223,11 @@ export default function Promotion() {
                 {totalPages > 1 && (
                     <div className="pagination-wrapper">
                         <Pagination 
-                            page={currentPage} 
+                            page={page} 
                             totalPages={totalPages} 
                             totalItems={totalItems} 
                             pageSize={itemsPerPage} 
-                            onPageChange={setCurrentPage} 
+                            onPageChange={handlePageChange} 
                         />
                     </div>
                 )}

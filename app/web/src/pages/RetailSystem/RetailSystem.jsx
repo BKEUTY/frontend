@@ -10,25 +10,23 @@ import {
 } from '@ant-design/icons';
 import { Input, Select, Button } from 'antd';
 import { Skeleton, Pagination, EmptyState, CButton } from '../../Component/Common';
-import usePagination from '../../hooks/usePagination';
+import { useQueryParams } from "../../hooks/useQueryParams";
+import { useDebounce } from "../../hooks/useDebounce";
 import './RetailSystem.css';
 
 export default function RetailSystem() {
     const { t } = useLanguage();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [statusFilter, setStatusFilter] = useState('all');
+    const [query, setQuery] = useQueryParams();
+
+    const searchTermFromUrl = query.search || '';
+    const statusFilter = query.status || 'all';
+    const page = query.page ? Number(query.page) - 1 : 0;
+    const pageSize = 6;
+
+    const [searchInput, setSearchInput] = useState(searchTermFromUrl);
+    const debouncedSearch = useDebounce(searchInput, 500);
     const [selectedBranch, setSelectedBranch] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
-
-    const { pagination, setCurrent } = usePagination(0, 6);
-
-    useEffect(() => {
-        setIsLoading(true);
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 600);
-        return () => clearTimeout(timer);
-    }, [searchTerm, statusFilter, pagination.current]);
 
     const branches = useMemo(() => [
         { id: 1, name: "BKEUTY - Quận 1", address: "123 Lê Lợi, Phường Bến Nghé, Quận 1", phone: "0908 741 625", status: "Open", open_date: "2024-01-15", manager: "Nguyễn Văn A" },
@@ -45,16 +43,41 @@ export default function RetailSystem() {
         { id: 11, name: "BKEUTY - Hà Nội 1", address: "101 Cầu Giấy, Quận Cầu Giấy, Hà Nội", phone: "0908 741 635", status: "Open", open_date: "2024-06-15", manager: "Phạm Văn L" },
     ], []);
 
+    useEffect(() => {
+        setSearchInput(searchTermFromUrl);
+    }, [searchTermFromUrl]);
+
+    useEffect(() => {
+        if (debouncedSearch !== searchTermFromUrl) {
+            setQuery({ search: debouncedSearch || null, page: 1 });
+        }
+    }, [debouncedSearch, searchTermFromUrl, setQuery]);
+
+    useEffect(() => {
+        setIsLoading(true);
+        const timer = setTimeout(() => setIsLoading(false), 500);
+        return () => clearTimeout(timer);
+    }, [searchTermFromUrl, statusFilter, page]);
+
     const filteredBranches = useMemo(() => {
         return branches.filter(branch => {
-            const matchesSearch = branch.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = branch.name.toLowerCase().includes(searchTermFromUrl.toLowerCase());
             const matchesStatus = statusFilter === 'all' || branch.status === statusFilter;
             return matchesSearch && matchesStatus;
         });
-    }, [branches, searchTerm, statusFilter]);
+    }, [branches, searchTermFromUrl, statusFilter]);
 
-    const totalPages = Math.ceil(filteredBranches.length / pagination.pageSize);
-    const paginatedBranches = filteredBranches.slice(pagination.current * pagination.pageSize, (pagination.current + 1) * pagination.pageSize);
+    const totalPages = Math.ceil(filteredBranches.length / pageSize);
+    const paginatedBranches = filteredBranches.slice(page * pageSize, (page + 1) * pageSize);
+
+    const handleStatusChange = (value) => {
+        setQuery({ status: value === 'all' ? null : value, page: 1 });
+    };
+
+    const handlePageChange = (newPage) => {
+        setQuery({ page: newPage + 1 });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
 
     if (selectedBranch) {
         return (
@@ -64,15 +87,9 @@ export default function RetailSystem() {
                 </div>
                 <div className="retail-page-content">
                     <div className="retail-detail-wrapper">
-                        <Button 
-                            icon={<LeftOutlined />} 
-                            onClick={() => setSelectedBranch(null)}
-                            className="btn-back"
-                            type="text"
-                        >
+                        <Button icon={<LeftOutlined />} onClick={() => setSelectedBranch(null)} className="btn-back" type="text">
                             {t('retail_back_to_list')}
                         </Button>
-
                         <div className="retail-detail-card">
                             <div className="detail-header">
                                 <h2>{selectedBranch.name}</h2>
@@ -83,31 +100,19 @@ export default function RetailSystem() {
                             <div className="detail-grid">
                                 <div className="detail-item">
                                     <div className="detail-icon"><EnvironmentOutlined /></div>
-                                    <div className="detail-content">
-                                        <label>{t('retail_address')}</label>
-                                        <p>{selectedBranch.address}</p>
-                                    </div>
+                                    <div className="detail-content"><label>{t('retail_address')}</label><p>{selectedBranch.address}</p></div>
                                 </div>
                                 <div className="detail-item">
                                     <div className="detail-icon"><PhoneOutlined /></div>
-                                    <div className="detail-content">
-                                        <label>{t('retail_phone')}</label>
-                                        <p>{selectedBranch.phone}</p>
-                                    </div>
+                                    <div className="detail-content"><label>{t('retail_phone')}</label><p>{selectedBranch.phone}</p></div>
                                 </div>
                                 <div className="detail-item">
                                     <div className="detail-icon"><ClockCircleOutlined /></div>
-                                    <div className="detail-content">
-                                        <label>{t('retail_open_date')}</label>
-                                        <p>{selectedBranch.open_date}</p>
-                                    </div>
+                                    <div className="detail-content"><label>{t('retail_open_date')}</label><p>{selectedBranch.open_date}</p></div>
                                 </div>
                                 <div className="detail-item">
                                     <div className="detail-icon"><UserOutlined /></div>
-                                    <div className="detail-content">
-                                        <label>{t('retail_manager')}</label>
-                                        <p>{selectedBranch.manager}</p>
-                                    </div>
+                                    <div className="detail-content"><label>{t('retail_manager')}</label><p>{selectedBranch.manager}</p></div>
                                 </div>
                             </div>
                         </div>
@@ -128,14 +133,14 @@ export default function RetailSystem() {
                         size="large"
                         placeholder={t('retail_search_placeholder')}
                         prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                        value={searchTerm}
-                        onChange={(e) => { setSearchTerm(e.target.value); setCurrent(0); }}
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
                         className="retail-search-input"
                     />
                     <Select
                         size="large"
                         value={statusFilter}
-                        onChange={(value) => { setStatusFilter(value); setCurrent(0); }}
+                        onChange={handleStatusChange}
                         className="retail-status-select"
                         options={[
                             { value: 'all', label: t('all') },
@@ -150,16 +155,12 @@ export default function RetailSystem() {
                         {Array(6).fill(0).map((_, i) => (
                             <div key={i} className="store-card skeleton-card">
                                 <div className="store-card-header">
-                                    <Skeleton width="60%" height="22px" />
-                                    <Skeleton width="80px" height="26px" borderRadius="13px" />
+                                    <Skeleton width="60%" height="22px" /><Skeleton width="80px" height="26px" borderRadius="13px" />
                                 </div>
                                 <div className="store-card-body">
-                                    <Skeleton width="100%" height="14px" style={{ marginBottom: '10px' }} />
-                                    <Skeleton width="70%" height="14px" />
+                                    <Skeleton width="100%" height="14px" style={{ marginBottom: '10px' }} /><Skeleton width="70%" height="14px" />
                                 </div>
-                                <div className="store-card-footer">
-                                    <Skeleton width="100%" height="36px" borderRadius="6px" />
-                                </div>
+                                <div className="store-card-footer"><Skeleton width="100%" height="36px" borderRadius="6px" /></div>
                             </div>
                         ))}
                     </div>
@@ -194,11 +195,11 @@ export default function RetailSystem() {
                         {totalPages > 1 && (
                             <div className="pagination-wrapper">
                                 <Pagination 
-                                    page={pagination.current} 
+                                    page={page} 
                                     totalPages={totalPages} 
                                     totalItems={filteredBranches.length} 
-                                    pageSize={pagination.pageSize} 
-                                    onPageChange={setCurrent} 
+                                    pageSize={pageSize} 
+                                    onPageChange={handlePageChange} 
                                 />
                             </div>
                         )}

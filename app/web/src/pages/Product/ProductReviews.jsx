@@ -204,7 +204,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                             <div className="pr-main-content">
                                 <div className="pr-card-header">
                                     <span className="pr-user-name">{rev.userName || 'User'}</span>
-                                    <span className="pr-post-date">{formatDateTime(rev.updatedAt)}</span>
+                                    <span className="pr-post-date">{formatDateTime(rev.createdAt)}</span>
                                 </div>
                                 <div className="pr-rating-meta">
                                     <Rate disabled defaultValue={rev.rating} style={{ fontSize: '13px', color: '#f59e0b' }} />
@@ -222,7 +222,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                                     <div className="pr-admin-reply">
                                         <div className="pr-reply-header">
                                             <span className="pr-reply-label">{t('admin_reply').toUpperCase()}</span>
-                                            <span className="pr-reply-date">{formatDateTime(rev.reply.updatedAt)}</span>
+                                            <span className="pr-reply-date">{formatDateTime(rev.reply.repliedAt)}</span>
                                         </div>
                                         <div className="pr-reply-body">{rev.reply.comment}</div>
                                     </div>

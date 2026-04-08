@@ -21,6 +21,12 @@ export default {
     edit: "Edit",
     delete: "Delete",
     update: "Update",
+    first_name: "First Name",
+    last_name: "Last Name",
+    fetch_profile_error: "Could not fetch profile information.",
+    update_info_error: "Update profile information failed.",
+    user_id: "Account ID",
+
     view_more: "View More",
     view_all: "View All",
     explore: "Explore Now",
@@ -248,7 +254,6 @@ export default {
     brand_story: "The journey to pure beauty",
     brand_desc: "Bkeuty is proud to be a trusted companion, understanding and elevating Vietnamese skin.",
 
-    next_level_condition: "Spend {amount} more to become {level}",
     account: "Account",
     my_orders: "My Orders",
     my_appointments: "My Appointments",
@@ -273,7 +278,7 @@ export default {
     status: "Status",
     invoice: "Invoice",
     track_order: "Track Order",
-    pts: "pts",
+
     pending: "Pending",
     completed: "Completed",
     cancelled: "Cancelled",
@@ -438,6 +443,11 @@ export default {
     price_high_low: "Price: High to low",
     stock_low_high: "Stock: Low to high",
     stock_high_low: "Stock: High to low",
+    rating_high_low: "Rating: High to low",
+    rating_low_high: "Rating: Low to high",
+    reviews_high_low: "Review: High to low",
+    reviews_low_high: "Review: Low to high",
+    login_required: "Please log in",
     login_required_to_checkout: "Please log in to checkout",
 
     chatbot_title: "BKEUTY Assistant",

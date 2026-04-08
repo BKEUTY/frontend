@@ -1,36 +1,81 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TextInput, ScrollView, TouchableOpacity, Image } from 'react-native';
-import { COLORS, SIZES } from '../../constants/Theme';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { COLORS } from '../../constants/Theme';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { Ionicons } from '@expo/vector-icons';
 import { CButton, CInput } from '../../Component/Common';
+import userApi from '../../api/userApi';
 
 const DEFAULT_AVATAR = 'https://via.placeholder.com/150';
 
 const ProfileScreen = () => {
     const { t } = useLanguage();
-
+    const [loading, setLoading] = useState(true);
     const [userData, setUserData] = useState({
-        name: "Phạm Thanh Phong",
-        username: "thanhphong28",
-        email: "phongdeptrai28@gmail.com",
-        phone: "0376929681",
-        date_of_birth: "2004-08-28",
-        gender: "Nam",
-        address: "xã Long Phước, tỉnh Đồng Nai",
-        join_date: "2026-10-20",
-        membership_level: "Diamond",
-        total_spent: 85000000,
-        target_spent: 100000000,
-        next_level: "VIP"
+        firstname: '',
+        lastname: '',
+        id: '',
+        email: '',
+        phone: '',
+        date_of_birth: '',
+        gender: 'Nam',
+        address: '',
     });
 
-    const handleUpdate = () => {
-        alert(t('update_info_success'));
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await userApi.getProfile();
+                if (response.data) {
+                    const data = response.data;
+                    setUserData({
+                        firstname: data.firstname || '',
+                        lastname: data.lastname || '',
+                        id: data.userId || data.id || '',
+                        email: data.email || '',
+                        phone: data.phoneNumber || '',
+                        date_of_birth: data.dob || '',
+                        gender: data.gender || 'Nam',
+                        address: data.addresses?.[0]?.address || '',
+                    });
+                }
+            } catch (err) {
+                console.error("Fetch profile error:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleUpdate = async () => {
+        try {
+            setLoading(true);
+            const updateData = {
+                firstname: userData.firstname,
+                lastname: userData.lastname,
+                phoneNumber: userData.phone,
+                dob: userData.date_of_birth,
+            };
+            await userApi.updateProfile(updateData);
+            alert(t('update_info_success'));
+        } catch (err) {
+            alert(t('api_error_profile_update'));
+        } finally {
+            setLoading(false);
+        }
     };
 
+    if (loading) {
+        return (
+            <View style={[styles.container, styles.center]}>
+                <ActivityIndicator size="large" color={COLORS.mainTitle} />
+            </View>
+        );
+    }
+
     return (
-        <ScrollView style={styles.container}>
+        <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
             <View style={styles.header}>
                 <View style={styles.avatarMainSection}>
                     <View style={styles.avatarContainer}>
@@ -40,67 +85,41 @@ const ProfileScreen = () => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.nameSection}>
-                        <Text style={styles.greeting}>{userData.name}</Text>
-                        <Text style={styles.usernameText}>@{userData.username}</Text>
-                    </View>
-                </View>
-
-                {/* VIP Section - Modern Minimal Card */}
-                <View style={styles.vipCard}>
-                    <View style={styles.vipCardTop}>
-                        <View style={styles.vipLevelBadge}>
-                            <Ionicons name="diamond-outline" size={14} color="white" style={{ marginRight: 4 }} />
-                            <Text style={styles.vipBadgeText}>{userData.membership_level}</Text>
-                        </View>
-                        <View style={styles.spentInfo}>
-                            <Text style={styles.spentLabel}>{t('total_spent')}</Text>
-                            <Text style={styles.spentValue}>{new Intl.NumberFormat('vi-VN').format(userData.total_spent)}đ</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.progressContainer}>
-                        <View style={styles.progressTrack}>
-                            <View
-                                style={[
-                                    styles.progressFill,
-                                    { width: `${(userData.total_spent / userData.target_spent) * 100}%` }
-                                ]}
-                            />
-                        </View>
-                        <Text style={styles.progressLabel}>
-                            {t('next_level_condition')
-                                .replace('{amount}', new Intl.NumberFormat('vi-VN').format(userData.target_spent - userData.total_spent) + 'đ')
-                                .replace('{level}', userData.next_level)}
-                        </Text>
+                        <Text style={styles.greeting}>{t('welcome')},</Text>
+                        <Text style={styles.fullNameText}>#{userData.id}</Text>
+                        <Text style={styles.userIdText}>{userData.firstname} {userData.lastname}</Text>
                     </View>
                 </View>
             </View>
 
             <View style={styles.formContainer}>
-                <CInput
-                    label={t('name') || "Họ và tên"}
-                    value={userData.name}
-                    onChangeText={(text) => setUserData({ ...userData, name: text })}
-                />
+                <View style={styles.row}>
+                    <CInput
+                        label={t('first_name')}
+                        value={userData.firstname}
+                        onChangeText={(text) => setUserData({ ...userData, firstname: text })}
+                        style={{ flex: 1, marginRight: 10 }}
+                    />
+                    <CInput
+                        label={t('last_name')}
+                        value={userData.lastname}
+                        onChangeText={(text) => setUserData({ ...userData, lastname: text })}
+                        style={{ flex: 1 }}
+                    />
+                </View>
 
                 <CInput
-                    label={t('username')}
-                    value={userData.username}
+                    label={t('user_id')}
+                    value={userData.id}
                     style={styles.readOnlyWrapper}
                     editable={false}
                 />
 
                 <CInput
-                    label={t('gender')}
-                    value={userData.gender === 'Nam' ? t('male') : (userData.gender === 'Nu' ? t('female') : t('other'))}
-                    onChangeText={(text) => setUserData({ ...userData, gender: text })}
-                />
-
-                <CInput
                     label="Email"
                     value={userData.email}
-                    keyboardType="email-address"
-                    onChangeText={(text) => setUserData({ ...userData, email: text })}
+                    style={styles.readOnlyWrapper}
+                    editable={false}
                 />
 
                 <CInput
@@ -114,26 +133,28 @@ const ProfileScreen = () => {
                     label={t('dob')}
                     value={userData.date_of_birth}
                     onChangeText={(text) => setUserData({ ...userData, date_of_birth: text })}
+                    placeholder="YYYY-MM-DD"
+                />
+
+                <CInput
+                    label={t('gender')}
+                    value={userData.gender === 'Nam' ? t('male') : (userData.gender === 'Nu' ? t('female') : t('other'))}
+                    editable={false}
+                    style={styles.readOnlyWrapper}
                 />
 
                 <CInput
                     label={t('address')}
                     value={userData.address}
                     multiline
-                    onChangeText={(text) => setUserData({ ...userData, address: text })}
-                />
-
-                <CInput
-                    label={t('join_date')}
-                    value={new Date(userData.join_date).toLocaleDateString("vi-VN")}
-                    style={styles.readOnlyWrapper}
                     editable={false}
+                    style={styles.readOnlyWrapper}
                 />
 
                 <CButton
                     title={t('update')}
                     onPress={handleUpdate}
-                    style={{ marginTop: 20 }}
+                    style={{ marginTop: 10, marginBottom: 30 }}
                 />
             </View>
         </ScrollView>
@@ -145,8 +166,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#fff',
     },
-    header: {
+    center: {
+        justifyContent: 'center',
         alignItems: 'center',
+    },
+    header: {
         paddingVertical: 30,
         backgroundColor: COLORS.background,
         paddingHorizontal: 20,
@@ -155,165 +179,63 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         width: '100%',
-        marginBottom: 20,
     },
     avatarContainer: {
         position: 'relative',
     },
     avatar: {
-        width: 85,
-        height: 85,
-        borderRadius: 42.5,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         borderWidth: 3,
         borderColor: 'white',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
     },
     editAvatarBadge: {
         position: 'absolute',
         bottom: 0,
         right: 0,
         backgroundColor: COLORS.mainTitle,
-        width: 28,
-        height: 28,
-        borderRadius: 14,
+        width: 26,
+        height: 26,
+        borderRadius: 13,
         justifyContent: 'center',
         alignItems: 'center',
         borderWidth: 2,
         borderColor: 'white',
     },
     nameSection: {
-        marginLeft: 20,
+        marginLeft: 15,
         flex: 1,
     },
     greeting: {
-        fontSize: 22,
-        fontWeight: '900',
-        color: COLORS.mainTitle,
-        marginBottom: 2,
-    },
-    usernameText: {
         fontSize: 14,
         color: '#64748b',
         fontWeight: '600',
+    },
+    fullNameText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: COLORS.mainTitle,
+    },
+    userIdText: {
+        fontSize: 12,
+        color: '#94a3b8',
+        fontWeight: '500',
+        marginTop: 2,
     },
     formContainer: {
         padding: 20,
         backgroundColor: 'white',
         borderTopLeftRadius: 30,
         borderTopRightRadius: 30,
-        marginTop: -10,
+        marginTop: -20,
     },
-    inputGroup: {
-        marginBottom: 20,
-    },
-    label: {
-        fontSize: 13,
-        color: '#94a3b8',
-        marginBottom: 8,
-        fontWeight: '800',
-        textTransform: 'uppercase',
-        letterSpacing: 0.5,
-    },
-    input: {
-        backgroundColor: '#f8fafc',
-        borderWidth: 1,
-        borderColor: '#e2e8f0',
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 14,
-        fontSize: 15,
-        color: '#1e293b',
-        fontWeight: '600',
-    },
-    readOnlyWrapper: {
-        opacity: 0.7,
-    },
-    updateButton: {
-        display: 'none' // Replaced by CButton
-    },
-    updateButtonText: {
-        color: 'white',
-        fontSize: 16,
-        fontWeight: '900',
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-    },
-    // VIP Styles
-    vipCard: {
-        backgroundColor: 'white',
-        width: '100%',
-        borderRadius: 24,
-        padding: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.05,
-        shadowRadius: 20,
-        elevation: 10,
-        borderWidth: 1,
-        borderColor: '#f1f5f9',
-    },
-    vipCardTop: {
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'flex-start',
-        marginBottom: 20,
     },
-    vipLevelBadge: {
-        backgroundColor: '#00d2d3',
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 10,
-        shadowColor: '#00d2d3',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-    },
-    vipBadgeText: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: '900',
-        textTransform: 'uppercase',
-    },
-    spentInfo: {
-        alignItems: 'flex-end',
-    },
-    spentLabel: {
-        fontSize: 11,
-        fontWeight: '800',
-        color: '#94a3b8',
-        textTransform: 'uppercase',
-        marginBottom: 2,
-    },
-    spentValue: {
-        fontSize: 18,
-        fontWeight: '900',
-        color: '#1e293b',
-    },
-    progressContainer: {
-        width: '100%',
-    },
-    progressTrack: {
-        height: 10,
-        backgroundColor: '#f1f5f9',
-        borderRadius: 5,
-        overflow: 'hidden',
-        marginBottom: 10,
-    },
-    progressFill: {
-        height: '100%',
-        backgroundColor: COLORS.mainTitle,
-        borderRadius: 5,
-    },
-    progressLabel: {
-        fontSize: 12,
-        color: '#64748b',
-        fontWeight: '700',
-        textAlign: 'center',
+    readOnlyWrapper: {
+        opacity: 0.6,
     }
 });
 

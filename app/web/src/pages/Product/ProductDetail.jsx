@@ -269,7 +269,7 @@ export default function ProductDetail() {
 
                     <div className="rating-container">
                         <StarFilled className="bkeuty-star" />
-                        {productData.averageRating}/5 ({productData.reviewCount} {t('reviews')})
+                        {Number(productData.averageRating).toFixed(1)}/5 ({productData.reviewCount} {t('reviews')})
                     </div>
 
                     <div className="price-box">

@@ -178,11 +178,18 @@ const ProductDetailScreen = ({ route, navigation }) => {
                     <View>
                         <View style={styles.reviewOverview}>
                             <View style={styles.ratingBigBox}>
-                                <Text style={styles.bigRating}>4.8</Text>
+                                <Text style={styles.bigRating}>{Number(productDetail?.averageRating || 0).toFixed(1)}</Text>
                                 <View style={styles.starsRow}>
-                                    {[1, 2, 3, 4, 5].map(s => <Ionicons key={s} name="star" size={12} color="#f59e0b" />)}
+                                    {[1, 2, 3, 4, 5].map(s => (
+                                        <Ionicons 
+                                            key={s} 
+                                            name={s <= Math.round(productDetail?.averageRating || 0) ? "star" : "star-outline"} 
+                                            size={12} 
+                                            color="#f59e0b" 
+                                        />
+                                    ))}
                                 </View>
-                                <Text style={styles.totalReviewText}>128 {t('reviews')}</Text>
+                                <Text style={styles.totalReviewText}>{productDetail?.ratingCount || 0} {t('reviews')}</Text>
                             </View>
                             <View style={styles.ratingBars}>
                                 {[5, 4, 3, 2, 1].map(r => (
@@ -250,7 +257,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                         <Text style={styles.brand}>BKEUTY PREMIUM</Text>
                         <View style={styles.ratingRow}>
                             <Ionicons name="star" size={14} color="#fbbf24" />
-                            <Text style={styles.ratingText}>4.8</Text>
+                            <Text style={styles.ratingText}>{Number(productDetail?.averageRating || 0).toFixed(1)}</Text>
                         </View>
                     </View>
                     <Text style={styles.name}>{productDetail.name}</Text>

@@ -61,12 +61,6 @@
     color: var(--ac-primary);
 }
 
-.profile-role {
-    font-size: 0.85rem;
-    color: var(--ac-secondary);
-    margin-top: 2px;
-}
-
 .sidebar-nav {
     display: flex;
     flex-direction: column;
@@ -132,6 +126,9 @@
 }
 
 .page-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     margin-bottom: 32px;
 }
 
@@ -147,77 +144,7 @@
     font-size: 0.95rem;
 }
 
-.membership-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: var(--ac-bg-light);
-    border: 1px solid var(--ac-border);
-    border-radius: var(--ac-radius-lg);
-    padding: 24px;
-    margin-bottom: 40px;
-}
 
-.membership-tier {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.tier-label {
-    font-size: 0.85rem;
-    color: var(--ac-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.tier-badge {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--ac-primary);
-}
-
-.membership-progress-wrap {
-    flex: 1;
-    max-width: 400px;
-}
-
-.progress-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.spent-amount {
-    color: var(--ac-primary);
-}
-
-.target-amount {
-    color: var(--ac-secondary);
-}
-
-.progress-track {
-    height: 6px;
-    background: var(--ac-border);
-    border-radius: 4px;
-    overflow: hidden;
-    margin-bottom: 8px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: var(--ac-primary);
-    border-radius: 4px;
-}
-
-.tier-hint {
-    margin: 0;
-    font-size: 0.85rem;
-    color: var(--ac-secondary);
-    text-align: right;
-}
 
 .info-grid-layout {
     display: grid;
@@ -343,7 +270,7 @@
     .info-grid-layout {
         grid-template-columns: 1fr;
     }
-    
+
     .avatar-upload-section {
         grid-row: 1;
         padding-top: 0;
@@ -417,17 +344,7 @@
         white-space: nowrap;
     }
 
-    .membership-card {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 24px;
-        padding: 20px;
-    }
 
-    .membership-progress-wrap {
-        width: 100%;
-        max-width: none;
-    }
 
     .form-grid {
         grid-template-columns: 1fr;

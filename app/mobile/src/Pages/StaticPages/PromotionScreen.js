@@ -12,25 +12,15 @@ const PromotionScreen = ({ navigation }) => {
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
 
-    const { promotions, isLoading, error, fetchPromotions } = usePromotions();
+    const { promotions, isLoading, fetchPromotions } = usePromotions();
 
     useEffect(() => {
-        fetchPromotions();
-    }, [fetchPromotions]);
+        const delayDebounceFn = setTimeout(() => {
+            fetchPromotions({ search: searchTerm, status: filterType });
+        }, 500);
 
-    const filteredData = useMemo(() => {
-        if (!promotions) return [];
-        return promotions.filter(item => {
-            const searchMatch =
-                item.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                item.description?.toLowerCase().includes(searchTerm.toLowerCase());
-
-            if (!searchMatch) return false;
-
-            if (filterType === 'all') return true;
-            return item.status === filterType;
-        });
-    }, [filterType, searchTerm, promotions]);
+        return () => clearTimeout(delayDebounceFn);
+    }, [searchTerm, filterType, fetchPromotions]);
 
     const formatCurrency = (val) => {
         return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
@@ -159,14 +149,14 @@ const PromotionScreen = ({ navigation }) => {
                 </View>
             ) : (
                 <FlatList
-                    data={filteredData}
+                    data={promotions}
                     renderItem={renderItem}
                     keyExtractor={item => item.id.toString()}
                     contentContainerStyle={styles.listContent}
                     ListEmptyComponent={
                         <Text style={styles.noResult}>{t('no_promos_found')}</Text>
                     }
-                    onRefresh={fetchPromotions}
+                    onRefresh={() => fetchPromotions({ search: searchTerm, status: filterType })}
                     refreshing={isLoading}
                 />
             )}

@@ -66,7 +66,7 @@ const AccountScreen = () => {
                                     <Image source={{ uri: user.avatar }} style={styles.avatar} />
                                 ) : (
                                     <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                                        <Text style={styles.avatarText}>{user.name.charAt(0)}</Text>
+                                        <Text style={styles.avatarText}>{user.name ? user.name.charAt(0) : 'U'}</Text>
                                     </View>
                                 )}
                                 <TouchableOpacity style={styles.editAvatarBtn}>
@@ -74,15 +74,9 @@ const AccountScreen = () => {
                                 </TouchableOpacity>
                             </View>
                             <View style={styles.userInfo}>
-                                <Text style={styles.username}>{user.name}</Text>
-                                <View style={styles.membershipBadge}>
-                                    <Ionicons name="diamond" size={12} color="#fbc531" />
-                                    <Text style={styles.membershipText}>DIAMOND MEMBER</Text>
-                                </View>
-                                <View style={styles.pointsRow}>
-                                    <Text style={styles.pointsValue}>{user.points || 0}</Text>
-                                    <Text style={styles.pointsLabel}> {t('pts')}</Text>
-                                </View>
+                                <Text style={styles.greetingText}>{t('welcome')},</Text>
+                                <Text style={styles.username}>#{user.id}</Text>
+                                <Text style={styles.userIdText}>{user.name}</Text>
                             </View>
                         </View>
                     </LinearGradient>
@@ -232,41 +226,20 @@ const styles = StyleSheet.create({
     userInfo: {
         flex: 1,
     },
-    username: {
-        fontSize: 24,
-        fontWeight: '900',
-        color: 'white',
-        marginBottom: 6,
-    },
-    membershipBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.15)',
-        paddingHorizontal: 12,
-        paddingVertical: 4,
-        borderRadius: 12,
-        alignSelf: 'flex-start',
-        marginBottom: 10,
-        gap: 6,
-    },
-    membershipText: {
-        color: 'white',
-        fontSize: 10,
-        fontWeight: '800',
-        letterSpacing: 1,
-    },
-    pointsRow: {
-        flexDirection: 'row',
-        alignItems: 'baseline',
-    },
-    pointsValue: {
-        color: 'white',
-        fontSize: 18,
-        fontWeight: '900',
-    },
-    pointsLabel: {
-        color: 'rgba(255,255,255,0.7)',
+    greetingText: {
         fontSize: 12,
+        color: 'rgba(255,255,255,0.7)',
+        fontWeight: '600',
+    },
+    username: {
+        fontSize: 22,
+        fontWeight: '900',
+        color: 'white',
+        letterSpacing: -0.5,
+    },
+    userIdText: {
+        fontSize: 13,
+        color: 'rgba(255,255,255,0.9)',
         fontWeight: '600',
     },
     guestContainer: {

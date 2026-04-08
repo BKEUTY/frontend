@@ -21,6 +21,12 @@ export default {
     edit: "Chỉnh sửa",
     delete: "Xóa",
     update: "Cập nhật",
+    first_name: "Tên",
+    last_name: "Họ",
+    fetch_profile_error: "Không thể tải thông tin cá nhân.",
+    update_info_error: "Cập nhật thông tin thất bại.",
+    user_id: "ID tài khoản",
+
     view_more: "Xem thêm",
     view_all: "Xem tất cả",
     explore: "Khám phá ngay",
@@ -249,7 +255,7 @@ export default {
     brand_story: "Hành trình mang đến vẻ đẹp thuần khiết",
     brand_desc: "Bkeuty tự hào là người bạn đồng hành tin cậy, thấu hiểu và nâng tầm làn da Việt.",
 
-    next_level_condition: "Chỉ còn {amount} nữa để trở thành {level}",
+
     account: "Tài khoản",
     my_orders: "Đơn hàng của tôi",
     my_appointments: "Lịch hẹn của tôi",
@@ -274,7 +280,7 @@ export default {
     status: "Trạng thái",
     invoice: "Hóa đơn",
     track_order: "Theo dõi đơn hàng",
-    pts: "điểm",
+
     pending: "Đang xử lý",
     completed: "Hoàn thành",
     cancelled: "Đã hủy",
@@ -439,6 +445,11 @@ export default {
     price_high_low: "Giá: Cao đến thấp",
     stock_low_high: "Số lượng: Thấp đến cao",
     stock_high_low: "Số lượng: Cao đến thấp",
+    rating_high_low: "Đánh giá: Cao đến thấp",
+    rating_low_high: "Đánh giá: Thấp đến cao",
+    reviews_high_low: "Bình luận: Nhiều đến ít",
+    reviews_low_high: "Bình luận: Ít đến nhiều",
+    login_required: "Vui lòng đăng nhập",
     login_required_to_checkout: "Vui lòng đăng nhập để thanh toán",
 
     chatbot_title: "Trợ lý BKEUTY",

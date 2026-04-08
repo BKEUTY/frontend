@@ -65,10 +65,9 @@ const ProductCard = ({
 
                 {showRating && (
                     <View style={styles.ratingRow}>
-                        {[...Array(5)].map((_, i) => (
-                            <Ionicons key={i} name="star" size={10} color="#ffc107" />
-                        ))}
-                        <Text style={styles.ratingCount}>({item.ratingCount || 100})</Text>
+                        <Ionicons name="star" size={10} color="#ffc107" />
+                        <Text style={styles.ratingValue}>{Number(item.averageRating || 0).toFixed(1)}</Text>
+                        <Text style={styles.ratingCount}>({item.ratingCount || 0})</Text>
                     </View>
                 )}
 
@@ -199,10 +198,16 @@ const styles = StyleSheet.create({
         marginBottom: 8,
         gap: 2,
     },
+    ratingValue: {
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#111827',
+        marginLeft: 2,
+    },
     ratingCount: {
         fontSize: 10,
         color: '#9ca3af',
-        marginLeft: 4,
+        marginLeft: 2,
     },
     priceRow: {
         flexDirection: 'row',

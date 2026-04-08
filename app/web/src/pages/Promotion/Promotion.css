@@ -54,23 +54,57 @@
 
 .prm-controls {
     display: flex;
+    flex-wrap: wrap;
     gap: 16px;
     margin-bottom: 32px;
     align-items: center;
     background: #ffffff;
-    padding: 16px;
-    border-radius: var(--ecom-radius-md);
+    padding: 20px;
+    border-radius: var(--ecom-radius-lg);
     box-shadow: var(--ecom-shadow-sm);
     border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.prm-controls:hover {
+    box-shadow: var(--ecom-shadow-hover);
+}
+
+
+.prm-search-status {
+    display: flex;
+    gap: 12px;
+    flex: 2;
+    min-width: 300px;
 }
 
 .prm-search-input {
     flex: 1;
 }
 
-.prm-status-select {
-    min-width: 200px;
+.prm-search-input.ant-input-affix-wrapper-lg {
+    border-radius: 8px;
 }
+
+.prm-status-select {
+    min-width: 160px;
+}
+
+.prm-status-select .ant-select-selector {
+    border-radius: 8px !important;
+}
+
+.prm-date-range {
+    flex: 1.5;
+    min-width: 340px;
+    border-radius: 8px !important;
+}
+
+.prm-date-range:hover, .prm-date-range:focus {
+    border-color: var(--ecom-primary) !important;
+}
+
+
 
 .prm-status-badge {
     display: inline-flex;
@@ -443,7 +477,17 @@
         gap: 12px;
     }
 
+    .prm-search-status {
+        flex-direction: column;
+        width: 100%;
+        gap: 12px;
+    }
+
     .prm-status-select {
+        width: 100%;
+    }
+
+    .prm-date-range {
         width: 100%;
     }
 }

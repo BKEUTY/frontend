@@ -19,17 +19,19 @@ import { useAuth } from '../../Context/AuthContext';
 const RegisterScreen = ({ navigation }) => {
     const { t } = useLanguage();
     const { login, register } = useAuth();
-    const [fullName, setFullName] = useState('');
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
+    const [phone, setPhone] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [agreeTerms, setAgreeTerms] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleRegister = async () => {
-        if (!fullName || !email || !password || !confirmPassword) {
+        if (!firstName || !lastName || !email || !password || !confirmPassword || !phone) {
             Alert.alert(t('error'), t('please_fill_all_fields'));
             return;
         }
@@ -41,25 +43,21 @@ const RegisterScreen = ({ navigation }) => {
 
         setLoading(true);
         try {
-            const nameParts = fullName.trim().split(' ');
-            const firstName = nameParts[0];
-            const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : firstName;
-
             const registrationData = {
                 username: email,
                 email: email,
                 password: password,
-                firstName: firstName,
-                lastName: lastName,
-                phoneNumber: '0000000000', // Default
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                phoneNumber: phone.trim(),
                 mainAddress: 'Vietnam' // Default
             };
 
             await register(registrationData);
             
             Alert.alert(
-                t('success', 'Success'), 
-                t('register_success', 'Registration Successful. You can now login.'),
+                t('success'), 
+                t('register_success'),
                 [
                     { text: 'OK', onPress: () => navigation.navigate('Login') }
                 ]
@@ -67,7 +65,7 @@ const RegisterScreen = ({ navigation }) => {
         } catch (error) {
             console.error('Registration error:', error);
             const errorMessage = error.response?.data?.message || error.message || t('api_error_register');
-            Alert.alert(t('error', 'Error'), errorMessage);
+            Alert.alert(t('error'), errorMessage);
         } finally {
             setLoading(false);
         }
@@ -93,19 +91,42 @@ const RegisterScreen = ({ navigation }) => {
                         style={styles.logo}
                         resizeMode="contain"
                     />
-                    <Text style={styles.title}>{t('create_account', 'Create Account')}</Text>
-                    <Text style={styles.subtitle}>{t('register_subtitle', 'Sign up to get started')}</Text>
+                    <Text style={styles.title}>{t('create_account')}</Text>
+                    <Text style={styles.subtitle}>{t('register_subtitle')}</Text>
                 </View>
 
                 <View style={styles.form}>
+                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                        <View style={[styles.inputContainer, { flex: 1 }]}>
+                            <Ionicons name="person-outline" size={20} color="#636e72" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder={t('last_name')}
+                                value={lastName}
+                                onChangeText={setLastName}
+                                autoCapitalize="words"
+                            />
+                        </View>
+                        <View style={[styles.inputContainer, { flex: 1 }]}>
+                            <Ionicons name="person-outline" size={20} color="#636e72" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder={t('first_name')}
+                                value={firstName}
+                                onChangeText={setFirstName}
+                                autoCapitalize="words"
+                            />
+                        </View>
+                    </View>
+
                     <View style={styles.inputContainer}>
-                        <Ionicons name="person-outline" size={20} color="#636e72" style={styles.inputIcon} />
+                        <Ionicons name="phone-portrait-outline" size={20} color="#636e72" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
-                            placeholder={t('full_name', 'Full Name')}
-                            value={fullName}
-                            onChangeText={setFullName}
-                            autoCapitalize="words"
+                            placeholder={t('phone_placeholder')}
+                            value={phone}
+                            onChangeText={setPhone}
+                            keyboardType="phone-pad"
                         />
                     </View>
 
@@ -113,7 +134,7 @@ const RegisterScreen = ({ navigation }) => {
                         <Ionicons name="mail-outline" size={20} color="#636e72" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
-                            placeholder={t('email_placeholder', 'Email')}
+                            placeholder={t('email_placeholder')}
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
@@ -126,7 +147,7 @@ const RegisterScreen = ({ navigation }) => {
                         <Ionicons name="lock-closed-outline" size={20} color="#636e72" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
-                            placeholder={t('password', 'Password')}
+                            placeholder={t('password')}
                             value={password}
                             onChangeText={setPassword}
                             secureTextEntry={!showPassword}
@@ -149,7 +170,7 @@ const RegisterScreen = ({ navigation }) => {
                         <Ionicons name="lock-closed-outline" size={20} color="#636e72" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
-                            placeholder={t('confirm_password', 'Confirm Password')}
+                            placeholder={t('confirm_password')}
                             value={confirmPassword}
                             onChangeText={setConfirmPassword}
                             secureTextEntry={!showConfirmPassword}
@@ -177,8 +198,8 @@ const RegisterScreen = ({ navigation }) => {
                             {agreeTerms && <Ionicons name="checkmark" size={18} color="#fff" />}
                         </View>
                         <Text style={styles.checkboxText}>
-                            {t('agree_terms', 'I agree with')}{' '}
-                            <Text style={styles.link}>{t('terms_and_policy', 'Terms & Policy')}</Text>
+                            {t('agree_terms')}{' '}
+                            <Text style={styles.link}>{t('terms_and_policy')}</Text>
                         </Text>
                     </TouchableOpacity>
 
@@ -188,18 +209,18 @@ const RegisterScreen = ({ navigation }) => {
                         disabled={!agreeTerms}
                         activeOpacity={0.8}
                     >
-                        <Text style={styles.registerButtonText}>{t('register', 'Register')}</Text>
+                        <Text style={styles.registerButtonText}>{t('register')}</Text>
                     </TouchableOpacity>
 
 
 
                     <View style={styles.footer}>
-                        <Text style={styles.footerText}>{t('already_have_account', 'Already have an account?')}</Text>
+                        <Text style={styles.footerText}>{t('already_have_account')}</Text>
                         <TouchableOpacity
                             onPress={() => navigation.navigate('Login')}
                             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                         >
-                            <Text style={styles.footerLink}>{t('login', 'Login')}</Text>
+                            <Text style={styles.footerLink}>{t('login')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

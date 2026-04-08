@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useLanguage } from "../../i18n/LanguageContext";
 import { Pagination, EmptyState, CButton } from '../../Component/Common';
 import { SearchOutlined } from '@ant-design/icons';
-import { Input, Select, Spin } from 'antd';
+import { Input, Select, Spin, DatePicker } from 'antd';
+import dayjs from 'dayjs';
+
 import promotionApi from '../../api/promotionApi';
 import { useQueryParams } from "../../hooks/useQueryParams";
 import { useDebounce } from "../../hooks/useDebounce";
@@ -15,11 +17,15 @@ export default function Promotion() {
     const [query, setQuery] = useQueryParams();
 
     const page = query.page ? Number(query.page) - 1 : 0;
-    const filterType = query.type || 'all';
-    const searchTermFromUrl = query.search || '';
+    const filterType = query.status || 'all';
+    const titleTermFromUrl = query.title || '';
+    const startAtParam = query.startAt || null;
+    const endAtParam = query.endAt || null;
 
-    const [searchInput, setSearchInput] = useState(searchTermFromUrl);
+    const [searchInput, setSearchInput] = useState(titleTermFromUrl);
+
     const debouncedSearch = useDebounce(searchInput, 500);
+
 
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
@@ -34,8 +40,10 @@ export default function Promotion() {
             const res = await promotionApi.getAll({ 
                 page, 
                 size: itemsPerPage,
-                search: searchTermFromUrl,
-                status: filterType === 'all' ? '' : filterType
+                title: titleTermFromUrl,
+                status: filterType === 'all' ? '' : filterType,
+                startAt: startAtParam,
+                endAt: endAtParam
             });
             if (res.data) {
                 setPromotions(res.data.content || []);
@@ -46,24 +54,37 @@ export default function Promotion() {
         } finally {
             setLoading(false);
         }
-    }, [page, searchTermFromUrl, filterType]);
+    }, [page, titleTermFromUrl, filterType, startAtParam, endAtParam]);
 
     useEffect(() => {
-        setSearchInput(searchTermFromUrl);
-    }, [searchTermFromUrl]);
+        setSearchInput(titleTermFromUrl);
+    }, [titleTermFromUrl]);
 
     useEffect(() => {
-        if (debouncedSearch !== searchTermFromUrl) {
-            setQuery({ search: debouncedSearch || null, page: 1 });
+        if (debouncedSearch !== titleTermFromUrl) {
+            setQuery({ title: debouncedSearch || null, page: 1 });
         }
-    }, [debouncedSearch, searchTermFromUrl, setQuery]);
+    }, [debouncedSearch, titleTermFromUrl, setQuery]);
+
 
     useEffect(() => {
         fetchPromotions();
     }, [fetchPromotions]);
 
     const handleFilterChange = (value) => {
-        setQuery({ type: value === 'all' ? null : value, page: 1 });
+        setQuery({ status: value === 'all' ? null : value, page: 1 });
+    };
+
+    const handleDateRangeChange = (dates) => {
+        if (dates) {
+            setQuery({ 
+                startAt: dates[0].toISOString(), 
+                endAt: dates[1].toISOString(), 
+                page: 1 
+            });
+        } else {
+            setQuery({ startAt: null, endAt: null, page: 1 });
+        }
     };
 
     const handlePageChange = (newPage) => {
@@ -106,26 +127,36 @@ export default function Promotion() {
             
             <div className="prm-page-content">
                 <div className="prm-controls">
-                    <Input
+                    <div className="prm-search-status">
+                        <Input
+                            size="large"
+                            placeholder={t('promo_search_placeholder')}
+                            prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+                            value={searchInput}
+                            onChange={(e) => setSearchInput(e.target.value)}
+                            className="prm-search-input"
+                        />
+                        <Select
+                            size="large"
+                            value={filterType}
+                            onChange={handleFilterChange}
+                            className="prm-status-select"
+                            options={[
+                                { value: 'all', label: t('promo_tab_all') },
+                                { value: 'STARTING', label: t('promo_tab_STARTING') },
+                                { value: 'INCOMING', label: t('promo_tab_INCOMING') },
+                                { value: 'DISABLED', label: t('promo_tab_DISABLED') },
+                                { value: 'ENDED', label: t('promo_tab_ENDED') },
+                            ]}
+                        />
+                    </div>
+                    <DatePicker.RangePicker
                         size="large"
-                        placeholder={t('promo_search_placeholder')}
-                        prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                        className="prm-search-input"
-                    />
-                    <Select
-                        size="large"
-                        value={filterType}
-                        onChange={handleFilterChange}
-                        className="prm-status-select"
-                        options={[
-                            { value: 'all', label: t('promo_tab_all') },
-                            { value: 'STARTING', label: t('promo_tab_STARTING') },
-                            { value: 'INCOMING', label: t('promo_tab_INCOMING') },
-                            { value: 'DISABLED', label: t('promo_tab_DISABLED') },
-                            { value: 'ENDED', label: t('promo_tab_ENDED') },
-                        ]}
+                        className="prm-date-range"
+                        showTime
+                        value={startAtParam && endAtParam ? [dayjs(startAtParam), dayjs(endAtParam)] : null}
+                        onChange={handleDateRangeChange}
+                        placeholder={[t('promo_col_start_time'), t('promo_col_end_time')]}
                     />
                 </div>
 

@@ -32,21 +32,19 @@ const OrderDetail = () => {
     }, 0);
 
     return (
-        <div className="od-container animate-fade-in">
-            <div className="od-header animate-slide-up">
-                <div className="od-header-left">
-                    <button className="od-btn-back" onClick={() => navigate('/account/orders')}>
-                        <FaArrowLeft />
-                    </button>
-                    <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
-                </div>
+        <div className="od-container">
+            <div className="od-header">
+                <button className="od-btn-back" onClick={() => navigate('/account/orders')}>
+                    <FaArrowLeft />
+                </button>
+                <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
             </div>
 
-            <div className="od-dates animate-slide-up delay-100">
+            <div className="od-dates">
                 <span>{t('order_time')} <strong>{orderData.formattedDate}</strong></span>
             </div>
 
-            <div className="od-items-section animate-slide-up delay-200">
+            <div className="od-items-section">
                 <h3 className="od-section-title">{t('order_items')}</h3>
                 <div className="od-items-list">
                     {orderData.items.map((item, index) => (
@@ -65,13 +63,26 @@ const OrderDetail = () => {
                                 {item.promotionPrice < item.price && (
                                     <span className="od-original-price">{item.price.toLocaleString("vi-VN")}đ</span>
                                 )}
+                                {orderData.status === 'COMPLETED' && (
+                                    <button 
+                                        className="od-btn-return"
+                                        onClick={() => navigate('/account/returns', { 
+                                            state: { 
+                                                orderId: orderData.orderId, 
+                                                item: item 
+                                            } 
+                                        })}
+                                    >
+                                        {t('request_return')}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}
                 </div>
             </div>
 
-            <div className="od-info-grid animate-slide-up delay-300">
+            <div className="od-info-grid">
                 <div className="od-info-card">
                     <h3 className="od-info-title"><FaCreditCard /> {t('payment_header')}</h3>
                     <p className="od-info-text od-font-bold">{orderData.paymentMethod}</p>
@@ -84,7 +95,7 @@ const OrderDetail = () => {
                 </div>
             </div>
 
-            <div className="od-summary-wrapper animate-slide-up delay-300">
+            <div className="od-summary-wrapper">
                 <div className="od-summary-card">
                     <h3 className="od-summary-title">{t('order_overview')}</h3>
                     

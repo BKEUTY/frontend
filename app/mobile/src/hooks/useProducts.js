@@ -12,7 +12,7 @@ export const useProducts = (pageSize = 20) => {
         setError(null);
         try {
             const params = { page: pageIndex, size: pageSize };
-            if (searchTerm) params.search = searchTerm; 
+            if (searchTerm) params.search = searchTerm;
             if (catId && catId !== 'all') params.categoryId = catId;
 
             const res = await productApi.getAll(params);
@@ -28,12 +28,14 @@ export const useProducts = (pageSize = 20) => {
                 stockQuantity: p.stock ?? 0,
                 image: p.imageUrl,
                 originalId: p.productId,
-                parentId: p.productId
+                parentId: p.productId,
+                averageRating: p.averageRating ?? 0,
+                ratingCount: p.ratingCount ?? 0
             }));
 
             if (searchTerm) {
                 const lowerTerm = searchTerm.toLowerCase();
-                mappedProducts = mappedProducts.filter(v => 
+                mappedProducts = mappedProducts.filter(v =>
                     v.name?.toLowerCase().includes(lowerTerm)
                 );
             }

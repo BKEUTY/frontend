@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import './Account.css';
 import MyOrders from './MyOrders';
 import AppointmentList from './AppointmentList';
+import ShippingAddress from './ShippingAddress';
 import OrderDetail from './OrderDetail';
 import { useNotification } from '../../Context/NotificationContext';
 import { useLanguage } from '../../i18n/LanguageContext';
 import { useAuth } from '../../Context/AuthContext';
 import { CButton, CInput } from '../../Component/Common';
 import NotFound from '../../Component/ErrorPages/NotFound';
+import userApi from '../../api/userApi';
 import account_image from "../../Assets/Images/Icons/icon_account.svg";
 import { 
     UserOutlined, 
@@ -17,8 +19,10 @@ import {
     WalletOutlined, 
     EnvironmentOutlined, 
     LogoutOutlined,
-    CameraOutlined
+    CameraOutlined,
+    RollbackOutlined
 } from '@ant-design/icons';
+import ReturnRequests from './ReturnRequests';
 
 export default function Account() {
     const notify = useNotification();
@@ -44,6 +48,8 @@ export default function Account() {
         if (path === '/account' && (location.pathname === '/account' || location.pathname === '/account/' || location.pathname === '/account/info')) return true;
         if (path === '/account/orders' && location.pathname.includes('/orders')) return true;
         if (path === '/account/appointments' && location.pathname.includes('/appointments')) return true;
+        if (path === '/account/address' && location.pathname.includes('/address')) return true;
+        if (path === '/account/returns' && location.pathname.includes('/returns')) return true;
         return false;
     };
 
@@ -56,7 +62,6 @@ export default function Account() {
                     </div>
                     <div className="profile-info">
                         <span className="profile-name">{user?.name || t('account')}</span>
-                        <span className="profile-role">{t('member')}</span>
                     </div>
                 </div>
                 <nav className="sidebar-nav">
@@ -72,13 +77,17 @@ export default function Account() {
                         <CalendarOutlined className="nav-icon" />
                         <span>{t('my_appointments')}</span>
                     </Link>
+                    <Link to="/account/address" className={`nav-item ${isActive('/account/address') ? 'active' : ''}`}>
+                        <EnvironmentOutlined className="nav-icon" />
+                        <span>{t('shipping_address')}</span>
+                    </Link>
+                    <Link to="/account/returns" className={`nav-item ${isActive('/account/returns') ? 'active' : ''}`}>
+                        <RollbackOutlined className="nav-icon" />
+                        <span>{t('return_requests') || t('my_returns')}</span>
+                    </Link>
                     <div className="nav-item disabled">
                         <WalletOutlined className="nav-icon" />
                         <span>{t('my_wallet')}</span>
-                    </div>
-                    <div className="nav-item disabled">
-                        <EnvironmentOutlined className="nav-icon" />
-                        <span>{t('shipping_address')}</span>
                     </div>
                 </nav>
                 <div className="sidebar-bottom">
@@ -96,6 +105,8 @@ export default function Account() {
                     <Route path="/orders" element={<MyOrders />} />
                     <Route path="/orders/:id" element={<OrderDetail />} />
                     <Route path="/appointments" element={<AppointmentList />} />
+                    <Route path="/address" element={<ShippingAddress />} />
+                    <Route path="/returns" element={<ReturnRequests />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>
@@ -105,25 +116,36 @@ export default function Account() {
 
 const AccountInfo = ({ onUpdate }) => {
     const { t } = useLanguage();
+    const notify = useNotification();
 
-    const [userData, setUserData] = useState({
-        id: 1,
-        username: "thanhphong28",
-        name: "Phạm Thanh Phong",
-        email: "phongdeptrai28@gmail.com",
-        phone: "0376929681",
-        date_of_birth: "2004-08-28",
-        gender: "Nam",
-        address: "xã Long Phước, tỉnh Đồng Nai",
-        join_date: "2026-10-20",
-        membership_level: "Diamond",
-        balance: 5000000,
-        total_spent: 85000000,
-        target_spent: 100000000,
-        next_level: "VIP"
-    });
-
+    const [userData, setUserData] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const [avatar, setAvatar] = useState(account_image);
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const res = await userApi.getProfile();
+                if (res.data) {
+                    const data = res.data;
+                    setUserData({
+                        id: data.userId,
+                        firstname: data.firstname || '',
+                        lastname: data.lastname || '',
+                        email: data.email || '',
+                        phone: data.phoneNumber || '',
+                        date_of_birth: data.dob || '',
+                        gender: data.gender || 'Nam',
+                    });
+                }
+            } catch (err) {
+                notify(t('fetch_profile_error'), 'error');
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchProfile();
+    }, [notify, t]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -139,56 +161,50 @@ const AccountInfo = ({ onUpdate }) => {
         }
     };
 
-    const handleSave = (e) => {
+    const handleSave = async (e) => {
         e.preventDefault();
-        setTimeout(() => {
+        try {
+            await userApi.updateProfile({
+                firstname: userData.firstname,
+                lastname: userData.lastname,
+                email: userData.email,
+                phoneNumber: userData.phone
+            });
+            notify(t('update_info_success'), 'success');
             if (onUpdate) onUpdate();
-        }, 300);
+        } catch (err) {
+            notify(t('update_info_error') || t('api_error_general'), 'error');
+        }
     };
+
+    if (isLoading) return <div className="account-loading">Loading profile...</div>;
+    if (!userData) return <div className="account-error">Could not load profile.</div>;
 
     return (
         <div className="account-info-container">
             <div className="page-header">
                 <h1 className="page-title">{t('account')}</h1>
-                <p className="page-subtitle">{t('welcome')} <strong>{userData.name}</strong></p>
-            </div>
-
-            <div className="membership-card">
-                <div className="membership-tier">
-                    <span className="tier-label">{t('current_tier')}</span>
-                    <span className="tier-badge">{userData.membership_level}</span>
-                </div>
-                <div className="membership-progress-wrap">
-                    <div className="progress-labels">
-                        <span className="spent-amount">{new Intl.NumberFormat('vi-VN').format(userData.total_spent)}đ</span>
-                        <span className="target-amount">{new Intl.NumberFormat('vi-VN').format(userData.target_spent)}đ</span>
-                    </div>
-                    <div className="progress-track">
-                        <div 
-                            className="progress-fill" 
-                            style={{ width: `${(userData.total_spent / userData.target_spent) * 100}%` }}
-                        ></div>
-                    </div>
-                    <p className="tier-hint">
-                        {t('next_level_condition')
-                            .replace('{amount}', new Intl.NumberFormat('vi-VN').format(userData.target_spent - userData.total_spent) + 'đ')
-                            .replace('{level}', userData.next_level)}
-                    </p>
-                </div>
+                <p className="page-subtitle">{t('welcome')} <strong>{userData.firstname} {userData.lastname}</strong></p>
             </div>
 
             <div className="info-grid-layout">
                 <div className="info-form-section">
                     <div className="form-grid">
                         <CInput
-                            label={t('name')}
-                            name="name"
-                            value={userData.name}
+                            label={t('first_name')}
+                            name="firstname"
+                            value={userData.firstname}
                             onChange={handleInputChange}
                         />
                         <CInput
-                            label={t('username')}
-                            value={userData.username}
+                            label={t('last_name')}
+                            name="lastname"
+                            value={userData.lastname}
+                            onChange={handleInputChange}
+                        />
+                        <CInput
+                            label={t('user_id')}
+                            value={userData.id}
                             disabled
                         />
                         <div className="form-group">
@@ -225,17 +241,8 @@ const AccountInfo = ({ onUpdate }) => {
                             value={userData.phone}
                             onChange={handleInputChange}
                         />
-                        <div className="form-group full-width">
-                            <CInput
-                                label={t('address')}
-                                name="address"
-                                value={userData.address}
-                                onChange={handleInputChange}
-                            />
-                        </div>
                     </div>
                     <div className="form-actions">
-                        <span className="join-date">{t('join_date')}: {new Date(userData.join_date).toLocaleDateString("vi-VN")}</span>
                         <CButton type="primary" onClick={handleSave} className="btn-save">
                             {t('update')}
                         </CButton>

@@ -1,4 +1,4 @@
-# BKEUTY - Beauty Storefront (User Role)
+# BKEUTY - Premium Beauty Storefront (Customer Ecosystem)
 
 [English](#english) | [Tiếng Việt](#tiếng-việt)
 
@@ -7,59 +7,60 @@
 <a name="english"></a>
 ## English
 
-### Overview
-BKEUTY Storefront is the customer-facing application of the BKEUTY omni-channel platform. It is designed exclusively for customers to explore, shop, and manage their beauty journey with a premium, aesthetic experience.
-1. **Web Storefront:** A high-performance online shop built with React 19.
-2. **Mobile App:** A native shopping experience built with React Native and Expo.
+### 🌟 Executive Summary
+BKEUTY Storefront is a high-end e-commerce ecosystem designed to deliver a luxury shopping experience for beauty enthusiasts. Built on a modern microservices architecture, it seamlessly integrates high-performance web and mobile platforms to provide customers with a sophisticated journey from discovery to delivery.
 
-### Key Features (User Focus)
+### ✨ Key Value Propositions
 
-#### 1. Customer Authentication
-- **User-Specific Identity:** Dedicated login and registration for customers.
-- **Role Enforcement:** Strictly handles logic for the `USER` role.
-- **Account Recovery:** Full password reset functionality with OTP verification for customers.
+#### 1. Luxury User Experience (UX)
+- **Aesthetic Excellence:** Implements a "Luxury Design" language with smooth transitions, glassmorphism, and a signature premium color palette.
+- **Vite-Powered Performance:** Ultra-fast loading times and optimized interactions for a seamless shopping flow.
+- **Cross-Platform Consistency:** Unified brand experience across Web (React 19) and Mobile (React Native/Expo).
 
-#### 2. Premium Shopping Experience
-- **Brand Identity:** Consistent "Deep Magenta" & "Be Vietnam Pro" aesthetics.
-- **Responsive & Native:** Fluid experience across Web, iOS, and Android.
-- **Micro-interactions:** Smooth animations and feedback tailored for luxury shopping.
+#### 2. Advanced Commerce Features
+- **Smart Product Discovery:** Dynamic search, multi-criteria filtering, and intuitive categorization.
+- **Comprehensive Account Management:**
+  - Real-time order tracking with status history.
+  - **Return Request Management:** End-to-end workflow for product returns with image evidence support.
+  - Profile personalization and dynamic shipping address management.
 
-#### 3. Core Storefront Functionality
-- **Product Discovery:** Advanced filtering, search with suggestions, and categorized browsing.
-- **Cart & Checkout:** Streamlined cart management and secure checkout process.
-- **Personal Profile:** Track orders, manage loyalty points ("Diamond Member"), and view appointment history.
+#### 3. Secure & Robust Infrastructure
+- **Identity Security:** Enterprise-grade authentication powered by Keycloak (OAuth2/OIDC).
+- **Internationalization (i18n):** Full localization support for English and Vietnamese.
 
-### Technical Stack
-- **Web:** React 19, Ant Design 6, Context API, React Router v7.
-- **Mobile:** React Native, Expo 50+, React Navigation v7, Async Storage.
+### 🛠 Technical Specification
+- **Web App**: React 19, Vite, Ant Design 6, React Router 7, TanStack Query 5.
+- **Mobile App**: React Native, Expo 50+, React Navigation 7, Axios Interceptors.
 
 ---
 
 <a name="tiếng-việt"></a>
 ## Tiếng Việt
 
-### Tổng quan
-BKEUTY Storefront là ứng dụng dành riêng cho khách hàng của nền tảng BKEUTY. Đây là không gian chuyên biệt để khách hàng khám phá, mua sắm và quản lý các dịch vụ làm đẹp với trải nghiệm cao cấp.
-1. **Website Khách hàng:** Cửa hàng trực tuyến hiệu suất cao trên React 19.
-2. **Ứng dụng Di động:** Trải nghiệm mua sắm native trên React Native và Expo.
+### 🌟 Tổng quan Dự án
+BKEUTY Storefront là hệ sinh thái thương mại điện tử cao cấp, được thiết kế để mang lại trải nghiệm mua sắm xa xỉ cho những tín đồ làm đẹp. Dựa trên kiến trúc Microservices hiện đại, dự án kết hợp hoàn hảo giữa nền tảng Web và Mobile hiệu suất cao, mang đến hành trình khách hàng tinh tế từ lúc khám phá đến khi nhận hàng.
 
-### Tính năng chính (Dành cho Người dùng)
+### ✨ Giá trị Cốt lõi
 
-#### 1. Xác thực Khách hàng
-- **Định danh Chuyên biệt:** Hệ thống đăng ký và đăng nhập dành riêng cho khách hàng.
-- **Kiểm soát Quyền hạn:** Xử lý nghiêm ngặt logic dành riêng cho role `USER`.
-- **Khôi phục Tài khoản:** Chức năng quên mật khẩu hoàn chỉnh với xác thực OTP.
+#### 1. Trải nghiệm Người dùng (UX) Cao cấp
+- **Thẩm mỹ Luxury:** Ngôn ngữ thiết kế sang trọng với hiệu ứng chuyển cảnh mượt mà, phong cách Glassmorphism và bảng màu cao cấp.
+- **Hiệu năng từ Vite:** Tốc độ tải trang cực nhanh và tương tác tối ưu, loại bỏ mọi sự trễ nãi trong quá trình mua sắm.
+- **Nhất quán Đa nền tảng:** Trải nghiệm thương hiệu đồng nhất trên cả Web (React 19) và Mobile (React Native/Expo).
 
-#### 2. Trải nghiệm Mua sắm Cao cấp
-- **Nhận diện Thương hiệu:** Thẩm mỹ nhất quán với tông màu "Deep Magenta".
-- **Đa nền tảng:** Trải nghiệm mượt mà trên cả Web và Mobile Native (iOS/Android).
-- **Tương tác Tinh tế:** Hiệu ứng chuyển cảnh và phản hồi được thiết kế cho ngành làm đẹp.
+#### 2. Tính năng Thương mại Nâng cao
+- **Khám phá Thông minh:** Tìm kiếm động, bộ lọc đa tiêu chí và phân loại danh mục trực quan.
+- **Quản lý Tài khoản Toàn diện:**
+  - Theo dõi đơn hàng thời gian thực với lịch sử trạng thái chi tiết.
+  - **Quy trình Hoàn hàng chuyên nghiệp:** Cho phép gửi yêu cầu trả hàng kèm bằng chứng hình ảnh trực quan.
+  - Quản lý thông tin cá nhân và sổ địa chỉ linh hoạt.
 
-#### 3. Chức năng Cốt lõi
-- **Khám phá Sản phẩm:** Bộ lọc nâng cao, tìm kiếm thông minh và duyệt theo danh mục.
-- **Giỏ hàng & Thanh toán:** Quản lý giỏ hàng tối ưu và quy trình thanh toán nhanh gọn.
-- **Trang cá nhân:** Theo dõi đơn hàng, quản lý điểm thưởng (Thành viên Kim cương) và lịch sử hẹn dịch vụ.
+#### 3. Hạ tầng Bảo mật & Mạnh mẽ
+- **Bảo mật Định danh:** Hệ thống xác thực chuẩn doanh nghiệp dựa trên Keycloak (OAuth2/OIDC).
+- **Đa ngôn ngữ (i18n):** Hỗ trợ hoàn chỉnh Tiếng Anh và Tiếng Việt cho mọi quy trình.
 
-### Nền tảng Kỹ thuật
-- **Web:** React 19, Ant Design 6, Context API, React Router v7.
-- **Mobile:** React Native, Expo 50+, React Navigation v7, Async Storage.
+### 🛠 Nền tảng Kỹ thuật
+- **Web App**: React 19, Vite, Ant Design 6, React Router 7, TanStack Query 5.
+- **Mobile App**: React Native, Expo 50+, React Navigation 7, Axios Interceptors.
+
+---
+© 2026 BKEUTY Global. Professional E-commerce Solutions.

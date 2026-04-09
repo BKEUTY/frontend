@@ -1,8 +1,10 @@
 import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../../i18n/LanguageContext';
-import { FaCreditCard, FaMapLocationDot, FaArrowLeft } from "react-icons/fa6";
+import { FaCreditCard, FaMapLocationDot, FaArrowLeft, FaDownload } from "react-icons/fa6";
 import { generateSlug } from '../../utils/helpers';
+import OrderProgress from '../../Component/Order/OrderProgress';
+import generateInvoice from '../../utils/InvoiceService';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
@@ -38,7 +40,16 @@ const OrderDetail = () => {
                     <FaArrowLeft />
                 </button>
                 <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
+                <button 
+                    className="od-btn-download"
+                    onClick={() => generateInvoice(orderData, t)}
+                    title={t('download_invoice')}
+                >
+                    <FaDownload /> {t('invoice')}
+                </button>
             </div>
+
+            <OrderProgress currentStatus={orderData.status} />
 
             <div className="od-dates">
                 <span>{t('order_time')} <strong>{orderData.formattedDate}</strong></span>

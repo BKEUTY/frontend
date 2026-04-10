@@ -1,9 +1,9 @@
 import LandingPage from "../pages/LandingPage/LandingPage";
-import Login from "../Component/Auth/Login";
-import Register from "../Component/Auth/Register";
-import ForgotPassword from "../Component/Auth/ForgotPassword";
-import NotFound from "../Component/ErrorPages/NotFound";
-import ServerError from "../Component/ErrorPages/ServerError";
+import Login from "../components/Auth/Login";
+import Register from "../components/Auth/Register";
+import ForgotPassword from "../components/Auth/ForgotPassword";
+import NotFound from "../components/ErrorPages/NotFound";
+import ServerError from "../components/ErrorPages/ServerError";
 
 export const authRoutes = [
     {

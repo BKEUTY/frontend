@@ -1,0 +1,39 @@
+import { useQuery } from '@tanstack/react-query';
+import addressApi from '../services/addressService';
+
+export const useProvinces = () => {
+    return useQuery({
+        queryKey: ['provinces'],
+        queryFn: async () => {
+            const response = await addressApi.getProvinces();
+            return response.data?.data || [];
+        },
+        staleTime: 24 * 60 * 60 * 1000, 
+    });
+};
+
+export const useDistricts = (provinceId) => {
+    return useQuery({
+        queryKey: ['districts', provinceId],
+        queryFn: async () => {
+            if (!provinceId) return [];
+            const response = await addressApi.getDistricts(provinceId);
+            return response.data?.data || [];
+        },
+        enabled: !!provinceId,
+        staleTime: 24 * 60 * 60 * 1000,
+    });
+};
+
+export const useWards = (districtId) => {
+    return useQuery({
+        queryKey: ['wards', districtId],
+        queryFn: async () => {
+            if (!districtId) return [];
+            const response = await addressApi.getWards(districtId);
+            return response.data?.data || [];
+        },
+        enabled: !!districtId,
+        staleTime: 24 * 60 * 60 * 1000,
+    });
+};

@@ -6,11 +6,11 @@ import {
     DeleteOutlined, 
     ExclamationCircleOutlined 
 } from '@ant-design/icons';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { useNotification } from '../../Context/NotificationContext';
-import { useUserProfile, useAddAddress, useDeleteAddress } from '../../hooks/useUser';
-import { useProvinces, useDistricts, useWards } from '../../hooks/useAddress';
-import { CButton, CInput } from '../../Component/Common';
+import { useLanguage } from '@/store/LanguageContext';
+import { useNotification } from '@/store/NotificationContext';
+import { useUserProfile, useAddAddress, useDeleteAddress } from '@/features/account/hooks/useUser';
+import { useProvinces, useDistricts, useWards } from '@/features/account/hooks/useAddress';
+import { CButton, CInput, SEO } from '@/components/common';
 import './ShippingAddress.css';
 
 const { confirm } = Modal;
@@ -98,6 +98,7 @@ const ShippingAddress = () => {
 
     return (
         <div className="shipping-address-container">
+            <SEO title={t('shipping_address')} />
             <div className="page-header">
                 <div className="header-left">
                     <h1 className="page-title">{t('shipping_address')}</h1>

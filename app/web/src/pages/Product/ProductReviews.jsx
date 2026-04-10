@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { StarFilled, CheckCircleFilled, MessageOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownOutlined, HeartOutlined } from '@ant-design/icons';
 import { Modal, Input, Rate, notification, Upload, Space, Avatar } from 'antd';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { Pagination, Skeleton, CButton } from '../../Component/Common';
-import { useReviews } from '../../hooks/useReviews';
-import { useAuth } from '../../Context/AuthContext';
+import { useLanguage } from '@/store/LanguageContext';
+import { Pagination, Skeleton, CButton } from '@/components/common';
+import { useReviews } from '@/features/products/hooks/useReviews';
+import { useAuth } from '@/store/AuthContext';
 import './ProductReviews.css';
 
 const { TextArea } = Input;

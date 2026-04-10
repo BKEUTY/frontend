@@ -1,25 +1,25 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { useNotification } from '../../Context/NotificationContext';
-import { useCart } from '../../Context/CartContext';
-import { useAuth } from '../../Context/AuthContext';
+import { useLanguage } from '@/store/LanguageContext';
+import { useNotification } from '@/store/NotificationContext';
+import { useCart } from '@/store/CartContext';
+import { useAuth } from '@/store/AuthContext';
 import './ProductDetail.css';
 import { StarFilled, ShoppingOutlined } from '@ant-design/icons';
-import { CButton, Skeleton } from '../../Component/Common';
+import { CButton, Skeleton, SEO } from '@/components/common';
 import { Tag } from 'antd';
-import productApi from '../../api/productApi';
-import { getImageUrl } from '../../api/axiosClient';
-import NotFound from '../../Component/ErrorPages/NotFound';
+import productApi from '@/features/products/services/productService';
+import { getImageUrl } from '@/services/axiosClient';
+import NotFound from '@/pages/NotFound';
 import ProductReviews from './ProductReviews';
-import { generateSlug, getIdFromSlug } from '../../utils/helpers';
-import cartApi from '../../api/cartApi';
+import { generateSlug, getIdFromSlug } from '@/utils/helpers';
+import cartApi from '@/features/cart/services/cartService';
 
-import dummy1 from '../../Assets/Images/Products/product_dummy_1.jpg';
-import dummy2 from '../../Assets/Images/Products/product_dummy_2.jpg';
-import dummy3 from '../../Assets/Images/Products/product_dummy_3.jpg';
-import dummy4 from '../../Assets/Images/Products/product_dummy_4.jpg';
-import dummy5 from '../../Assets/Images/Products/product_dummy_5.svg';
+import dummy1 from '@/assets/images/products/product_dummy_1.jpg';
+import dummy2 from '@/assets/images/products/product_dummy_2.jpg';
+import dummy3 from '@/assets/images/products/product_dummy_3.jpg';
+import dummy4 from '@/assets/images/products/product_dummy_4.jpg';
+import dummy5 from '@/assets/images/products/product_dummy_5.svg';
 
 const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
 const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
@@ -37,7 +37,6 @@ export default function ProductDetail() {
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
     const [productData, setProductData] = useState(null);
-    // const [relatedProducts, setRelatedProducts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isError, setIsError] = useState(false);
 
@@ -224,6 +223,11 @@ export default function ProductDetail() {
 
     return (
         <div className="product-detail-page">
+            <SEO 
+                title={displayName} 
+                description={productData.description} 
+                image={mainImage}
+            />
             <div className="breadcrumb">
                 <Link to={'/product'} state={{ fromDetail: true }}>{t('product')}</Link>
                 <span className="divider">/</span>
@@ -369,16 +373,6 @@ export default function ProductDetail() {
                 </div>
             </div>
 
-            {/* {relatedProducts.length > 0 && (
-                <div className="recommendations-section">
-                    <h2 className="section-title">{t('related_products')}</h2>
-                    <div className="product-grid related-products-grid">
-                        {relatedProducts.map((p, i) => (
-                            <ProductCard key={i} product={p} t={t} />
-                        ))}
-                    </div>
-                </div>
-            )} */}
         </div>
     );
 }

@@ -1,5 +1,5 @@
 import { notification } from 'antd';
-import { getTranslation } from '../i18n/translate';
+import { getTranslation } from '@/utils/translate';
 
 const recentNotifications = new Map();
 

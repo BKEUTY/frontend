@@ -8,10 +8,10 @@ import Account from "../pages/Account/Account";
 import Checkout from "../pages/Checkout/Checkout";
 import ThankYou from "../pages/Checkout/ThankYou";
 import RetailSystem from "../pages/RetailSystem/RetailSystem";
-import { AboutUs } from "../Component/StaticPages/AboutUs";
-import { Contact } from "../Component/StaticPages/Contact";
-import { FAQ } from "../Component/StaticPages/FAQ";
-import { Terms } from "../Component/StaticPages/Terms";
+import { AboutUs } from "../components/StaticPages/AboutUs";
+import { Contact } from "../components/StaticPages/Contact";
+import { FAQ } from "../components/StaticPages/FAQ";
+import { Terms } from "../components/StaticPages/Terms";
 
 export const userRoutes = [
     {

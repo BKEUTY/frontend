@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useLanguage } from '../../i18n/LanguageContext';
+import { useLanguage } from '@/store/LanguageContext';
 import { Spin } from 'antd';
 import { EyeOutlined } from '@ant-design/icons';
-import { useOrders } from '../../hooks/useOrders';
+import { useOrders } from '@/features/orders/hooks/useOrders';
+import { SEO } from '@/components/common';
 import './MyOrders.css';
 
 const MyOrders = () => {
@@ -22,6 +23,7 @@ const MyOrders = () => {
 
     return (
         <div className="ord-page-container">
+            <SEO title={t('my_orders')} />
             <div className="ord-page-header">
                 <h2 className="ord-page-title">{t('my_orders')}</h2>
             </div>

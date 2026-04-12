@@ -7,10 +7,10 @@ import Skeleton from '../ui/Skeleton';
 
 const MainLayout = () => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="App">
       <Header />
-      <main className="flex-grow main_content">
-        <Suspense fallback={<div className="p-8"><Skeleton width="100%" height="400px" /></div>}>
+      <main className="main_content">
+        <Suspense fallback={<div className="layout_fallback"><Skeleton width="100%" height="400px" /></div>}>
           <Outlet />
         </Suspense>
       </main>

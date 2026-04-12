@@ -4,8 +4,8 @@ import Skeleton from '../ui/Skeleton';
 
 const AuthLayout = () => {
   return (
-    <div className="min-h-screen">
-      <Suspense fallback={<div className="p-8"><Skeleton width="100%" height="400px" /></div>}>
+    <div className="auth_layout_wrapper">
+      <Suspense fallback={<div className="layout_fallback"><Skeleton width="100%" height="400px" /></div>}>
         <Outlet />
       </Suspense>
     </div>

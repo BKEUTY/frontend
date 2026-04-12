@@ -137,3 +137,16 @@ body {
   margin: 0 auto;
   padding: 0 20px;
 }
+
+.auth_layout_wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--color-bg-light);
+}
+
+.layout_fallback {
+  padding: 40px;
+  max-width: 1200px;
+  margin: 0 auto;
+}

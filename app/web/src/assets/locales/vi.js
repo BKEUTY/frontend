@@ -6,7 +6,6 @@ export default {
     search_hint: "Tìm kiếm sản phẩm yêu thích...",
     all: "Tất cả",
     filter: "Bộ lọc",
-    filter_by: "Lọc theo",
     price_range: "Khoảng giá",
     min_price: "Tối thiểu",
     max_price: "Tối đa",
@@ -516,6 +515,8 @@ export default {
     rating_low_high: "Đánh giá: Thấp đến cao",
     reviews_high_low: "Bình luận: Nhiều đến ít",
     reviews_low_high: "Bình luận: Ít đến nhiều",
+    time_newest: "Thời gian: Mới nhất",
+    time_oldest: "Thời gian: Cũ nhất",
     login_required: "Vui lòng đăng nhập",
     login_required_to_checkout: "Vui lòng đăng nhập để thanh toán",
 
@@ -534,8 +535,6 @@ export default {
     total_original_price: "Tổng giá gốc",
     total_discount: "Tổng giá giảm",
 
-    reviews: "Đánh giá",
-    write_review: "Viết đánh giá",
     edit_review: "Sửa đánh giá",
     rating: "Sao",
     comment_review: "Nội dung nhận xét",
@@ -573,5 +572,8 @@ export default {
     thank_you_title: "Cảm ơn",
     thank_you_desc: "Đơn hàng của bạn đã được đặt thành công!",
     view_orders: "Xem đơn hàng",
-    continue_shopping: "Tiếp tục mua sắm"
+    continue_shopping: "Tiếp tục mua sắm",
+    all: "Tất cả",
+    startDate: "Ngày bắt đầu",
+    endDate: "Ngày kết thúc"
 };

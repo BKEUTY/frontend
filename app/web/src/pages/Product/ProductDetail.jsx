@@ -386,11 +386,7 @@ export default function ProductDetail() {
                 <div className="home-product-grid">
                     {relLoading ? (
                         Array(5).fill(0).map((_, idx) => (
-                            <div key={`rel-skeleton-${idx}`} className="skeleton-product-card">
-                                <Skeleton width="100%" height="240px" borderRadius="16px" className="mb15" />
-                                <Skeleton width="80%" height="24px" borderRadius="4px" className="mb10" />
-                                <Skeleton width="40%" height="20px" borderRadius="4px" />
-                            </div>
+                            <ProductCard key={`rel-skeleton-${idx}`} isLoading={true} />
                         ))
                     ) : (
                         relData?.recommendedProducts?.map((item) => (

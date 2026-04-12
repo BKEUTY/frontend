@@ -1,4 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
 
 :root {
   --color-primary: #ba1a56;
@@ -149,4 +151,65 @@ body {
   padding: 40px;
   max-width: 1200px;
   margin: 0 auto;
+}
+
+.home-section {
+  padding: 40px 24px;
+}
+
+.home-section-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.home-section-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.home-section-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0;
+  position: relative;
+  display: inline-block;
+}
+
+.home-section-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #111 0%, var(--color-primary) 100%);
+  margin: 10px auto 0;
+  border-radius: 10px;
+}
+
+.home-product-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1200px) {
+  .home-product-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (max-width: 992px) {
+  .home-product-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 768px) {
+  .home-section { padding: 48px 16px; }
+  .home-section-header { margin-bottom: 32px; }
+  .home-section-title { font-size: 1.5rem; }
+  .home-product-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .home-product-grid { grid-template-columns: 1fr; }
 }

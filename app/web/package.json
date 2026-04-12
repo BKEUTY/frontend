@@ -1,6 +1,7 @@
 {
   "name": "fe",
   "version": "0.1.0",
+  "type": "module",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
@@ -47,10 +48,14 @@
     ]
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
     "@vitejs/plugin-react": "^6.0.1",
+    "autoprefixer": "^10.4.27",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.5.2",
+    "postcss": "^8.5.9",
+    "tailwindcss": "^4.2.2",
     "vite": "^8.0.3"
   }
 }

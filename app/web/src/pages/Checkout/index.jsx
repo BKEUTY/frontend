@@ -88,7 +88,6 @@ export default function Checkout() {
     };
 
     const currentAddress = profile?.addresses?.[selectedAddressIndex];
-    console.log("Current Address: ", currentAddress);
 
     const { data: provinces } = useProvinces();
     const { data: districts } = useDistricts(newAddr.province?.id);

@@ -43,7 +43,7 @@
 .glass-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.6) 100%);
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.6) 100%);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -54,7 +54,7 @@
     pointer-events: none;
 }
 
-.glass-overlay > * {
+.glass-overlay>* {
     pointer-events: auto;
 }
 
@@ -156,61 +156,6 @@
     transform: scale(1.4);
 }
 
-.home-section {
-    padding: 40px 24px;
-}
-
-.home-section.bg-light {
-    background-color: var(--home-bg-light);
-}
-
-.home-section-content {
-    max-width: var(--home-max-width);
-    margin: 0 auto;
-}
-
-.home-section-header {
-    text-align: center;
-    margin-bottom: 56px;
-}
-
-.home-section-title {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--home-primary);
-    margin: 0;
-    position: relative;
-    display: inline-block;
-    letter-spacing: -0.02em;
-}
-
-.home-section-title::after {
-    content: '';
-    display: block;
-    width: 64px;
-    height: 4px;
-    background: linear-gradient(90deg, #111111 0%, #ff4081 100%);
-    margin: 12px auto 0;
-    border-radius: 2px;
-}
-
-.home-product-grid {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 24px;
-}
-
-.skeleton-card {
-    border: 1px solid var(--home-border);
-    border-radius: 12px;
-    overflow: hidden;
-    background-color: #ffffff;
-}
-
-.skeleton-info-wrap {
-    padding: 20px;
-}
-
 .home-brand-section {
     padding: 80px 24px;
     background-color: #ffffff;
@@ -282,17 +227,7 @@
     object-fit: cover;
 }
 
-@media (max-width: 1200px) {
-    .home-product-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
 @media (max-width: 992px) {
-    .home-product-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-
     .brand-content-wrapper {
         flex-direction: column;
     }
@@ -336,23 +271,6 @@
         display: none;
     }
 
-    .home-section {
-        padding: 48px 16px;
-    }
-
-    .home-section-header {
-        margin-bottom: 32px;
-    }
-
-    .home-section-title {
-        font-size: 1.5rem;
-    }
-
-    .home-product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-    }
-
     .home-brand-section {
         padding: 48px 16px;
     }
@@ -366,15 +284,10 @@
     }
 }
 
-@media (max-width: 480px) {
-    .home-product-grid {
-        grid-template-columns: 1fr;
-    }
-}
 /* AI Personalized Section */
 .ai-personalized-section {
     background: linear-gradient(135deg, #fffcf8 0%, #ffffff 100%);
-    border-bottom: 1px solid rgba(0,0,0,0.03);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.03);
     padding: 60px 0;
 }
 

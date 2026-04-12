@@ -1,10 +1,11 @@
 import React from 'react';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useLanguage } from '../../i18n/LanguageContext';
+import { useLanguage } from '@/store/LanguageContext';
 import { FaCreditCard, FaMapLocationDot, FaArrowLeft, FaDownload } from "react-icons/fa6";
-import { generateSlug } from '../../utils/helpers';
-import OrderProgress from '../../Component/Order/OrderProgress';
-import generateInvoice from '../../utils/InvoiceService';
+import { generateSlug } from '@/utils/helpers';
+import OrderProgress from '@/features/orders/components/OrderProgress';
+import generateInvoice from '@/utils/InvoiceService';
+import { SEO } from '@/components/common';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
@@ -35,6 +36,7 @@ const OrderDetail = () => {
 
     return (
         <div className="od-container">
+            <SEO title={`${t('order_id_label')} #${orderData.orderId}`} />
             <div className="od-header">
                 <button className="od-btn-back" onClick={() => navigate('/account/orders')}>
                     <FaArrowLeft />

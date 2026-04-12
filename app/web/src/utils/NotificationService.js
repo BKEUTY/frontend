@@ -1,5 +1,5 @@
 import { notification } from 'antd';
-import { getTranslation } from '../i18n/translate';
+import { getTranslation } from '@/utils/translate';
 
 const recentNotifications = new Map();
 
@@ -19,7 +19,7 @@ export const showNotification = (type, messageKey, descriptionKey, duration = 3)
 
     notification[type]({
         key: notificationKey,
-        title: message,
+        message: message,
         description: description,
         duration: duration,
         placement: 'topRight',

@@ -1,12 +1,13 @@
 import React from 'react';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { PageWrapper, DevelopingState } from '../../Component/Common';
+import { useLanguage } from '@/store/LanguageContext';
+import { PageWrapper, DevelopingState, SEO } from '@/components/common';
 
 const AppointmentList = () => {
     const { t } = useLanguage();
 
     return (
         <PageWrapper>
+            <SEO title={t('my_appointments')} />
             <DevelopingState />
         </PageWrapper>
     );

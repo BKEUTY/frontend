@@ -436,3 +436,19 @@
         white-space: nowrap;
     }
 }
+
+.related-products-section {
+    padding-top: 60px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.skeleton-product-card {
+    padding: 15px;
+    background: #fff;
+    border-radius: 20px;
+    border: 1px solid #f1f5f9;
+}
+
+.mt-60 {
+    margin-top: 60px;
+}

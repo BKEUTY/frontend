@@ -9,9 +9,9 @@ import {
     CheckCircleOutlined,
     ExclamationCircleOutlined 
 } from '@ant-design/icons';
-import { useLanguage } from '../../i18n/LanguageContext';
-import { useNotification } from '../../Context/NotificationContext';
-import { CButton } from '../../Component/Common';
+import { useLanguage } from '@/store/LanguageContext';
+import { useNotification } from '@/store/NotificationContext';
+import { CButton, SEO } from '@/components/common';
 import './ReturnRequests.css';
 
 const { Dragger } = Upload;
@@ -83,6 +83,7 @@ const ReturnRequests = () => {
 
     return (
         <div className="return-requests-container">
+            <SEO title={t('return_requests')} />
             <div className="page-header">
                 <div className="header-left">
                     <h1 className="page-title">{t('return_requests')}</h1>

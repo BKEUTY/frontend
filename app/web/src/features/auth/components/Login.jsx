@@ -1,0 +1,149 @@
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Form, Input, Button, Checkbox, Typography } from 'antd';
+import { MailOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone, GlobalOutlined } from '@ant-design/icons';
+import { useLanguage } from '@/store/LanguageContext';
+import { useAuth } from '@/store/AuthContext';
+import { notifyError, notifySuccess } from '@/utils/NotificationService';
+import { SEO } from '@/components/common';
+import './Auth.css';
+import auth_bg from '@/assets/images/banners/auth_background.png';
+
+const { Title, Text } = Typography;
+
+const Login = () => {
+    const navigate = useNavigate();
+    const { t, language, changeLanguage } = useLanguage();
+    const [loading, setLoading] = useState(false);
+    const { login } = useAuth();
+
+    const onFinish = async (values) => {
+        setLoading(true);
+        try {
+            const user = await login(values.email, values.password);
+            notifySuccess('success', t('login_success'));
+            navigate('/home');
+        } catch (error) {
+            const errorRaw = error.response?.data;
+            let descriptionKey = 'api_error_login';
+
+            if (errorRaw === 'Wrong credentials') {
+                descriptionKey = 'api_error_wrong_credentials';
+            } else if (error.response?.status === 401) {
+                descriptionKey = 'api_error_invalid_credentials';
+            }
+
+            notifyError('error', descriptionKey);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="auth-container">
+            <SEO title={t('login')} />
+            <div className="auth-image-side" style={{ backgroundImage: `url(${auth_bg})` }}>
+                <div className="auth-image-overlay">
+                    <div className="auth-brand-section">
+                        <h1 className="auth-brand-logo">BKEUTY</h1>
+                        <p className="auth-brand-tagline">{t('brand_tagline')}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="auth-form-side">
+                <div className="auth-lang-switch">
+                    <Button
+                        type="text"
+                        icon={<GlobalOutlined />}
+                        onClick={() => changeLanguage(language === 'en' ? 'vi' : 'en')}
+                    >
+                        {language === 'vi' ? 'Tiếng Việt' : 'English'}
+                    </Button>
+                </div>
+                <div className="auth-mobile-logo">
+                    <h1>BKEUTY</h1>
+                    <p>{t('brand_tagline')}</p>
+                </div>
+                <div className="auth-form-container">
+                    <div className="auth-header">
+                        <Title level={2} className="auth-title">
+                            {t('welcome_back')}
+                        </Title>
+                        <Text className="auth-subtitle">
+                            {t('login_subtitle')}
+                        </Text>
+                    </div>
+
+                    <Form
+                        name="login"
+                        onFinish={onFinish}
+                        layout="vertical"
+                        size="large"
+                        className="auth-form"
+                    >
+                        <Form.Item
+                            name="email"
+                            label="Email"
+                            rules={[
+                                { required: true, message: t('email_required') },
+                                { type: 'email', message: t('email_invalid') }
+                            ]}
+                        >
+                            <Input
+                                prefix={<MailOutlined />}
+                                placeholder={t('email_placeholder')}
+                                autoComplete="email"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="password"
+                            label={t('password')}
+                            rules={[{ required: true, message: t('password_required') }]}
+                        >
+                            <Input.Password
+                                prefix={<LockOutlined />}
+                                placeholder={t('password')}
+                                iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                                autoComplete="current-password"
+                            />
+                        </Form.Item>
+
+                        <Form.Item>
+                            <div className="auth-options">
+                                <Checkbox>{t('remember_me')}</Checkbox>
+                                <Link to="/forgot-password" className="auth-link">
+                                    {t('forgot_password')}
+                                </Link>
+                            </div>
+                        </Form.Item>
+
+                        <Form.Item>
+                            <Button
+                                type="primary"
+                                htmlType="submit"
+                                loading={loading}
+                                block
+                                className="auth-submit-btn"
+                            >
+                                {t('login')}
+                            </Button>
+                        </Form.Item>
+
+                        <div className="auth-footer">
+                            <Text>
+                                {t('no_account')}{' '}
+                                <Link to="/register" className="auth-link">
+                                    {t('register')}
+                                </Link>
+                            </Text>
+                        </div>
+                    </Form>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Login;

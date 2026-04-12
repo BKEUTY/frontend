@@ -1,0 +1,28 @@
+import BaseApi from '@/services/BaseApi';
+import publicAxiosClient from '@/services/publicAxiosClient';
+
+class ReviewApi extends BaseApi {
+    constructor() {
+        super('/api/user/reviews');
+    }
+
+    getReviewsByVariantId(variantId, params = {}, config = {}) {
+        return publicAxiosClient.get(`/api/reviews/product/${variantId}`, {
+            params,
+            ...config
+        });
+    }
+
+    getStatsByVariantId(variantId) {
+        return publicAxiosClient.get(`/api/reviews/product/${variantId}/stats`);
+    }
+
+    uploadImage(formData, config = {}) {
+        return this.client.post(`${this.resource}/upload-image`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+            ...config
+        });
+    }
+}
+
+export default new ReviewApi();

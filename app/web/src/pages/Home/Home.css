@@ -157,7 +157,7 @@
 }
 
 .home-section {
-    padding: 80px 24px;
+    padding: 40px 24px;
 }
 
 .home-section.bg-light {
@@ -370,4 +370,22 @@
     .home-product-grid {
         grid-template-columns: 1fr;
     }
+}
+/* AI Personalized Section */
+.ai-personalized-section {
+    background: linear-gradient(135deg, #fffcf8 0%, #ffffff 100%);
+    border-bottom: 1px solid rgba(0,0,0,0.03);
+    padding: 60px 0;
+}
+
+.ai-title {
+    position: relative;
+    display: inline-block;
+}
+
+.ai-reasoning {
+    color: #8c8c8c;
+    font-style: italic;
+    margin-bottom: 30px;
+    font-size: 15px;
 }

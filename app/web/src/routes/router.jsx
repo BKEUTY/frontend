@@ -1,5 +1,6 @@
 import { createBrowserRouter } from 'react-router-dom';
-import React, { lazy } from 'react';
+import React, { lazy, Suspense } from 'react';
+import Skeleton from '../components/ui/Skeleton';
 
 // Layouts
 import MainLayout from '../components/layouts/MainLayout';
@@ -60,11 +61,19 @@ const router = createBrowserRouter([
   },
   {
     path: '/500',
-    element: <ServerError />,
+    element: (
+      <Suspense fallback={<div className="layout_fallback"><Skeleton width="100%" height="400px" /></div>}>
+        <ServerError />
+      </Suspense>
+    ),
   },
   {
     path: '*',
-    element: <NotFound />,
+    element: (
+      <Suspense fallback={<div className="layout_fallback"><Skeleton width="100%" height="400px" /></div>}>
+        <NotFound />
+      </Suspense>
+    ),
   },
 ]);
 

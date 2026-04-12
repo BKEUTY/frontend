@@ -20,7 +20,8 @@ const ProductCard = ({ product, t }) => {
     const navigate = useNavigate();
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
-    const image = product.imgUrl ? getImageUrl(product.imgUrl) : fallbackImg;
+    const productImg = product.imageUrl || product.productImageUrl || product.imgUrl || product.image;
+    const image = productImg ? getImageUrl(productImg) : fallbackImg;
     const hasDiscount = product.discountPrice < product.originPrice;
     const tag = hasDiscount ? t('promotion') : product.tag;
     const productId = product.productId;
@@ -82,8 +83,8 @@ const ProductCard = ({ product, t }) => {
                             {product.discountPrice.toLocaleString('vi-VN')}đ
                         </Text>
                     </div>
-                    <Tag color={product.stock > 0 ? 'green' : 'red'} className="card-stock-tag">
-                        {product.stock > 0 ? `${t('in_stock')} ${product.stock}` : t('out_of_stock_btn')}
+                    <Tag color={product.stockQuantity > 0 ? 'green' : 'red'} className="card-stock-tag">
+                        {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
                     </Tag>
                 </div>
             </div>

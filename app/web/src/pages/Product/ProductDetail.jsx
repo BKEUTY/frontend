@@ -11,6 +11,8 @@ import { Tag } from 'antd';
 import productApi from '@/features/products/services/productService';
 import { getImageUrl } from '@/services/axiosClient';
 import NotFound from '@/pages/NotFound';
+import { ProductCard } from '@/components/common';
+import { useRelatedProducts } from '@/hooks/useRecommendation';
 import ProductReviews from './ProductReviews';
 import { generateSlug, getIdFromSlug } from '@/utils/helpers';
 import cartApi from '@/features/cart/services/cartService';
@@ -45,6 +47,7 @@ export default function ProductDetail() {
     const [stockQuantity, setStockQuantity] = useState(0);
     const [mainImage, setMainImage] = useState(fallbackImg);
     const [quantity, setQuantity] = useState(1);
+    const { data: relData, isLoading: relLoading } = useRelatedProducts(productData?.name);
 
     const [currentPrice, setCurrentPrice] = useState({ originPrice: 0, promotionPrice: 0, hasDiscount: false });
 
@@ -373,6 +376,33 @@ export default function ProductDetail() {
                 </div>
             </div>
 
+            <div className="related-products-section mt-60 animate-fade-in">
+                <div className="home-section-header">
+                    <h2 className="home-section-title">
+                        {t('related_products') || 'Khám phá sản phẩm tương tự ✨'}
+                    </h2>
+                </div>
+
+                <div className="home-product-grid">
+                    {relLoading ? (
+                        Array(5).fill(0).map((_, idx) => (
+                            <div key={`rel-skeleton-${idx}`} className="skeleton-product-card">
+                                <Skeleton width="100%" height="240px" borderRadius="16px" className="mb15" />
+                                <Skeleton width="80%" height="24px" borderRadius="4px" className="mb10" />
+                                <Skeleton width="40%" height="20px" borderRadius="4px" />
+                            </div>
+                        ))
+                    ) : (
+                        relData?.recommendedProducts?.map((item) => (
+                            <ProductCard
+                                key={item.productId}
+                                product={item}
+                                t={t}
+                            />
+                        ))
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

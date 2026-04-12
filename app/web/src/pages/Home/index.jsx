@@ -7,6 +7,7 @@ import { useProducts } from '@/features/products/hooks/useProducts';
 import banner1 from '@/assets/images/banners/banner_home_1.png';
 import banner2 from '@/assets/images/banners/banner_home_2.png';
 import about_image from "@/assets/images/banners/banner_about_us.svg";
+import { usePersonalizedRecommendations } from '@/hooks/useRecommendation';
 import './Home.css';
 
 const bannerImages = [banner1, banner2];
@@ -15,6 +16,8 @@ const Home = () => {
     const { t } = useLanguage();
     const navigate = useNavigate();
     const [currentBanner, setCurrentBanner] = useState(0);
+
+    const { data: recData, isLoading: recLoading } = usePersonalizedRecommendations();
 
     const topRatedApi = useProducts(5);
     const mostReviewedApi = useProducts(5);
@@ -90,6 +93,28 @@ const Home = () => {
                     ))}
                 </div>
             </div>
+
+            {/* AI Personalized Section */}
+            {!recLoading && recData?.recommendedProducts?.length > 0 && (
+                <section className="home-section ai-personalized-section animate-fade-in">
+                    <div className="home-section-content">
+                        <div className="home-section-header">
+                            <h2 className="home-section-title ai-title">
+                                {t('personalized_for_you') || 'Gợi ý cho riêng bạn ✨'}
+                            </h2>
+                        </div>
+                        <div className="home-product-grid">
+                            {recData.recommendedProducts.map((item) => (
+                                <ProductCard
+                                    key={item.productId}
+                                    product={item}
+                                    t={t}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </section>
+            )}
 
             {sectionsConfig.map((section, idx) => {
                 const { products, isLoading } = section.hook;

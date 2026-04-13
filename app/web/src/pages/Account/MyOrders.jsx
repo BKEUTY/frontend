@@ -32,7 +32,7 @@ const MyOrders = () => {
         endDate,
     };
 
-    const { orders, total, loading } = useOrders(page - 1, pageSize, filters);
+    const { orders, total, loading } = useOrders(page, pageSize, filters);
     const totalPages = Math.ceil(total / pageSize);
 
     const onPageChange = (p) => {
@@ -166,7 +166,7 @@ const MyOrders = () => {
                             
                             <div className="ord-pagination-wrapper">
                                 <Pagination
-                                    page={page - 1}
+                                    page={page}
                                     totalPages={totalPages}
                                     totalItems={total}
                                     pageSize={pageSize}
@@ -182,34 +182,43 @@ const MyOrders = () => {
                         <div className="ord-loading"><Spin /></div>
                     ) : (
                         <>
-                            {orders?.map((order) => (
-                                <div className="ord-card" key={order.id}>
-                                    <div className="ord-card-header">
-                                        <Link to={`/account/orders/${order.id}`} className="ord-card-title">#{order.id}</Link>
-                                        <span className={`ord-status-badge ${getStatusClass(order.status)}`}>
-                                            {t(`order_status_${order.status}`)}
-                                        </span>
+                            {orders && orders.length > 0 ? (
+                                orders.map((order) => (
+                                    <div className="ord-card" key={order.id}>
+                                        <div className="ord-card-header">
+                                            <Link to={`/account/orders/${order.id}`} className="ord-card-title">#{order.id}</Link>
+                                            <span className={`ord-status-badge ${getStatusClass(order.status)}`}>
+                                                {t(`order_status_${order.status}`)}
+                                            </span>
+                                        </div>
+                                        <div className="ord-card-row">
+                                            <span>{t('order_date')}</span>
+                                            <span className="fw-600">{order.formattedDate}</span>
+                                        </div>
+                                        <div className="ord-card-row">
+                                            <span>{t('total')}</span>
+                                            <span className="ord-highlight-total">{order.formattedTotal}</span>
+                                        </div>
+                                        <button 
+                                            className="ord-btn-detail"
+                                            onClick={() => navigate(`/account/orders/${order.id}`)}
+                                        >
+                                            {t('view_detail')}
+                                        </button>
                                     </div>
-                                    <div className="ord-card-row">
-                                        <span>{t('order_date')}</span>
-                                        <span className="fw-600">{order.formattedDate}</span>
-                                    </div>
-                                    <div className="ord-card-row">
-                                        <span>{t('total')}</span>
-                                        <span className="ord-highlight-total">{order.formattedTotal}</span>
-                                    </div>
-                                    <button 
-                                        className="ord-btn-detail"
-                                        onClick={() => navigate(`/account/orders/${order.id}`)}
-                                    >
-                                        {t('view_detail')}
+                                ))
+                            ) : (
+                                <div className="ord-empty-state">
+                                    <p>{t('no_orders')}</p>
+                                    <button className="goto-shopping" onClick={() => navigate('/product')}>
+                                        {t('continue_shopping')}
                                     </button>
                                 </div>
-                            ))}
+                            )}
                             
                             <div className="mobile-pagination">
                                 <Pagination
-                                    page={page - 1}
+                                    page={page}
                                     totalPages={totalPages}
                                     totalItems={total}
                                     pageSize={pageSize}

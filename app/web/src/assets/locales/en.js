@@ -564,9 +564,6 @@ export default {
     thank_you_title: "Thank you",
     thank_you_desc: "Your order has been placed successfully!",
     view_orders: "View my orders",
-    continue_shopping: "Continue Shopping",
-    all: "All",
-    oldest: "Oldest",
     startDate: "Start Date",
     endDate: "End Date"
 };

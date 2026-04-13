@@ -572,8 +572,6 @@ export default {
     thank_you_title: "Cảm ơn",
     thank_you_desc: "Đơn hàng của bạn đã được đặt thành công!",
     view_orders: "Xem đơn hàng",
-    continue_shopping: "Tiếp tục mua sắm",
-    all: "Tất cả",
     startDate: "Ngày bắt đầu",
     endDate: "Ngày kết thúc"
 };

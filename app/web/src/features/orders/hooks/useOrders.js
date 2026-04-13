@@ -6,7 +6,7 @@ export const useOrders = (page = 0, size = 10, filters = {}) => {
         queryKey: ['myOrders', page, size, filters],
         queryFn: async () => {
             const response = await orderApi.getHistory({ 
-                page, 
+                page: Math.max(0, page), 
                 size, 
                 ...filters 
             });

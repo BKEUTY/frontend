@@ -224,3 +224,10 @@
     .ord-filter-controls { flex-direction: column; width: 100%; }
     .ord-compact-select, .ord-compact-range { width: 100% !important; }
 }
+
+.ord-loading {
+    padding: 60px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

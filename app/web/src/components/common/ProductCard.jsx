@@ -22,7 +22,7 @@ const ProductCard = ({ product, t, isLoading = false }) => {
     if (isLoading) {
         return (
             <Card
-                className="product-card-wrapper product-card skeleton-card"
+                className="product-card-wrapper product-card"
                 cover={<Skeleton width="100%" height="240px" borderRadius="16px 16px 0 0" />}
                 variant="outlined"
             >

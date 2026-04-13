@@ -36,8 +36,7 @@ const MyOrders = () => {
         endDate,
     };
 
-    const { orders, total, loading } = useOrders(page, pageSize, filters);
-    const totalPages = Math.ceil(total / pageSize);
+    const { orders, total, totalPages, loading } = useOrders(page, pageSize, filters);
 
     const onPageChange = (p) => {
         setQuery({ page: p + 1 });
@@ -147,6 +146,8 @@ const MyOrders = () => {
                                                     <button 
                                                         className="ord-action-btn"
                                                         onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
+                                                        title={t('view_detail')}
+                                                        aria-label={t('view_detail')}
                                                     >
                                                         <EyeOutlined />
                                                     </button>

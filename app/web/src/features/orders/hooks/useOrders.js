@@ -8,15 +8,17 @@ export const useOrders = (page = 0, size = 10, filters = {}) => {
     const { data, isPending, error, refetch } = useQuery({
         queryKey: ['myOrders', normalizedPage, normalizedSize, filters],
         queryFn: async () => {
+            const sanitizedFilters = Object.fromEntries(
+                Object.entries(filters).filter(([, value]) => value !== null && value !== undefined && value !== '')
+            );
+
             const response = await orderApi.getHistory({ 
                 page: normalizedPage, 
                 size: normalizedSize, 
-                ...filters 
+                ...sanitizedFilters
             });
             
             const rawData = response.data;
-            
-            // Handle both Page object (new) and Array (legacy/fallback)
             const content = Array.isArray(rawData) ? rawData : (rawData?.content || []);
             const totalElements = Array.isArray(rawData) ? rawData.length : (rawData?.totalElements || 0);
             const totalPages = Array.isArray(rawData) ? 1 : (rawData?.totalPages || 0);
@@ -41,6 +43,7 @@ export const useOrders = (page = 0, size = 10, filters = {}) => {
     return {
         orders: data?.content ?? [],
         total: data?.total ?? 0,
+        totalPages: data?.totalPages ?? 0,
         loading: isPending,
         error,
         refetch

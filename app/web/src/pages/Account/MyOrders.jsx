@@ -18,8 +18,12 @@ const MyOrders = () => {
     const [queryData, setQuery] = useQueryParams();
     const query = queryData || {};
 
-    const page = query.page ? Number(query.page) - 1 : 0;
-    const pageSize = query.pageSize ? Number(query.pageSize) : 10;
+    const rawPage = query.page ? Number(query.page) - 1 : 0;
+    const page = Number.isFinite(rawPage) ? Math.max(0, rawPage) : 0;
+    
+    const rawSize = query.pageSize ? Number(query.pageSize) : 10;
+    const pageSize = Number.isFinite(rawSize) ? Math.max(1, rawSize) : 10;
+
     const status = query.status || 'ALL';
     const sort = query.sort || 'date_desc';
     const startDate = query.startDate || null;
@@ -80,8 +84,8 @@ const MyOrders = () => {
                             value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : null}
                             onChange={(dates) => {
                                 handleFilterChange({
-                                    startDate: dates ? dates[0].format('YYYY-MM-DD') : null,
-                                    endDate: dates ? dates[1].format('YYYY-MM-DD') : null
+                                    startDate: dates?.[0] ? dates[0].format('YYYY-MM-DD') : null,
+                                    endDate: dates?.[1] ? dates[1].format('YYYY-MM-DD') : null
                                 });
                             }}
                             className="ord-compact-range"
@@ -129,7 +133,7 @@ const MyOrders = () => {
                                         orders.map((order) => (
                                             <tr key={order.id} className="ord-row">
                                                 <td className="ord-id-col">
-                                                    <Link to={`/account/orders/${order.id}`}>#{order.id}</Link>
+                                                    <Link to={`/account/orders/${order.id}`} state={{ order }}>#{order.id}</Link>
                                                 </td>
                                                 <td>{order.formattedDate}</td>
                                                 <td><span className="ord-highlight-total">{order.formattedTotal}</span></td>
@@ -142,7 +146,7 @@ const MyOrders = () => {
                                                 <td align="center">
                                                     <button 
                                                         className="ord-action-btn"
-                                                        onClick={() => navigate(`/account/orders/${order.id}`)}
+                                                        onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
                                                     >
                                                         <EyeOutlined />
                                                     </button>
@@ -186,7 +190,7 @@ const MyOrders = () => {
                                 orders.map((order) => (
                                     <div className="ord-card" key={order.id}>
                                         <div className="ord-card-header">
-                                            <Link to={`/account/orders/${order.id}`} className="ord-card-title">#{order.id}</Link>
+                                            <Link to={`/account/orders/${order.id}`} state={{ order }} className="ord-card-title">#{order.id}</Link>
                                             <span className={`ord-status-badge ${getStatusClass(order.status)}`}>
                                                 {t(`order_status_${order.status}`)}
                                             </span>
@@ -201,7 +205,7 @@ const MyOrders = () => {
                                         </div>
                                         <button 
                                             className="ord-btn-detail"
-                                            onClick={() => navigate(`/account/orders/${order.id}`)}
+                                            onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
                                         >
                                             {t('view_detail')}
                                         </button>

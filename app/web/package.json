@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "type": "module",
   "private": true,
+  "engines": {
+    "node": ">= 20"
+  },
   "dependencies": {
     "@ant-design/icons": "^6.1.0",
     "@fontsource/be-vietnam-pro": "^5.2.8",

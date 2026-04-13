@@ -2,18 +2,27 @@ import { useQuery } from '@tanstack/react-query';
 import orderApi from '../services/orderService';
 
 export const useOrders = (page = 0, size = 10, filters = {}) => {
+    const normalizedPage = Number.isFinite(Number(page)) ? Math.max(0, Number(page)) : 0;
+    const normalizedSize = Number.isFinite(Number(size)) ? Math.max(1, Number(size)) : 10;
+
     const { data, isPending, error, refetch } = useQuery({
-        queryKey: ['myOrders', page, size, filters],
+        queryKey: ['myOrders', normalizedPage, normalizedSize, filters],
         queryFn: async () => {
             const response = await orderApi.getHistory({ 
-                page: Math.max(0, page), 
-                size, 
+                page: normalizedPage, 
+                size: normalizedSize, 
                 ...filters 
             });
-            const pagedData = response.data;
+            
+            const rawData = response.data;
+            
+            // Handle both Page object (new) and Array (legacy/fallback)
+            const content = Array.isArray(rawData) ? rawData : (rawData?.content || []);
+            const totalElements = Array.isArray(rawData) ? rawData.length : (rawData?.totalElements || 0);
+            const totalPages = Array.isArray(rawData) ? 1 : (rawData?.totalPages || 0);
             
             return {
-                content: (pagedData.content || []).map((order) => ({
+                content: content.map((order) => ({
                     ...order,
                     id: order.orderId,
                     formattedDate: order.orderDate 
@@ -21,8 +30,8 @@ export const useOrders = (page = 0, size = 10, filters = {}) => {
                         : '',
                     formattedTotal: Number(order.total || 0).toLocaleString("vi-VN") + 'đ'
                 })),
-                total: pagedData.totalElements || 0,
-                totalPages: pagedData.totalPages || 0
+                total: totalElements,
+                totalPages: totalPages
             };
         },
         retry: false,

@@ -94,8 +94,7 @@ const Home = () => {
                 </div>
             </div>
 
-            {/* AI Personalized Section */}
-            {!recLoading && recData?.recommendedProducts?.length > 0 && (
+            {(recLoading || recData?.recommendedProducts?.length > 0) && (
                 <section className="home-section ai-personalized-section animate-fade-in">
                     <div className="home-section-content">
                         <div className="home-section-header">
@@ -104,13 +103,19 @@ const Home = () => {
                             </h2>
                         </div>
                         <div className="home-product-grid">
-                            {recData.recommendedProducts.map((item) => (
-                                <ProductCard
-                                    key={item.productId}
-                                    product={item}
-                                    t={t}
-                                />
-                            ))}
+                            {recLoading ? (
+                                Array(5).fill(0).map((_, i) => (
+                                    <ProductCard key={`ai-shimmer-${i}`} isLoading={true} />
+                                ))
+                            ) : (
+                                recData.recommendedProducts.map((item) => (
+                                    <ProductCard
+                                        key={item.productId}
+                                        product={item}
+                                        t={t}
+                                    />
+                                ))
+                            )}
                         </div>
                     </div>
                 </section>
@@ -128,14 +133,7 @@ const Home = () => {
                             <div className="home-product-grid">
                                 {isLoading ? (
                                     Array(5).fill(0).map((_, i) => (
-                                        <div key={i} className="product-card skeleton-card">
-                                            <Skeleton width="100%" height="240px" />
-                                            <div className="skeleton-info-wrap">
-                                                <Skeleton width="70%" height="20px" style={{ marginBottom: '12px' }} />
-                                                <Skeleton width="90%" height="20px" style={{ marginBottom: '16px' }} />
-                                                <Skeleton width="50%" height="24px" />
-                                            </div>
-                                        </div>
+                                        <ProductCard key={`shimmer-${i}`} isLoading={true} />
                                     ))
                                 ) : (
                                     products.map((item) => (

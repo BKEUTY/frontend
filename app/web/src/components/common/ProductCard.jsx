@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Card, Badge, Rate, Typography, Tag } from 'antd';
+import { Card, Rate, Tooltip } from 'antd';
 import { getImageUrl } from '../../services/axiosClient';
+import Skeleton from './Skeleton';
 import './ProductCard.css';
 import { generateSlug } from '@/utils/helpers';
 
@@ -14,16 +15,34 @@ import dummy5 from '@/assets/images/products/product_dummy_5.svg';
 const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
 const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
-const { Text, Title } = Typography;
-
-const ProductCard = ({ product, t }) => {
+const ProductCard = ({ product, t, isLoading = false }) => {
     const navigate = useNavigate();
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
-    const productImg = product.imageUrl || product.productImageUrl || product.imgUrl || product.image;
-    const image = productImg ? getImageUrl(productImg) : fallbackImg;
+    if (isLoading) {
+        return (
+            <Card
+                className="product-card-wrapper product-card"
+                cover={<Skeleton width="100%" height="240px" borderRadius="16px 16px 0 0" />}
+                variant="outlined"
+            >
+                <div className="p-4 flex flex-col flex-1">
+                    <Skeleton width="40%" height="12px" borderRadius="100px" className="mb-2.5" />
+                    <Skeleton width="100%" height="20px" borderRadius="4px" className="mb-2.5" />
+                    <Skeleton width="100%" height="20px" borderRadius="4px" className="mb-5" />
+                    <div className="mt-auto pt-3 border-t border-dashed border-[#e2e8f0] flex items-end justify-between gap-2">
+                        <Skeleton width="60%" height="24px" borderRadius="4px" />
+                        <Skeleton width="30%" height="20px" borderRadius="4px" />
+                    </div>
+                </div>
+            </Card>
+        );
+    }
+
+    if (!product) return null;
+
+    const image = product.imageUrl ? getImageUrl(product.imageUrl) : fallbackImg;
     const hasDiscount = product.discountPrice < product.originPrice;
-    const tag = hasDiscount ? t('promotion') : product.tag;
     const productId = product.productId;
 
     const handleClick = () => {
@@ -31,13 +50,16 @@ const ProductCard = ({ product, t }) => {
         navigate(`/product/${slug}`, { state: { productId } });
     };
 
-    const CardContent = (
+    return (
         <Card
             hoverable
             className="product-card-wrapper product-card"
             cover={
                 <div className="card-img-container">
                     <img alt={product.variantName} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
+                    {hasDiscount && (
+                        <div className="card-promo-tag">{t('promotion')}</div>
+                    )}
                 </div>
             }
             onClick={handleClick}
@@ -45,10 +67,10 @@ const ProductCard = ({ product, t }) => {
         >
             <div className="card-body-content">
                 <div className="card-brand-wrap">
-                    <Text type="secondary" className="card-brand-text">{product.brand?.toUpperCase()}</Text>
+                    <span className="card-brand-text">{product.brand?.toUpperCase()}</span>
                 </div>
 
-                <Title level={5} className="card-product-name" ellipsis={{ rows: 2 }}>{product.variantName}</Title>
+                <h3 className="card-product-name">{product.variantName}</h3>
 
                 {product.categories && product.categories.length > 0 && (
                     <div className="card-cat-pills">
@@ -57,45 +79,40 @@ const ProductCard = ({ product, t }) => {
                                 {cat.categoryName}
                             </span>
                         ))}
-                        {product.categories.length > 2 && (
-                            <span className="cat-pill plus-pill">
-                                +{product.categories.length - 2}
-                            </span>
-                        )}
                     </div>
                 )}
 
                 <div className="card-rating-wrap">
-                    <div className="card-stars-tooltip" data-rating={`${Number(product.averageRating || 0).toFixed(1)} ${t('rating')}`}>
-                        <Rate disabled defaultValue={product.averageRating} allowHalf className="card-stars" />
-                    </div>
-                    <Text type="secondary" className="card-review-txt">({product.reviewCount} {t('reviews')})</Text>
+                    <Tooltip title={`${Number(product.averageRating || 0).toFixed(1)} ${t('rating')}`}>
+                        <div className="card-stars-wrapper">
+                            <Rate disabled defaultValue={product.averageRating} allowHalf className="card-stars" />
+                        </div>
+                    </Tooltip>
+                    <span className="card-review-txt">({product.reviewCount} {t('reviews')})</span>
                 </div>
 
                 <div className="card-footer-row">
-                    <div className="card-price-col">
-                        {hasDiscount && (
-                            <Text delete className="card-price-old">
-                                {product.originPrice.toLocaleString('vi-VN')}đ
-                            </Text>
-                        )}
-                        <Text className={`card-price-current ${hasDiscount ? 'is-discounted' : ''}`}>
+                    <div className="card-price-row">
+                        <span className={`card-price-current ${hasDiscount ? 'is-discounted' : ''}`}>
                             {product.discountPrice.toLocaleString('vi-VN')}đ
-                        </Text>
+                        </span>
+                        {hasDiscount && (
+                            <span className="card-price-old">
+                                {product.originPrice.toLocaleString('vi-VN')}đ
+                            </span>
+                        )}
                     </div>
-                    <Tag color={product.stockQuantity > 0 ? 'green' : 'red'} className="card-stock-tag">
-                        {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
-                    </Tag>
+
+                    <div className={`stock-status ${product.stockQuantity > 0 ? 'is-available' : 'is-unavailable'}`}>
+                        <span className="stock-dot"></span>
+                        <span className="stock-text">
+                            {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
+                        </span>
+                    </div>
                 </div>
             </div>
         </Card>
     );
-
-    if (tag) {
-        return <Badge.Ribbon text={tag} color="pink">{CardContent}</Badge.Ribbon>;
-    }
-
-    return CardContent;
 };
 
 export default ProductCard;

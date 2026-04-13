@@ -272,19 +272,6 @@
     margin-bottom: 50px;
 }
 
-.product-card-skeleton {
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    border: 1px solid #f1f5f9;
-}
-
-.skeleton-info-wrap {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
 
 .pagination-wrapper-container {
     display: flex;

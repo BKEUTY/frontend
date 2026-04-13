@@ -5,8 +5,8 @@ class OrderApi extends BaseApi {
         super('/api/order');
     }
 
-    getHistory() {
-        return this.client.get(`${this.resource}/history`);
+    getHistory(params = {}) {
+        return this.client.get(`${this.resource}/history`, { params });
     }
 
     placeOrder(data) {

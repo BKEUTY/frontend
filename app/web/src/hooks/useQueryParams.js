@@ -36,3 +36,5 @@ export const useQueryParams = () => {
 
     return [query, setQuery];
 };
+
+export default useQueryParams;

@@ -29,7 +29,6 @@ export default function Product() {
   const debouncedSearch = useDebounce(searchInput, 500);
 
   const { products, isLoading, error, totalPages, totalItems, fetchProducts } = useProducts(pageSize);
-  console.log("Products: ", products);
 
   useClickOutside(dropdownRef, () => setIsMobileCatOpen(false));
 
@@ -166,12 +165,7 @@ export default function Product() {
             {isLoading && page === 0 ? (
               <div className="product-grid">
                 {Array(10).fill(0).map((_, i) => (
-                  <div key={i} className="product-card-skeleton" >
-                    <Skeleton width="100%" height="220px" />
-                    <div className="skeleton-info-wrap">
-                      <Skeleton width="40%" height="15px" /><Skeleton width="90%" height="20px" /><Skeleton width="60%" height="20px" /><Skeleton width="100%" height="40px" />
-                    </div>
-                  </div>
+                  <ProductCard key={`prod-shimmer-${i}`} isLoading={true} />
                 ))}
               </div>
             ) : error ? (

@@ -6,7 +6,6 @@ export default {
     search_hint: "Search for favorites...",
     all: "All",
     filter: "Filter",
-    filter_by: "Filter by",
     price_range: "Price Range",
     min_price: "Min Price",
     max_price: "Max Price",
@@ -507,6 +506,8 @@ export default {
     rating_low_high: "Rating: Low to high",
     reviews_high_low: "Review: High to low",
     reviews_low_high: "Review: Low to high",
+    time_newest: "Time: Newest",
+    time_oldest: "Time: Oldest",
     login_required: "Please log in",
     login_required_to_checkout: "Please log in to checkout",
 
@@ -523,8 +524,6 @@ export default {
     pagination_of: "of",
     pagination_results: "results",
 
-    reviews: "Reviews",
-    write_review: "Write a review",
     edit_review: "Edit review",
     rating: "Stars",
     comment_review: "Comment content",
@@ -565,5 +564,6 @@ export default {
     thank_you_title: "Thank you",
     thank_you_desc: "Your order has been placed successfully!",
     view_orders: "View my orders",
-    continue_shopping: "Continue Shopping"
+    startDate: "Start Date",
+    endDate: "End Date"
 };

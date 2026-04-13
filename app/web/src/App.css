@@ -157,6 +157,10 @@ body {
   padding: 40px 24px;
 }
 
+.home-section.bg-light {
+  background-color: var(--color-bg-light);
+}
+
 .home-section-content {
   max-width: 1200px;
   margin: 0 auto;

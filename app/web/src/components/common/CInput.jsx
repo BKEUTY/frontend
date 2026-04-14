@@ -25,7 +25,8 @@ const CInput = ({
     style = {},
     rows = 4,
     showCount = false,
-    maxLength
+    maxLength,
+    name
 }) => {
     const InputComponent = multiline ? TextArea : Input;
 
@@ -43,6 +44,7 @@ const CInput = ({
             <div className={`c-input-container ${className}`} style={style}>
                 {label && <Text strong className="c-input-label">{label}</Text>}
                 <InputComponent
+                    name={name}
                     placeholder={placeholder}
                     value={value}
                     onChange={onChange}

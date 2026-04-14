@@ -59,12 +59,12 @@ const ShippingAddress = () => {
                     }
                 };
 
-                deleteAddressMutation.mutate(payload, {
+                deleteAddressMutation.mutate({ 
+                    data: payload, 
+                    config: { customErrorMsg: t('delete_failed') || t('api_error_general') } 
+                }, {
                     onSuccess: () => {
                         notify(t('delete_success'), "success");
-                    },
-                    onError: () => {
-                        notify(t('api_error_general'), "error");
                     }
                 });
             },
@@ -77,19 +77,19 @@ const ShippingAddress = () => {
             return;
         }
 
-        addAddressMutation.mutate({
-            address: newAddr.street,
-            province: { provinceID: newAddr.province.id, provinceName: newAddr.province.name },
-            district: { districtID: newAddr.district.id, districtName: newAddr.district.name },
-            ward: { wardCode: newAddr.ward.id, wardName: newAddr.ward.name }
+        addAddressMutation.mutate({ 
+            data: {
+                address: newAddr.street,
+                province: { provinceID: newAddr.province.id, provinceName: newAddr.province.name },
+                district: { districtID: newAddr.district.id, districtName: newAddr.district.name },
+                ward: { wardCode: newAddr.ward.id, wardName: newAddr.ward.name }
+            },
+            config: { customErrorMsg: t('add_address_failed') || t('api_error_general') }
         }, { 
             onSuccess: () => {
                 setIsAddModalOpen(false);
                 setNewAddr({ street: "", province: null, district: null, ward: null });
                 notify(t('success'), "success");
-            },
-            onError: () => {
-                notify(t('api_error_general'), "error");
             }
         });
     };
@@ -155,23 +155,38 @@ const ShippingAddress = () => {
                 title={t('add_new_address')}
                 open={isAddModalOpen}
                 onCancel={() => setIsAddModalOpen(false)}
-                onOk={handleAddAddress}
-                confirmLoading={addAddressMutation.isPending}
-                okText={t('confirm')}
-                cancelText={t('back')}
-                width={600}
+                width={650}
                 className="address-modal-luxury"
+                footer={
+                    <div className="modal-footer-custom">
+                        <CButton 
+                            className="btn-modal-back" 
+                            onClick={() => setIsAddModalOpen(false)}
+                        >
+                            {t('back')}
+                        </CButton>
+                        <CButton 
+                            type="primary" 
+                            className="btn-modal-confirm" 
+                            onClick={handleAddAddress}
+                            loading={addAddressMutation.isPending}
+                        >
+                            {t('confirm')}
+                        </CButton>
+                    </div>
+                }
             >
                 <div className="add-address-form">
-                    <CInput 
-                        label={t('address')} 
-                        placeholder={t('address_placeholder')} 
-                        value={newAddr.street}
-                        onChange={(e) => setNewAddr(p => ({ ...p, street: e.target.value }))}
-                        className="mb-20"
-                    />
+                    <div className="address-form-field">
+                        <CInput 
+                            label={t('address')} 
+                            placeholder={t('address_placeholder')} 
+                            value={newAddr.street}
+                            onChange={(e) => setNewAddr(p => ({ ...p, street: e.target.value }))}
+                        />
+                    </div>
                     
-                    <div className="address-select-group">
+                    <div className="address-select-grid">
                         <div className="select-item">
                             <label className="select-label">{t('province')}</label>
                             <Select

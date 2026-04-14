@@ -32,7 +32,6 @@ export default function Account() {
     const { user, logout } = useAuth();
 
     const handleUpdate = () => {
-        notify(t('update_info_success'), 'success');
     };
 
     const handleLogout = async () => {
@@ -120,32 +119,34 @@ const AccountInfo = ({ onUpdate }) => {
 
     const [userData, setUserData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [isEditing, setIsEditing] = useState(false);
     const [avatar, setAvatar] = useState(account_image);
 
-    useEffect(() => {
-        const fetchProfile = async () => {
-            try {
-                const res = await userApi.getProfile();
-                if (res.data) {
-                    const data = res.data;
-                    setUserData({
-                        id: data.userId,
-                        firstname: data.firstname || '',
-                        lastname: data.lastname || '',
-                        email: data.email || '',
-                        phone: data.phoneNumber || '',
-                        date_of_birth: data.dob || '',
-                        gender: data.gender || 'Nam',
-                    });
-                }
-            } catch (err) {
-                notify(t('fetch_profile_error'), 'error');
-            } finally {
-                setIsLoading(false);
+    const fetchProfile = async () => {
+        try {
+            const res = await userApi.getProfile({ skipGlobalErrorHandler: true });
+            if (res.data) {
+                const data = res.data;
+                setUserData({
+                    id: data.userId,
+                    firstname: data.firstname || '',
+                    lastname: data.lastname || '',
+                    email: data.email || '',
+                    phone: data.phoneNumber || '',
+                    dob: data.dob || '',
+                    gender: data.gender || 'Nam',
+                });
             }
-        };
+        } catch (err) {
+            notify(t('fetch_profile_error'), 'error');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
         fetchProfile();
-    }, [notify, t]);
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -156,24 +157,37 @@ const AccountInfo = ({ onUpdate }) => {
     };
 
     const handleFileChange = (e) => {
+        if (!isEditing) return;
         if (e.target.files && e.target.files[0]) {
             setAvatar(URL.createObjectURL(e.target.files[0]));
         }
     };
 
+    const handleCancel = () => {
+        setIsEditing(false);
+        fetchProfile(); // Reset to fresh data from server
+    };
+
     const handleSave = async (e) => {
-        e.preventDefault();
+        if (e) e.preventDefault();
         try {
             await userApi.updateProfile({
                 firstname: userData.firstname,
                 lastname: userData.lastname,
                 email: userData.email,
-                phoneNumber: userData.phone
+                phoneNumber: userData.phone,
+                dob: userData.dob,
+                gender: userData.gender
+            }, { 
+                customErrorMsg: t('update_info_error') || t('api_error_general') 
             });
+            
+            await fetchProfile();
+            setIsEditing(false);
             notify(t('update_info_success'), 'success');
             if (onUpdate) onUpdate();
         } catch (err) {
-            notify(t('update_info_error') || t('api_error_general'), 'error');
+            console.error('Update profile error:', err);
         }
     };
 
@@ -196,17 +210,20 @@ const AccountInfo = ({ onUpdate }) => {
                             name="firstname"
                             value={userData.firstname}
                             onChange={handleInputChange}
+                            disabled={!isEditing}
                         />
                         <CInput
                             label={t('last_name')}
                             name="lastname"
                             value={userData.lastname}
                             onChange={handleInputChange}
+                            disabled={!isEditing}
                         />
                         <CInput
                             label={t('user_id')}
                             value={userData.id}
-                            disabled
+                            disabled={true}
+                            className="input-locked"
                         />
                         <div className="form-group">
                             <label className="form-label">{t('gender')}</label>
@@ -215,6 +232,7 @@ const AccountInfo = ({ onUpdate }) => {
                                 name="gender"
                                 value={userData.gender}
                                 onChange={handleInputChange}
+                                disabled={!isEditing}
                             >
                                 <option value="Nam">{t('male')}</option>
                                 <option value="Nu">{t('female')}</option>
@@ -224,9 +242,10 @@ const AccountInfo = ({ onUpdate }) => {
                         <CInput
                             label={t('dob')}
                             type="date"
-                            name="date_of_birth"
-                            value={userData.date_of_birth}
+                            name="dob"
+                            value={userData.dob}
                             onChange={handleInputChange}
+                            disabled={!isEditing}
                         />
                         <CInput
                             label={t('step_email')}
@@ -234,6 +253,7 @@ const AccountInfo = ({ onUpdate }) => {
                             name="email"
                             value={userData.email}
                             onChange={handleInputChange}
+                            disabled={!isEditing}
                         />
                         <CInput
                             label={t('phone')}
@@ -241,17 +261,29 @@ const AccountInfo = ({ onUpdate }) => {
                             name="phone"
                             value={userData.phone}
                             onChange={handleInputChange}
+                            disabled={!isEditing}
                         />
                     </div>
                     <div className="form-actions">
-                        <CButton type="primary" onClick={handleSave} className="btn-save">
-                            {t('update')}
-                        </CButton>
+                        {!isEditing ? (
+                            <CButton type="primary" onClick={() => setIsEditing(true)} className="btn-edit-mode">
+                                {t('update')}
+                            </CButton>
+                        ) : (
+                            <div className="editing-actions">
+                                <CButton type="secondary" onClick={handleCancel} className="btn-cancel">
+                                    {t('back')}
+                                </CButton>
+                                <CButton type="primary" onClick={handleSave} className="btn-save">
+                                    {t('confirm')}
+                                </CButton>
+                            </div>
+                        )}
                     </div>
                 </div>
 
                 <div className="avatar-upload-section">
-                    <div className="avatar-preview-box">
+                    <div className={`avatar-preview-box ${isEditing ? 'is-editing' : ''}`}>
                         <img src={avatar} alt="Avatar" className="avatar-image" />
                         <label className="avatar-upload-overlay">
                             <CameraOutlined className="camera-icon" />
@@ -260,6 +292,7 @@ const AccountInfo = ({ onUpdate }) => {
                                 className="hidden-file-input" 
                                 onChange={handleFileChange} 
                                 accept="image/*" 
+                                disabled={!isEditing}
                             />
                         </label>
                     </div>

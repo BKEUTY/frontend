@@ -36,7 +36,7 @@ export const useUpdateProfile = () => {
 export const useAddAddress = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data) => userApi.addAddress(data),
+        mutationFn: ({ data, config }) => userApi.addAddress(data, config),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['userProfile'] });
             queryClient.invalidateQueries({ queryKey: ['userAddresses'] });
@@ -47,7 +47,7 @@ export const useAddAddress = () => {
 export const useDeleteAddress = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (data) => userApi.deleteAddress(data),
+        mutationFn: ({ data, config }) => userApi.deleteAddress(data, config),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['userProfile'] });
             queryClient.invalidateQueries({ queryKey: ['userAddresses'] });

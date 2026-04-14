@@ -56,11 +56,11 @@ const MyOrders = () => {
     };
 
     return (
-        <div className="ord-page-container">
+        <div className="account-info-container">
             <SEO title={t('my_orders')} />
             
-            <div className="ord-page-header">
-                <h2 className="ord-page-title">{t('my_orders')}</h2>
+            <div className="page-header">
+                <h1 className="page-title">{t('my_orders')}</h1>
             </div>
 
             <div className="ord-filter-section-compact">

@@ -10,7 +10,7 @@ import { useQueryParams } from "@/hooks/useQueryParams";
 import { useDebounce } from "@/hooks/useDebounce";
 import "./Promotion.css";
 
-const itemsPerPage = 30;
+const itemsPerPage = 10;
 
 export default function Promotion() {
     const { t } = useLanguage();

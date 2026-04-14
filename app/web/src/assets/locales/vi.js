@@ -506,6 +506,7 @@ export default {
     retail_search_placeholder: "Tìm cửa hàng theo tên, đường, quận...",
     retail_filter_status: "Lọc theo trạng thái",
     retail_no_result: "Không có cửa hàng nào khớp với tìm kiếm của bạn.",
+    sort_default: "Mặc định",
     default_sort: "Sắp xếp: Mặc định",
     price_low_high: "Giá: Thấp đến cao",
     price_high_low: "Giá: Cao đến thấp",

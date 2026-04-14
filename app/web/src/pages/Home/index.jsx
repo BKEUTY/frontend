@@ -25,10 +25,10 @@ const Home = () => {
     const availableApi = useProducts(5);
 
     useEffect(() => {
-        topRatedApi.fetchProducts(0, false, null, 'all', 'rating_desc');
-        mostReviewedApi.fetchProducts(0, false, null, 'all', 'reviews_desc');
-        premiumApi.fetchProducts(0, false, null, 'all', 'price_desc');
-        availableApi.fetchProducts(0, false, null, 'all', 'stock_desc');
+        topRatedApi.fetchProducts(1, false, null, 'all', 'rating_desc');
+        mostReviewedApi.fetchProducts(1, false, null, 'all', 'reviews_desc');
+        premiumApi.fetchProducts(1, false, null, 'all', 'price_desc');
+        availableApi.fetchProducts(1, false, null, 'all', 'stock_desc');
     }, []);
 
     const sectionsConfig = [

@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await productApi.getAll({ page: 0, size: 10 });
+                const response = await productApi.getAll({ page: 1, size: 10 });
                 const products = response.data.content || [];
                 setBestSellers(products.slice(0, 5));
                 setSuggestedProducts(products.slice(5, 10));

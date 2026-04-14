@@ -497,6 +497,7 @@ export default {
     retail_search_placeholder: "Search store by name, street, district...",
     retail_filter_status: "Filter by status",
     retail_no_result: "No store matches your search.",
+    sort_default: "Default",
     default_sort: "Sort: Default",
     price_low_high: "Price: Low to high",
     price_high_low: "Price: High to low",

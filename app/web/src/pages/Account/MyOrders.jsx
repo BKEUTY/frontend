@@ -18,14 +18,14 @@ const MyOrders = () => {
     const [queryData, setQuery] = useQueryParams();
     const query = queryData || {};
 
-    const rawPage = query.page ? Number(query.page) - 1 : 0;
-    const page = Number.isFinite(rawPage) ? Math.max(0, rawPage) : 0;
+    const rawPage = query.page ? Number(query.page) : 1;
+    const page = Number.isFinite(rawPage) ? Math.max(1, rawPage) : 1;
     
     const rawSize = query.pageSize ? Number(query.pageSize) : 10;
     const pageSize = Number.isFinite(rawSize) ? Math.max(1, rawSize) : 10;
 
     const status = query.status || 'ALL';
-    const sort = query.sort || 'date_desc';
+    const sort = query.sort || 'default';
     const startDate = query.startDate || null;
     const endDate = query.endDate || null;
 
@@ -39,7 +39,7 @@ const MyOrders = () => {
     const { orders, total, totalPages, loading } = useOrders(page, pageSize, filters);
 
     const onPageChange = (p) => {
-        setQuery({ page: p + 1 });
+        setQuery({ page: p });
     };
 
     const handleFilterChange = (params) => {
@@ -101,6 +101,7 @@ const MyOrders = () => {
                             onChange={(val) => handleFilterChange({ sort: val })} 
                             className="ord-compact-select"
                         >
+                            <Option value="default">{t('sort_default')}</Option>
                             <Option value="date_desc">{t('time_newest')}</Option>
                             <Option value="date_asc">{t('time_oldest')}</Option>
                             <Option value="total_desc">{t('price_high_low')}</Option>

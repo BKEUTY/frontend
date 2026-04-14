@@ -12,7 +12,7 @@ const { TextArea } = Input;
 const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = {}, onReviewChanged }) => {
     const { t } = useLanguage();
     const { user } = useAuth();
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
     const [ratingFilter, setRatingFilter] = useState(null);
     const [hasImageFilter, setHasImageFilter] = useState(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -46,7 +46,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
 
     const handleFilterChange = (type, value) => {
         if (!isExpanded) setIsExpanded(true);
-        setPage(0);
+        setPage(1);
         if (type === 'rating') setRatingFilter(prev => prev === value ? null : value);
         else if (type === 'media') setHasImageFilter(prev => prev ? null : true);
         else if (type === 'all') { setRatingFilter(null); setHasImageFilter(null); }

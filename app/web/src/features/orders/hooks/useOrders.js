@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import orderApi from '../services/orderService';
 
-export const useOrders = (page = 0, size = 10, filters = {}) => {
-    const normalizedPage = Number.isFinite(Number(page)) ? Math.max(0, Number(page)) : 0;
+export const useOrders = (page = 1, size = 10, filters = {}) => {
+    const normalizedPage = Number.isFinite(Number(page)) ? Math.max(1, Number(page)) : 1;
     const normalizedSize = Number.isFinite(Number(size)) ? Math.max(1, Number(size)) : 10;
 
     const { data, isPending, error, refetch } = useQuery({

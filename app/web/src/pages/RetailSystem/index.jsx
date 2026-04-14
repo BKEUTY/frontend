@@ -20,7 +20,7 @@ export default function RetailSystem() {
 
     const searchTermFromUrl = query.search || '';
     const statusFilter = query.status || 'all';
-    const page = query.page ? Number(query.page) - 1 : 0;
+    const page = query.page ? Number(query.page) : 1;
     const pageSize = 6;
 
     const [searchInput, setSearchInput] = useState(searchTermFromUrl);
@@ -68,14 +68,14 @@ export default function RetailSystem() {
     }, [branches, searchTermFromUrl, statusFilter]);
 
     const totalPages = Math.ceil(filteredBranches.length / pageSize);
-    const paginatedBranches = filteredBranches.slice(page * pageSize, (page + 1) * pageSize);
+    const paginatedBranches = filteredBranches.slice((page - 1) * pageSize, page * pageSize);
 
     const handleStatusChange = (value) => {
         setQuery({ status: value === 'all' ? null : value, page: 1 });
     };
 
     const handlePageChange = (newPage) => {
-        setQuery({ page: newPage + 1 });
+        setQuery({ page: newPage });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 

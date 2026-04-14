@@ -43,7 +43,7 @@ const ProductScreen = ({ navigation }) => {
     }, [fetchCategories]);
 
     useEffect(() => {
-        fetchProducts(0, false, searchText, activeCategory);
+        fetchProducts(1, false, searchText, activeCategory);
     }, [activeCategory, searchText, fetchProducts]);
 
     const handleAddToCart = async (product) => {

@@ -14,7 +14,7 @@ export const usePromotions = (pageSize = 30) => {
         setError(null);
         try {
             const queryParams = { 
-                page: params.page || 0, 
+                page: params.page || 1, 
                 size: params.size || pageSize,
                 search: params.search || '',
                 status: params.status && params.status !== 'all' ? params.status : ''

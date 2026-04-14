@@ -2,13 +2,13 @@ import React from 'react';
 import { useLanguage } from '@/store/LanguageContext';
 import './Pagination.css';
 
-const Pagination = ({ page = 0, totalPages = 0, totalItems = 0, pageSize = 10, onPageChange }) => {
+const Pagination = ({ page = 1, totalPages = 0, totalItems = 0, pageSize = 10, onPageChange }) => {
     const { t } = useLanguage();
 
     if (totalPages <= 1 && totalItems === 0) return null;
 
-    const startItem = totalItems === 0 ? 0 : page * pageSize + 1;
-    const endItem = Math.min((page + 1) * pageSize, totalItems);
+    const startItem = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;
+    const endItem = Math.min(page * pageSize, totalItems);
 
     return (
         <div className="pagination-container">
@@ -20,8 +20,8 @@ const Pagination = ({ page = 0, totalPages = 0, totalItems = 0, pageSize = 10, o
                 <div className="pagination">
                     <button
                         className="page-btn"
-                        disabled={page === 0}
-                        onClick={() => onPageChange(Math.max(0, page - 1))}
+                        disabled={page === 1}
+                        onClick={() => onPageChange(Math.max(1, page - 1))}
                     >
                         ❮
                     </button>
@@ -29,8 +29,8 @@ const Pagination = ({ page = 0, totalPages = 0, totalItems = 0, pageSize = 10, o
                     {[...Array(totalPages)].map((_, idx) => (
                         <button
                             key={idx}
-                            className={`page-btn ${page === idx ? 'active' : ''}`}
-                            onClick={() => onPageChange(idx)}
+                            className={`page-btn ${page === idx + 1 ? 'active' : ''}`}
+                            onClick={() => onPageChange(idx + 1)}
                         >
                             {idx + 1}
                         </button>
@@ -38,8 +38,8 @@ const Pagination = ({ page = 0, totalPages = 0, totalItems = 0, pageSize = 10, o
 
                     <button
                         className="page-btn"
-                        disabled={page >= totalPages - 1}
-                        onClick={() => onPageChange(Math.min(totalPages - 1, page + 1))}
+                        disabled={page >= totalPages}
+                        onClick={() => onPageChange(Math.min(totalPages, page + 1))}
                     >
                         ❯
                     </button>

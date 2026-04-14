@@ -22,7 +22,7 @@ export default function Product() {
 
   const activeCategory = query.categoryId || null;
   const sortOption = query.sort || 'default';
-  const page = query.page ? Number(query.page) - 1 : 0;
+  const page = query.page ? Number(query.page) : 1;
   const searchTermFromUrl = query.search || '';
 
   const [searchInput, setSearchInput] = useState(searchTermFromUrl);
@@ -57,7 +57,7 @@ export default function Product() {
   useEffect(() => {
     const isFiltering = searchTermFromUrl.length > 0 || activeCategory !== null || sortOption !== 'default';
     setIsPaginationMode(isFiltering);
-    const shouldAppend = !isFiltering && page > 0;
+    const shouldAppend = !isFiltering && page > 1;
     fetchProducts(page, shouldAppend, searchTermFromUrl, activeCategory, sortOption); 
   }, [page, searchTermFromUrl, activeCategory, sortOption, fetchProducts]);
 
@@ -73,13 +73,13 @@ export default function Product() {
   };
 
   const handlePageChange = (newPage) => {
-    setQuery({ page: newPage + 1 });
+    setQuery({ page: newPage });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLoadMore = () => {
-    if (page >= totalPages - 1 || isLoading) return;
-    setQuery({ ...query, page: page + 2 }, { replace: true, scroll: true });
+    if (page >= totalPages || isLoading) return;
+    setQuery({ ...query, page: page + 1 }, { replace: true, scroll: true });
   };
 
   const getCurrentCategoryName = () => {
@@ -162,7 +162,7 @@ export default function Product() {
               </div>
             </div>
 
-            {isLoading && page === 0 ? (
+            {isLoading && page === 1 ? (
               <div className="product-grid">
                 {Array(10).fill(0).map((_, i) => (
                   <ProductCard key={`prod-shimmer-${i}`} isLoading={true} />
@@ -183,10 +183,10 @@ export default function Product() {
                 <div className="pagination-wrapper-container">
                   {!isPaginationMode ? (
                     <div className="load-more-container">
-                      {isLoading && page > 0 ? (
+                      {isLoading && page > 1 ? (
                         <p>{t('loading')}</p>
                       ) : (
-                        page < totalPages - 1 && (
+                        page < totalPages && (
                           <CButton type="outline" onClick={handleLoadMore}>{t('load_more')}</CButton>
                         )
                       )}

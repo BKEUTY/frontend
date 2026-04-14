@@ -100,7 +100,8 @@
     border-radius: 8px !important;
 }
 
-.prm-date-range:hover, .prm-date-range:focus {
+.prm-date-range:hover,
+.prm-date-range:focus {
     border-color: var(--ecom-primary) !important;
 }
 
@@ -210,7 +211,8 @@
     margin-left: 6px;
     color: #bfbfbf;
     cursor: pointer;
-    vertical-align: -3px;
+    vertical-align: middle;
+    display: inline-flex;
     transition: color 0.2s ease;
 }
 
@@ -442,13 +444,25 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideUp {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 @media (max-width: 992px) {

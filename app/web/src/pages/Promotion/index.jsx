@@ -16,7 +16,7 @@ export default function Promotion() {
     const { t } = useLanguage();
     const [query, setQuery] = useQueryParams();
 
-    const page = query.page ? Number(query.page) - 1 : 0;
+    const page = query.page ? Number(query.page) : 1;
     const filterType = query.status || 'all';
     const titleTermFromUrl = query.title || '';
     const startAtParam = query.startAt || null;
@@ -88,7 +88,7 @@ export default function Promotion() {
     };
 
     const handlePageChange = (newPage) => {
-        setQuery({ page: newPage + 1 });
+        setQuery({ page: newPage });
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
@@ -170,8 +170,10 @@ export default function Promotion() {
                                     <th>{t('promo_col_name')}</th>
                                     <th>{t('promo_col_discount')}</th>
                                     <th>
-                                        {t('promo_col_target')}
-                                        <InfoIcon />
+                                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                                            {t('promo_col_target')}
+                                            <InfoIcon />
+                                        </div>
                                     </th>
                                     <th>{t('promo_col_time')}</th>
                                     <th style={{ textAlign: 'center' }}>{t('promo_col_status')}</th>

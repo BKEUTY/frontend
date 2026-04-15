@@ -170,66 +170,39 @@
 
 .stock-sold-wrapper {
     display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: 8px;
     width: 100%;
 }
 
-.stock-status {
+.stock-status, .sold-status {
+    flex: 1;
     display: flex;
     align-items: center;
-    gap: 0;
-    padding: 4px 10px;
-    border-radius: 6px;
-    width: fit-content;
-    flex-wrap: nowrap;
+    justify-content: center;
+    padding: 6px 4px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
     white-space: nowrap;
+    transition: all 0.2s ease;
 }
 
 .stock-status.is-available {
     background: #f0fdf4;
+    color: #166534;
 }
 
 .stock-status.is-unavailable {
     background: #fef2f2;
-}
-
-
-.stock-text {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2px;
-}
-
-.is-available .stock-text {
-    color: #166534;
-}
-
-.is-unavailable .stock-text {
     color: #991b1b;
 }
 
 .sold-status {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 12px;
-    border-radius: 8px;
-    background: #e5e7eb;
-    color: #374151;
-    width: fit-content;
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
-.sold-text {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.2px;
-    color: #374151;
+    background: #f1f5f9;
+    color: #475569;
 }
 
 @media (max-width: 768px) {

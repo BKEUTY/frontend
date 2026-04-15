@@ -60,8 +60,8 @@ const generateInvoice = (orderData, t) => {
     const tableData = orderData.items.map(item => [
         item.productVariantName,
         item.quantity,
-        `${(item.promotionPrice || item.price || 0).toLocaleString("vi-VN")}d`,
-        `${((item.promotionPrice || item.price || 0) * item.quantity).toLocaleString("vi-VN")}d`
+        `${(item.promotionPrice || item.price || 0).toLocaleString("vi-VN")} đ`,
+        `${((item.promotionPrice || item.price || 0) * item.quantity).toLocaleString("vi-VN")} đ`
     ]);
 
     autoTable(doc, {
@@ -95,23 +95,23 @@ const generateInvoice = (orderData, t) => {
 
     doc.setFontSize(10);
     doc.text(`${t('invoice_subtotal')}:`, labelX, finalY, { align: "right" });
-    doc.text(`${(orderData.total - (orderData.shippingFee || 0) + (orderData.totalDiscount || 0)).toLocaleString("vi-VN")}d`, valueX, finalY, { align: "right" });
+    doc.text(`${(orderData.total - (orderData.shippingFee || 0) + (orderData.totalDiscount || 0)).toLocaleString("vi-VN")} đ`, valueX, finalY, { align: "right" });
 
     if (orderData.totalDiscount > 0) {
         doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
         doc.text(`${t('invoice_discount')}:`, labelX, finalY + 7, { align: "right" });
-        doc.text(`-${(orderData.totalDiscount).toLocaleString("vi-VN")}d`, valueX, finalY + 7, { align: "right" });
+        doc.text(`-${(orderData.totalDiscount).toLocaleString("vi-VN")} đ`, valueX, finalY + 7, { align: "right" });
         doc.setTextColor(0);
     }
 
     doc.text(`${t('invoice_shipping')}:`, labelX, finalY + 14, { align: "right" });
-    doc.text(`+${(orderData.shippingFee || 0).toLocaleString("vi-VN")}d`, valueX, finalY + 14, { align: "right" });
+    doc.text(`+${(orderData.shippingFee || 0).toLocaleString("vi-VN")} đ`, valueX, finalY + 14, { align: "right" });
 
     doc.setFont("Roboto", "bold");
     doc.setFontSize(14);
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.text(`${t('invoice_grand_total')}:`, labelX, finalY + 25, { align: "right" });
-    doc.text(`${(orderData.total || 0).toLocaleString("vi-VN")}d`, valueX, finalY + 25, { align: "right" });
+    doc.text(`${(orderData.total || 0).toLocaleString("vi-VN")} đ`, valueX, finalY + 25, { align: "right" });
 
     doc.setFont("Roboto", "normal");
     doc.setFontSize(9);

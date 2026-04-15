@@ -12,23 +12,23 @@ export const useOrders = (page = 1, size = 10, filters = {}) => {
                 Object.entries(filters).filter(([, value]) => value !== null && value !== undefined && value !== '')
             );
 
-            const response = await orderApi.getHistory({ 
-                page: normalizedPage, 
-                size: normalizedSize, 
+            const response = await orderApi.getHistory({
+                page: normalizedPage,
+                size: normalizedSize,
                 ...sanitizedFilters
             });
-            
+
             const rawData = response.data;
             const content = Array.isArray(rawData) ? rawData : (rawData?.content || []);
             const totalElements = Array.isArray(rawData) ? rawData.length : (rawData?.totalElements || 0);
             const totalPages = Array.isArray(rawData) ? 1 : (rawData?.totalPages || 0);
-            
+
             return {
                 content: content.map((order) => ({
                     ...order,
                     id: order.orderId,
-                    formattedDate: order.orderDate 
-                        ? new Date(order.orderDate).toLocaleDateString('vi-VN') 
+                    formattedDate: order.orderDate
+                        ? new Date(order.orderDate).toLocaleDateString('vi-VN')
                         : '',
                     formattedTotal: Number(order.total || 0).toLocaleString("vi-VN") + 'đ'
                 })),
@@ -49,3 +49,4 @@ export const useOrders = (page = 1, size = 10, filters = {}) => {
         refetch
     };
 };
+

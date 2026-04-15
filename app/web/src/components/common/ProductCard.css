@@ -168,13 +168,23 @@
     color: #e11d48;
 }
 
-.stock-status {
+.stock-sold-wrapper {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 6px 12px;
-    border-radius: 8px;
+    flex-wrap: nowrap;
+    width: 100%;
+}
+
+.stock-status {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    padding: 4px 10px;
+    border-radius: 6px;
     width: fit-content;
+    flex-wrap: nowrap;
+    white-space: nowrap;
 }
 
 .stock-status.is-available {
@@ -185,19 +195,6 @@
     background: #fef2f2;
 }
 
-.stock-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-}
-
-.is-available .stock-dot {
-    background: #22c55e;
-}
-
-.is-unavailable .stock-dot {
-    background: #ef4444;
-}
 
 .stock-text {
     font-size: 10px;
@@ -214,11 +211,32 @@
     color: #991b1b;
 }
 
+.sold-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    background: #e5e7eb;
+    color: #374151;
+    width: fit-content;
+    flex-shrink: 0;
+    white-space: nowrap;
+}
+
+.sold-text {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2px;
+    color: #374151;
+}
+
 @media (max-width: 768px) {
     .card-body-content {
         padding: 12px;
     }
-    
+
     .card-product-name {
         font-size: 0.875rem;
     }

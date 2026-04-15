@@ -77,7 +77,7 @@ export default {
     back_to_login: "Quay lại đăng nhập",
     full_name: "Họ và tên",
     username: "Tên hiển thị",
-    
+
     step_email: "Email",
     step_otp: "Xác thực OTP",
     step_new_pass: "Mật khẩu mới",
@@ -166,6 +166,8 @@ export default {
     quantity: "Số lượng",
     sku: "Mã: #SKU-",
     sold_count: "đã bán",
+    items_sold: "sản phẩm",
+    sold: "Đã bán",
     price: "Giá",
     market_price: "Giá thị trường",
     ends_in: "KẾT THÚC TRONG",
@@ -336,7 +338,7 @@ export default {
     terms_2_content: "Chúng tôi cam kết bảo vệ quyền riêng tư và thông tin cá nhân của bạn theo Chính sách bảo mật.",
     terms_3_title: "3. Chính sách đổi trả",
     terms_3_content: "Sản phẩm có thể được đổi trả trong vòng 7 ngày kể từ ngày nhận, với điều kiện còn nguyên vẹn.",
-    
+
     footer_support: "Hỗ trợ khách hàng",
     support_team: "Hỗ trợ khách hàng",
     footer_connect: "Kết nối với BKEUTY",
@@ -445,10 +447,14 @@ export default {
     price_high_low: "Giá: Cao đến thấp",
     stock_low_high: "Số lượng: Thấp đến cao",
     stock_high_low: "Số lượng: Cao đến thấp",
+    sold_low_high: "Đã bán: Ít đến nhiều",
+    sold_high_low: "Đã bán: Nhiều đến ít",
     rating_high_low: "Đánh giá: Cao đến thấp",
     rating_low_high: "Đánh giá: Thấp đến cao",
     reviews_high_low: "Bình luận: Nhiều đến ít",
     reviews_low_high: "Bình luận: Ít đến nhiều",
+    time_newest: "Thời gian: Mới nhất",
+    time_oldest: "Thời gian: Cũ nhất",
     login_required: "Vui lòng đăng nhập",
     login_required_to_checkout: "Vui lòng đăng nhập để thanh toán",
 

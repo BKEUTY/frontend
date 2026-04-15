@@ -1,10 +1,10 @@
-import React, { useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, Rate, Tooltip } from 'antd';
-import { getImageUrl } from '../../services/axiosClient';
-import Skeleton from './Skeleton';
-import './ProductCard.css';
 import { generateSlug } from '@/utils/helpers';
+import { Card, Rate, Tooltip } from 'antd';
+import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getImageUrl } from '../../services/axiosClient';
+import './ProductCard.css';
+import Skeleton from './Skeleton';
 
 import dummy1 from '@/assets/images/products/product_dummy_1.jpg';
 import dummy2 from '@/assets/images/products/product_dummy_2.jpg';
@@ -103,11 +103,19 @@ const ProductCard = ({ product, t, isLoading = false }) => {
                         )}
                     </div>
 
-                    <div className={`stock-status ${product.stockQuantity > 0 ? 'is-available' : 'is-unavailable'}`}>
-                        <span className="stock-dot"></span>
-                        <span className="stock-text">
-                            {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
-                        </span>
+                    <div className="stock-sold-wrapper">
+                        <div className={`stock-status ${product.stockQuantity > 0 ? 'is-available' : 'is-unavailable'}`}>
+                            <span className="stock-text">
+                                {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
+                            </span>
+                        </div>
+                        {product.sold > 0 && (
+                            <div className="sold-status">
+                                <span className="sold-text">
+                                    {t('sold')} {product.sold}
+                                </span>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

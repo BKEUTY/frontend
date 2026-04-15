@@ -1,21 +1,20 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, Link, useLocation, useNavigate } from 'react-router-dom';
+import { CButton, ProductCard, SEO, Skeleton } from '@/components/common';
+import cartApi from '@/features/cart/services/cartService';
+import productApi from '@/features/products/services/productService';
+import { useRelatedProducts } from '@/hooks/useRecommendation';
+import NotFound from '@/pages/NotFound';
+import { getImageUrl } from '@/services/axiosClient';
+import { useAuth } from '@/store/AuthContext';
+import { useCart } from '@/store/CartContext';
 import { useLanguage } from '@/store/LanguageContext';
 import { useNotification } from '@/store/NotificationContext';
-import { useCart } from '@/store/CartContext';
-import { useAuth } from '@/store/AuthContext';
-import './ProductDetail.css';
-import { StarFilled, ShoppingOutlined } from '@ant-design/icons';
-import { CButton, Skeleton, SEO } from '@/components/common';
-import { Tag } from 'antd';
-import productApi from '@/features/products/services/productService';
-import { getImageUrl } from '@/services/axiosClient';
-import NotFound from '@/pages/NotFound';
-import { ProductCard } from '@/components/common';
-import { useRelatedProducts } from '@/hooks/useRecommendation';
-import ProductReviews from './ProductReviews';
 import { generateSlug, getIdFromSlug } from '@/utils/helpers';
-import cartApi from '@/features/cart/services/cartService';
+import { ShoppingOutlined, StarFilled } from '@ant-design/icons';
+import { Tag } from 'antd';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import './ProductDetail.css';
+import ProductReviews from './ProductReviews';
 
 import dummy1 from '@/assets/images/products/product_dummy_1.jpg';
 import dummy2 from '@/assets/images/products/product_dummy_2.jpg';
@@ -88,7 +87,7 @@ export default function ProductDetail() {
             const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
             const correctSlug = generateSlug(targetVariant.productVariantName, productId);
             if (slug && slug !== correctSlug) {
-                throw new Error('Invalid product slug'); 
+                throw new Error('Invalid product slug');
             }
             setProductData(responseData);
             setSelectedOptions(targetVariant?.variantOptions || {});
@@ -178,14 +177,14 @@ export default function ProductDetail() {
         try {
             const response = await cartApi.create({ productVariantId: productData.id, quantity, buyNow: true });
             fetchCart();
-            
+
             const { cartId, price, promotionPrice, quantity: resQty } = response.data || response;
             const finalPrice = promotionPrice && promotionPrice > 0 ? promotionPrice : price;
             const grandTotal = finalPrice * resQty;
-            
-            navigate('/checkout', { 
-                state: { 
-                    cartIds: [cartId], 
+
+            navigate('/checkout', {
+                state: {
+                    cartIds: [cartId],
                     grandTotal,
                     selectedProducts: [{
                         id: productData.id,
@@ -196,7 +195,7 @@ export default function ProductDetail() {
                         image: mainImage,
                         effectivePrice: finalPrice
                     }]
-                } 
+                }
             });
         } catch (err) {
             notify(t('api_error_add_cart'), 'error');
@@ -226,9 +225,9 @@ export default function ProductDetail() {
 
     return (
         <div className="product-detail-page">
-            <SEO 
-                title={displayName} 
-                description={productData.description} 
+            <SEO
+                title={displayName}
+                description={productData.description}
                 image={mainImage}
             />
             <div className="breadcrumb">
@@ -328,6 +327,10 @@ export default function ProductDetail() {
                             {t('in_stock_label')} <strong>{stockQuantity}</strong> {t('items_available')}
                         </div>
 
+                        <div className="sold-info">
+                            {t('sold')} <strong>{productData.sold}</strong> {t('items_sold')}
+                        </div>
+
                         <div className="option-group align-center mt-10">
                             <span className="option-label">{t('quantity')}:</span>
                             <div className="input-quantity-wrapper">
@@ -365,8 +368,8 @@ export default function ProductDetail() {
                     )}
                     {activeTab === 'reviews' && (
                         <div className="tab-content animate-fade-in">
-                            <ProductReviews 
-                                variantId={productData.id} 
+                            <ProductReviews
+                                variantId={productData.id}
                                 averageRating={productData.averageRating}
                                 reviewCount={productData.reviewCount}
                                 onReviewChanged={fetchProduct}
@@ -379,7 +382,7 @@ export default function ProductDetail() {
             <div className="related-products-section mt-60 animate-fade-in">
                 <div className="home-section-header">
                     <h2 className="home-section-title">
-                        {t('related_products') || 'Khám phá sản phẩm tương tự ✨'}
+                        {t('related_products')}
                     </h2>
                 </div>
 

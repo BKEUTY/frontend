@@ -1,11 +1,10 @@
-import React from 'react';
-import { useLocation, useNavigate, Link } from 'react-router-dom';
-import { useLanguage } from '@/store/LanguageContext';
-import { FaCreditCard, FaMapLocationDot, FaArrowLeft, FaDownload } from "react-icons/fa6";
-import { generateSlug } from '@/utils/helpers';
-import OrderProgress from '@/features/orders/components/OrderProgress';
-import generateInvoice from '@/utils/InvoiceService';
 import { SEO } from '@/components/common';
+import OrderProgress from '@/features/orders/components/OrderProgress';
+import { useLanguage } from '@/store/LanguageContext';
+import { generateSlug } from '@/utils/helpers';
+import generateInvoice from '@/utils/InvoiceService';
+import { FaArrowLeft, FaCreditCard, FaDownload, FaMapLocationDot } from "react-icons/fa6";
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
@@ -26,9 +25,12 @@ const OrderDetail = () => {
         );
     }
 
-    const subtotal = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const subtotal = orderData.items.reduce((sum, item) => {
+        return sum + (item.price * item.quantity);
+    }, 0);
+
     const totalDiscount = orderData.items.reduce((sum, item) => {
-        if (item.promotionPrice < item.price) {
+        if (item.promotionPrice && item.promotionPrice < item.price) {
             return sum + ((item.price - item.promotionPrice) * item.quantity);
         }
         return sum;
@@ -42,7 +44,7 @@ const OrderDetail = () => {
                     <FaArrowLeft />
                 </button>
                 <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
-                <button 
+                <button
                     className="od-btn-download"
                     onClick={() => generateInvoice(orderData, t)}
                     title={t('download_invoice')}
@@ -72,18 +74,22 @@ const OrderDetail = () => {
                                 <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>
                             </div>
                             <div className="od-item-pricing">
-                                <span className="od-current-price">{item.promotionPrice.toLocaleString("vi-VN")}đ</span>
-                                {item.promotionPrice < item.price && (
-                                    <span className="od-original-price">{item.price.toLocaleString("vi-VN")}đ</span>
+                                {item.promotionPrice && item.promotionPrice < item.price ? (
+                                    <>
+                                        <span className="od-current-price">{item.promotionPrice.toLocaleString("vi-VN")}đ</span>
+                                        <span className="od-original-price">{item.price.toLocaleString("vi-VN")}đ</span>
+                                    </>
+                                ) : (
+                                    <span className="od-current-price">{item.price.toLocaleString("vi-VN")}đ</span>
                                 )}
                                 {orderData.status === 'COMPLETED' && (
-                                    <button 
+                                    <button
                                         className="od-btn-return"
-                                        onClick={() => navigate('/account/returns', { 
-                                            state: { 
-                                                orderId: orderData.orderId, 
-                                                item: item 
-                                            } 
+                                        onClick={() => navigate('/account/returns', {
+                                            state: {
+                                                orderId: orderData.orderId,
+                                                item: item
+                                            }
                                         })}
                                     >
                                         {t('request_return')}
@@ -111,19 +117,19 @@ const OrderDetail = () => {
             <div className="od-summary-wrapper">
                 <div className="od-summary-card">
                     <h3 className="od-summary-title">{t('order_overview')}</h3>
-                    
+
                     <div className="od-summary-row">
                         <span>{t('subtotal')}</span>
                         <span>{subtotal.toLocaleString("vi-VN")}đ</span>
                     </div>
-                    
+
                     {totalDiscount > 0 && (
                         <div className="od-summary-row od-discount-row">
                             <span>{t('discount')}</span>
                             <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
                         </div>
                     )}
-                    
+
                     <div className="od-summary-row">
                         <span>{t('shipping_fee')}</span>
                         <span>+{orderData.shippingFee.toLocaleString("vi-VN")}đ</span>

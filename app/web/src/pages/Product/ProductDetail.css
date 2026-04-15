@@ -270,6 +270,12 @@
     font-weight: 500;
 }
 
+.sold-info {
+    font-size: 0.95rem;
+    color: #64748b;
+    font-weight: 500;
+}
+
 .input-quantity-wrapper {
     display: flex;
     align-items: center;

@@ -1,13 +1,13 @@
-import "./Product.css";
-import { useEffect, useState, useRef } from "react";
-import { useLanguage } from "@/store/LanguageContext";
-import { Skeleton, Pagination, ProductCard, CButton, SEO } from "@/components/common";
-import { SearchOutlined, MenuOutlined, DownOutlined } from '@ant-design/icons';
+import { CButton, Pagination, ProductCard, SEO } from "@/components/common";
+import { useProducts } from "@/features/products/hooks/useProducts";
 import productApi from "@/features/products/services/productService";
 import useClickOutside from "@/hooks/useClickOutside";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useProducts } from "@/features/products/hooks/useProducts";
 import { useQueryParams } from "@/hooks/useQueryParams";
+import { useLanguage } from "@/store/LanguageContext";
+import { DownOutlined, MenuOutlined, SearchOutlined } from '@ant-design/icons';
+import { useEffect, useRef, useState } from "react";
+import "./Product.css";
 
 export default function Product() {
   const { t } = useLanguage();
@@ -48,7 +48,7 @@ export default function Product() {
       try {
         const res = await productApi.getCategories();
         if (isMounted && res.data) setCategories(res.data);
-      } catch (err) {}
+      } catch (err) { }
     };
     fetchCategories();
     return () => { isMounted = false };
@@ -58,7 +58,7 @@ export default function Product() {
     const isFiltering = searchTermFromUrl.length > 0 || activeCategory !== null || sortOption !== 'default';
     setIsPaginationMode(isFiltering);
     const shouldAppend = !isFiltering && page > 1;
-    fetchProducts(page, shouldAppend, searchTermFromUrl, activeCategory, sortOption); 
+    fetchProducts(page, shouldAppend, searchTermFromUrl, activeCategory, sortOption);
   }, [page, searchTermFromUrl, activeCategory, sortOption, fetchProducts]);
 
   const handleCategorySelect = (id) => {
@@ -154,6 +154,8 @@ export default function Product() {
                   <option value="price_desc">{t('price_high_low')}</option>
                   <option value="stock_desc">{t('stock_high_low')}</option>
                   <option value="stock_asc">{t('stock_low_high')}</option>
+                  <option value="sold_desc">{t('sold_high_low')}</option>
+                  <option value="sold_asc">{t('sold_low_high')}</option>
                   <option value="rating_desc">{t('rating_high_low')}</option>
                   <option value="rating_asc">{t('rating_low_high')}</option>
                   <option value="reviews_desc">{t('reviews_high_low')}</option>

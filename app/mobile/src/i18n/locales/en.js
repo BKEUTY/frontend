@@ -77,7 +77,7 @@ export default {
     back_to_login: "Back to Login",
     full_name: "Full Name",
     username: "Username",
-    
+
     step_email: "Email",
     step_otp: "OTP Verification",
     step_new_pass: "New Password",
@@ -334,7 +334,7 @@ export default {
     terms_2_content: "We are committed to protecting your privacy and personal information in accordance with our Privacy Policy.",
     terms_3_title: "3. Return Policy",
     terms_3_content: "Products can be returned within 7 days of receipt, provided they are in their original condition.",
-    
+
     footer_support: "Customer Support",
     support_team: "Customer Support",
     footer_connect: "Connect with Bkeuty",
@@ -443,10 +443,14 @@ export default {
     price_high_low: "Price: High to low",
     stock_low_high: "Stock: Low to high",
     stock_high_low: "Stock: High to low",
+    sold_low_high: "Sold: Low to high",
+    sold_high_low: "Sold: High to low",
     rating_high_low: "Rating: High to low",
     rating_low_high: "Rating: Low to high",
     reviews_high_low: "Review: High to low",
     reviews_low_high: "Review: Low to high",
+    time_newest: "Time: Newest",
+    time_oldest: "Time: Oldest",
     login_required: "Please log in",
     login_required_to_checkout: "Please log in to checkout",
 

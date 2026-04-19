@@ -98,7 +98,9 @@
     text-align: center;
 }
 
-.ord-row:hover { background-color: #f1f5f9; }
+.ord-row:hover {
+    background-color: #f1f5f9;
+}
 
 .ord-id-col a {
     color: var(--color_main_title);
@@ -118,10 +120,11 @@
     letter-spacing: 0.05em;
 }
 
-.ord-status-badge.success { background: #d1fae5; color: #065f46; }
-.ord-status-badge.warning { background: #fef3c7; color: #92400e; }
-.ord-status-badge.danger { background: #fee2e2; color: #991b1b; }
-.ord-status-badge.default { background: #f1f5f9; color: #475569; }
+.ord-status-badge.success { background: #ecfdf5; color: #059669; border: 1px solid #10b98133; }
+.ord-status-badge.warning { background: #fffbeb; color: #d97706; border: 1px solid #f59e0b33; }
+.ord-status-badge.danger { background: #fef2f2; color: #dc2626; border: 1px solid #ef444433; }
+.ord-status-badge.info { background: #eff6ff; color: #2563eb; border: 1px solid #3b82f633; }
+.ord-status-badge.default { background: #f8fafc; color: #475569; border: 1px solid #64748b33; }
 
 .ord-action-btn {
     width: 36px;
@@ -163,8 +166,13 @@
 }
 
 /* Mobile & Transitions */
-.ord-mobile-list { display: none; }
-.fw-600 { font-weight: 600; }
+.ord-mobile-list {
+    display: none;
+}
+
+.fw-600 {
+    font-weight: 600;
+}
 
 .ord-card {
     background: white;
@@ -207,8 +215,13 @@
 }
 
 @media (max-width: 992px) {
-    .ord-table-wrapper { display: none; }
-    .ord-mobile-list { display: block; }
+    .ord-table-wrapper {
+        display: none;
+    }
+
+    .ord-mobile-list {
+        display: block;
+    }
 }
 
 @media (max-width: 768px) {
@@ -217,9 +230,22 @@
         align-items: flex-start;
         gap: 16px;
     }
-    .ord-filter-group { flex-direction: column; align-items: flex-start; width: 100%; }
-    .ord-filter-controls { flex-direction: column; width: 100%; }
-    .ord-compact-select, .ord-compact-range { width: 100% !important; }
+
+    .ord-filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+        width: 100%;
+    }
+
+    .ord-filter-controls {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .ord-compact-select,
+    .ord-compact-range {
+        width: 100% !important;
+    }
 }
 
 .ord-loading {
@@ -227,4 +253,23 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.ord-actions-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.ord-pay-now-link {
+    font-size: 0.75rem;
+    color: var(--color_main_title);
+    font-weight: 600;
+    text-decoration: underline;
+    white-space: nowrap;
+}
+
+.ord-pay-now-link:hover {
+    color: #c97171;
 }

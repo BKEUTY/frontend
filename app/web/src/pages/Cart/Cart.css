@@ -268,7 +268,7 @@
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
     width: 100%;
-    max-width: 420px;
+    max-width: 480px;
     border: 1px solid #f0f0f0;
 }
 
@@ -326,6 +326,8 @@
     font-weight: 800;
     color: var(--color_main_title);
     line-height: 1;
+    white-space: nowrap;
+    margin-left: 15px;
 }
 
 .btn-checkout {

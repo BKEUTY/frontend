@@ -4,20 +4,31 @@ import { useLanguage } from '@/store/LanguageContext';
 import { generateSlug } from '@/utils/helpers';
 import generateInvoice from '@/utils/InvoiceService';
 import { FaArrowLeft, FaCreditCard, FaDownload, FaMapLocationDot } from "react-icons/fa6";
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useOrderDetail } from '@/features/orders/hooks/useOrders';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
-    const location = useLocation();
+    const { id } = useParams();
     const navigate = useNavigate();
     const { t } = useLanguage();
 
-    const orderData = location.state?.order;
+    const { data: orderData, isLoading, error } = useOrderDetail(id);
 
-    if (!orderData) {
+    if (isLoading) {
+        return (
+            <div className="od-container od-loading">
+                <div className="od-skeleton-header"></div>
+                <div className="od-skeleton-progress"></div>
+                <div className="od-skeleton-content"></div>
+            </div>
+        );
+    }
+
+    if (error || !orderData) {
         return (
             <div className="od-container od-not-found">
-                <p>{t('order_not_found')}</p>
+                <p>{error ? t('api_error_general') : t('order_not_found')}</p>
                 <button onClick={() => navigate('/account/orders')} className="od-btn-fallback">
                     <FaArrowLeft /> {t('back')}
                 </button>
@@ -25,16 +36,16 @@ const OrderDetail = () => {
         );
     }
 
-    const subtotal = orderData.items.reduce((sum, item) => {
+    const subtotal = orderData.items?.reduce((sum, item) => {
         return sum + (item.price * item.quantity);
-    }, 0);
+    }, 0) || 0;
 
-    const totalDiscount = orderData.items.reduce((sum, item) => {
+    const totalDiscount = orderData.items?.reduce((sum, item) => {
         if (item.promotionPrice && item.promotionPrice < item.price) {
             return sum + ((item.price - item.promotionPrice) * item.quantity);
         }
         return sum;
-    }, 0);
+    }, 0) || 0;
 
     return (
         <div className="od-container">
@@ -53,7 +64,12 @@ const OrderDetail = () => {
                 </button>
             </div>
 
-            <OrderProgress currentStatus={orderData.status} />
+            <OrderProgress 
+                currentStatus={orderData.status} 
+                shippingStatus={orderData.shippingStatus}
+                paymentMethod={orderData.paymentMethod}
+                paymentStatus={orderData.paymentStatus}
+            />
 
             <div className="od-dates">
                 <span>{t('order_time')} <strong>{orderData.formattedDate}</strong></span>
@@ -62,7 +78,7 @@ const OrderDetail = () => {
             <div className="od-items-section">
                 <h3 className="od-section-title">{t('order_items')}</h3>
                 <div className="od-items-list">
-                    {orderData.items.map((item, index) => (
+                    {orderData.items?.map((item, index) => (
                         <div className="od-item-card" key={index}>
                             <div className="od-item-img">
                                 <img src={item.productVariantImage || 'https://placehold.co/100x100?text=Product'} alt={item.productVariantName} />
@@ -101,15 +117,45 @@ const OrderDetail = () => {
                 </div>
             </div>
 
+
+            {orderData.paymentMethod === 'BANK' && orderData.paymentStatus === 'UNPAID' && orderData.status !== 'CANCELLED' && (
+                <div className="od-payment-pending-card">
+                    <div className="od-pp-header">
+                        <h3>{t('payment_pending_title')}</h3>
+                    </div>
+                    <p className="od-pp-notice">
+                        {t('payment_8h_notice')}
+                    </p>
+                    <div className="od-pp-qr-box">
+                        <img src={orderData.qrCodeLink} alt="QR Code" className="od-pp-qr-img" />
+                        <div className="od-pp-info">
+                            <div className="od-pp-info-item">
+                                <span className="label">{t('amount')}</span>
+                                <span className="value highlighting">{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
+                            </div>
+                            <div className="od-pp-info-item">
+                                <span className="label">{t('order_id')}</span>
+                                <span className="value">DH{orderData.orderId}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <div className="od-info-grid">
                 <div className="od-info-card">
                     <h3 className="od-info-title"><FaCreditCard /> {t('payment_header')}</h3>
-                    <p className="od-info-text od-font-bold">{orderData.paymentMethod}</p>
+                    <div className="od-payment-info-box">
+                        <p className="od-info-text od-font-bold">{t(`payment_method_${orderData.paymentMethod}`)}</p>
+                        <span className={`od-status-badge ${orderData.paymentStatus === 'PAID' ? 'success' : 'warning'}`}>
+                            {t(`payment_status_${orderData.paymentStatus}`)}
+                        </span>
+                    </div>
                 </div>
                 <div className="od-info-card">
                     <h3 className="od-info-title"><FaMapLocationDot /> {t('delivery_header')}</h3>
                     <p className="od-info-text">
-                        {`${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}`}
+                        {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}` : '---'}
                     </p>
                 </div>
             </div>
@@ -132,12 +178,12 @@ const OrderDetail = () => {
 
                     <div className="od-summary-row">
                         <span>{t('shipping_fee')}</span>
-                        <span>+{orderData.shippingFee.toLocaleString("vi-VN")}đ</span>
+                        <span>+{(orderData.shippingFee || 0).toLocaleString("vi-VN")}đ</span>
                     </div>
 
                     <div className="od-summary-row od-total-row">
                         <span>{t('total')}</span>
-                        <span>{orderData.total.toLocaleString("vi-VN")}đ</span>
+                        <span>{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
                     </div>
                 </div>
             </div>

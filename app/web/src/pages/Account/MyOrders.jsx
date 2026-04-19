@@ -46,12 +46,32 @@ const MyOrders = () => {
         setQuery({ ...params, page: 1 });
     };
 
-    const getStatusClass = (status) => {
-        if (!status) return 'default';
-        const s = status.toUpperCase();
-        if (s === 'PAID' || s === 'COMPLETED') return 'success';
-        if (s === 'UNPAID' || s === 'IN_PROGRESS') return 'warning';
-        if (s === 'CANCELLED') return 'danger';
+    const getDisplayStatus = (order) => {
+        const orderS = order.status?.toUpperCase();
+        const payS = order.paymentStatus?.toUpperCase();
+        const payM = order.paymentMethod?.toUpperCase();
+
+        if (orderS === 'CANCELLED') return t('order_status_CANCELLED');
+        if (orderS === 'SUCCEEDED') return t('order_status_SUCCEEDED');
+
+        if (payM === 'BANK' && payS === 'UNPAID') {
+            return t('status_awaiting_payment');
+        }
+        
+        if (orderS === 'CONFIRMED') return t('status_shipping');
+        
+        return t('status_order_received');
+    };
+
+    const getStatusClass = (order) => {
+        const orderS = order.status?.toUpperCase();
+        const payS = order.paymentStatus?.toUpperCase();
+        const payM = order.paymentMethod?.toUpperCase();
+
+        if (orderS === 'SUCCEEDED') return 'success';
+        if (orderS === 'CANCELLED') return 'danger';
+        if (payM === 'BANK' && payS === 'UNPAID') return 'warning';
+        if (orderS === 'CONFIRMED') return 'info';
         return 'default';
     };
 
@@ -73,10 +93,9 @@ const MyOrders = () => {
                             className="ord-compact-select"
                         >
                             <Option value="ALL">{t('all')}</Option>
-                            <Option value="UNPAID">{t('order_status_UNPAID')}</Option>
-                            <Option value="PAID">{t('order_status_PAID')}</Option>
-                            <Option value="IN_PROGRESS">{t('order_status_IN_PROGRESS')}</Option>
-                            <Option value="COMPLETED">{t('order_status_COMPLETED')}</Option>
+                            <Option value="NOT_CONFIRMED">{t('status_order_received')}</Option>
+                            <Option value="CONFIRMED">{t('status_shipping')}</Option>
+                            <Option value="SUCCEEDED">{t('order_status_SUCCEEDED')}</Option>
                             <Option value="CANCELLED">{t('order_status_CANCELLED')}</Option>
                         </Select>
                         <RangePicker 
@@ -137,21 +156,23 @@ const MyOrders = () => {
                                                 </td>
                                                 <td>{order.formattedDate}</td>
                                                 <td><span className="ord-highlight-total">{order.formattedTotal}</span></td>
-                                                <td align="center">{order.paymentMethod}</td>
+                                                <td align="center">{t(`payment_method_${order.paymentMethod}`)}</td>
                                                 <td align="center">
-                                                    <span className={`ord-status-badge ${getStatusClass(order.status)}`}>
-                                                        {t(`order_status_${order.status}`)}
+                                                    <span className={`ord-status-badge ${getStatusClass(order)}`}>
+                                                        {getDisplayStatus(order)}
                                                     </span>
                                                 </td>
                                                 <td align="center">
-                                                    <button 
-                                                        className="ord-action-btn"
-                                                        onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
-                                                        title={t('view_detail')}
-                                                        aria-label={t('view_detail')}
-                                                    >
-                                                        <EyeOutlined />
-                                                    </button>
+                                                    <div className="ord-actions-cell">
+                                                        <button 
+                                                            className="ord-action-btn"
+                                                            onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
+                                                            title={t('view_detail')}
+                                                            aria-label={t('view_detail')}
+                                                        >
+                                                            <EyeOutlined />
+                                                        </button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))
@@ -193,8 +214,8 @@ const MyOrders = () => {
                                     <div className="ord-card" key={order.id}>
                                         <div className="ord-card-header">
                                             <Link to={`/account/orders/${order.id}`} state={{ order }} className="ord-card-title">#{order.id}</Link>
-                                            <span className={`ord-status-badge ${getStatusClass(order.status)}`}>
-                                                {t(`order_status_${order.status}`)}
+                                            <span className={`ord-status-badge ${getStatusClass(order)}`}>
+                                                {getDisplayStatus(order)}
                                             </span>
                                         </div>
                                         <div className="ord-card-row">

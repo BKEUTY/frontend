@@ -141,11 +141,11 @@ export default function Checkout() {
         setIsProcessing(true);
         try {
             const response = await orderApi.placeOrder({
-                paymentMethod: paymentMethod === 'banking' ? 'Banking' : 'COD',
+                paymentMethod: paymentMethod === 'banking' ? 'BANK' : 'COD',
                 address: currentAddress,
-                // phone: formData.phone,
-                // recipientName: formData.fullName,
-                // note: formData.note,
+                phoneNumber: formData.phone,
+                name: formData.fullName,
+                note: formData.note,
                 shippingFee: shippingFee || 0,
                 orderItems: cartIds.map(id => ({ cartItemId: id })),
             });
@@ -161,8 +161,9 @@ export default function Checkout() {
                 queryClient.invalidateQueries({ queryKey: ['cartItems'] });
                 setTimeout(() => navigate('/thank-you', { state: { orderId: actualData?.orderId } }), 1500);
             }
-        } catch {
-            notify(t('payment_error_try_again'), "error");
+        } catch (error) {
+            const errorMessage = error.response?.data?.message || t('payment_error_try_again');
+            notify(errorMessage, "error");
         } finally {
             setIsProcessing(false);
         }
@@ -183,7 +184,11 @@ export default function Checkout() {
                         <h2>{t('payment_qr_title')}</h2>
                         <div className="order-chip">#{orderData.orderId}</div>
                     </div>
-                    <p className="qr-desc">{t('scan_qr_desc')}</p>
+                    <div className="qr-payment-notice">
+                        <FiCalendar style={{ marginRight: '8px' }} />
+                        <span>{t('payment_8h_notice')}</span>
+                    </div>
+
                     <div className="qr-card">
                         <div className="qr-code-box">
                             <img src={orderData.qrCodeLink} alt="QR Code" />
@@ -192,7 +197,7 @@ export default function Checkout() {
                         <div className="qr-info-grid">
                             <div className="qr-info-item">
                                 <span className="label">{t('amount')}</span>
-                                <span className="value highlighting">{(orderData.total || grandTotal).toLocaleString("vi-VN")}đ</span>
+                                <span className="value highlighting">{((orderData.total || grandTotal) + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
                             </div>
                             <div className="qr-info-item">
                                 <span className="label">{t('order_id')}</span>
@@ -204,8 +209,8 @@ export default function Checkout() {
                         <CButton type="primary" block size="large" loading={isCheckingPayment} onClick={handleManualCheck}>
                             {isCheckingPayment ? t('payment_checking') : t('paid_confirm')}
                         </CButton>
-                        <CButton type="outline" block size="large" onClick={() => setShowQR(false)} style={{ marginTop: 12 }}>
-                            {t('back')}
+                        <CButton type="outline" block size="large" onClick={() => navigate('/account/orders')} style={{ marginTop: 12 }}>
+                            {t('pay_later_and_view_orders')}
                         </CButton>
                     </div>
                 </div>

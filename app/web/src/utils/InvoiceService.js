@@ -95,7 +95,7 @@ const generateInvoice = (orderData, t) => {
 
     doc.setFontSize(10);
     doc.text(`${t('invoice_subtotal')}:`, labelX, finalY, { align: "right" });
-    doc.text(`${(orderData.total - (orderData.shippingFee || 0) + (orderData.totalDiscount || 0)).toLocaleString("vi-VN")} đ`, valueX, finalY, { align: "right" });
+    doc.text(`${(orderData.total + (orderData.totalDiscount || 0)).toLocaleString("vi-VN")} đ`, valueX, finalY, { align: "right" });
 
     if (orderData.totalDiscount > 0) {
         doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
@@ -111,7 +111,7 @@ const generateInvoice = (orderData, t) => {
     doc.setFontSize(14);
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.text(`${t('invoice_grand_total')}:`, labelX, finalY + 25, { align: "right" });
-    doc.text(`${(orderData.total || 0).toLocaleString("vi-VN")} đ`, valueX, finalY + 25, { align: "right" });
+    doc.text(`${((orderData.total || 0) + (orderData.shippingFee || 0)).toLocaleString("vi-VN")} đ`, valueX, finalY + 25, { align: "right" });
 
     doc.setFont("Roboto", "normal");
     doc.setFontSize(9);

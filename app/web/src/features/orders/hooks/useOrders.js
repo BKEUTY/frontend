@@ -30,7 +30,7 @@ export const useOrders = (page = 1, size = 10, filters = {}) => {
                     formattedDate: order.orderDate
                         ? new Date(order.orderDate).toLocaleDateString('vi-VN')
                         : '',
-                    formattedTotal: Number(order.total || 0).toLocaleString("vi-VN") + 'đ'
+                    formattedTotal: (Number(order.total || 0) + Number(order.shippingFee || 0)).toLocaleString("vi-VN") + 'đ'
                 })),
                 total: totalElements,
                 totalPages: totalPages
@@ -48,5 +48,38 @@ export const useOrders = (page = 1, size = 10, filters = {}) => {
         error,
         refetch
     };
+};
+
+export const useOrderDetail = (id, options = {}) => {
+    return useQuery({
+        queryKey: ['orderDetail', id],
+        queryFn: async () => {
+            const response = await orderApi.getById(id);
+            const order = response.data || response;
+            return {
+                ...order,
+                formattedDate: order.orderDate
+                    ? new Date(order.orderDate).toLocaleString('vi-VN', {
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })
+                    : '',
+                total: Number(order.total || 0),
+                shippingFee: Number(order.shippingFee || 0)
+            };
+        },
+        enabled: !!id,
+        refetchInterval: (query) => {
+            const data = query.state.data;
+            if (data?.paymentMethod === 'BANK' && data?.paymentStatus === 'UNPAID' && data?.status !== 'CANCELLED') {
+                return 5000;
+            }
+            return false;
+        },
+        ...options,
+    });
 };
 

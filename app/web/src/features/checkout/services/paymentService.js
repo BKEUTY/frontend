@@ -2,11 +2,11 @@ import BaseApi from '@/services/BaseApi';
 
 class PaymentApi extends BaseApi {
     constructor() {
-        super('/api/payment');
+        super('/api/order');
     }
 
     checkStatus(orderId) {
-        return this.client.post(`${this.resource}/status`, { orderId }, { 
+        return this.client.post(`${this.resource}/payment-status`, { orderId }, { 
             errorMessage: 'api_error_payment_status' 
         });
     }

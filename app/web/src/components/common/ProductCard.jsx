@@ -109,13 +109,11 @@ const ProductCard = ({ product, t, isLoading = false }) => {
                                 {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
                             </span>
                         </div>
-                        {product.sold > 0 && (
-                            <div className="sold-status">
-                                <span>
-                                    {t('sold')} {product.sold}
-                                </span>
-                            </div>
-                        )}
+                        <div className="sold-status">
+                            <span>
+                                {t('sold')} {product.sold || 0}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>

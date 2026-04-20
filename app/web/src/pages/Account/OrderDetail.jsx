@@ -92,13 +92,13 @@ const OrderDetail = () => {
                             <div className="od-item-pricing">
                                 {item.promotionPrice && item.promotionPrice < item.price ? (
                                     <>
-                                        <span className="od-current-price">{item.promotionPrice.toLocaleString("vi-VN")}đ</span>
-                                        <span className="od-original-price">{item.price.toLocaleString("vi-VN")}đ</span>
+                                        <span className="od-current-price">{item.promotionPrice.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                        <span className="od-original-price">{item.price.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                                     </>
                                 ) : (
-                                    <span className="od-current-price">{item.price.toLocaleString("vi-VN")}đ</span>
+                                    <span className="od-current-price">{item.price.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                                 )}
-                                {orderData.status === 'COMPLETED' && (
+                                {orderData.status === 'SUCCEEDED' && (
                                     <button
                                         className="od-btn-return"
                                         onClick={() => navigate('/account/returns', {
@@ -131,7 +131,7 @@ const OrderDetail = () => {
                         <div className="od-pp-info">
                             <div className="od-pp-info-item">
                                 <span className="label">{t('amount')}</span>
-                                <span className="value highlighting">{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
+                                <span className="value highlighting">{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                             </div>
                             <div className="od-pp-info-item">
                                 <span className="label">{t('order_id')}</span>
@@ -166,24 +166,24 @@ const OrderDetail = () => {
 
                     <div className="od-summary-row">
                         <span>{t('subtotal')}</span>
-                        <span>{subtotal.toLocaleString("vi-VN")}đ</span>
+                        <span>{subtotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                     </div>
 
                     {totalDiscount > 0 && (
                         <div className="od-summary-row od-discount-row">
                             <span>{t('discount')}</span>
-                            <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
+                            <span>-{totalDiscount.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                         </div>
                     )}
 
                     <div className="od-summary-row">
                         <span>{t('shipping_fee')}</span>
-                        <span>+{(orderData.shippingFee || 0).toLocaleString("vi-VN")}đ</span>
+                        <span>+{(orderData.shippingFee || 0).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                     </div>
 
                     <div className="od-summary-row od-total-row">
-                        <span>{t('total')}</span>
-                        <span>{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
+                        <span>{t('grand_total')}</span>
+                        <span>{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                     </div>
                 </div>
             </div>

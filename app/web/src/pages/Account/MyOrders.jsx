@@ -141,7 +141,7 @@ const MyOrders = () => {
                                     <tr>
                                         <th>{t('order_id')}</th>
                                         <th>{t('order_date')}</th>
-                                        <th>{t('total')}</th>
+                                        <th>{t('grand_total')}</th>
                                         <th align="center">{t('payment_method')}</th>
                                         <th align="center">{t('status')}</th>
                                         <th align="center">{t('actions_col')}</th>
@@ -223,7 +223,7 @@ const MyOrders = () => {
                                             <span className="fw-600">{order.formattedDate}</span>
                                         </div>
                                         <div className="ord-card-row">
-                                            <span>{t('total')}</span>
+                                            <span>{t('grand_total')}</span>
                                             <span className="ord-highlight-total">{order.formattedTotal}</span>
                                         </div>
                                         <button 

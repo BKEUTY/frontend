@@ -1,10 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import orderApi from '../services/orderService';
+import { useLanguage } from '@/store/LanguageContext';
 
 export const useOrders = (page = 1, size = 10, filters = {}) => {
     const normalizedPage = Number.isFinite(Number(page)) ? Math.max(1, Number(page)) : 1;
     const normalizedSize = Number.isFinite(Number(size)) ? Math.max(1, Number(size)) : 10;
 
+    const { t } = useLanguage();
     const { data, isPending, error, refetch } = useQuery({
         queryKey: ['myOrders', normalizedPage, normalizedSize, filters],
         queryFn: async () => {
@@ -30,7 +32,7 @@ export const useOrders = (page = 1, size = 10, filters = {}) => {
                     formattedDate: order.orderDate
                         ? new Date(order.orderDate).toLocaleDateString('vi-VN')
                         : '',
-                    formattedTotal: (Number(order.total || 0) + Number(order.shippingFee || 0)).toLocaleString("vi-VN") + 'đ'
+                    formattedTotal: (Number(order.total || 0) + Number(order.shippingFee || 0)).toLocaleString("vi-VN") + t('unit_vnd')
                 })),
                 total: totalElements,
                 totalPages: totalPages

@@ -8,34 +8,78 @@ import { LinearGradient } from 'expo-linear-gradient';
 
 import productApi from '../../api/productApi';
 
+import { useProductsPaginated } from '../../hooks/useProducts';
+import { usePersonalizedRecommendations } from '../../hooks/useRecommendation';
+
 const { width, height } = Dimensions.get('window');
 
 const HomeScreen = ({ navigation }) => {
     const { t } = useLanguage();
-    const [isLoading, setIsLoading] = useState(true);
-    const [bestSellers, setBestSellers] = useState([]);
-    const [suggestedProducts, setSuggestedProducts] = useState([]);
 
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await productApi.getAll({ page: 1, size: 10 });
-                const products = response.data.content || [];
-                setBestSellers(products.slice(0, 5));
-                setSuggestedProducts(products.slice(5, 10));
-            } catch (error) {
-                console.error("Failed to fetch home products:", error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchProducts();
-    }, []);
+    const { data: recData, isLoading: recLoading } = usePersonalizedRecommendations();
+    const { data: bestSellersData, isLoading: bestSellersLoading } = useProductsPaginated({ size: 6, sort: 'sold_desc' });
+    const { data: suggestedData, isLoading: suggestedLoading } = useProductsPaginated({ size: 6, sort: 'rating_desc' });
+    const { data: mostReviewedData, isLoading: mostReviewedLoading } = useProductsPaginated({ size: 6, sort: 'reviews_desc' });
+    const { data: premiumData, isLoading: premiumLoading } = useProductsPaginated({ size: 6, sort: 'price_desc' });
+    const { data: availableData, isLoading: availableLoading } = useProductsPaginated({ size: 6, sort: 'stock_desc' });
+
+    const bestSellers = bestSellersData?.items || [];
+    const suggestedProducts = suggestedData?.items || [];
+    const mostReviewed = mostReviewedData?.items || [];
+    const premiumProducts = premiumData?.items || [];
+    const availableProducts = availableData?.items || [];
+    const personalizedProducts = recData?.recommendedProducts || [];
+
+    const isGlobalLoading = bestSellersLoading && suggestedLoading;
+
+    const renderSection = (title, products, isLoading, horizontal = true) => {
+        if (!isLoading && products.length === 0) return null;
+
+        return (
+            <View style={styles.sectionContainer}>
+                <View style={styles.sectionHeader}>
+                    <Text style={styles.sectionTitle}>{title}</Text>
+                    <TouchableOpacity onPress={() => navigation.navigate('ProductList')}>
+                        <Text style={styles.viewAllText}>{t('view_all')}</Text>
+                    </TouchableOpacity>
+                </View>
+                {isLoading ? (
+                    <View style={styles.sectionLoading}>
+                        <ActivityIndicator size="small" color={COLORS.mainTitle} />
+                    </View>
+                ) : horizontal ? (
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
+                        {products.map(item => (
+                            <ProductCard
+                                key={item.id}
+                                item={item}
+                                onPress={() => navigation.navigate('Product', { screen: 'ProductDetail', params: { product: item } })}
+                                layout="horizontal"
+                                showAddToCart={false}
+                            />
+                        ))}
+                    </ScrollView>
+                ) : (
+                    <View style={styles.gridContainer}>
+                        {products.map(item => (
+                            <ProductCard
+                                key={item.id}
+                                item={item}
+                                onPress={() => navigation.navigate('Product', { screen: 'ProductDetail', params: { product: item } })}
+                                layout="grid"
+                                showAddToCart={false}
+                            />
+                        ))}
+                    </View>
+                )}
+            </View>
+        );
+    };
 
     return (
         <View style={styles.container}>
             <Header />
-            {isLoading ? (
+            {isGlobalLoading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator size="large" color={COLORS.mainTitle} />
                 </View>
@@ -48,19 +92,14 @@ const HomeScreen = ({ navigation }) => {
                         source={require('../../Assets/Images/Banners/banner_home_1.png')}
                         style={styles.heroSection}
                         resizeMode="cover"
-                        imageStyle={{ borderRadius: 0 }}
                     >
                         <LinearGradient
-                            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.6)']}
+                            colors={['rgba(0,0,0,0.1)', 'rgba(0,0,0,0.7)']}
                             style={styles.heroOverlay}
                         >
-                            <View style={styles.heroContent}>
-                                <Text style={styles.heroTitle}>
-                                    {t('mid_autumn_promo')}
-                                </Text>
-                                <Text style={styles.heroSubtitle}>
-                                    {t('promo_subtitle')}
-                                </Text>
+                            <View style={styles.glassCard}>
+                                <Text style={styles.heroTitle}>{t('mid_autumn_promo')}</Text>
+                                <Text style={styles.heroSubtitle}>{t('promo_subtitle')}</Text>
                                 <TouchableOpacity 
                                     style={styles.btnPrimary} 
                                     onPress={() => navigation.navigate('ProductList')}
@@ -72,68 +111,48 @@ const HomeScreen = ({ navigation }) => {
                         </LinearGradient>
                     </ImageBackground>
 
-                    <View style={styles.contentSection}>
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>{t('best_sellers')}</Text>
-                            <TouchableOpacity onPress={() => navigation.navigate('ProductList')}>
-                                <Text style={styles.viewAllText}>{t('view_all')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
-                            {bestSellers.map(item => (
-                                <ProductCard
-                                    key={item.id}
-                                    item={item}
-                                    onPress={() => navigation.navigate('Product', { screen: 'ProductDetail', params: { product: item } })}
-                                    layout="horizontal"
-                                    showAddToCart={false}
+                    <View style={styles.mainContent}>
+                        {/* AI Personalized Section */}
+                        {renderSection(t('personalized_for_you'), personalizedProducts, recLoading)}
+
+                        {/* Best Sellers */}
+                        {renderSection(t('best_sellers'), bestSellers, bestSellersLoading)}
+
+                        {/* Premium Products */}
+                        {renderSection(t('premium_products'), premiumProducts, premiumLoading)}
+
+                        {/* Most Reviewed */}
+                        {renderSection(t('most_reviewed'), mostReviewed, mostReviewedLoading)}
+
+                        {/* Suggested - Grid */}
+                        <LinearGradient colors={['#fff', '#fff9fb']} style={styles.suggestedGradient}>
+                            {renderSection(t('section_suggested'), suggestedProducts, suggestedLoading, false)}
+                        </LinearGradient>
+
+                        {/* Available Products */}
+                        {renderSection(t('top_in_stock'), availableProducts, availableLoading)}
+
+                        {/* Brand Story */}
+                        <LinearGradient
+                            colors={[COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f']}
+                            style={styles.brandSection}
+                        >
+                            <View style={styles.certContainer}>
+                                <Image
+                                    source={{ uri: 'http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png' }}
+                                    style={styles.certImage}
+                                    resizeMode="contain"
                                 />
-                            ))}
-                        </ScrollView>
+                            </View>
+                            <Text style={styles.brandTitle}>{t('brand_story')}</Text>
+                            <Text style={styles.sectionText}>
+                                {t('brand_desc')}
+                            </Text>
+                            <TouchableOpacity style={styles.btnSecondary} activeOpacity={0.7}>
+                                <Text style={styles.btnTextSecondary}>{t('explore_more')}</Text>
+                            </TouchableOpacity>
+                        </LinearGradient>
                     </View>
-
-                    <LinearGradient
-                        colors={['#fff', '#fff0f3']}
-                        style={styles.gridSection}
-                    >
-                        <View style={styles.sectionHeader}>
-                            <Text style={styles.sectionTitle}>{t('section_suggested')}</Text>
-                            <TouchableOpacity onPress={() => navigation.navigate('ProductList')}>
-                                <Text style={styles.viewAllText}>{t('view_all')}</Text>
-                            </TouchableOpacity>
-                        </View>
-                        <View style={styles.gridContainer}>
-                            {suggestedProducts.map(item => (
-                                <ProductCard
-                                    key={item.id}
-                                    item={item}
-                                    onPress={() => navigation.navigate('Product', { screen: 'ProductDetail', params: { product: item } })}
-                                    layout="grid"
-                                    showAddToCart={false}
-                                />
-                            ))}
-                        </View>
-                    </LinearGradient>
-
-                    <LinearGradient
-                        colors={[COLORS.mainTitle, COLORS.mainTitleDark]}
-                        style={styles.brandSection}
-                    >
-                        <View style={styles.certContainer}>
-                            <Image
-                                source={{ uri: 'http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png' }}
-                                style={styles.certImage}
-                                resizeMode="contain"
-                            />
-                        </View>
-                        <Text style={styles.brandTitle}>{t('brand_story')}</Text>
-                        <Text style={styles.sectionText}>
-                            {t('brand_desc')}
-                        </Text>
-                        <TouchableOpacity style={styles.btnSecondary} activeOpacity={0.7}>
-                            <Text style={styles.btnTextSecondary}>{t('explore_more')}</Text>
-                        </TouchableOpacity>
-                    </LinearGradient>
                 </ScrollView>
             )}
         </View>
@@ -143,7 +162,7 @@ const HomeScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#fff',
     },
     loadingContainer: {
         flex: 1,
@@ -154,89 +173,90 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     heroSection: {
-        height: height * 0.45,
+        height: height * 0.5,
         justifyContent: 'center',
         alignItems: 'center',
     },
     heroOverlay: {
         ...StyleSheet.absoluteFillObject,
-        justifyContent: 'center',
+        justifyContent: 'flex-end',
         alignItems: 'center',
+        paddingBottom: 40,
     },
-    heroContent: {
-        zIndex: 1,
+    glassCard: {
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        padding: 25,
+        borderRadius: 24,
+        width: width - 40,
         alignItems: 'center',
-        paddingHorizontal: 20,
-        width: '100%',
+        borderWidth: 1,
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+        backdropFilter: 'blur(10px)', // Note: standard RN doesn't support this, but good for future/web
     },
     heroTitle: {
-        fontSize: 36,
+        fontSize: 32,
         fontWeight: '900',
         color: 'white',
         textAlign: 'center',
-        marginBottom: 12,
-        textShadowColor: 'rgba(0,0,0,0.5)',
-        textShadowOffset: { width: 0, height: 4 },
-        textShadowRadius: 15,
-        letterSpacing: -1,
-        lineHeight: 44,
+        marginBottom: 10,
+        textShadowColor: 'rgba(0,0,0,0.3)',
+        textShadowOffset: { width: 0, height: 2 },
+        textShadowRadius: 10,
     },
     heroSubtitle: {
-        fontSize: 16,
+        fontSize: 15,
         color: 'rgba(255, 255, 255, 0.9)',
         textAlign: 'center',
-        marginBottom: 35,
+        marginBottom: 25,
         fontWeight: '600',
-        lineHeight: 24,
-        paddingHorizontal: 20,
+        lineHeight: 22,
     },
     btnPrimary: {
-        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-        paddingVertical: 16,
-        paddingHorizontal: 45,
-        borderRadius: 20,
-        elevation: 15,
-        shadowColor: COLORS.mainTitle || '#000',
-        shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.4,
-        shadowRadius: 20,
+        backgroundColor: 'white',
+        paddingVertical: 14,
+        paddingHorizontal: 40,
+        borderRadius: 16,
+        elevation: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 6 },
+        shadowOpacity: 0.3,
+        shadowRadius: 12,
     },
     btnTextPrimary: {
-        color: COLORS.mainTitle || '#c2185b',
-        fontSize: 16,
-        fontWeight: '900',
+        color: COLORS.mainTitle,
+        fontSize: 15,
+        fontWeight: '800',
         textTransform: 'uppercase',
-        letterSpacing: 2,
+        letterSpacing: 1,
     },
-    contentSection: {
-        paddingVertical: 25,
+    mainContent: {
+        paddingTop: 10,
+    },
+    sectionContainer: {
+        paddingVertical: 20,
         paddingHorizontal: 15,
     },
     sectionHeader: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 16,
         paddingHorizontal: 5,
     },
     sectionTitle: {
-        fontSize: 20,
-        color: COLORS.text,
+        fontSize: 19,
+        color: '#1e293b',
         fontWeight: '800',
         letterSpacing: -0.5,
     },
     viewAllText: {
-        fontSize: 14,
+        fontSize: 13,
         color: COLORS.mainTitle,
-        fontWeight: '600',
+        fontWeight: '700',
     },
     horizontalScroll: {
         paddingRight: 15,
-        paddingBottom: 10,
-    },
-    gridSection: {
-        paddingVertical: 30,
-        paddingHorizontal: 15,
+        paddingBottom: 5,
     },
     gridContainer: {
         flexDirection: 'row',
@@ -244,17 +264,21 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         paddingHorizontal: 5,
     },
+    sectionLoading: {
+        height: 150,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    suggestedGradient: {
+        paddingVertical: 10,
+        marginVertical: 10,
+    },
     brandSection: {
         padding: 40,
         alignItems: 'center',
         marginTop: 20,
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
-        elevation: 20,
-        shadowColor: 'black',
-        shadowOffset: { width: 0, height: -5 },
-        shadowOpacity: 0.2,
-        shadowRadius: 10,
+        borderTopLeftRadius: 32,
+        borderTopRightRadius: 32,
     },
     brandTitle: {
         fontSize: 22,
@@ -271,6 +295,7 @@ const styles = StyleSheet.create({
         lineHeight: 24,
         marginBottom: 30,
         fontSize: 15,
+        fontWeight: '500',
     },
     btnSecondary: {
         borderColor: 'white',

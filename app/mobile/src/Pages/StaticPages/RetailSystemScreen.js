@@ -6,7 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 const RetailSystemScreen = ({ navigation }) => {
     const { t, language } = useLanguage();
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [statusFilter, setStatusFilter] = useState('all');
     const [selectedBranch, setSelectedBranch] = useState(null);
 
@@ -28,11 +28,11 @@ const RetailSystemScreen = ({ navigation }) => {
 
     const filteredBranches = useMemo(() => {
         return branches.filter(branch => {
-            const matchesSearch = branch.name.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesSearch = branch.name.toLowerCase().includes(searchInput.toLowerCase());
             const matchesStatus = statusFilter === 'all' || branch.status === statusFilter;
             return matchesSearch && matchesStatus;
         });
-    }, [branches, searchTerm, statusFilter]);
+    }, [branches, searchInput, statusFilter]);
 
     if (selectedBranch) {
         return (
@@ -115,10 +115,15 @@ const RetailSystemScreen = ({ navigation }) => {
                     <TextInput
                         style={styles.searchInput}
                         placeholder={t('retail_search_placeholder')}
-                        value={searchTerm}
-                        onChangeText={setSearchTerm}
+                        value={searchInput}
+                        onChangeText={setSearchInput}
                         placeholderTextColor="#999"
                     />
+                    {searchInput.length > 0 && (
+                        <TouchableOpacity onPress={() => setSearchInput('')} style={styles.clearIcon}>
+                            <Ionicons name="close-circle" size={20} color="#999" />
+                        </TouchableOpacity>
+                    )}
                 </View>
 
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.statusFilters}>
@@ -207,6 +212,9 @@ const styles = StyleSheet.create({
     searchIcon: {
         marginRight: 12,
         opacity: 0.8,
+    },
+    clearIcon: {
+        padding: 4,
     },
     searchInput: {
         flex: 1,

@@ -9,8 +9,8 @@ class OrderApi extends BaseApi {
         return this.client.post(`${this.resource}/place-order`, data, { errorMessage: 'api_error_checkout' });
     }
 
-    getHistory() {
-        return this.client.get(`${this.resource}/history`, { errorMessage: 'api_error_order_history' });
+    getHistory(params = {}) {
+        return this.client.get(`${this.resource}/history`, { params, errorMessage: 'api_error_order_history' });
     }
 }
 

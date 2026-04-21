@@ -8,27 +8,28 @@ import { Ionicons } from '@expo/vector-icons';
 import { showToast } from '../../utils/ToastService';
 import { useOrders } from '../../hooks/useOrders';
 
+import { useDebounce } from '../../hooks/useDebounce';
+
 const OrderListScreen = () => {
     const navigation = useNavigation();
     const { t } = useLanguage();
-    const { orders, loading, refreshing, setRefreshing, fetchOrders } = useOrders();
+    const [searchInput, setSearchInput] = useState('');
+    const debouncedSearch = useDebounce(searchInput, 500);
 
-    useEffect(() => {
-        fetchOrders();
-    }, [fetchOrders]);
-
-    const onRefresh = () => {
-        setRefreshing(true);
-        fetchOrders();
-    };
+    const { data: orders, isLoading, isRefetching, refetch } = useOrders({
+        search: debouncedSearch
+    });
 
     const getStatusColor = (status) => {
-        switch (status) {
+        const s = status?.toUpperCase();
+        switch (s) {
             case 'PAID':
             case 'COMPLETED':
+            case 'SUCCEEDED':
                 return '#10b981';
             case 'UNPAID':
             case 'PENDING':
+            case 'PROCESSING':
                 return '#f59e0b';
             case 'CANCELLED':
                 return '#ef4444';
@@ -77,7 +78,7 @@ const OrderListScreen = () => {
     );
 
     return (
-        <ScreenWrapper loading={loading} padding={0}>
+        <ScreenWrapper loading={isLoading && !isRefetching} padding={0}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
                     <Ionicons name="arrow-back" size={24} color="#333" />
@@ -86,16 +87,32 @@ const OrderListScreen = () => {
                 <View style={{ width: 40 }} />
             </View>
 
+            <View style={styles.searchContainer}>
+                <Ionicons name="search" size={20} color="#94a3b8" style={styles.searchIcon} />
+                <TextInput
+                    style={styles.searchInput}
+                    placeholder={t('search_orders_placeholder') || t('search')}
+                    placeholderTextColor="#94a3b8"
+                    value={searchInput}
+                    onChangeText={setSearchInput}
+                />
+                {searchInput.length > 0 && (
+                    <TouchableOpacity onPress={() => setSearchInput('')} style={styles.clearIcon}>
+                        <Ionicons name="close-circle" size={20} color="#94a3b8" />
+                    </TouchableOpacity>
+                )}
+            </View>
+
             <FlatList
                 data={orders}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={renderOrderItem}
                 contentContainerStyle={styles.listContent}
                 refreshControl={
-                    <RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={[COLORS.mainTitle]} />
+                    <RefreshControl refreshing={isRefetching} onRefresh={refetch} colors={[COLORS.mainTitle]} />
                 }
                 ListEmptyComponent={
-                    !loading && (
+                    !isLoading && (
                         <View style={styles.emptyContainer}>
                             <Ionicons name="cube-outline" size={80} color="#e5e7eb" />
                             <Text style={styles.emptyText}>{t('no_orders') || t('no_data')}</Text>
@@ -114,8 +131,30 @@ const styles = StyleSheet.create({
         paddingHorizontal: 15,
         height: 56,
         backgroundColor: 'white',
-        borderBottomWidth: 1,
-        borderBottomColor: '#f3f4f6',
+    },
+    searchContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#f8fafc',
+        marginHorizontal: 15,
+        marginVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 14,
+        height: 48,
+        borderWidth: 1,
+        borderColor: '#f1f5f9',
+    },
+    searchIcon: {
+        marginRight: 10,
+    },
+    clearIcon: {
+        padding: 4,
+    },
+    searchInput: {
+        flex: 1,
+        fontSize: 14,
+        color: '#333',
+        fontWeight: '500',
     },
     backBtn: {
         width: 40,

@@ -254,7 +254,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
                 <View style={styles.infoContainer}>
                     <View style={styles.brandRow}>
-                        <Text style={styles.brand}>BKEUTY PREMIUM</Text>
+                        <Text style={styles.brand}>{productDetail.brandName || "BKEUTY PREMIUM"}</Text>
                         <View style={styles.ratingRow}>
                             <Ionicons name="star" size={14} color="#fbbf24" />
                             <Text style={styles.ratingText}>{Number(productDetail?.averageRating || 0).toFixed(1)}</Text>
@@ -281,7 +281,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.soldBox}>
-                            <Text style={styles.soldText}>{t('sold_count')}: 1.2k</Text>
+                            <Text style={styles.soldText}>{t('sold')} {productDetail.sold || 0}</Text>
                         </View>
                     </LinearGradient>
 

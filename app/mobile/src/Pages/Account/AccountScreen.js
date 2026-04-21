@@ -20,6 +20,7 @@ const AccountScreen = () => {
     const mainFeatures = isAuthenticated ? [
         { id: 'info', iconName: 'person-outline', title: t('account'), route: 'Profile', color: '#6366f1' },
         { id: 'orders', iconName: 'cube-outline', title: t('my_orders'), route: 'OrderList', color: '#f59e0b' },
+        { id: 'returns', iconName: 'reload-outline', title: t('return_requests'), route: 'Returns', color: '#8b5cf6' },
         { id: 'appointments', iconName: 'calendar-outline', title: t('my_appointments'), route: 'Appointments', color: '#ec4899' },
         { id: 'wallet', iconName: 'wallet-outline', title: t('my_wallet'), route: 'Wallet', color: '#14b8a6' },
     ] : [];

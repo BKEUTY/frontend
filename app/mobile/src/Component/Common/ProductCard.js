@@ -16,6 +16,7 @@ const ProductCard = ({
     showRating = true,
     showAddToCart = true
 }) => {
+    const { t } = useLanguage();
     const isGrid = layout === 'grid';
     const cardStyle = isGrid ? styles.gridCard : styles.horizontalCard;
     const imageStyle = isGrid ? styles.gridImageContainer : styles.horizontalImageContainer;
@@ -40,50 +41,71 @@ const ProductCard = ({
                 )}
 
                 <View style={styles.badgeContainer}>
-                    {item.tag && (
-                        <LinearGradient
-                            colors={['#ef4444', '#b91c1c']}
-                            style={styles.tagBadge}
-                        >
-                            <Text style={styles.tagText}>{item.tag}</Text>
-                        </LinearGradient>
-                    )}
-                    {item.discount && (
+                    {item.hasDiscount && (
                         <LinearGradient
                             colors={['#ec4899', '#be185d']}
                             style={styles.discountBadge}
                         >
-                            <Text style={styles.discountText}>-{item.discount}%</Text>
+                            <Text style={styles.discountText}>{t('promotion')}</Text>
                         </LinearGradient>
                     )}
                 </View>
             </View>
 
             <View style={styles.infoContainer}>
-                <Text style={styles.brandText}>{item.brand || 'BKEUTY'}</Text>
-                <Text style={styles.nameText} numberOfLines={2}>{item.name}</Text>
+                <View>
+                    <Text style={styles.brandText}>{item.brand?.toUpperCase() || 'BKEUTY'}</Text>
+                    <Text style={styles.nameText} numberOfLines={2}>{item.name}</Text>
 
-                {showRating && (
-                    <View style={styles.ratingRow}>
-                        <Ionicons name="star" size={10} color="#ffc107" />
-                        <Text style={styles.ratingValue}>{Number(item.averageRating || 0).toFixed(1)}</Text>
-                        <Text style={styles.ratingCount}>({item.ratingCount || 0})</Text>
+                    {item.categories && item.categories.length > 0 && (
+                        <View style={styles.catContainer}>
+                            {item.categories.slice(0, 1).map((cat, idx) => (
+                                <View key={cat.id || idx} style={styles.catPill}>
+                                    <Text style={styles.catPillText}>{cat.categoryName}</Text>
+                                </View>
+                            ))}
+                        </View>
+                    )}
+
+                    {showRating && (
+                        <View style={styles.ratingRow}>
+                            <Ionicons name="star" size={10} color="#ffc107" />
+                            <Text style={styles.ratingValue}>{Number(item.averageRating || 0).toFixed(1)}</Text>
+                            <Text style={styles.ratingCount}>({item.ratingCount || 0})</Text>
+                        </View>
+                    )}
+                </View>
+
+                <View style={styles.footerContainer}>
+                    <View style={styles.priceRow}>
+                        <View>
+                            {item.hasDiscount && (
+                                <Text style={styles.oldPriceText}>
+                                    {item.oldPrice?.toLocaleString("vi-VN")}đ
+                                </Text>
+                            )}
+                            <Text style={[styles.priceText, item.hasDiscount && styles.discountedPrice]}>
+                                {item.price?.toLocaleString("vi-VN")}đ
+                            </Text>
+                        </View>
+
+                        {showAddToCart && onAddToCart && (
+                            <TouchableOpacity style={styles.addToCartBtn} onPress={() => onAddToCart(item)}>
+                                <Ionicons name="add" size={20} color="white" />
+                            </TouchableOpacity>
+                        )}
                     </View>
-                )}
 
-                <View style={styles.priceRow}>
-                    <View>
-                        {item.oldPrice && <Text style={styles.oldPriceText}>{item.oldPrice}</Text>}
-                        <Text style={styles.priceText}>
-                            {item.minPrice ? `${item.minPrice.toLocaleString("vi-VN")}đ` : (item.price || '0đ')}
+                    <View style={styles.metaRow}>
+                        <View style={[styles.stockBadge, item.stockQuantity > 0 ? styles.inStock : styles.outOfStock]}>
+                            <Text style={[styles.stockText, item.stockQuantity > 0 ? styles.inStockText : styles.outOfStockText]}>
+                                {item.stockQuantity > 0 ? `${t('in_stock')} ${item.stockQuantity}` : t('out_of_stock_btn')}
+                            </Text>
+                        </View>
+                        <Text style={styles.soldText}>
+                            {t('sold')} {item.sold || 0}
                         </Text>
                     </View>
-
-                    {showAddToCart && onAddToCart && (
-                        <TouchableOpacity style={styles.addToCartBtn} onPress={() => onAddToCart(item)}>
-                            <Ionicons name="add" size={20} color="white" />
-                        </TouchableOpacity>
-                    )}
                 </View>
             </View>
         </TouchableOpacity>
@@ -94,42 +116,42 @@ const styles = StyleSheet.create({
     gridCard: {
         width: GRID_WIDTH,
         backgroundColor: 'white',
-        borderRadius: 12,
+        borderRadius: 16,
         marginBottom: 15,
         borderWidth: 1,
-        borderColor: '#f0f0f0',
-        elevation: 2,
+        borderColor: '#f1f5f9',
+        elevation: 4,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
         overflow: 'hidden',
     },
     gridImageContainer: {
         width: '100%',
-        height: 160,
-        backgroundColor: '#f9f9f9',
+        height: 180,
+        backgroundColor: '#f8fafc',
         position: 'relative',
     },
     horizontalCard: {
-        width: 160,
+        width: 170,
         marginRight: 15,
         backgroundColor: 'white',
-        borderRadius: 8,
+        borderRadius: 16,
         borderWidth: 1,
-        borderColor: '#eee',
+        borderColor: '#f1f5f9',
         padding: 0,
-        elevation: 2,
+        elevation: 4,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.08,
+        shadowRadius: 10,
         overflow: 'hidden',
     },
     horizontalImageContainer: {
         width: '100%',
-        height: 120,
-        backgroundColor: '#f5f5f5',
+        height: 140,
+        backgroundColor: '#f8fafc',
         position: 'relative',
     },
     image: {
@@ -139,105 +161,154 @@ const styles = StyleSheet.create({
     imagePlaceholder: {
         width: '100%',
         height: '100%',
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f8fafc',
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     badgeContainer: {
         position: 'absolute',
-        top: 8,
-        left: 8,
-        right: 8,
+        top: 10,
+        left: 10,
+        right: 10,
         flexDirection: 'row',
         justifyContent: 'space-between',
     },
-    tagBadge: {
-        backgroundColor: '#d32f2f',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 4,
-    },
-    tagText: {
-        color: 'white',
-        fontSize: 9,
-        fontWeight: 'bold',
-    },
     discountBadge: {
-        backgroundColor: '#ff4081',
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 4,
-        marginLeft: 'auto',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 8,
     },
     discountText: {
         color: 'white',
         fontSize: 10,
-        fontWeight: 'bold',
+        fontWeight: '900',
+        textTransform: 'uppercase',
     },
     infoContainer: {
-        padding: 10,
+        padding: 12,
         flex: 1,
         justifyContent: 'space-between',
     },
     brandText: {
         fontSize: 10,
-        color: '#9ca3af',
-        fontWeight: '700',
+        color: '#94a3b8',
+        fontWeight: '800',
         marginBottom: 4,
         textTransform: 'uppercase',
+        letterSpacing: 0.5,
     },
     nameText: {
-        fontWeight: '600',
-        fontSize: 13,
+        fontWeight: '700',
+        fontSize: 14,
         marginBottom: 6,
-        color: '#111827',
-        height: 36,
-        lineHeight: 18,
+        color: '#1e293b',
+        height: 40,
+        lineHeight: 20,
+    },
+    catContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginBottom: 8,
+        gap: 4,
+    },
+    catPill: {
+        backgroundColor: '#f1f5f9',
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+    catPillText: {
+        fontSize: 9,
+        color: '#64748b',
+        fontWeight: '600',
     },
     ratingRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 8,
+        marginBottom: 10,
         gap: 2,
     },
     ratingValue: {
         fontSize: 11,
-        fontWeight: '700',
-        color: '#111827',
+        fontWeight: '800',
+        color: '#1e293b',
         marginLeft: 2,
     },
     ratingCount: {
         fontSize: 10,
-        color: '#9ca3af',
+        color: '#94a3b8',
         marginLeft: 2,
+    },
+    footerContainer: {
+        marginTop: 'auto',
     },
     priceRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        marginTop: 'auto',
+        marginBottom: 10,
     },
     oldPriceText: {
         fontSize: 11,
-        color: '#999',
+        color: '#94a3b8',
         textDecorationLine: 'line-through',
-        marginBottom: 2,
+        marginBottom: 1,
+        fontWeight: '500',
     },
     priceText: {
-        fontSize: 15,
-        fontWeight: '700',
+        fontSize: 16,
+        fontWeight: '800',
+        color: '#1e293b',
+    },
+    discountedPrice: {
         color: COLORS.mainTitle,
     },
     addToCartBtn: {
         backgroundColor: COLORS.mainTitle,
-        width: 28,
-        height: 28,
-        borderRadius: 14,
+        width: 32,
+        height: 32,
+        borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         shadowColor: COLORS.mainTitle,
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
-        shadowRadius: 4,
-        elevation: 3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    metaRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        borderTopWidth: 1,
+        borderTopColor: '#f1f5f9',
+        paddingTop: 8,
+    },
+    stockBadge: {
+        paddingHorizontal: 6,
+        paddingVertical: 2,
+        borderRadius: 6,
+    },
+    inStock: {
+        backgroundColor: '#ecfdf5',
+    },
+    outOfStock: {
+        backgroundColor: '#fef2f2',
+    },
+    stockText: {
+        fontSize: 9,
+        fontWeight: '700',
+    },
+    inStockText: {
+        color: '#059669',
+    },
+    outOfStockText: {
+        color: '#ef4444',
+    },
+    soldText: {
+        fontSize: 9,
+        color: '#94a3b8',
+        fontWeight: '600',
     },
 });
 

@@ -5,9 +5,12 @@ import { COLORS } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { usePromotions } from '../../hooks/usePromotions';
 
+import { useDebounce } from '../../hooks/useDebounce';
+
 const PromotionScreen = ({ navigation }) => {
     const { t } = useLanguage();
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchInput, setSearchInput] = useState('');
+    const debouncedSearch = useDebounce(searchInput, 500);
     const [filterType, setFilterType] = useState('all');
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
@@ -15,12 +18,9 @@ const PromotionScreen = ({ navigation }) => {
     const { promotions, isLoading, fetchPromotions } = usePromotions();
 
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            fetchPromotions({ search: searchTerm, status: filterType });
-        }, 500);
-
-        return () => clearTimeout(delayDebounceFn);
-    }, [searchTerm, filterType, fetchPromotions]);
+        if (debouncedSearch !== searchInput) return;
+        fetchPromotions({ search: debouncedSearch, status: filterType });
+    }, [debouncedSearch, filterType, fetchPromotions]);
 
     const formatCurrency = (val) => {
         return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
@@ -71,7 +71,7 @@ const PromotionScreen = ({ navigation }) => {
 
                 {item.maxDiscount > 0 && (
                 <View style={styles.infoRow}>
-                    <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>Tối đa:</Text>
+                    <Text style={[styles.infoLabel, isExpired && styles.textDisabled]}>{t('promo_label_max_discount')}:</Text>
                     <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{formatCurrency(item.maxDiscount)}</Text>
                 </View>
                 )}
@@ -81,7 +81,9 @@ const PromotionScreen = ({ navigation }) => {
                         {t('promo_col_target')}:
                     </Text>
                     <View style={styles.rowInline}>
-                        <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>{item.promotionType || 'Tất cả'}</Text>
+                        <Text style={[styles.infoValue, isExpired && styles.textDisabled]}>
+                            {item.promotionType ? t(`promo_type_${item.promotionType.toLowerCase()}`) : t('all')}
+                        </Text>
                         <InfoIcon />
                     </View>
                 </View>
@@ -117,16 +119,21 @@ const PromotionScreen = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <View style={styles.filters}>
-                <Text style={styles.headerTitle}>{t('admin_home_promotions_title')}</Text>
+                <Text style={styles.headerTitle}>{t('promo_list_title')}</Text>
                 <View style={styles.searchContainer}>
                     <Ionicons name="search-outline" size={20} color="#999" style={styles.searchIcon} />
                     <TextInput
                         style={styles.searchInput}
-                        placeholder={t('search_placeholder') || "Search promotions..."}
-                        value={searchTerm}
-                        onChangeText={setSearchTerm}
+                        placeholder={t('promo_search_placeholder')}
+                        value={searchInput}
+                        onChangeText={setSearchInput}
                         placeholderTextColor="#999"
                     />
+                    {searchInput.length > 0 && (
+                        <TouchableOpacity onPress={() => setSearchInput('')} style={styles.clearIcon}>
+                            <Ionicons name="close-circle" size={20} color="#999" />
+                        </TouchableOpacity>
+                    )}
                 </View>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.chipContainer}>
                     {['all', 'STARTING', 'INCOMING', 'ENDED'].map((type) => (
@@ -156,7 +163,7 @@ const PromotionScreen = ({ navigation }) => {
                     ListEmptyComponent={
                         <Text style={styles.noResult}>{t('no_promos_found')}</Text>
                     }
-                    onRefresh={() => fetchPromotions({ search: searchTerm, status: filterType })}
+                    onRefresh={() => fetchPromotions({ search: searchInput, status: filterType })}
                     refreshing={isLoading}
                 />
             )}
@@ -186,7 +193,7 @@ const PromotionScreen = ({ navigation }) => {
                                     <Text style={styles.modalValue}>{selectedPromo.title}</Text>
                                 </View>
                                 <View style={styles.modalDetailRow}>
-                                    <Text style={styles.modalLabel}>Mã ID:</Text>
+                                    <Text style={styles.modalLabel}>{t('admin_promotion_id') || 'ID'}:</Text>
                                     <Text style={[styles.modalValue, styles.modalCode]}>#{selectedPromo.id}</Text>
                                 </View>
                                 <View style={styles.modalDetailRow}>
@@ -195,7 +202,9 @@ const PromotionScreen = ({ navigation }) => {
                                 </View>
                                 <View style={styles.modalDetailRow}>
                                     <Text style={styles.modalLabel}>{t('promo_col_target')}:</Text>
-                                    <Text style={styles.modalValue}>{selectedPromo.promotionType || 'Tất cả'}</Text>
+                                    <Text style={styles.modalValue}>
+                                        {selectedPromo.promotionType ? t(`promo_type_${selectedPromo.promotionType.toLowerCase()}`) : t('all')}
+                                    </Text>
                                 </View>
 
                                 {selectedPromo.categoryIds?.length > 0 && (
@@ -315,6 +324,9 @@ const styles = StyleSheet.create({
     searchIcon: {
         marginRight: 10,
         opacity: 0.8,
+    },
+    clearIcon: {
+        padding: 4,
     },
     searchInput: {
         flex: 1,

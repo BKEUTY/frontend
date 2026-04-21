@@ -56,7 +56,7 @@ const CheckoutScreen = () => {
         setLoading(true);
         try {
             const data = {
-                paymentMethod: paymentMethod === 'banking' ? 'Banking' : 'COD',
+                paymentMethod: paymentMethod === 'banking' ? 'BANK' : 'COD',
                 address: formData.address,
                 phone: formData.phone,
                 recipientName: formData.fullName,

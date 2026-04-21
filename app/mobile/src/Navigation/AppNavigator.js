@@ -13,6 +13,7 @@ import AccountScreen from '../Pages/Account/AccountScreen';
 import ProfileScreen from '../Pages/Account/ProfileScreen';
 import OrderDetailScreen from '../Pages/Account/OrderDetailScreen';
 import OrderListScreen from '../Pages/Account/OrderListScreen';
+import ReturnsScreen from '../Pages/Account/ReturnsScreen';
 import RetailSystemScreen from '../Pages/StaticPages/RetailSystemScreen';
 import ServiceScreen from '../Pages/StaticPages/ServiceScreen';
 import PromotionScreen from '../Pages/StaticPages/PromotionScreen';
@@ -102,6 +103,7 @@ export default function AppNavigator() {
                     <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: true, title: t('account') }} />
                     <Stack.Screen name="OrderList" component={OrderListScreen} options={{ headerShown: false }} />
                     <Stack.Screen name="OrderDetail" component={OrderDetailScreen} options={{ headerShown: false }} />
+                    <Stack.Screen name="Returns" component={ReturnsScreen} options={{ headerShown: true, title: t('return_requests') }} />
                     <Stack.Screen name="AppInfo" component={AppInfoScreen} options={{ headerShown: true, title: "App Info" }} />
 
                     <Stack.Screen name="NotFound" component={NotFoundScreen} />

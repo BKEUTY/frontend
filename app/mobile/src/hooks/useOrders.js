@@ -1,42 +1,58 @@
-import { useState, useCallback } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import orderApi from '../api/orderApi';
 import { useLanguage } from '../i18n/LanguageContext';
-import { showToast } from '../utils/ToastService';
 
-export const useOrders = () => {
-    const { t } = useLanguage();
-    const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [refreshing, setRefreshing] = useState(false);
+/**
+ * Hook for fetching user order history.
+ */
+export const useOrders = (params = {}) => {
+  const { t } = useLanguage();
+  return useQuery({
+    queryKey: ['myOrders', params],
+    queryFn: async () => {
+      const response = await orderApi.getHistory(params);
+      const rawData = response.data || [];
+      
+      return rawData.map(order => ({
+        ...order,
+        id: order.orderId || order.id,
+        date: order.orderDate,
+        totalDisplay: (Number(order.total || 0) + Number(order.shippingFee || 0)).toLocaleString("vi-VN") + 'đ',
+        status: order.status || 'PENDING'
+      })).sort((a, b) => new Date(b.date) - new Date(a.date));
+    },
+    staleTime: 30000,
+  });
+};
 
-    const fetchOrders = useCallback(async () => {
-        try {
-            const response = await orderApi.getHistory();
-            if (response.data) {
-                const mappedOrders = response.data.map(order => ({
-                    ...order,
-                    id: order.orderId,
-                    date: order.orderDate,
-                    totalDisplay: order.total ? order.total.toLocaleString("vi-VN") + 'đ' : '0đ',
-                    status: (order.paymentMethod === 'Banking' && !order.qrCodeLink) ? 'COMPLETED' : 'PENDING'
-                }));
-                mappedOrders.sort((a, b) => new Date(b.date) - new Date(a.date));
-                setOrders(mappedOrders);
-            }
-        } catch (error) {
-            console.error(error);
-            showToast(t('error'), 'error', t('api_error_order_history'));
-        } finally {
-            setLoading(false);
-            setRefreshing(false);
-        }
-    }, [t]);
-
-    return {
-        orders,
-        loading,
-        refreshing,
-        setRefreshing,
-        fetchOrders
-    };
+/**
+ * Hook for fetching a specific order's details.
+ */
+export const useOrderDetail = (orderId) => {
+  const { t } = useLanguage();
+  return useQuery({
+    queryKey: ['orderDetail', orderId],
+    queryFn: async () => {
+      const response = await orderApi.getById(orderId);
+      const order = response.data || response;
+      
+      return {
+        ...order,
+        id: order.orderId || order.id,
+        formattedDate: order.orderDate
+          ? new Date(order.orderDate).toLocaleString('vi-VN')
+          : '',
+        grandTotal: Number(order.total || 0) + Number(order.shippingFee || 0),
+        subtotal: Number(order.total || 0) // Backend 'total' usually means subtotal in this context
+      };
+    },
+    enabled: !!orderId,
+    refetchInterval: (query) => {
+      const data = query.state.data;
+      if (data?.paymentMethod === 'BANK' && data?.paymentStatus === 'UNPAID' && data?.status !== 'CANCELLED') {
+        return 5000;
+      }
+      return false;
+    },
+  });
 };

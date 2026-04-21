@@ -8,6 +8,16 @@ import { AuthProvider } from './src/Context/AuthContext';
 import { CartProvider } from './src/Context/CartContext';
 import { ToastProvider } from './src/Context/ToastContext';
 import { registerForPushNotificationsAsync } from './src/utils/NotificationService';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+const queryClient = new QueryClient({
+    defaultOptions: {
+        queries: {
+            retry: 1,
+            refetchOnWindowFocus: false,
+        },
+    },
+});
 
 const App = () => {
     const notificationListener = useRef();
@@ -29,17 +39,19 @@ const App = () => {
     }, []);
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }}>
-            <LanguageProvider>
-                <AuthProvider>
-                    <CartProvider>
-                        <ToastProvider>
-                            <AppNavigator />
-                        </ToastProvider>
-                    </CartProvider>
-                </AuthProvider>
-            </LanguageProvider>
-        </GestureHandlerRootView>
+        <QueryClientProvider client={queryClient}>
+            <GestureHandlerRootView style={{ flex: 1 }}>
+                <LanguageProvider>
+                    <AuthProvider>
+                        <CartProvider>
+                            <ToastProvider>
+                                <AppNavigator />
+                            </ToastProvider>
+                        </CartProvider>
+                    </AuthProvider>
+                </LanguageProvider>
+            </GestureHandlerRootView>
+        </QueryClientProvider>
     );
 };
 

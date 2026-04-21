@@ -57,14 +57,17 @@ export default function Promotion() {
     }, [page, titleTermFromUrl, filterType, startAtParam, endAtParam]);
 
     useEffect(() => {
-        setSearchInput(titleTermFromUrl);
+        if (!titleTermFromUrl) setSearchInput('');
     }, [titleTermFromUrl]);
 
     useEffect(() => {
-        if (debouncedSearch !== titleTermFromUrl) {
-            setQuery({ title: debouncedSearch || null, page: 1 });
+        if (debouncedSearch !== searchInput) return;
+
+        const cleanSearch = String(debouncedSearch ?? '').trim();
+        if (cleanSearch !== titleTermFromUrl) {
+            setQuery({ title: cleanSearch || null, page: 1 });
         }
-    }, [debouncedSearch, titleTermFromUrl, setQuery]);
+    }, [debouncedSearch, searchInput, titleTermFromUrl, setQuery]);
 
 
     useEffect(() => {
@@ -133,7 +136,15 @@ export default function Promotion() {
                             placeholder={t('promo_search_placeholder')}
                             prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
                             value={searchInput}
-                            onChange={(e) => setSearchInput(e.target.value)}
+                            onChange={(e) => {
+                                const val = e.target.value;
+                                setSearchInput(val);
+                                if (!val) {
+                                    setQuery({ title: null, page: 1 });
+                                }
+                            }}
+                            allowClear
+                            onPressEnter={() => setQuery({ title: searchInput.trim() || null, page: 1 })}
                             className="prm-search-input"
                         />
                         <Select

@@ -1,48 +1,92 @@
-import { useState, useCallback } from 'react';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import productApi from '../services/productService';
 
-export const useProducts = (pageSize = 20) => {
-    const [products, setProducts] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [totalPages, setTotalPages] = useState(0);
-    const [totalItems, setTotalItems] = useState(0);
+export const useProducts = (params = {}) => {
+  const {
+    size = 20,
+    search = '',
+    categoryId = null,
+    sort = 'default',
+    status = 'ACTIVE'
+  } = params;
 
-    const fetchProducts = useCallback(async (pageIndex, append, searchTerm, catId, currentSort) => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const params = { 
-                page: pageIndex, 
-                size: pageSize,
-                status: 'ACTIVE'
-            };
 
-            if (searchTerm) {
-                params.name = searchTerm.trim();
-            }
+  return useInfiniteQuery({
+    queryKey: ['products', 'infinite', { size, search, categoryId, sort, status }],
+    queryFn: async ({ pageParam = 1 }) => {
+      const trimmedSearch = search ? String(search).trim() : '';
+      const apiParams = {
+        page: pageParam,
+        size,
+        status,
+      };
 
-            if (catId && catId !== 'all') {
-                params.categoryId = catId;
-            }
-            
-            if (currentSort !== 'default') {
-                params.sort = currentSort; 
-            }
+      if (trimmedSearch) {
+        apiParams.search = trimmedSearch;
+      }
+      if (categoryId && categoryId !== 'all') {
+        apiParams.categoryId = categoryId;
+      }
+      if (sort !== 'default') {
+        apiParams.sort = sort;
+      }
 
-            const res = await productApi.getAll(params);
-            const newItems = res.data?.content || [];
+      const res = await productApi.getAll(apiParams);
+      return {
+        items: res.data?.content || [],
+        totalPages: res.data?.totalPages || 1,
+        totalItems: res.data?.totalElements || 0,
+        nextPage: pageParam < res.data?.totalPages ? pageParam + 1 : undefined,
+      };
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage) => lastPage.nextPage,
+    staleTime: 5 * 60 * 1000,
+  });
+};
 
-            setProducts(prev => append ? [...prev, ...newItems] : newItems);
-            setTotalPages(res.data?.totalPages || 1);
-            setTotalItems(res.data?.totalElements || 0);
+export const useProductsPaginated = (params = {}) => {
+  const {
+    page = 1,
+    size = 20,
+    search = '',
+    categoryId = null,
+    sort = 'default',
+    status = 'ACTIVE'
+  } = params;
 
-        } catch (err) {
-            setError('api_error_fetch_products');
-        } finally {
-            setTimeout(() => setIsLoading(false), 300);
-        }
-    }, [pageSize]);
+  const query = useQuery({
+    queryKey: ['products', 'paginated', { page, size, search, categoryId, sort, status }],
+    queryFn: async () => {
+      const trimmedSearch = search ? String(search).trim() : '';
+      const apiParams = {
+        page,
+        size,
+        status,
+      };
 
-    return { products, isLoading, error, totalPages, totalItems, fetchProducts };
+      if (trimmedSearch) {
+        apiParams.search = trimmedSearch;
+      }
+      if (categoryId && categoryId !== 'all') {
+        apiParams.categoryId = categoryId;
+      }
+      if (sort !== 'default') {
+        apiParams.sort = sort;
+      }
+
+      const res = await productApi.getAll(apiParams);
+      return {
+        items: res.data?.content || [],
+        totalPages: res.data?.totalPages || 1,
+        totalItems: res.data?.totalElements || 0,
+      };
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  return {
+    ...query,
+    error: query.error ? (query.error?.response?.data?.message || query.error?.message || 'no_products_found') : null,
+  };
 };

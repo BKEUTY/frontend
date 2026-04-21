@@ -188,6 +188,7 @@ export default {
     brand_desc: "Bkeuty brings leading high-end cosmetic brands, committing to absolute product quality and a professional beauty experience.",
     top_rated: "Top Rated",
     most_reviewed: "Most Reviewed",
+    best_selling: "Best Selling",
     premium_products: "Premium Products",
     top_in_stock: "Top In Stock",
     filter_5_star: "5 stars",
@@ -521,6 +522,7 @@ export default {
     reviews_low_high: "Review: Low to high",
     time_newest: "Time: Newest",
     time_oldest: "Time: Oldest",
+    search_order_placeholder: "Search by order ID, product name...",
     login_required: "Please log in",
     login_required_to_checkout: "Please log in to checkout",
 

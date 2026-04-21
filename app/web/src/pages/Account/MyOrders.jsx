@@ -1,16 +1,18 @@
-import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useLanguage } from '@/store/LanguageContext';
-import { Spin, Select, DatePicker } from 'antd';
-import { EyeOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
+import { Pagination, SEO } from '@/components/common';
 import { useOrders } from '@/features/orders/hooks/useOrders';
+import { useDebounce } from '@/hooks/useDebounce';
 import { useQueryParams } from '@/hooks/useQueryParams';
-import { SEO, Pagination } from '@/components/common';
+import { useLanguage } from '@/store/LanguageContext';
+import { EyeOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
+import { DatePicker, Input, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './MyOrders.css';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
+const { Search } = Input;
 
 const MyOrders = () => {
     const { t } = useLanguage();
@@ -20,7 +22,7 @@ const MyOrders = () => {
 
     const rawPage = query.page ? Number(query.page) : 1;
     const page = Number.isFinite(rawPage) ? Math.max(1, rawPage) : 1;
-    
+
     const rawSize = query.pageSize ? Number(query.pageSize) : 10;
     const pageSize = Number.isFinite(rawSize) ? Math.max(1, rawSize) : 10;
 
@@ -28,13 +30,31 @@ const MyOrders = () => {
     const sort = query.sort || 'default';
     const startDate = query.startDate || null;
     const endDate = query.endDate || null;
+    const searchText = query.search || '';
 
-    const filters = {
+    const [searchInput, setSearchInput] = useState(searchText);
+    const debouncedSearch = useDebounce(searchInput, 500);
+
+    useEffect(() => {
+        if (!searchText) setSearchInput('');
+    }, [searchText]);
+
+    useEffect(() => {
+        if (debouncedSearch !== searchInput) return;
+
+        const cleanSearch = String(debouncedSearch ?? '').trim();
+        if (cleanSearch !== searchText) {
+            setQuery({ search: cleanSearch || null, page: 1 });
+        }
+    }, [debouncedSearch, searchInput, searchText, setQuery]);
+
+    const filters = useMemo(() => ({
         status: status === 'ALL' ? null : status,
-        sort,
+        sort: sort === 'default' ? null : sort,
         startDate,
         endDate,
-    };
+        search: searchText,
+    }), [status, sort, startDate, endDate, searchText]);
 
     const { orders, total, totalPages, loading } = useOrders(page, pageSize, filters);
 
@@ -57,9 +77,9 @@ const MyOrders = () => {
         if (payM === 'BANK' && payS === 'UNPAID') {
             return t('status_awaiting_payment');
         }
-        
+
         if (orderS === 'CONFIRMED') return t('status_shipping');
-        
+
         return t('status_order_received');
     };
 
@@ -78,58 +98,79 @@ const MyOrders = () => {
     return (
         <div className="account-info-container">
             <SEO title={t('my_orders')} />
-            
+
             <div className="page-header">
                 <h1 className="page-title">{t('my_orders')}</h1>
             </div>
 
             <div className="ord-filter-section-compact">
-                <div className="ord-filter-group">
-                    <FilterOutlined className="ord-filter-icon-only" />
-                    <div className="ord-filter-controls">
-                        <Select 
-                            value={status} 
-                            onChange={(val) => handleFilterChange({ status: val })} 
-                            className="ord-compact-select"
-                        >
-                            <Option value="ALL">{t('all')}</Option>
-                            <Option value="NOT_CONFIRMED">{t('status_order_received')}</Option>
-                            <Option value="CONFIRMED">{t('status_shipping')}</Option>
-                            <Option value="SUCCEEDED">{t('order_status_SUCCEEDED')}</Option>
-                            <Option value="CANCELLED">{t('order_status_CANCELLED')}</Option>
-                        </Select>
-                        <RangePicker 
-                            value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : null}
-                            onChange={(dates) => {
-                                handleFilterChange({
-                                    startDate: dates?.[0] ? dates[0].format('YYYY-MM-DD') : null,
-                                    endDate: dates?.[1] ? dates[1].format('YYYY-MM-DD') : null
-                                });
-                            }}
-                            className="ord-compact-range"
-                            placeholder={[t('startDate'), t('endDate')]}
-                        />
-                    </div>
+                <div className="ord-search-wrapper">
+                    <Search
+                        placeholder={t('search_order_placeholder') || t('search')}
+                        allowClear
+                        value={searchInput}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setSearchInput(val);
+                            if (!val) {
+                                setQuery({ search: null, page: 1 });
+                            }
+                        }}
+                        onSearch={(val) => setQuery({ search: val?.trim?.() || null, page: 1 })}
+                        className="ord-compact-search"
+                    />
                 </div>
 
-                <div className="ord-filter-group sort-group">
-                    <SortAscendingOutlined className="ord-filter-icon-only" />
-                    <div className="ord-filter-controls">
-                        <Select 
-                            value={sort} 
-                            onChange={(val) => handleFilterChange({ sort: val })} 
-                            className="ord-compact-select"
-                        >
-                            <Option value="default">{t('sort_default')}</Option>
-                            <Option value="date_desc">{t('time_newest')}</Option>
-                            <Option value="date_asc">{t('time_oldest')}</Option>
-                            <Option value="total_desc">{t('price_high_low')}</Option>
-                            <Option value="total_asc">{t('price_low_high')}</Option>
-                        </Select>
+                <div className="ord-filters-row">
+                    <div className="ord-filter-group">
+                        <FilterOutlined className="ord-filter-icon-only" />
+                        <div className="ord-filter-controls">
+                            <Select
+                                value={status}
+                                onChange={(val) => handleFilterChange({ status: val })}
+                                className="ord-compact-select"
+                                dropdownMatchSelectWidth={false}
+                            >
+                                <Option value="ALL">{t('all')}</Option>
+                                <Option value="NOT_CONFIRMED">{t('status_order_received')}</Option>
+                                <Option value="CONFIRMED">{t('status_shipping')}</Option>
+                                <Option value="SUCCEEDED">{t('order_status_SUCCEEDED')}</Option>
+                                <Option value="CANCELLED">{t('order_status_CANCELLED')}</Option>
+                            </Select>
+                            <RangePicker
+                                value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : null}
+                                onChange={(dates) => {
+                                    handleFilterChange({
+                                        startDate: dates?.[0] ? dates[0].format('YYYY-MM-DD') : null,
+                                        endDate: dates?.[1] ? dates[1].format('YYYY-MM-DD') : null
+                                    });
+                                }}
+                                className="ord-compact-range"
+                                placeholder={[t('startDate'), t('endDate')]}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="ord-filter-group sort-group">
+                        <SortAscendingOutlined className="ord-filter-icon-only" />
+                        <div className="ord-filter-controls">
+                            <Select
+                                value={sort}
+                                onChange={(val) => handleFilterChange({ sort: val })}
+                                className="ord-compact-select"
+                                dropdownMatchSelectWidth={false}
+                            >
+                                <Option value="default">{t('sort_default')}</Option>
+                                <Option value="date_desc">{t('time_newest')}</Option>
+                                <Option value="date_asc">{t('time_oldest')}</Option>
+                                <Option value="total_desc">{t('price_high_low')}</Option>
+                                <Option value="total_asc">{t('price_low_high')}</Option>
+                            </Select>
+                        </div>
                     </div>
                 </div>
             </div>
-            
+
             <div className="ord-page-content">
                 <div className="ord-table-wrapper">
                     {loading ? (
@@ -164,7 +205,7 @@ const MyOrders = () => {
                                                 </td>
                                                 <td align="center">
                                                     <div className="ord-actions-cell">
-                                                        <button 
+                                                        <button
                                                             className="ord-action-btn"
                                                             onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
                                                             title={t('view_detail')}
@@ -190,7 +231,7 @@ const MyOrders = () => {
                                     )}
                                 </tbody>
                             </table>
-                            
+
                             <div className="ord-pagination-wrapper">
                                 <Pagination
                                     page={page}
@@ -226,7 +267,7 @@ const MyOrders = () => {
                                             <span>{t('grand_total')}</span>
                                             <span className="ord-highlight-total">{order.formattedTotal}</span>
                                         </div>
-                                        <button 
+                                        <button
                                             className="ord-btn-detail"
                                             onClick={() => navigate(`/account/orders/${order.id}`, { state: { order } })}
                                         >
@@ -242,7 +283,7 @@ const MyOrders = () => {
                                     </button>
                                 </div>
                             )}
-                            
+
                             <div className="mobile-pagination">
                                 <Pagination
                                     page={page}

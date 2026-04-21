@@ -1,11 +1,12 @@
 import { CButton, Pagination, ProductCard, SEO } from "@/components/common";
-import { useProducts } from "@/features/products/hooks/useProducts";
+import { useProductsPaginated } from "@/features/products/hooks/useProducts";
 import productApi from "@/features/products/services/productService";
 import useClickOutside from "@/hooks/useClickOutside";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useLanguage } from "@/store/LanguageContext";
 import { DownOutlined, MenuOutlined, SearchOutlined } from '@ant-design/icons';
+import { Input } from "antd";
 import { useEffect, useRef, useState } from "react";
 import "./Product.css";
 
@@ -28,19 +29,33 @@ export default function Product() {
   const [searchInput, setSearchInput] = useState(searchTermFromUrl);
   const debouncedSearch = useDebounce(searchInput, 500);
 
-  const { products, isLoading, error, totalPages, totalItems, fetchProducts } = useProducts(pageSize);
+  const { data, isLoading, error } = useProductsPaginated({
+    page,
+    size: pageSize,
+    search: searchTermFromUrl,
+    categoryId: activeCategory,
+    sort: sortOption
+  });
+
+  const [allProducts, setAllProducts] = useState([]);
+  const products = allProducts;
+  const totalPages = data?.totalPages || 0;
+  const totalItems = data?.totalItems || 0;
 
   useClickOutside(dropdownRef, () => setIsMobileCatOpen(false));
 
   useEffect(() => {
-    setSearchInput(searchTermFromUrl);
+    if (!searchTermFromUrl) setSearchInput('');
   }, [searchTermFromUrl]);
 
   useEffect(() => {
-    if (debouncedSearch !== searchTermFromUrl) {
-      setQuery({ search: debouncedSearch, page: 1 });
+    if (debouncedSearch !== searchInput) return;
+
+    const cleanSearch = String(debouncedSearch ?? '').trim();
+    if (cleanSearch !== searchTermFromUrl) {
+      setQuery({ search: cleanSearch || null, page: 1 });
     }
-  }, [debouncedSearch, searchTermFromUrl, setQuery]);
+  }, [debouncedSearch, searchInput, searchTermFromUrl, setQuery]);
 
   useEffect(() => {
     let isMounted = true;
@@ -57,9 +72,26 @@ export default function Product() {
   useEffect(() => {
     const isFiltering = searchTermFromUrl.length > 0 || activeCategory !== null || sortOption !== 'default';
     setIsPaginationMode(isFiltering);
-    const shouldAppend = !isFiltering && page > 1;
-    fetchProducts(page, shouldAppend, searchTermFromUrl, activeCategory, sortOption);
-  }, [page, searchTermFromUrl, activeCategory, sortOption, fetchProducts]);
+  }, [searchTermFromUrl, activeCategory, sortOption]);
+
+  useEffect(() => {
+    if (data?.items) {
+      if (isPaginationMode) {
+        setAllProducts(data.items);
+      } else {
+        if (page === 1) {
+          setAllProducts(data.items);
+        } else {
+          // Only append if it's not already in the list (simple deduplication)
+          setAllProducts(prev => {
+            const existingIds = new Set(prev.map(p => p.productId));
+            const newItems = data.items.filter(p => !existingIds.has(p.productId));
+            return page === 1 ? data.items : [...prev, ...newItems];
+          });
+        }
+      }
+    }
+  }, [data, isPaginationMode, page]);
 
   const handleCategorySelect = (id) => {
     if (activeCategory === id) return;
@@ -70,6 +102,12 @@ export default function Product() {
   const handleSortChange = (e) => {
     if (sortOption === e.target.value) return;
     setQuery({ sort: e.target.value, page: 1 });
+  };
+
+  const handleQuickSort = (sortValue) => {
+    if (sortOption === sortValue) return;
+    setQuery({ sort: sortValue, page: 1 });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePageChange = (newPage) => {
@@ -121,20 +159,42 @@ export default function Product() {
             </div>
           </div>
           <div className="quick-links">
-            <span className="quick-link-item">{t('best_sellers')}</span>
-            <span className="quick-link-item">{t('hot_deals')}</span>
-            <span className="quick-link-item">{t('new_arrivals')}</span>
+            <span
+              className={`quick-link-item ${sortOption === 'sold_desc' ? 'active' : ''}`}
+              onClick={() => handleQuickSort('sold_desc')}
+            >
+              {t('best_sellers')}
+            </span>
+            <span
+              className={`quick-link-item ${sortOption === 'price_asc' ? 'active' : ''}`}
+              onClick={() => handleQuickSort('price_asc')}
+            >
+              {t('hot_deals')}
+            </span>
+            <span
+              className={`quick-link-item ${sortOption === 'id_desc' ? 'active' : ''}`}
+              onClick={() => handleQuickSort('id_desc')}
+            >
+              {t('new_arrivals')}
+            </span>
           </div>
         </div>
 
         <div className="prod-search-bar-wrapper">
-          <button className="prod-search-btn"><SearchOutlined className="prod-search-icon" /></button>
-          <input
-            type="text"
+          <Input
             placeholder={t('search_hint')}
             className="prod-search-input"
             value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
+            onChange={(e) => {
+              const val = e.target.value;
+              setSearchInput(val);
+              if (!val) {
+                setQuery({ search: null, page: 1 });
+              }
+            }}
+            onPressEnter={() => setQuery({ search: searchInput.trim() || null, page: 1 })}
+            allowClear
+            prefix={<SearchOutlined className="prod-search-icon" />}
           />
         </div>
       </div>
@@ -171,7 +231,7 @@ export default function Product() {
                 ))}
               </div>
             ) : error ? (
-              <div className="no-products">{t(error)}</div>
+              <div className="no-products">{t(error) || error.toString()}</div>
             ) : products.length === 0 ? (
               <div className="no-products">{t('no_products_found')}</div>
             ) : (

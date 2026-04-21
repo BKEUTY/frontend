@@ -249,22 +249,25 @@
 
 @media (max-width: 768px) {
     .home-hero-slider {
-        height: 55vh;
-        min-height: 400px;
+        height: 50vh;
+        min-height: 350px;
     }
 
     .glass-title {
-        font-size: 2.25rem;
+        font-size: 1.85rem;
+        margin-bottom: 12px;
     }
 
     .glass-subtitle {
-        font-size: 1rem;
-        margin-bottom: 32px;
+        font-size: 0.9rem;
+        margin-bottom: 24px;
+        opacity: 0.9;
     }
 
     .btn-glass-primary {
-        padding: 12px 32px;
-        font-size: 0.95rem;
+        padding: 10px 24px;
+        font-size: 0.85rem;
+        border-radius: 25px;
     }
 
     .slider-arrow {

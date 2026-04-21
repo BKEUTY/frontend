@@ -1,24 +1,37 @@
+import { useLanguage } from '@/store/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import orderApi from '../services/orderService';
-import { useLanguage } from '@/store/LanguageContext';
+import { useMemo } from 'react';
 
 export const useOrders = (page = 1, size = 10, filters = {}) => {
-    const normalizedPage = Number.isFinite(Number(page)) ? Math.max(1, Number(page)) : 1;
-    const normalizedSize = Number.isFinite(Number(size)) ? Math.max(1, Number(size)) : 10;
-
     const { t } = useLanguage();
-    const { data, isPending, error, refetch } = useQuery({
-        queryKey: ['myOrders', normalizedPage, normalizedSize, filters],
-        queryFn: async () => {
-            const sanitizedFilters = Object.fromEntries(
-                Object.entries(filters).filter(([, value]) => value !== null && value !== undefined && value !== '')
-            );
 
-            const response = await orderApi.getHistory({
-                page: normalizedPage,
-                size: normalizedSize,
-                ...sanitizedFilters
-            });
+    const queryParams = useMemo(() => {
+        const cleanParams = { 
+            page: Number.isFinite(Number(page)) ? Math.max(1, Number(page)) : 1,
+            size: Number.isFinite(Number(size)) ? Math.max(1, Number(size)) : 10,
+            ...filters 
+        };
+        
+        Object.keys(cleanParams).forEach((key) => {
+            if (cleanParams[key] === null || cleanParams[key] === undefined || cleanParams[key] === '') {
+                delete cleanParams[key];
+            }
+        });
+
+        if (cleanParams.status === 'ALL') delete cleanParams.status;
+        if (cleanParams.sort === 'default') delete cleanParams.sort;
+        if (cleanParams.search) {
+            cleanParams.search = String(cleanParams.search).trim();
+        }
+        
+        return cleanParams;
+    }, [page, size, filters]);
+
+    const query = useQuery({
+        queryKey: ['myOrders', queryParams],
+        queryFn: async () => {
+            const response = await orderApi.getHistory(queryParams);
 
             const rawData = response.data;
             const content = Array.isArray(rawData) ? rawData : (rawData?.content || []);
@@ -43,12 +56,12 @@ export const useOrders = (page = 1, size = 10, filters = {}) => {
     });
 
     return {
-        orders: data?.content ?? [],
-        total: data?.total ?? 0,
-        totalPages: data?.totalPages ?? 0,
-        loading: isPending,
-        error,
-        refetch
+        orders: query.data?.content ?? [],
+        total: query.data?.total ?? 0,
+        totalPages: query.data?.totalPages ?? 0,
+        loading: query.isPending,
+        error: query.error ? (query.error?.response?.data?.message || query.error?.message || 'error') : null,
+        refetch: query.refetch
     };
 };
 

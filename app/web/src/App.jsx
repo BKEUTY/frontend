@@ -10,20 +10,37 @@ import router from "./routes/router";
 
 import "./App.css";
 
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import ErrorBoundary from './components/common/ErrorBoundary';
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
 function App() {
   return (
-    <ConfigProvider theme={{ cssVar: true, hashed: false }}>
-      <LanguageProvider>
-        <NotificationProvider>
-          <AuthProvider>
-            <CartProvider>
-              <RouterProvider router={router} />
-            </CartProvider>
-          </AuthProvider>
-        </NotificationProvider>
-      </LanguageProvider>
-    </ConfigProvider>
+    <ErrorBoundary>
+      <QueryClientProvider client={queryClient}>
+        <ConfigProvider theme={{ cssVar: true, hashed: false }}>
+          <LanguageProvider>
+            <NotificationProvider>
+              <AuthProvider>
+                <CartProvider>
+                  <RouterProvider router={router} />
+                </CartProvider>
+              </AuthProvider>
+            </NotificationProvider>
+          </LanguageProvider>
+        </ConfigProvider>
+      </QueryClientProvider>
+    </ErrorBoundary>
   );
 }
+
 
 export default App;

@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '@/store/LanguageContext';
-import { Skeleton, ProductCard, SEO } from '@/components/common';
-import { LeftOutlined, RightOutlined } from '@ant-design/icons';
-import { useProducts } from '@/features/products/hooks/useProducts';
+import about_image from "@/assets/images/banners/banner_about_us.svg";
 import banner1 from '@/assets/images/banners/banner_home_1.png';
 import banner2 from '@/assets/images/banners/banner_home_2.png';
-import about_image from "@/assets/images/banners/banner_about_us.svg";
+import { ProductCard, SEO } from '@/components/common';
+import { useProductsPaginated } from '@/features/products/hooks/useProducts';
 import { usePersonalizedRecommendations } from '@/hooks/useRecommendation';
+import { useLanguage } from '@/store/LanguageContext';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Home.css';
 
 const bannerImages = [banner1, banner2];
@@ -19,24 +19,20 @@ const Home = () => {
 
     const { data: recData, isLoading: recLoading } = usePersonalizedRecommendations();
 
-    const topRatedApi = useProducts(5);
-    const mostReviewedApi = useProducts(5);
-    const premiumApi = useProducts(5);
-    const availableApi = useProducts(5);
-
-    useEffect(() => {
-        topRatedApi.fetchProducts(1, false, null, 'all', 'rating_desc');
-        mostReviewedApi.fetchProducts(1, false, null, 'all', 'reviews_desc');
-        premiumApi.fetchProducts(1, false, null, 'all', 'price_desc');
-        availableApi.fetchProducts(1, false, null, 'all', 'stock_desc');
-    }, []);
+    const { data: topRated, isLoading: topRatedLoading } = useProductsPaginated({ size: 5, sort: 'rating_desc' });
+    const { data: mostReviewed, isLoading: mostReviewedLoading } = useProductsPaginated({ size: 5, sort: 'reviews_desc' });
+    const { data: bestSelling, isLoading: bestSellingLoading } = useProductsPaginated({ size: 5, sort: 'sold_desc' });
+    const { data: premium, isLoading: premiumLoading } = useProductsPaginated({ size: 5, sort: 'price_desc' });
+    const { data: available, isLoading: availableLoading } = useProductsPaginated({ size: 5, sort: 'stock_desc' });
 
     const sectionsConfig = [
-        { id: 'rating', hook: topRatedApi, title: t('top_rated') },
-        { id: 'reviews', hook: mostReviewedApi, title: t('most_reviewed') },
-        { id: 'price', hook: premiumApi, title: t('premium_products') },
-        { id: 'stock', hook: availableApi, title: t('top_in_stock') }
+        { id: 'rating', items: topRated?.items || [], isLoading: topRatedLoading, title: t('top_rated') },
+        { id: 'reviews', items: mostReviewed?.items || [], isLoading: mostReviewedLoading, title: t('most_reviewed') },
+        { id: 'bestselling', items: bestSelling?.items || [], isLoading: bestSellingLoading, title: t('best_selling') },
+        { id: 'price', items: premium?.items || [], isLoading: premiumLoading, title: t('premium_products') },
+        { id: 'stock', items: available?.items || [], isLoading: availableLoading, title: t('top_in_stock') }
     ];
+
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -50,8 +46,8 @@ const Home = () => {
 
     return (
         <div className="home-container">
-            <SEO 
-                title={t('home')} 
+            <SEO
+                title={t('home')}
                 description={t('brand_tagline')}
             />
             <div className="home-hero-slider animate-fade-in">
@@ -122,8 +118,8 @@ const Home = () => {
             )}
 
             {sectionsConfig.map((section, idx) => {
-                const { products, isLoading } = section.hook;
-                
+                const { items: products, isLoading } = section;
+
                 return (
                     <section key={section.id} className={`home-section ${idx % 2 !== 0 ? 'bg-light' : ''}`}>
                         <div className="home-section-content">
@@ -149,6 +145,7 @@ const Home = () => {
                     </section>
                 );
             })}
+
 
             <section className="home-brand-section">
                 <div className="brand-content-wrapper">

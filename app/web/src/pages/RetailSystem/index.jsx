@@ -44,14 +44,17 @@ export default function RetailSystem() {
     ], []);
 
     useEffect(() => {
-        setSearchInput(searchTermFromUrl);
+        if (!searchTermFromUrl) setSearchInput('');
     }, [searchTermFromUrl]);
 
     useEffect(() => {
-        if (debouncedSearch !== searchTermFromUrl) {
-            setQuery({ search: debouncedSearch || null, page: 1 });
+        if (debouncedSearch !== searchInput) return;
+
+        const cleanSearch = String(debouncedSearch ?? '').trim();
+        if (cleanSearch !== searchTermFromUrl) {
+            setQuery({ search: cleanSearch || null, page: 1 });
         }
-    }, [debouncedSearch, searchTermFromUrl, setQuery]);
+    }, [debouncedSearch, searchInput, searchTermFromUrl, setQuery]);
 
     useEffect(() => {
         setIsLoading(true);
@@ -135,8 +138,15 @@ export default function RetailSystem() {
                         size="large"
                         placeholder={t('retail_search_placeholder')}
                         prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
+                        allowClear
                         value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setSearchInput(val);
+                            if (!val) {
+                                setQuery({ search: null, page: 1 });
+                            }
+                        }}
                         className="retail-search-input"
                     />
                     <Select

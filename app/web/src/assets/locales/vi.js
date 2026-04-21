@@ -193,6 +193,7 @@ export default {
     show_less: "Thu gọn",
     top_rated: "Đánh giá cao",
     most_reviewed: "Được đánh giá nhiều nhất",
+    best_selling: "Bán chạy nhất",
     premium_products: "Sản phẩm cao cấp",
     top_in_stock: "Sản phẩm sẵn có",
     personalized_for_you: "Gợi ý cho riêng bạn",
@@ -532,6 +533,7 @@ export default {
     reviews_low_high: "Bình luận: Ít đến nhiều",
     time_newest: "Thời gian: Mới nhất",
     time_oldest: "Thời gian: Cũ nhất",
+    search_order_placeholder: "Tìm kiếm theo mã đơn hàng, sản phẩm...",
     login_required: "Vui lòng đăng nhập",
     login_required_to_checkout: "Vui lòng đăng nhập để thanh toán",
 

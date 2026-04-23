@@ -471,13 +471,19 @@
     }
 
     .prm-mobile-list {
-        display: block;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
     }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 600px) {
+    .prm-mobile-list {
+        grid-template-columns: 1fr;
+    }
+    
     .prm-page-container {
-        padding: 24px 16px;
+        padding: 24px 12px;
     }
 
     .prm-page-title {
@@ -489,12 +495,15 @@
         align-items: stretch;
         padding: 16px;
         gap: 12px;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.8);
     }
 
     .prm-search-status {
         flex-direction: column;
         width: 100%;
-        gap: 12px;
+        gap: 10px;
+        min-width: unset;
     }
 
     .prm-status-select {
@@ -502,6 +511,7 @@
     }
 
     .prm-date-range {
-        width: 100%;
+        width: 100% !important;
+        min-width: unset;
     }
 }

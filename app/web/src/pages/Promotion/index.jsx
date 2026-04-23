@@ -6,6 +6,7 @@ import { Input, Select, Spin, DatePicker } from 'antd';
 import dayjs from 'dayjs';
 
 import promotionApi from '@/features/promotions/services/promotionService';
+import productApi from '@/features/products/services/productService';
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useDebounce } from "@/hooks/useDebounce";
 import "./Promotion.css";
@@ -30,6 +31,7 @@ export default function Promotion() {
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
     const [promotions, setPromotions] = useState([]);
+    const [metadata, setMetadata] = useState({ productNames: {}, categoryNames: {}, brandNames: {} });
     const [loading, setLoading] = useState(true);
     const [totalPages, setTotalPages] = useState(0);
     const [totalItems, setTotalItems] = useState(0);
@@ -46,9 +48,30 @@ export default function Promotion() {
                 endAt: endAtParam
             });
             if (res.data) {
-                setPromotions(res.data.content || []);
+                const fetchedPromotions = res.data.content || [];
+                setPromotions(fetchedPromotions);
                 setTotalPages(res.data.totalPages || 0);
                 setTotalItems(res.data.totalElements || 0);
+                const productIds = new Set();
+                const categoryIds = new Set();
+                const brandIds = new Set();
+
+                fetchedPromotions.forEach(p => {
+                    if (p.productIds) p.productIds.forEach(id => productIds.add(id));
+                    if (p.categoryIds) p.categoryIds.forEach(id => categoryIds.add(id));
+                    if (p.brandIds) p.brandIds.forEach(id => brandIds.add(id));
+                });
+
+                if (productIds.size > 0 || categoryIds.size > 0 || brandIds.size > 0) {
+                    const metaRes = await productApi.getPromotionMetadata({
+                        productIds: Array.from(productIds),
+                        categoryIds: Array.from(categoryIds),
+                        brandIds: Array.from(brandIds)
+                    });
+                    if (metaRes.data) {
+                        setMetadata(metaRes.data);
+                    }
+                }
             }
         } catch (error) {
         } finally {
@@ -307,21 +330,27 @@ export default function Promotion() {
                             {selectedPromo.categoryIds?.length > 0 && (
                                 <div className="prm-modal-row">
                                     <label>{t('categories')}:</label>
-                                    <span className="prm-text-wrap">{selectedPromo.categoryIds.join(', ')}</span>
+                                    <span className="prm-text-wrap">
+                                        {selectedPromo.categoryIds.map(id => metadata.categoryNames?.[id] || id).join(', ')}
+                                    </span>
                                 </div>
                             )}
 
                             {selectedPromo.brandIds?.length > 0 && (
                                 <div className="prm-modal-row">
                                     <label>{t('brands')}:</label>
-                                    <span className="prm-text-wrap">{selectedPromo.brandIds.join(', ')}</span>
+                                    <span className="prm-text-wrap">
+                                        {selectedPromo.brandIds.map(id => metadata.brandNames?.[id] || id).join(', ')}
+                                    </span>
                                 </div>
                             )}
 
                             {selectedPromo.productIds?.length > 0 && (
                                 <div className="prm-modal-row">
                                     <label>{t('product')}:</label>
-                                    <span className="prm-text-wrap">{selectedPromo.productIds.join(', ')}</span>
+                                    <span className="prm-text-wrap">
+                                        {selectedPromo.productIds.map(id => metadata.productNames?.[id] || id).join(', ')}
+                                    </span>
                                 </div>
                             )}
 

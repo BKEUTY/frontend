@@ -112,6 +112,7 @@ const createAxiosClient = () => {
 
                 const errorData = error.response?.data;
                 const apiMessage = typeof errorData === 'string' ? errorData : (errorData?.message || errorData?.error || '');
+                
                 const description = originalRequest.customErrorMsg || apiMessage || getTranslation(fallbackKey);
                 
                 if (error.message === 'Network Error') {
@@ -138,4 +139,3 @@ export const getImageUrl = (imagePath) => {
 };
 
 export default axiosClient;
-

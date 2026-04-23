@@ -9,6 +9,10 @@ class ProductApi extends BaseApi {
     getCategories() {
         return this.client.get(`${this.resource}/categories`);
     }
+
+    getPromotionMetadata(data) {
+        return this.client.post(`${this.resource}/promotion-metadata`, data);
+    }
 }
 
 const productApi = new ProductApi();

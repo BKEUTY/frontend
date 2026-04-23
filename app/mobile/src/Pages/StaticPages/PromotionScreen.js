@@ -4,6 +4,7 @@ import { useLanguage } from '../../i18n/LanguageContext';
 import { COLORS } from '../../constants/Theme';
 import { Ionicons } from '@expo/vector-icons';
 import { usePromotions } from '../../hooks/usePromotions';
+import productApi from '../../api/productApi';
 
 import { useDebounce } from '../../hooks/useDebounce';
 
@@ -14,13 +15,45 @@ const PromotionScreen = ({ navigation }) => {
     const [filterType, setFilterType] = useState('all');
     const [selectedPromo, setSelectedPromo] = useState(null);
     const [showVipInfo, setShowVipInfo] = useState(false);
-
+    const [metadata, setMetadata] = useState({ productNames: {}, categoryNames: {}, brandNames: {} });
     const { promotions, isLoading, fetchPromotions } = usePromotions();
 
     useEffect(() => {
-        if (debouncedSearch !== searchInput) return;
-        fetchPromotions({ search: debouncedSearch, status: filterType });
+        const loadPromos = async () => {
+            const result = await fetchPromotions({ search: debouncedSearch, status: filterType });
+            if (result && result.length > 0) {
+                fetchMetadata(result);
+            }
+        };
+        loadPromos();
     }, [debouncedSearch, filterType, fetchPromotions]);
+
+    const fetchMetadata = async (promoList) => {
+        const productIds = new Set();
+        const categoryIds = new Set();
+        const brandIds = new Set();
+
+        promoList.forEach(p => {
+            if (p.productIds) p.productIds.forEach(id => productIds.add(id));
+            if (p.categoryIds) p.categoryIds.forEach(id => categoryIds.add(id));
+            if (p.brandIds) p.brandIds.forEach(id => brandIds.add(id));
+        });
+
+        if (productIds.size > 0 || categoryIds.size > 0 || brandIds.size > 0) {
+            try {
+                const metaRes = await productApi.getPromotionMetadata({
+                    productIds: Array.from(productIds),
+                    categoryIds: Array.from(categoryIds),
+                    brandIds: Array.from(brandIds)
+                });
+                if (metaRes.data) {
+                    setMetadata(metaRes.data);
+                }
+            } catch (err) {
+                console.error('Metadata fetch error:', err);
+            }
+        }
+    };
 
     const formatCurrency = (val) => {
         return new Intl.NumberFormat('vi-VN').format(val) + 'đ';
@@ -210,21 +243,27 @@ const PromotionScreen = ({ navigation }) => {
                                 {selectedPromo.categoryIds?.length > 0 && (
                                     <View style={styles.modalDetailRow}>
                                         <Text style={styles.modalLabel}>{t('categories') || 'Danh mục'}:</Text>
-                                        <Text style={styles.modalValue}>{selectedPromo.categoryIds.join(', ')}</Text>
+                                        <Text style={styles.modalValue}>
+                                            {selectedPromo.categoryIds.map(id => metadata.categoryNames?.[id] || id).join(', ')}
+                                        </Text>
                                     </View>
                                 )}
 
                                 {selectedPromo.brandIds?.length > 0 && (
                                     <View style={styles.modalDetailRow}>
                                         <Text style={styles.modalLabel}>{t('brands') || 'Thương hiệu'}:</Text>
-                                        <Text style={styles.modalValue}>{selectedPromo.brandIds.join(', ')}</Text>
+                                        <Text style={styles.modalValue}>
+                                            {selectedPromo.brandIds.map(id => metadata.brandNames?.[id] || id).join(', ')}
+                                        </Text>
                                     </View>
                                 )}
 
                                 {selectedPromo.productIds?.length > 0 && (
                                     <View style={styles.modalDetailRow}>
                                         <Text style={styles.modalLabel}>{t('products') || 'Sản phẩm'}:</Text>
-                                        <Text style={styles.modalValue}>{selectedPromo.productIds.join(', ')}</Text>
+                                        <Text style={styles.modalValue}>
+                                            {selectedPromo.productIds.map(id => metadata.productNames?.[id] || id).join(', ')}
+                                        </Text>
                                     </View>
                                 )}
 

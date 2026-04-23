@@ -29,6 +29,7 @@ export const usePromotions = (pageSize = 30) => {
                 total: data.totalElements || 0,
                 totalPages: data.totalPages || 0
             });
+            return content;
         } catch (err) {
             setError('api_error_general');
         } finally {

@@ -116,7 +116,7 @@ const OrderDetailScreen = () => {
                             <View style={styles.paymentDetails}>
                                 <View style={styles.payRow}>
                                     <Text style={styles.payLabel}>{t('amount')}</Text>
-                                    <Text style={styles.payValue}>{order.grandTotal.toLocaleString()}đ</Text>
+                                    <Text style={styles.payValue}>{order.grandTotal.toLocaleString()}{t('unit_vnd')}</Text>
                                 </View>
                                 <View style={styles.payRow}>
                                     <Text style={styles.payLabel}>{t('order_id')}</Text>
@@ -160,7 +160,7 @@ const OrderDetailScreen = () => {
                                     <Text style={styles.productName} numberOfLines={2}>{item.productVariantName}</Text>
                                     <View style={styles.qtyPriceRow}>
                                         <Text style={styles.productQty}>x{item.quantity}</Text>
-                                        <Text style={styles.productPrice}>{(item.promotionPrice || item.price)?.toLocaleString()}đ</Text>
+                                        <Text style={styles.productPrice}>{(item.promotionPrice || item.price)?.toLocaleString()}{t('unit_vnd')}</Text>
                                     </View>
                                 </View>
                             </View>
@@ -212,24 +212,24 @@ const OrderDetailScreen = () => {
                     
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>{t('subtotal')}</Text>
-                        <Text style={styles.summaryValue}>{order.subtotal.toLocaleString()}đ</Text>
+                        <Text style={styles.summaryValue}>{order.subtotal.toLocaleString()}{t('unit_vnd')}</Text>
                     </View>
                     
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>{t('shipping_fee')}</Text>
-                        <Text style={styles.summaryValue}>+{(order.shippingFee || 0).toLocaleString()}đ</Text>
+                        <Text style={styles.summaryValue}>+{(order.shippingFee || 0).toLocaleString()}{t('unit_vnd')}</Text>
                     </View>
 
                     {order.discount > 0 && (
                         <View style={styles.summaryRow}>
                             <Text style={[styles.summaryLabel, { color: '#10b981' }]}>{t('discount')}</Text>
-                            <Text style={[styles.summaryValue, { color: '#10b981' }]}>-{(order.discount || 0).toLocaleString()}đ</Text>
+                            <Text style={[styles.summaryValue, { color: '#10b981' }]}>-{(order.discount || 0).toLocaleString()}{t('unit_vnd')}</Text>
                         </View>
                     )}
                     
                     <View style={styles.totalRow}>
                         <Text style={styles.totalLabel}>{t('grand_total')}</Text>
-                        <Text style={styles.totalValue}>{order.grandTotal.toLocaleString()}đ</Text>
+                        <Text style={styles.totalValue}>{order.grandTotal.toLocaleString()}{t('unit_vnd')}</Text>
                     </View>
                 </View>
 

@@ -526,4 +526,6 @@ export default {
     contact_office_address: "123 Le Loi Street, Ben Nghe Ward, District 1, HCMC.",
     contact_office_desc: "Operating hours: Monday - Friday, 8:30 - 17:30.",
     search_orders_placeholder: "Search by order ID...",
+    unit_vnd: "đ",
+    unit_product: "pcs",
 };

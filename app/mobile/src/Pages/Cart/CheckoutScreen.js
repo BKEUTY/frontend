@@ -141,7 +141,7 @@ const CheckoutScreen = () => {
                     <View style={styles.infoBox}>
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>{t('amount')}</Text>
-                            <Text style={styles.infoValue}>{grandTotal.toLocaleString("vi-VN")}đ</Text>
+                            <Text style={styles.infoValue}>{grandTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</Text>
                         </View>
                         <View style={styles.infoRow}>
                             <Text style={styles.infoLabel}>{t('order_id')}</Text>
@@ -271,7 +271,7 @@ const CheckoutScreen = () => {
                                     <Text style={styles.itemName} numberOfLines={1}>{item.name}</Text>
                                     <Text style={styles.itemQty}>x{item.quantity}</Text>
                                 </View>
-                                <Text style={styles.itemPrice}>{(item.price * item.quantity).toLocaleString("vi-VN")}đ</Text>
+                                <Text style={styles.itemPrice}>{(item.price * item.quantity).toLocaleString("vi-VN")}{t('unit_vnd')}</Text>
                             </View>
                         ))}
                     </View>
@@ -279,22 +279,22 @@ const CheckoutScreen = () => {
 
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>{t('subtotal')}</Text>
-                        <Text style={styles.summaryValue}>{(subTotal || 0).toLocaleString("vi-VN")}đ</Text>
+                        <Text style={styles.summaryValue}>{(subTotal || 0).toLocaleString("vi-VN")}{t('unit_vnd')}</Text>
                     </View>
                     <View style={styles.summaryRow}>
                         <Text style={styles.summaryLabel}>{t('shipping_fee')}</Text>
-                        <Text style={styles.summaryValue}>{shippingFee.toLocaleString("vi-VN")}đ</Text>
+                        <Text style={styles.summaryValue}>{shippingFee.toLocaleString("vi-VN")}{t('unit_vnd')}</Text>
                     </View>
                     {discount > 0 && (
                         <View style={styles.summaryRow}>
                             <Text style={[styles.summaryLabel, { color: '#10b981' }]}>{t('discount')}</Text>
-                            <Text style={{ color: '#10b981', fontWeight: 'bold' }}>-{(discount).toLocaleString("vi-VN")}đ</Text>
+                            <Text style={{ color: '#10b981', fontWeight: 'bold' }}>-{(discount).toLocaleString("vi-VN")}{t('unit_vnd')}</Text>
                         </View>
                     )}
                     <View style={styles.totalDivider} />
                     <View style={styles.summaryRow}>
                         <Text style={styles.totalLabel}>{t('total')}</Text>
-                        <Text style={styles.totalValue}>{grandTotal.toLocaleString("vi-VN")}đ</Text>
+                        <Text style={styles.totalValue}>{grandTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</Text>
                     </View>
                 </View>
             </ScrollView>

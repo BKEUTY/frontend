@@ -539,4 +539,6 @@ export default {
     contact_office_address: "123 Lê Lợi, Phường Bến Nghé, Quận 1, TP.HCM.",
     contact_office_desc: "Giờ làm việc: Thứ 2 - Thứ 6, 8:30 - 17:30.",
     search_orders_placeholder: "Tìm theo mã đơn hàng...",
+    unit_vnd: "đ",
+    unit_product: "sp",
 };

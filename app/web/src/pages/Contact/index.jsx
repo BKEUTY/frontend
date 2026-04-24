@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '@/store/LanguageContext';
-import { EnvironmentOutlined, PhoneOutlined, UserOutlined } from '@ant-design/icons';
+import { ClockCircleOutlined, EnvironmentOutlined, MailOutlined, MessageOutlined, PhoneOutlined } from '@ant-design/icons';
 import StaticPageLayout from '@/components/layouts/StaticPageLayout';
 import { SEO } from '@/components/common';
 import contact_map from "@/assets/images/contact_google_map.png";
@@ -21,18 +21,24 @@ const Contact = () => {
                 <div className="contact-info-card">
                     <h3>{t('contact_channels_title')}</h3>
                     <ul>
-                        <li><PhoneOutlined /> {t('contact_hotline')}</li>
-                        <li><EnvironmentOutlined /> {t('contact_email')}</li>
-                        <li><UserOutlined /> {t('contact_zalo')}</li>
+                        <li><PhoneOutlined /> <span>{t('contact_hotline')}</span></li>
+                        <li><MailOutlined /> <span>{t('contact_email')}</span></li>
+                        <li><MessageOutlined /> <span>{t('contact_zalo')}</span></li>
                     </ul>
                 </div>
 
                 <div className="contact-info-card">
                     <h3>{t('contact_office_title')}</h3>
-                    <p className="office-address">
-                        <EnvironmentOutlined /> {t('contact_office_address')}
-                    </p>
-                    <p className="office-desc">{t('contact_office_desc')}</p>
+                    <ul>
+                        <li>
+                            <EnvironmentOutlined />
+                            <span>{t('contact_office_address')}</span>
+                        </li>
+                        <li>
+                            <ClockCircleOutlined />
+                            <span>{t('contact_office_desc')}</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
         </StaticPageLayout>

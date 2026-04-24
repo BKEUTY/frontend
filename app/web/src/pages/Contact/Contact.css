@@ -31,19 +31,30 @@
     transform: scale(1.02);
 }
 
-.contact-info-card li,
-.office-address {
+.contact-info-card li {
     cursor: default;
 }
 
-.contact-info-card svg {
+.contact-info-card .anticon {
     color: var(--color_main_title);
-    font-size: 1.25rem;
+    font-size: 1.2rem;
     flex-shrink: 0;
+    background: #fff0f6;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
-.office-desc {
-    margin-left: 36px;
-    color: var(--color_light_text);
-    font-size: 0.95rem;
+.contact-info-card li:hover .anticon {
+    background: var(--color_main_title);
+    color: #ffffff;
+    transform: rotate(-10deg);
+}
+
+.contact-info-card span {
+    font-weight: 500;
 }

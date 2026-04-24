@@ -360,28 +360,6 @@
     margin-top: 20px;
 }
 
-@media (max-width: 1200px) {
-    .ord-filter-section-compact {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .ord-filters-row {
-        width: 100%;
-        flex-wrap: wrap;
-    }
-
-    .ord-filter-group {
-        flex: 1;
-        min-width: 200px;
-    }
-
-    .ord-compact-select,
-    .ord-compact-range {
-        width: 100%;
-    }
-}
-
 @media (max-width: 992px) {
     .ord-table-wrapper {
         display: none;
@@ -389,122 +367,50 @@
 
     .ord-mobile-list {
         display: block;
+        padding: 0 15px;
     }
 
-    .ord-filter-section-compact {
-        grid-template-columns: 1fr;
-        gap: 12px;
-    }
-
-    .ord-filters-row {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .ord-filter-group {
-        width: 100%;
-    }
-
-    .ord-filter-controls {
-        width: 100%;
-    }
-
-    .ord-compact-select,
-    .ord-compact-range {
-        width: 100%;
-    }
-
-    .sort-group {
-        width: 100%;
-    }
-
-    .sort-group .ord-filter-controls {
-        width: 100%;
-    }
-}
-
-@media (max-width: 768px) {
-    .ord-filter-section-compact {
-        padding: 12px;
-        gap: 10px;
-    }
-
-    .ord-search-wrapper .ant-input-search input {
-        font-size: 14px;
-    }
-
-    .ord-filter-group {
-        flex-direction: column;
-        align-items: flex-start;
-        width: 100%;
-        gap: 6px;
-    }
-
-    .ord-filter-controls {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .ord-filter-icon-only {
-        align-self: flex-start;
-    }
-
-    .ord-compact-select,
-    .ord-compact-range {
-        width: 100%;
-    }
-
-    .ord-compact-select .ant-select,
-    .ord-compact-range .ant-picker {
-        width: 100%;
-    }
-
-    .sort-group {
-        width: 100%;
-    }
-
-    .sort-group .ord-filter-controls {
-        width: 100%;
-    }
-}
-
-@media (max-width: 480px) {
     .ord-page-header {
-        margin-bottom: 16px;
+        padding: 40px 15px 80px;
+        border-radius: 0 0 40px 40px;
     }
 
     .ord-page-title {
-        font-size: 1.5rem;
+        font-size: 28px;
+    }
+
+    .ord-hero-subtitle {
+        font-size: 14px;
     }
 
     .ord-filter-section-compact {
+        flex-direction: column;
+        align-items: stretch;
+        margin: -35px 15px 30px;
         padding: 12px;
-        gap: 10px;
-        grid-template-columns: 1fr;
+        border-radius: 16px;
     }
 
-    .ord-search-wrapper .ant-input-search input {
-        font-size: 13px;
-        height: 40px !important;
-    }
-
-    .ord-filter-group {
-        gap: 4px;
-    }
-
+    .ord-search-wrapper,
+    .ord-filters-row,
+    .ord-filter-group,
+    .ord-filter-controls,
     .ord-compact-select,
     .ord-compact-range {
-        width: 100%;
-        font-size: 13px;
+        width: 100% !important;
+        min-width: 100% !important;
     }
 
+    .ord-filter-controls {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .ord-search-wrapper .ant-input-affix-wrapper,
     .ord-compact-select .ant-select,
     .ord-compact-range .ant-picker {
-        height: 40px !important;
-    }
-
-    .ord-filter-icon-only {
-        font-size: 14px;
+        height: 48px !important;
+        border-radius: 12px !important;
     }
 
     .ord-table th,
@@ -514,18 +420,14 @@
     }
 
     .ord-card {
-        padding: 12px;
-        margin-bottom: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        border-radius: 20px;
     }
 
     .ord-status-badge {
-        padding: 3px 8px;
+        padding: 4px 10px;
         font-size: 10px;
-    }
-
-    .ord-action-btn {
-        width: 32px;
-        height: 32px;
     }
 }
 

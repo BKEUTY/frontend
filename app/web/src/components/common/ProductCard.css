@@ -1,10 +1,11 @@
 .product-card {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #ffffff;
-    border-radius: 12px;
+    border-radius: 24px;
     overflow: hidden;
-    border: 1px solid #f1f5f9;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: none;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -12,9 +13,8 @@
 }
 
 .product-card:hover {
-    border-color: #e2e8f0;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
-    transform: translateY(-2px);
+    box-shadow: 0 15px 40px rgba(161, 5, 80, 0.1);
+    transform: translateY(-8px);
 }
 
 .product-card-wrapper .ant-card-body {
@@ -26,9 +26,10 @@
 
 .card-img-container {
     position: relative;
-    padding-top: 90%;
+    padding-top: 100%;
     background: #f8fafc;
     overflow: hidden;
+    border-radius: 24px 24px 0 0;
 }
 
 .card-img-container img {
@@ -36,52 +37,58 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 82%;
-    height: 82%;
+    width: 85%;
+    height: 85%;
     object-fit: contain;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .card-img-container img {
+    transform: translate(-50%, -50%) scale(1.08);
 }
 
 .card-promo-tag {
     position: absolute;
-    top: 10px;
+    top: 16px;
     right: 0;
-    background: #e11d48;
+    background: linear-gradient(135deg, var(--color_main_title) 0%, var(--color_secondary) 100%);
     color: #ffffff;
-    font-size: 9px;
-    font-weight: 900;
-    padding: 4px 10px;
+    font-size: 10px;
+    font-weight: 800;
+    padding: 6px 14px;
     border-radius: 100px 0 0 100px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 1px;
     z-index: 10;
+    box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
 }
 
 .card-body-content {
-    padding: 14px;
+    padding: 18px;
     display: flex;
     flex-direction: column;
     flex: 1;
 }
 
 .card-brand-wrap {
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 
 .card-brand-text {
     color: #94a3b8;
-    font-size: 10px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 1px;
     text-transform: uppercase;
 }
 
 .card-product-name {
-    font-size: 0.925rem;
+    font-size: 0.95rem;
     font-weight: 700;
     color: #1e293b;
     margin-bottom: 10px;
     line-height: 1.4;
-    height: 2.6rem;
+    height: 2.8rem;
     overflow: hidden;
     display: -webkit-box;
     -webkit-line-clamp: 2;
@@ -91,24 +98,24 @@
 .card-cat-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
 .cat-pill {
-    background-color: #f1f5f9;
-    color: #64748b;
-    font-size: 10px;
-    font-weight: 600;
+    background-color: rgba(161, 5, 80, 0.05);
+    color: var(--color_main_title);
+    font-size: 9px;
+    font-weight: 700;
     padding: 3px 8px;
-    border-radius: 4px;
+    border-radius: 100px;
 }
 
 .card-rating-wrap {
     display: flex;
     align-items: center;
     gap: 8px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .card-stars-wrapper {
@@ -118,7 +125,7 @@
 }
 
 .card-stars {
-    font-size: 11px !important;
+    font-size: 12px !important;
     color: #f59e0b !important;
     display: flex !important;
     align-items: center;
@@ -129,16 +136,15 @@
 }
 
 .card-review-txt {
-    font-size: 11px;
+    font-size: 12px;
     color: #94a3b8;
-    font-weight: 500;
-    line-height: 1;
+    font-weight: 600;
 }
 
 .card-footer-row {
     margin-top: auto;
     padding-top: 12px;
-    border-top: 1px solid #f8fafc;
+    border-top: 1px dashed #f1f5f9;
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -147,25 +153,26 @@
 .card-price-row {
     display: flex;
     align-items: baseline;
-    gap: 10px;
+    gap: 12px;
 }
 
 .card-price-old {
-    font-size: 11px;
+    font-size: 12px;
     color: #cbd5e1;
     text-decoration: line-through;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .card-price-current {
     font-size: 1.25rem;
-    font-weight: 800;
+    font-weight: 850;
     color: #1e293b;
     line-height: 1;
+    letter-spacing: -0.5px;
 }
 
 .card-price-current.is-discounted {
-    color: #e11d48;
+    color: #c2185b;
 }
 
 .stock-sold-wrapper {
@@ -180,37 +187,57 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 6px 4px;
-    border-radius: 8px;
-    font-size: 10px;
-    font-weight: 700;
+    padding: 7px 4px;
+    border-radius: 10px;
+    font-size: 9.5px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.3px;
     white-space: nowrap;
-    transition: all 0.2s ease;
 }
 
 .stock-status.is-available {
-    background: #f0fdf4;
-    color: #166534;
+    background: rgba(16, 185, 129, 0.1);
+    color: #059669;
 }
 
 .stock-status.is-unavailable {
-    background: #fef2f2;
-    color: #991b1b;
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
 }
 
 .sold-status {
-    background: #f1f5f9;
+    background: #f8fafc;
     color: #475569;
+}
+
+@media (max-width: 480px) {
+    .card-footer-row {
+        gap: 12px;
+    }
+    
+    .card-price-current {
+        font-size: 1.15rem;
+    }
+
+    .stock-status, .sold-status {
+        font-size: 8px;
+        padding: 5px 2px;
+    }
 }
 
 @media (max-width: 768px) {
     .card-body-content {
-        padding: 12px;
+        padding: 16px;
     }
 
     .card-product-name {
-        font-size: 0.875rem;
+        font-size: 0.95rem;
+        height: 2.85rem;
+    }
+    
+    .product-card {
+        border-radius: 20px;
     }
 }
+

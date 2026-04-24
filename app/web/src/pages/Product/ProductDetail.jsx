@@ -225,11 +225,12 @@ export default function ProductDetail() {
 
     return (
         <div className="product-detail-page">
-            <SEO
-                title={displayName}
-                description={productData.description}
-                image={mainImage}
-            />
+            <div className="product-detail-container">
+                <SEO
+                    title={displayName}
+                    description={productData.description}
+                    image={mainImage}
+                />
             <div className="breadcrumb">
                 <Link to={'/product'} state={{ fromDetail: true }}>{t('product')}</Link>
                 <span className="divider">/</span>
@@ -296,7 +297,7 @@ export default function ProductDetail() {
                     <div className="options-section">
                         {productData.options?.map((opt, idx) => (
                             <div key={idx} className="option-group">
-                                <span className="option-label">{opt.name.toUpperCase()}:</span>
+                                <span className="option-label">{opt.name}:</span>
                                 <div className="size-options">
                                     {opt.values.map(val => {
                                         const isActive = selectedOptions[opt.name]?.toString().toLowerCase().trim() === val?.toString().toLowerCase().trim();
@@ -401,6 +402,7 @@ export default function ProductDetail() {
                         ))
                     )}
                 </div>
+            </div>
             </div>
         </div>
     );

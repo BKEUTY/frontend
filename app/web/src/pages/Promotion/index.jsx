@@ -147,8 +147,9 @@ export default function Promotion() {
 
     return (
         <div className="prm-page-container">
-            <div className="prm-page-header">
+            <div className="prm-page-header animate-slide-up">
                 <h1 className="prm-page-title">{t('promo_list_title')}</h1>
+                <p className="prm-hero-subtitle">Khám phá các chương trình ưu đãi đặc biệt từ BKEUTY</p>
             </div>
             
             <div className="prm-page-content">

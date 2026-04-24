@@ -77,7 +77,7 @@
 .progress-bar {
     width: 30%;
     height: 100%;
-    background: linear-gradient(90deg, var(--color_main_title, #c2185b) 0%, #ff4081 100%);
+    background: linear-gradient(90deg, var(--color_main_title) 0%, var(--color_secondary) 100%);
     border-radius: 100px;
     position: relative;
     overflow: hidden;

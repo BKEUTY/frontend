@@ -6,7 +6,7 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useLanguage } from "@/store/LanguageContext";
 import { DownOutlined, MenuOutlined, SearchOutlined } from '@ant-design/icons';
-import { Input } from "antd";
+import { Input, Select } from "antd";
 import { useEffect, useRef, useState } from "react";
 import "./Product.css";
 
@@ -99,9 +99,9 @@ export default function Product() {
     setIsMobileCatOpen(false);
   };
 
-  const handleSortChange = (e) => {
-    if (sortOption === e.target.value) return;
-    setQuery({ sort: e.target.value, page: 1 });
+  const handleSortChange = (value) => {
+    if (sortOption === value) return;
+    setQuery({ sort: value, page: 1 });
   };
 
   const handleQuickSort = (sortValue) => {
@@ -208,19 +208,28 @@ export default function Product() {
                 <span className="count-badge">({totalItems})</span>
               </div>
               <div className="product-sort">
-                <select value={sortOption} onChange={handleSortChange} className="sort-select">
-                  <option value="default">{t('default_sort')}</option>
-                  <option value="price_asc">{t('price_low_high')}</option>
-                  <option value="price_desc">{t('price_high_low')}</option>
-                  <option value="stock_desc">{t('stock_high_low')}</option>
-                  <option value="stock_asc">{t('stock_low_high')}</option>
-                  <option value="sold_desc">{t('sold_high_low')}</option>
-                  <option value="sold_asc">{t('sold_low_high')}</option>
-                  <option value="rating_desc">{t('rating_high_low')}</option>
-                  <option value="rating_asc">{t('rating_low_high')}</option>
-                  <option value="reviews_desc">{t('reviews_high_low')}</option>
-                  <option value="reviews_asc">{t('reviews_low_high')}</option>
-                </select>
+                <div className="bkeuty-sort-wrapper">
+                  <Select
+                    value={sortOption}
+                    onChange={handleSortChange}
+                    className="bkeuty-custom-select"
+                    popupClassName="sort-select-popup"
+                    suffixIcon={<DownOutlined />}
+                    variant="borderless"
+                  >
+                    <Select.Option value="default">{t('default_sort')}</Select.Option>
+                    <Select.Option value="price_asc">{t('price_low_high')}</Select.Option>
+                    <Select.Option value="price_desc">{t('price_high_low')}</Select.Option>
+                    <Select.Option value="stock_desc">{t('stock_high_low')}</Select.Option>
+                    <Select.Option value="stock_asc">{t('stock_low_high')}</Select.Option>
+                    <Select.Option value="sold_desc">{t('sold_high_low')}</Select.Option>
+                    <Select.Option value="sold_asc">{t('sold_low_high')}</Select.Option>
+                    <Select.Option value="rating_desc">{t('rating_high_low')}</Select.Option>
+                    <Select.Option value="rating_asc">{t('rating_low_high')}</Select.Option>
+                    <Select.Option value="reviews_desc">{t('reviews_high_low')}</Select.Option>
+                    <Select.Option value="reviews_asc">{t('reviews_low_high')}</Select.Option>
+                  </Select>
+                </div>
               </div>
             </div>
 

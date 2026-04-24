@@ -7,12 +7,12 @@
     display: flex;
     background: #ffffff;
     padding: 32px;
-    border-radius: 16px;
+    border-radius: 24px;
     gap: 40px;
     align-items: center;
     margin-bottom: 32px;
-    border: 1px solid #f1f5f9;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+    border: none;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
 }
 
 .pr-overview {

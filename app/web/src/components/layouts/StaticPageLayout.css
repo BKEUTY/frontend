@@ -75,21 +75,15 @@
 }
 
 .static-container ul li {
-    padding-left: 28px;
+    padding-left: 0;
     position: relative;
     margin-bottom: 15px;
     color: var(--color_general_text);
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.static-container ul li::before {
-    content: '→';
-    position: absolute;
-    left: 0;
-    color: var(--color_main_title);
-    font-weight: bold;
-}
-
-/* Specific adjustments for Contact form-like sections */
 .contact-info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

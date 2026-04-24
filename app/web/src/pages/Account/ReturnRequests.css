@@ -1,12 +1,12 @@
 :root {
     --ret-primary: #1a1a1a;
     --ret-secondary: #64748b;
-    --ret-accent: #c2185b;
+    --ret-accent: var(--color_main_title);
     --ret-border: #f1f5f9;
     --ret-bg-card: #ffffff;
-    --ret-radius: 20px;
-    --ret-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    --ret-shadow-hover: 0 12px 30px rgba(194, 24, 91, 0.08);
+    --ret-radius: 24px;
+    --ret-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --ret-shadow-hover: 0 15px 40px rgba(161, 5, 80, 0.12);
 }
 
 .return-requests-container {
@@ -41,8 +41,8 @@
     bottom: -8px;
     left: 0;
     width: 60px;
-    height: 4px;
-    background: var(--ret-accent);
+    height: 6px;
+    background: linear-gradient(90deg, var(--color_main_title), var(--color_secondary));
     border-radius: 10px;
 }
 
@@ -74,7 +74,7 @@
 .return-card:hover {
     transform: translateY(-8px);
     box-shadow: var(--ret-shadow-hover);
-    border-color: rgba(194, 24, 91, 0.2);
+    border-color: rgba(161, 5, 80, 0.2);
 }
 
 .card-top {
@@ -191,3 +191,4 @@
     .page-header { flex-direction: column; gap: 20px; }
     .returns-list { grid-template-columns: 1fr; }
 }
+

@@ -73,6 +73,16 @@ const LandingPage = () => {
                         <RightOutlined />
                     </button>
                 </div>
+
+                <div className="slider-dots">
+                    {images.map((_, idx) => (
+                        <span
+                            key={idx}
+                            className={`dot ${currentImageIndex === idx ? 'active' : ''}`}
+                            onClick={() => setCurrentImageIndex(idx)}
+                        />
+                    ))}
+                </div>
             </div>
         </div>
     );

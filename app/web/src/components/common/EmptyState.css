@@ -9,7 +9,7 @@
 
 .empty-state-icon {
     font-size: 48px;
-    color: var(--color_main_title, #ec4899);
+    color: var(--color_main_title);
     margin-bottom: 16px;
 }
 

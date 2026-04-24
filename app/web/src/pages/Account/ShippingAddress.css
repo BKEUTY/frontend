@@ -1,13 +1,13 @@
 :root {
-    --bkeuty-primary: #c2185b;
-    --bkeuty-primary-light: #fff0f3;
-    --bkeuty-primary-dark: #880e4f;
+    --bkeuty-primary: var(--color_main_title);
+    --bkeuty-primary-light: rgba(161, 5, 80, 0.05);
+    --bkeuty-primary-dark: #730336;
     --bkeuty-text-main: #1a1a1a;
     --bkeuty-text-sub: #64748b;
     --bkeuty-border: #f1f5f9;
-    --bkeuty-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    --bkeuty-shadow-hover: 0 12px 30px rgba(194, 24, 91, 0.12);
-    --bkeuty-radius: 20px;
+    --bkeuty-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    --bkeuty-shadow-hover: 0 15px 40px rgba(161, 5, 80, 0.12);
+    --bkeuty-radius: 24px;
 }
 
 .shipping-address-container {
@@ -64,7 +64,7 @@
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
-    box-shadow: 0 8px 16px rgba(194, 24, 91, 0.2) !important;
+    box-shadow: 0 8px 16px rgba(161, 5, 80, 0.2) !important;
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
     background-color: var(--bkeuty-primary) !important;
     border: none !important;
@@ -72,7 +72,7 @@
 
 .btn-add-address:hover {
     transform: translateY(-4px) scale(1.02);
-    box-shadow: 0 12px 24px rgba(194, 24, 91, 0.3) !important;
+    box-shadow: 0 12px 24px rgba(161, 5, 80, 0.3) !important;
     background-color: var(--bkeuty-primary-dark) !important;
 }
 
@@ -107,7 +107,7 @@
 }
 
 .address-card:hover {
-    border-color: rgba(194, 24, 91, 0.1);
+    border-color: rgba(161, 5, 80, 0.1);
     box-shadow: var(--bkeuty-shadow-hover);
     transform: translateY(-6px);
 }
@@ -291,7 +291,7 @@
 .beauty-select.ant-select-focused .ant-select-selector {
     border-color: var(--bkeuty-primary) !important;
     background: #fff !important;
-    box-shadow: 0 0 0 4px rgba(194, 24, 91, 0.08) !important;
+    box-shadow: 0 0 0 4px rgba(161, 5, 80, 0.08) !important;
 }
 
 .beauty-select .ant-select-selection-placeholder {
@@ -354,14 +354,14 @@
     font-weight: 700 !important;
     background: var(--bkeuty-primary) !important;
     border: none !important;
-    box-shadow: 0 4px 12px rgba(194, 24, 91, 0.2) !important;
+    box-shadow: 0 4px 12px rgba(161, 5, 80, 0.2) !important;
     transition: all 0.3s ease !important;
 }
 
 .btn-modal-confirm:hover {
     background: var(--bkeuty-primary-dark) !important;
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(194, 24, 91, 0.3) !important;
+    box-shadow: 0 8px 16px rgba(161, 5, 80, 0.3) !important;
 }
 
 @keyframes sa-slide-up {
@@ -412,3 +412,4 @@
         font-size: 26px;
     }
 }
+

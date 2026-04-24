@@ -4,7 +4,7 @@
 
 :root {
   --color-primary: #ba1a56;
-  --color-primary-hover: #e91e63;
+  --color-primary-hover: var(--color_secondary);
   --color-text-main: #333;
   --color-text-secondary: #666;
   --color-bg-light: #f9f9f9;

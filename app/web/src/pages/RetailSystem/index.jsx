@@ -90,15 +90,15 @@ export default function RetailSystem() {
         const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(selectedBranch.address)}`;
 
         return (
-            <div className="retail-page-container">
+            <div className="retail-page-container animate-fade-in">
                 <SEO 
                     title={`${selectedBranch.name} | ${t('retail_system')} | BKEUTY`} 
                     description={`${t('retail_address')}: ${selectedBranch.address}. ${t('retail_phone')}: ${selectedBranch.phone}.`}
                 />
-                <div className="retail-page-header">
-                    <h1 className="retail-page-title">{selectedBranch.name}</h1>
+                <div className="retail-hero-header animate-slide-up">
+                    <h1 className="retail-hero-title">{selectedBranch.name}</h1>
                 </div>
-                <div className="retail-page-content">
+                <div className="retail-page-content delay-100">
                     <div className="retail-detail-wrapper">
                         <Button icon={<LeftOutlined />} onClick={() => setQuery({ branchId: null })} className="btn-back" type="text">
                             {t('retail_back_to_list')}
@@ -168,13 +168,14 @@ export default function RetailSystem() {
     }
 
     return (
-        <div className="retail-page-container">
+        <div className="retail-page-container animate-fade-in">
             <SEO title={t('retail_system')} />
-            <div className="retail-page-header">
-                <h1 className="retail-page-title">{t('retail_system')}</h1>
+            <div className="retail-hero-header animate-slide-up">
+                <h1 className="retail-hero-title">{t('retail_system')}</h1>
+                <p className="retail-hero-subtitle">Khám phá các chi nhánh BKEUTY gần bạn nhất</p>
             </div>
-            <div className="retail-page-content">
-                <div className="retail-controls">
+            <div className="retail-page-content delay-100">
+                <div className="retail-controls-floating">
                     <Input
                         size="large"
                         placeholder={t('retail_search_placeholder')}
@@ -221,7 +222,8 @@ export default function RetailSystem() {
                     <>
                         <div className="retail-grid">
                             {paginatedBranches.map(branch => (
-                                <div key={branch.id} className={`store-card ${branch.status === 'Closed' ? 'inactive' : ''}`}>
+                                <div key={branch.id} className={`store-card animate-slide-up delay-100 ${branch.status === 'Closed' ? 'inactive' : ''}`}>
+                                    <div className="store-card-decoration"></div>
                                     <div className="store-card-header">
                                         <h4 className="store-title">{branch.name}</h4>
                                         <span className={`retail-status-badge ${branch.status.toLowerCase()}`}>
@@ -229,8 +231,8 @@ export default function RetailSystem() {
                                         </span>
                                     </div>
                                     <div className="store-card-body">
-                                        <p className="store-info"><EnvironmentOutlined /> <span>{branch.address}</span></p>
-                                        <p className="store-info"><PhoneOutlined /> <span>{branch.phone}</span></p>
+                                        <div className="store-info-row"><div className="info-icon"><EnvironmentOutlined /></div> <span>{branch.address}</span></div>
+                                        <div className="store-info-row"><div className="info-icon"><PhoneOutlined /></div> <span>{branch.phone}</span></div>
                                     </div>
                                     <div className="store-card-footer">
                                         <CButton 

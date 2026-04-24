@@ -18,7 +18,7 @@
     padding: 24px;
     border-radius: 16px;
     border: 1px solid #fce7f3;
-    box-shadow: 0 4px 20px rgba(194, 24, 91, 0.04);
+    box-shadow: 0 4px 20px rgba(161, 5, 80, 0.04);
 }
 
 .addr-main {
@@ -118,7 +118,7 @@
 .address-item-card.selected {
     border-color: var(--color_main_title);
     background: #fff5f7;
-    box-shadow: 0 8px 24px rgba(194, 24, 91, 0.08);
+    box-shadow: 0 8px 24px rgba(161, 5, 80, 0.08);
 }
 
 .addr-check-circle {
@@ -241,8 +241,8 @@
     content: '';
     display: block;
     width: 60px;
-    height: 4px;
-    background: linear-gradient(90deg, var(--color_main_title), #ff4081);
+    height: 6px;
+    background: linear-gradient(90deg, var(--color_main_title), var(--color_secondary));
     margin: 10px 0 30px 0;
     border-radius: 2px;
 }
@@ -321,7 +321,7 @@
 .form-group textarea:focus {
     border-color: var(--color_main_title);
     background-color: white;
-    box-shadow: 0 0 0 3px rgba(194, 24, 91, 0.1);
+    box-shadow: 0 0 0 3px rgba(161, 5, 80, 0.1);
 }
 
 .form-group textarea {
@@ -354,7 +354,7 @@
 .payment-option.selected {
     border-color: var(--color_main_title);
     background-color: #fff0f5;
-    box-shadow: 0 4px 10px rgba(194, 24, 91, 0.08);
+    box-shadow: 0 4px 10px rgba(161, 5, 80, 0.08);
 }
 
 .payment-icon {
@@ -620,8 +620,8 @@
     left: 0;
     right: 0;
     height: 2px;
-    background: rgba(194, 24, 91, 0.5);
-    box-shadow: 0 0 8px #c2185b;
+    background: rgba(161, 5, 80, 0.5);
+    box-shadow: 0 0 8px var(--color_main_title);
     animation: scan 3s linear infinite;
 }
 
@@ -819,3 +819,4 @@
     color: #b45309;
     font-weight: 600;
 }
+

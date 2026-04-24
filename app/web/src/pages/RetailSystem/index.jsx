@@ -25,7 +25,6 @@ export default function RetailSystem() {
 
     const [searchInput, setSearchInput] = useState(searchTermFromUrl);
     const debouncedSearch = useDebounce(searchInput, 500);
-    const [selectedBranch, setSelectedBranch] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const branches = useMemo(() => [
@@ -42,6 +41,11 @@ export default function RetailSystem() {
         { id: 10, name: "BKEUTY - Thủ Đức", address: "438 Võ Văn Ngân, TP. Thủ Đức", phone: "0908 741 634", status: "Open", open_date: "2024-06-01", manager: "Trần Văn K" },
         { id: 11, name: "BKEUTY - Hà Nội 1", address: "101 Cầu Giấy, Quận Cầu Giấy, Hà Nội", phone: "0908 741 635", status: "Open", open_date: "2024-06-15", manager: "Phạm Văn L" },
     ], []);
+
+    const selectedBranch = useMemo(() => {
+        if (!query.branchId) return null;
+        return branches.find(b => b.id === Number(query.branchId)) || null;
+    }, [query.branchId, branches]);
 
     useEffect(() => {
         if (!searchTermFromUrl) setSearchInput('');
@@ -83,40 +87,77 @@ export default function RetailSystem() {
     };
 
     if (selectedBranch) {
+        const mapUrl = `https://www.google.com/maps/embed/v1/place?key=${import.meta.env.VITE_GOOGLE_MAPS_API_KEY}&q=${encodeURIComponent(selectedBranch.address)}`;
+
         return (
             <div className="retail-page-container">
-                <SEO title={`${t('retail_detail')}: ${selectedBranch.name}`} />
+                <SEO 
+                    title={`${selectedBranch.name} | ${t('retail_system')} | BKEUTY`} 
+                    description={`${t('retail_address')}: ${selectedBranch.address}. ${t('retail_phone')}: ${selectedBranch.phone}.`}
+                />
                 <div className="retail-page-header">
-                    <h1 className="retail-page-title">{t('retail_detail')}: {selectedBranch.name}</h1>
+                    <h1 className="retail-page-title">{selectedBranch.name}</h1>
                 </div>
                 <div className="retail-page-content">
                     <div className="retail-detail-wrapper">
-                        <Button icon={<LeftOutlined />} onClick={() => setSelectedBranch(null)} className="btn-back" type="text">
+                        <Button icon={<LeftOutlined />} onClick={() => setQuery({ branchId: null })} className="btn-back" type="text">
                             {t('retail_back_to_list')}
                         </Button>
-                        <div className="retail-detail-card">
-                            <div className="detail-header">
-                                <h2>{selectedBranch.name}</h2>
-                                <span className={`retail-status-badge ${selectedBranch.status.toLowerCase()}`}>
-                                    {selectedBranch.status === 'Open' ? t('retail_status_open') : t('retail_status_closed')}
-                                </span>
+                        
+                        <div className="retail-detail-layout">
+                            <div className="retail-detail-info">
+                                <div className="retail-detail-card">
+                                    <div className="detail-header">
+                                        <h2>{t('retail_detail')}</h2>
+                                        <span className={`retail-status-badge ${selectedBranch.status.toLowerCase()}`}>
+                                            {selectedBranch.status === 'Open' ? t('retail_status_open') : t('retail_status_closed')}
+                                        </span>
+                                    </div>
+                                    <div className="detail-grid">
+                                        <div className="detail-item">
+                                            <div className="detail-icon"><EnvironmentOutlined /></div>
+                                            <div className="detail-content">
+                                                <label>{t('retail_address')}</label>
+                                                <p>{selectedBranch.address}</p>
+                                            </div>
+                                        </div>
+                                        <div className="detail-item">
+                                            <div className="detail-icon"><PhoneOutlined /></div>
+                                            <div className="detail-content">
+                                                <label>{t('retail_phone')}</label>
+                                                <p>{selectedBranch.phone}</p>
+                                            </div>
+                                        </div>
+                                        <div className="detail-item">
+                                            <div className="detail-icon"><ClockCircleOutlined /></div>
+                                            <div className="detail-content">
+                                                <label>{t('retail_open_date')}</label>
+                                                <p>{selectedBranch.open_date}</p>
+                                            </div>
+                                        </div>
+                                        <div className="detail-item">
+                                            <div className="detail-icon"><UserOutlined /></div>
+                                            <div className="detail-content">
+                                                <label>{t('retail_manager')}</label>
+                                                <p>{selectedBranch.manager}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="detail-grid">
-                                <div className="detail-item">
-                                    <div className="detail-icon"><EnvironmentOutlined /></div>
-                                    <div className="detail-content"><label>{t('retail_address')}</label><p>{selectedBranch.address}</p></div>
-                                </div>
-                                <div className="detail-item">
-                                    <div className="detail-icon"><PhoneOutlined /></div>
-                                    <div className="detail-content"><label>{t('retail_phone')}</label><p>{selectedBranch.phone}</p></div>
-                                </div>
-                                <div className="detail-item">
-                                    <div className="detail-icon"><ClockCircleOutlined /></div>
-                                    <div className="detail-content"><label>{t('retail_open_date')}</label><p>{selectedBranch.open_date}</p></div>
-                                </div>
-                                <div className="detail-item">
-                                    <div className="detail-icon"><UserOutlined /></div>
-                                    <div className="detail-content"><label>{t('retail_manager')}</label><p>{selectedBranch.manager}</p></div>
+                            
+                            <div className="retail-detail-map">
+                                <div className="map-container">
+                                    <iframe
+                                        title={`Map of ${selectedBranch.name}`}
+                                        width="100%"
+                                        height="450"
+                                        style={{ border: 0, borderRadius: '12px' }}
+                                        loading="lazy"
+                                        allowFullScreen
+                                        referrerPolicy="no-referrer-when-downgrade"
+                                        src={mapUrl}
+                                    ></iframe>
                                 </div>
                             </div>
                         </div>
@@ -196,7 +237,7 @@ export default function RetailSystem() {
                                             type="primary" 
                                             block 
                                             disabled={branch.status === 'Closed'}
-                                            onClick={() => branch.status === 'Open' && setSelectedBranch(branch)}
+                                            onClick={() => branch.status === 'Open' && setQuery({ branchId: branch.id })}
                                         >
                                             {t('retail_detail')}
                                         </CButton>

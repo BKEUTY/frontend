@@ -54,8 +54,6 @@
     margin-right: auto;
 }
 
-/* Removed old underline */
-
 .prm-page-content {
     max-width: var(--retail-max-width);
     margin: 0 auto;
@@ -80,7 +78,6 @@
 .prm-controls:hover {
     box-shadow: var(--ecom-shadow-hover);
 }
-
 
 .prm-search-status {
     display: flex;
@@ -124,8 +121,6 @@
 .prm-date-range:focus {
     border-color: var(--ecom-primary) !important;
 }
-
-
 
 .prm-status-badge {
     display: inline-flex;

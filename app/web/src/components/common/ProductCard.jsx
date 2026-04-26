@@ -41,12 +41,18 @@ const ProductCard = ({ product, t, isLoading = false }) => {
 
     if (!product) return null;
 
-    const image = product.imageUrl ? getImageUrl(product.imageUrl) : fallbackImg;
-    const hasDiscount = product.discountPrice < product.originPrice;
-    const productId = product.productId;
+    // Normalize data from different DTOs (Chatbot vs Product Service)
+    const productId = product.productId || product.id;
+    const name = product.variantName || product.name;
+    const imagePath = product.imageUrl || product.image;
+    const image = imagePath ? getImageUrl(imagePath) : fallbackImg;
+    
+    const currentPrice = product.discountPrice ?? product.promotionPrice ?? 0;
+    const oldPrice = product.originPrice ?? 0;
+    const hasDiscount = currentPrice < oldPrice && currentPrice > 0;
 
     const handleClick = () => {
-        const slug = generateSlug(product.variantName, productId);
+        const slug = generateSlug(name, productId);
         navigate(`/product/${slug}`, { state: { productId } });
     };
 
@@ -56,7 +62,7 @@ const ProductCard = ({ product, t, isLoading = false }) => {
             className="product-card-wrapper product-card"
             cover={
                 <div className="card-img-container">
-                    <img alt={product.variantName} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
+                    <img alt={name} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
                     {hasDiscount && (
                         <div className="card-promo-tag">{t('promotion')}</div>
                     )}
@@ -70,12 +76,12 @@ const ProductCard = ({ product, t, isLoading = false }) => {
                     <span className="card-brand-text">{product.brand?.toUpperCase()}</span>
                 </div>
 
-                <h3 className="card-product-name">{product.variantName}</h3>
+                <h3 className="card-product-name">{name}</h3>
 
                 {product.categories && product.categories.length > 0 && (
                     <div className="card-cat-pills">
                         {product.categories.slice(0, 2).map((cat) => (
-                            <span key={cat.id} className="cat-pill">
+                            <span key={cat.id || cat.categoryName} className="cat-pill">
                                 {cat.categoryName}
                             </span>
                         ))}
@@ -85,28 +91,30 @@ const ProductCard = ({ product, t, isLoading = false }) => {
                 <div className="card-rating-wrap">
                     <Tooltip title={`${Number(product.averageRating || 0).toFixed(1)} ${t('rating')}`}>
                         <div className="card-stars-wrapper">
-                            <Rate disabled defaultValue={product.averageRating} allowHalf className="card-stars" />
+                            <Rate disabled defaultValue={product.averageRating || 0} allowHalf className="card-stars" />
                         </div>
                     </Tooltip>
-                    <span className="card-review-txt">({product.reviewCount} {t('reviews')})</span>
+                    <span className="card-review-txt">({product.reviewCount || 0} {t('reviews')})</span>
                 </div>
 
                 <div className="card-footer-row">
                     <div className="card-price-row">
                         <span className={`card-price-current ${hasDiscount ? 'is-discounted' : ''}`}>
-                            {product.discountPrice.toLocaleString('vi-VN')}đ
+                            {Number(currentPrice).toLocaleString('vi-VN')}đ
                         </span>
                         {hasDiscount && (
                             <span className="card-price-old">
-                                {product.originPrice.toLocaleString('vi-VN')}đ
+                                {Number(oldPrice).toLocaleString('vi-VN')}đ
                             </span>
                         )}
                     </div>
 
                     <div className="stock-sold-wrapper">
-                        <div className={`stock-status ${product.stockQuantity > 0 ? 'is-available' : 'is-unavailable'}`}>
+                        <div className={`stock-status ${(product.stockQuantity ?? 1) > 0 ? 'is-available' : 'is-unavailable'}`}>
                             <span>
-                                {product.stockQuantity > 0 ? `${t('in_stock')} ${product.stockQuantity}` : t('out_of_stock_btn')}
+                                {(product.stockQuantity ?? 1) > 0 
+                                    ? `${t('in_stock')} ${product.stockQuantity ?? ''}` 
+                                    : t('out_of_stock_btn')}
                             </span>
                         </div>
                         <div className="sold-status">

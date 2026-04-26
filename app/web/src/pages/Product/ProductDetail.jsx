@@ -85,10 +85,6 @@ export default function ProductDetail() {
                 hasDiscount: responseData.promotionPrice < responseData.originPrice,
             });
             const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
-            const correctSlug = generateSlug(targetVariant.productVariantName, productId);
-            if (slug && slug !== correctSlug) {
-                throw new Error('Invalid product slug');
-            }
             setProductData(responseData);
             setSelectedOptions(targetVariant?.variantOptions || {});
             setStockQuantity(targetVariant?.stockQuantity || 0);
@@ -317,19 +313,17 @@ export default function ProductDetail() {
 
                         {Object.keys(selectedOptions).length > 0 && (
                             <div className="selected-variant-info">
-                                <span className="variant-label-title">{t('variant_selected_label')}: </span>
+                                <span className="variant-label-title">{t('product_selected')}</span>
                                 <strong className="variant-label-value">
                                     {Object.values(selectedOptions).join(' - ')}
                                 </strong>
                             </div>
                         )}
-
                         <div className="stock-info">
-                            {t('in_stock_label')} <strong>{stockQuantity}</strong> {t('items_available')}
+                            {t('product_stock_count').replace('{count}', stockQuantity)}
                         </div>
-
                         <div className="sold-info">
-                            {t('sold')} <strong>{productData.sold}</strong> {t('items_sold')}
+                            {t('product_sold_count').replace('{count}', productData.sold)}
                         </div>
 
                         <div className="option-group align-center mt-10">

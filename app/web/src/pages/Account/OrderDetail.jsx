@@ -84,7 +84,7 @@ const OrderDetail = () => {
                                 <img src={item.productVariantImage || 'https://placehold.co/100x100?text=Product'} alt={item.productVariantName} />
                             </div>
                             <div className="od-item-details">
-                                <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} className="od-item-link">
+                                <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} state={{ productId: item.productVariantId }} className="od-item-link">
                                     <h4 className="od-item-name">{item.productVariantName}</h4>
                                 </Link>
                                 <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>

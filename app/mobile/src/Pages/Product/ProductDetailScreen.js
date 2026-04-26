@@ -281,7 +281,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
                             </View>
                         </View>
                         <View style={styles.soldBox}>
-                            <Text style={styles.soldText}>{t('sold')} {productDetail.sold || 0}</Text>
+                            <Text style={styles.soldText}>{t('product_sold_count').replace('{count}', productDetail.sold || 0)}</Text>
                         </View>
                     </LinearGradient>
 
@@ -322,7 +322,7 @@ const ProductDetailScreen = ({ route, navigation }) => {
 
                     <View style={{ marginBottom: 20 }}>
                         <Text style={{ color: '#6b7280', fontSize: 13 }}>
-                            {t('in_stock_label')}: <Text style={{ fontWeight: '700', color: '#111827' }}>{currentVariant ? currentVariant.stockQuantity : 0}</Text> {t('items_available')}
+                            {t('product_stock_count').replace('{count}', currentVariant ? currentVariant.stockQuantity : 0)}
                         </Text>
                     </View>
 

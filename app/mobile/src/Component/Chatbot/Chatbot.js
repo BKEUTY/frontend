@@ -10,117 +10,130 @@ import {
     Image,
     KeyboardAvoidingView,
     Platform,
-    Dimensions
+    Dimensions,
+    ActivityIndicator
 } from 'react-native';
-import { COLORS } from '../../constants/Theme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS, SHADOWS } from '../../constants/Theme';
 import { useLanguage } from '../../i18n/LanguageContext';
+import { useAuth } from '../../Context/AuthContext';
 import Markdown from 'react-native-markdown-display';
 import { Ionicons } from '@expo/vector-icons';
+import chatbotApi from '../../api/chatbotApi';
+import { useNavigation } from '@react-navigation/native';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
+const SESSION_KEY = 'bkeuty_chat_session';
 
 const Chatbot = () => {
-    const { t } = useLanguage();
+    const { t, language } = useLanguage();
+    const { user } = useAuth();
+    const navigation = useNavigation();
     const [isOpen, setIsOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [messages, setMessages] = useState([]);
+    const [sessionId, setSessionId] = useState(null);
+    const [isTyping, setIsTyping] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const flatListRef = useRef(null);
 
     useEffect(() => {
-        if (isOpen && messages.length === 0) {
-            setMessages([
-                {
-                    id: '1',
-                    type: 'text',
-                    sender: 'bot',
-                    content: t('chatbot_greeting') || 'Chào bạn, mình có thể giúp gì cho bạn?'
+        const initSession = async () => {
+            if (user?.id) {
+                setSessionId(`user_${user.id}`);
+            } else {
+                try {
+                    let id = await AsyncStorage.getItem(SESSION_KEY);
+                    if (!id || id.startsWith('user_')) {
+                        id = `sess_mob_${Math.random().toString(36).substr(2, 9)}`;
+                        await AsyncStorage.setItem(SESSION_KEY, id);
+                    }
+                    setSessionId(id);
+                } catch (error) {
+                    console.error("AsyncStorage error", error);
                 }
-            ]);
+            }
+        };
+        initSession();
+    }, [user]);
+
+    const fetchHistory = async (id) => {
+        if (!id) return;
+        setIsLoading(true);
+        try {
+            const response = await chatbotApi.getHistory(id);
+            if (response.data && response.data.length > 0) {
+                const historyMessages = response.data.map(msg => ({
+                    id: Math.random().toString(),
+                    sender: msg.sender === 'user' ? 'user' : 'bot',
+                    content: msg.content,
+                    recommendedProduct: msg.recommendedProduct?.[0] || null
+                }));
+                setMessages(historyMessages);
+            } else {
+                setMessages([{
+                    id: 'greeting',
+                    sender: 'bot',
+                    content: t('chatbot_greeting')
+                }]);
+            }
+        } catch (error) {
+            console.error("Fetch history error", error);
+        } finally {
+            setIsLoading(false);
         }
-    }, [isOpen]);
+    };
 
-    const handleSend = () => {
-        if (!inputValue.trim()) return;
+    useEffect(() => {
+        if (isOpen && sessionId) {
+            fetchHistory(sessionId);
+        }
+    }, [isOpen, sessionId]);
 
+    const handleSend = async () => {
+        if (!inputValue.trim() || isTyping) return;
+
+        const currentMsg = inputValue;
         const userMsg = {
             id: Date.now().toString(),
-            type: 'text',
             sender: 'user',
-            content: inputValue
+            content: currentMsg
         };
 
         setMessages(prev => [...prev, userMsg]);
-        const currentInput = inputValue;
         setInputValue('');
+        setIsTyping(true);
 
-        setTimeout(() => {
-            const lowInput = currentInput.toLowerCase();
-            const hasProduct = lowInput.includes('da khô') || lowInput.includes('dưỡng ẩm') || lowInput.includes('dry skin') || lowInput.includes('moisturizer');
+        try {
+            const response = await chatbotApi.sendMessage({
+                sessionId,
+                message: currentMsg,
+                language: language
+            });
 
-            const textResponse = hasProduct
-                ? (t('chatbot_response_product') || 'Tuyệt vời! Dưới đây là 1 vài gợi ý kem dưỡng ẩm phù hợp cho da khô mà BKEUTY đề xuất cho bạn:')
-                : (t('chatbot_response_consult') || 'Cảm ơn bạn đã nhắn tin. Nhân viên tư vấn sẽ sớm liên hệ lại với bạn!');
+            if (response.data) {
+                const botMsg = {
+                    id: (Date.now() + 1).toString(),
+                    sender: 'bot',
+                    content: response.data.response,
+                    recommendedProduct: response.data.recommendedProduct?.[0] || null
+                };
+                setMessages(prev => [...prev, botMsg]);
+            }
+        } catch (error) {
+            console.error("Send message error", error);
+        } finally {
+            setIsTyping(false);
+        }
+    };
 
-            const botMsgId = (Date.now() + 1).toString();
-            setMessages(prev => [...prev, {
-                id: botMsgId,
-                type: 'text',
-                sender: 'bot',
-                content: ''
-            }]);
-
-            let i = 0;
-            const interval = setInterval(() => {
-                i++;
-                setMessages(prev => prev.map(msg =>
-                    msg.id === botMsgId
-                        ? { ...msg, content: textResponse.slice(0, i) }
-                        : msg
-                ));
-                flatListRef.current?.scrollToEnd({ animated: true });
-
-                if (i >= textResponse.length) {
-                    clearInterval(interval);
-                    if (hasProduct) {
-                        setTimeout(() => {
-                            setMessages(prev => [...prev, {
-                                id: (Date.now() + 2).toString(),
-                                type: 'product',
-                                sender: 'bot',
-                                content: {
-                                    name: 'BKEUTY Hydra-Deep Moisturizing Cream',
-                                    price: '450.000 ₫',
-                                    image: null
-                                }
-                            }]);
-                            flatListRef.current?.scrollToEnd({ animated: true });
-                        }, 400);
-                    }
-                }
-            }, 25); // 25ms typing effect
-        }, 500);
+    const handleProductPress = (product) => {
+        setIsOpen(false);
+        navigation.navigate('ProductDetail', { productId: product.productId || product.id });
     };
 
     const renderMessage = ({ item }) => {
         const isBot = item.sender === 'bot';
-
-        if (item.type === 'product') {
-            return (
-                <View style={[styles.messageContainer, styles.botMessageContainer]}>
-                    <View style={styles.botAvatar}>
-                        <Ionicons name="robot-outline" size={20} color={COLORS.mainTitle} />
-                    </View>
-                    <View style={styles.productCard}>
-                        <View style={styles.productImagePlaceholder} />
-                        <Text style={styles.productName} numberOfLines={2}>{item.content.name}</Text>
-                        <Text style={styles.productPrice}>{item.content.price}</Text>
-                        <TouchableOpacity style={styles.viewButton}>
-                            <Text style={styles.viewButtonText}>{t('view_now') || 'Xem ngay'}</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            );
-        }
 
         return (
             <View style={[
@@ -128,23 +141,50 @@ const Chatbot = () => {
                 isBot ? styles.botMessageContainer : styles.userMessageContainer
             ]}>
                 {isBot && (
-                    <View style={styles.botAvatar}>
-                        <Ionicons name="robot-outline" size={20} color={COLORS.mainTitle} />
+                    <View style={styles.botAvatarGroup}>
+                        <View style={styles.botAvatar}>
+                            <Ionicons name="robot-outline" size={18} color={COLORS.primary} />
+                        </View>
                     </View>
                 )}
-                <View style={[
-                    styles.messageBubble,
-                    isBot ? styles.botBubble : styles.userBubble
-                ]}>
-                    {isBot ? (
-                        <Markdown style={{ body: { color: '#333', fontSize: 15, lineHeight: 20 } }}>
+                <View style={styles.messageContent}>
+                    <View style={[
+                        styles.messageBubble,
+                        isBot ? styles.botBubble : styles.userBubble
+                    ]}>
+                        <Markdown style={{ 
+                            body: { 
+                                color: isBot ? '#1e293b' : 'white', 
+                                fontSize: 14, 
+                                lineHeight: 20 
+                            } 
+                        }}>
                             {item.content}
                         </Markdown>
-                    ) : (
-                        <Text style={[
-                            styles.messageText,
-                            styles.userText
-                        ]}>{item.content}</Text>
+                    </View>
+                    
+                    {item.recommendedProduct && (
+                        <TouchableOpacity 
+                            style={styles.productCard}
+                            onPress={() => handleProductPress(item.recommendedProduct)}
+                            activeOpacity={0.9}
+                        >
+                            <Image 
+                                source={{ uri: item.recommendedProduct.imageUrl || item.recommendedProduct.image || 'https://placehold.co/150x150' }}
+                                style={styles.productImage}
+                            />
+                            <View style={styles.productInfo}>
+                                <Text style={styles.productName} numberOfLines={1}>
+                                    {item.recommendedProduct.variantName || item.recommendedProduct.name}
+                                </Text>
+                                <Text style={styles.productPrice}>
+                                    {(item.recommendedProduct.discountPrice || item.recommendedProduct.promotionPrice || 0).toLocaleString()} ₫
+                                </Text>
+                                <View style={styles.viewBadge}>
+                                    <Text style={styles.viewBadgeText}>{t('view_now')}</Text>
+                                </View>
+                            </View>
+                        </TouchableOpacity>
                     )}
                 </View>
             </View>
@@ -155,59 +195,83 @@ const Chatbot = () => {
         <>
             {!isOpen && (
                 <TouchableOpacity
-                    style={styles.chatButton}
+                    style={[styles.chatTrigger, SHADOWS.medium]}
                     onPress={() => setIsOpen(true)}
                     activeOpacity={0.8}
                 >
-                    <Ionicons name="chatbubbles-outline" size={24} color="#fff" style={styles.chatIcon} />
-                    <Text style={styles.chatBtnText}>{t('chat') || 'Trò Chuyện'}</Text>
+                    <Ionicons name="chatbubble-ellipses" size={26} color="#fff" />
                 </TouchableOpacity>
             )}
 
             <Modal
                 visible={isOpen}
                 animationType="slide"
-                transparent={true}
+                transparent={false}
                 onRequestClose={() => setIsOpen(false)}
             >
                 <KeyboardAvoidingView
                     behavior={Platform.OS === "ios" ? "padding" : "height"}
-                    style={styles.modalContainer}
+                    style={styles.container}
                 >
-                    <View style={styles.chatWindow}>
-                        <View style={styles.header}>
-                            <Text style={styles.headerTitle}>{t('chatbot_title') || 'Trợ lý ảo BKEUTY'}</Text>
-                            <TouchableOpacity onPress={() => setIsOpen(false)} hitSlop={10}>
-                                <Ionicons name="close" size={24} color="#fff" />
-                            </TouchableOpacity>
-                        </View>
-
-                        <FlatList
-                            ref={flatListRef}
-                            data={messages}
-                            keyExtractor={item => item.id}
-                            renderItem={renderMessage}
-                            contentContainerStyle={styles.messagesList}
-                            onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
-                        />
-
-                        <View style={styles.footer}>
-                            <View style={styles.inputContainer}>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder={t('chatbot_input_placeholder') || 'Nhập tin nhắn...'}
-                                    value={inputValue}
-                                    onChangeText={setInputValue}
-                                    onSubmitEditing={handleSend}
-                                />
-                                <TouchableOpacity
-                                    style={[styles.sendButton, !inputValue.trim() && styles.sendButtonDisabled]}
-                                    onPress={handleSend}
-                                    disabled={!inputValue.trim()}
-                                >
-                                    <Ionicons name="send" size={20} color={COLORS.mainTitle} />
-                                </TouchableOpacity>
+                    <View style={styles.header}>
+                        <View>
+                            <Text style={styles.headerTitle}>{t('chatbot_title')}</Text>
+                            <View style={styles.statusRow}>
+                                <View style={styles.statusDot} />
+                                <Text style={styles.statusText}>{t('chatbot_online')}</Text>
                             </View>
+                        </View>
+                        <TouchableOpacity 
+                            onPress={() => setIsOpen(false)} 
+                            style={styles.closeBtn}
+                        >
+                            <Ionicons name="close" size={28} color="#fff" />
+                        </TouchableOpacity>
+                    </View>
+
+                    <View style={styles.body}>
+                        {isLoading ? (
+                            <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 50 }} />
+                        ) : (
+                            <FlatList
+                                ref={flatListRef}
+                                data={messages}
+                                keyExtractor={item => item.id}
+                                renderItem={renderMessage}
+                                contentContainerStyle={styles.listContent}
+                                onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+                            />
+                        )}
+                        {isTyping && (
+                            <View style={styles.typingIndicator}>
+                                <View style={styles.botAvatarGroup}>
+                                    <View style={styles.botAvatar}>
+                                        <Ionicons name="robot-outline" size={18} color={COLORS.primary} />
+                                    </View>
+                                </View>
+                                <View style={styles.typingBubble}>
+                                    <ActivityIndicator size="small" color={COLORS.primary} />
+                                </View>
+                            </View>
+                        )}
+                    </View>
+
+                    <View style={styles.footer}>
+                        <View style={styles.inputWrapper}>
+                            <TextInput
+                                style={styles.input}
+                                placeholder={t('chatbot_input_placeholder')}
+                                value={inputValue}
+                                onChangeText={setInputValue}
+                                placeholderTextColor="#94a3b8"
+                            />
+                            <TouchableOpacity
+                                style={[styles.sendBtn, !inputValue.trim() && { opacity: 0.5 }]}
+                                onPress={handleSend}
+                                disabled={!inputValue.trim() || isTyping}
+                            >
+                                <Ionicons name="send" size={20} color={COLORS.primary} />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 </KeyboardAvoidingView>
@@ -217,171 +281,196 @@ const Chatbot = () => {
 };
 
 const styles = StyleSheet.create({
-    chatButton: {
-        position: 'absolute',
-        bottom: 80,
-        right: 20,
-        backgroundColor: COLORS.mainTitle,
-        paddingVertical: 12,
-        paddingHorizontal: 20,
-        borderRadius: 30,
-        flexDirection: 'row',
-        alignItems: 'center',
-        elevation: 5,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        zIndex: 9999,
-    },
-    chatIcon: {
-        fontSize: 20,
-        color: 'white',
-        marginRight: 8,
-    },
-    chatBtnText: {
-        color: 'white',
-        fontWeight: 'bold',
-        fontSize: 14,
-    },
-    modalContainer: {
+    container: {
         flex: 1,
-        justifyContent: 'flex-end',
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: '#fcfcfd',
     },
-    chatWindow: {
-        height: '85%',
-        backgroundColor: 'white',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        overflow: 'hidden',
+    chatTrigger: {
+        position: 'absolute',
+        bottom: 90,
+        right: 20,
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        backgroundColor: COLORS.primary,
+        justifyContent: 'center',
+        alignItems: 'center',
+        zIndex: 1000,
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 15,
-        backgroundColor: COLORS.mainTitle,
+        paddingTop: Platform.OS === 'ios' ? 60 : 40,
+        paddingBottom: 20,
+        paddingHorizontal: 20,
+        backgroundColor: COLORS.primary,
     },
     headerTitle: {
         color: 'white',
-        fontSize: 18,
-        fontWeight: 'bold',
+        fontSize: 20,
+        fontWeight: '800',
+        letterSpacing: -0.5,
     },
-    messagesList: {
-        padding: 15,
-        paddingBottom: 20,
+    statusRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 4,
+    },
+    statusDot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: '#4ade80',
+        marginRight: 6,
+    },
+    statusText: {
+        color: 'rgba(255,255,255,0.8)',
+        fontSize: 12,
+        fontWeight: '600',
+    },
+    closeBtn: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    body: {
+        flex: 1,
+    },
+    listContent: {
+        padding: 16,
+        paddingBottom: 40,
     },
     messageContainer: {
         flexDirection: 'row',
-        marginBottom: 15,
-        maxWidth: '85%',
+        marginBottom: 12,
+        alignItems: 'flex-end',
     },
     userMessageContainer: {
         alignSelf: 'flex-end',
-        justifyContent: 'flex-end',
+        flexDirection: 'row-reverse',
     },
     botMessageContainer: {
         alignSelf: 'flex-start',
     },
+    botAvatarGroup: {
+        alignItems: 'center',
+        width: 32,
+        marginHorizontal: 8,
+    },
     botAvatar: {
-        width: 35,
-        height: 35,
-        borderRadius: 17.5,
-        backgroundColor: '#eee',
+        width: 32,
+        height: 32,
+        borderRadius: 16,
+        backgroundColor: 'white',
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 10,
+        borderWidth: 1,
+        borderColor: '#f1f5f9',
+        ...SHADOWS.light,
+    },
+    messageContent: {
+        maxWidth: width * 0.75,
     },
     messageBubble: {
-        padding: 12,
-        borderRadius: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 18,
     },
     botBubble: {
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#f1f5f9',
         borderBottomLeftRadius: 4,
     },
     userBubble: {
-        backgroundColor: COLORS.mainTitle,
+        backgroundColor: COLORS.primary,
         borderBottomRightRadius: 4,
     },
-    messageText: {
-        fontSize: 15,
-        lineHeight: 20,
-    },
-    botText: {
-        color: '#333',
-    },
-    userText: {
-        color: 'white',
-    },
     productCard: {
+        marginTop: 8,
+        width: 220,
         backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 10,
-        elevation: 3,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.22,
-        shadowRadius: 2.22,
-        width: 200,
-        marginLeft: 45,
-        marginTop: -10,
+        borderRadius: 16,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: '#f1f5f9',
+        ...SHADOWS.medium,
     },
-    productImagePlaceholder: {
+    productImage: {
         width: '100%',
         height: 120,
-        backgroundColor: '#f5f5f5',
-        borderRadius: 8,
-        marginBottom: 8,
+        backgroundColor: '#f8fafc',
+    },
+    productInfo: {
+        padding: 12,
     },
     productName: {
         fontSize: 14,
-        fontWeight: 'bold',
-        color: '#333',
-        marginBottom: 4,
+        fontWeight: '700',
+        color: '#1e293b',
     },
     productPrice: {
         fontSize: 15,
-        color: COLORS.mainTitle,
-        fontWeight: 'bold',
-        marginBottom: 8,
+        fontWeight: '800',
+        color: COLORS.primary,
+        marginTop: 4,
     },
-    viewButton: {
-        backgroundColor: COLORS.mainTitle,
-        paddingVertical: 6,
-        borderRadius: 20,
+    viewBadge: {
+        marginTop: 8,
+        backgroundColor: '#fdf2f8',
+        paddingVertical: 4,
+        borderRadius: 10,
         alignItems: 'center',
     },
-    viewButtonText: {
-        color: 'white',
-        fontSize: 12,
-        fontWeight: '600',
+    viewBadgeText: {
+        fontSize: 10,
+        color: COLORS.primary,
+        fontWeight: '700',
+    },
+    typingIndicator: {
+        flexDirection: 'row',
+        paddingHorizontal: 16,
+        marginBottom: 20,
+        alignItems: 'center',
+    },
+    typingBubble: {
+        backgroundColor: '#f1f5f9',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 18,
+        borderBottomLeftRadius: 4,
+        justifyContent: 'center',
+        alignItems: 'center',
+        minWidth: 50,
     },
     footer: {
-        padding: 10,
+        paddingHorizontal: 20,
+        paddingVertical: 12,
+        paddingBottom: Platform.OS === 'ios' ? 34 : 12,
+        backgroundColor: 'white',
         borderTopWidth: 1,
-        borderTopColor: '#eee',
-        paddingBottom: Platform.OS === 'ios' ? 30 : 10,
+        borderTopColor: '#f1f5f9',
     },
-    inputContainer: {
+    inputWrapper: {
         flexDirection: 'row',
-        backgroundColor: '#f1f2f6',
-        borderRadius: 25,
-        paddingHorizontal: 15,
         alignItems: 'center',
-        height: 50,
+        backgroundColor: '#f8fafc',
+        borderRadius: 25,
+        paddingHorizontal: 16,
+        height: 46,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
     },
     input: {
         flex: 1,
-        height: '100%',
-        fontSize: 16,
+        color: '#1e293b',
+        fontSize: 15,
+        fontWeight: '500',
     },
-    sendButton: {
+    sendBtn: {
         padding: 8,
-    },
-    sendButtonDisabled: {
-        opacity: 0.5,
     },
 });
 

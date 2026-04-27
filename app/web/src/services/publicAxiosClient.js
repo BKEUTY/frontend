@@ -19,10 +19,9 @@ publicAxiosClient.interceptors.response.use(
         const { config: originalRequest, response } = error;
         const status = response ? response.status : null;
 
-        if (!originalRequest?.skipGlobalErrorHandler) {
+        if (!originalRequest?.skipGlobalErrorHandler && status !== 401 && status !== 403) {
             let fallbackKey = 'error_unknown';
-            if (status === 403) fallbackKey = 'error_403';
-            else if (status === 404) fallbackKey = 'error_404';
+            if (status === 404) fallbackKey = 'error_404';
             else if (status >= 500) fallbackKey = 'error_500';
 
             const errorData = response?.data;

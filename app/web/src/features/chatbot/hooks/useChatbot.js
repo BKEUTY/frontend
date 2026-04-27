@@ -48,11 +48,6 @@ export const useSendMessage = () => {
             if (context?.previousHistory) {
                 queryClient.setQueryData(['chatbot', 'history', variables.sessionId], context.previousHistory);
             }
-        },
-        onSettled: (data, error, variables) => {
-            setTimeout(() => {
-                queryClient.invalidateQueries({ queryKey: ['chatbot', 'history', variables.sessionId] });
-            }, 1000);
         }
     });
 };

@@ -55,32 +55,32 @@ const AccountScreen = () => {
             <Header />
             <ScrollView style={styles.scrollContent} showsVerticalScrollIndicator={false}>
                 {isAuthenticated && user ? (
-                    <LinearGradient
-                        colors={[COLORS.mainTitle, COLORS.mainTitleDark || '#880e4f']}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.profileHeader}
-                    >
-                        <View style={styles.headerContent}>
-                            <View style={styles.avatarSection}>
-                                {user.avatar ? (
-                                    <Image source={{ uri: user.avatar }} style={styles.avatar} />
-                                ) : (
-                                    <View style={[styles.avatar, styles.avatarPlaceholder]}>
-                                        <Text style={styles.avatarText}>{user.name ? user.name.charAt(0) : 'U'}</Text>
-                                    </View>
-                                )}
-                                <TouchableOpacity style={styles.editAvatarBtn}>
-                                    <Ionicons name="camera" size={16} color="white" />
-                                </TouchableOpacity>
+                    <View style={styles.profileHeaderWrapper}>
+                        <LinearGradient
+                            colors={['#fff', '#fff']}
+                            style={styles.profileCard}
+                        >
+                            <View style={styles.headerContent}>
+                                <View style={styles.avatarSection}>
+                                    {user.avatar ? (
+                                        <Image source={{ uri: user.avatar }} style={styles.avatar} />
+                                    ) : (
+                                        <View style={[styles.avatar, styles.avatarPlaceholder]}>
+                                            <Text style={styles.avatarText}>{user.name ? user.name.charAt(0).toUpperCase() : 'U'}</Text>
+                                        </View>
+                                    )}
+                                    <TouchableOpacity style={styles.editAvatarBtn}>
+                                        <Ionicons name="camera" size={14} color="white" />
+                                    </TouchableOpacity>
+                                </View>
+                                <View style={styles.userInfo}>
+                                    <Text style={styles.usernameText}>{user.name || t('account')}</Text>
+                                    <Text style={styles.userIdSubtext}>#{user.id}</Text>
+                                </View>
+                                <Ionicons name="chevron-up" size={18} color={COLORS.mainTitle} style={{ opacity: 0.6 }} />
                             </View>
-                            <View style={styles.userInfo}>
-                                <Text style={styles.greetingText}>{t('welcome')},</Text>
-                                <Text style={styles.username}>#{user.id}</Text>
-                                <Text style={styles.userIdText}>{user.name}</Text>
-                            </View>
-                        </View>
-                    </LinearGradient>
+                        </LinearGradient>
+                    </View>
                 ) : (
                     <View style={styles.guestContainer}>
                         <LinearGradient
@@ -113,20 +113,36 @@ const AccountScreen = () => {
                 {isAuthenticated && (
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>{t('dashboard')}</Text>
-                        <View style={styles.bentoGrid}>
-                            {mainFeatures.map((item) => (
-                                <TouchableOpacity
-                                    key={item.id}
-                                    style={styles.bentoCard}
-                                    onPress={() => handlePress(item)}
-                                    activeOpacity={0.8}
-                                >
-                                    <View style={[styles.cardIconContainer, { backgroundColor: item.color + '15' }]}>
-                                        <Ionicons name={item.iconName} size={24} color={item.color} />
+                        <View style={styles.menuSection}>
+                            <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Profile')}>
+                                <View style={styles.menuItemLeft}>
+                                    <View style={[styles.menuIconContainer, { backgroundColor: '#fff1f2' }]}>
+                                        <Ionicons name="person" size={20} color={COLORS.mainTitle} />
                                     </View>
-                                    <Text style={styles.cardTitle}>{item.title}</Text>
-                                </TouchableOpacity>
-                            ))}
+                                    <Text style={styles.menuItemText}>{t('account')}</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('OrderList')}>
+                                <View style={styles.menuItemLeft}>
+                                    <View style={[styles.menuIconContainer, { backgroundColor: '#fff1f2' }]}>
+                                        <Ionicons name="time" size={20} color={COLORS.mainTitle} />
+                                    </View>
+                                    <Text style={styles.menuItemText}>{t('my_orders') || 'Lịch sử giao dịch'}</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+                            </TouchableOpacity>
+
+                            <TouchableOpacity style={styles.menuItem} onPress={() => navigation.navigate('Returns')}>
+                                <View style={styles.menuItemLeft}>
+                                    <View style={[styles.menuIconContainer, { backgroundColor: '#fff7ed' }]}>
+                                        <Ionicons name="reload" size={20} color="#f59e0b" />
+                                    </View>
+                                    <Text style={styles.menuItemText}>{t('return_requests')}</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
+                            </TouchableOpacity>
                         </View>
                     </View>
                 )}
@@ -136,13 +152,17 @@ const AccountScreen = () => {
                     <View style={styles.menuSection}>
                         {supportItems.map(item => (
                             <TouchableOpacity key={item.id} style={styles.menuItem} onPress={() => handlePress(item)}>
-                                <Text style={styles.menuItemText}>{item.title}</Text>
+                                <View style={styles.menuItemLeft}>
+                                    <Text style={styles.menuItemText}>{item.title}</Text>
+                                </View>
                                 <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
                             </TouchableOpacity>
                         ))}
 
                         <TouchableOpacity style={styles.menuItem} onPress={toggleLang}>
-                            <Text style={styles.menuItemText}>{t('language')}</Text>
+                            <View style={styles.menuItemLeft}>
+                                <Text style={styles.menuItemText}>{t('language')}</Text>
+                            </View>
                             <View style={styles.langBadge}>
                                 <Text style={styles.langBadgeText}>
                                     {language === 'vi' ? 'VI' : 'EN'}
@@ -153,8 +173,13 @@ const AccountScreen = () => {
 
                         {isAuthenticated && (
                             <TouchableOpacity style={[styles.menuItem, styles.logoutItem]} onPress={handleLogout}>
-                                <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
-                                <Ionicons name="log-out-outline" size={18} color="#ef4444" />
+                                <View style={styles.menuItemLeft}>
+                                    <View style={[styles.menuIconContainer, { backgroundColor: '#fff1f0' }]}>
+                                        <Ionicons name="log-out" size={20} color="#ef4444" />
+                                    </View>
+                                    <Text style={[styles.menuItemText, styles.logoutText]}>{t('logout')}</Text>
+                                </View>
+                                <Ionicons name="chevron-forward" size={18} color="#9ca3af" />
                             </TouchableOpacity>
                         )}
                     </View>
@@ -174,17 +199,21 @@ const styles = StyleSheet.create({
     scrollContent: {
         flex: 1,
     },
-    profileHeader: {
-        padding: 30,
-        paddingTop: 40,
-        borderBottomLeftRadius: 40,
-        borderBottomRightRadius: 40,
-        marginBottom: 30,
-        elevation: 10,
+    profileHeaderWrapper: {
+        paddingHorizontal: 20,
+        marginTop: 20,
+        marginBottom: 25,
+    },
+    profileCard: {
+        borderRadius: 24,
+        padding: 20,
+        elevation: 12,
         shadowColor: COLORS.mainTitle,
         shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.2,
+        shadowOpacity: 0.12,
         shadowRadius: 20,
+        borderWidth: 1,
+        borderColor: '#f3f4f6',
     },
     headerContent: {
         flexDirection: 'row',
@@ -192,56 +221,52 @@ const styles = StyleSheet.create({
     },
     avatarSection: {
         position: 'relative',
-        marginRight: 20,
+        marginRight: 16,
     },
     avatar: {
-        width: 85,
-        height: 85,
-        borderRadius: 42.5,
-        borderWidth: 3,
-        borderColor: 'rgba(255,255,255,0.4)',
+        width: 60,
+        height: 60,
+        borderRadius: 30,
+        borderWidth: 2,
+        borderColor: 'white',
     },
     avatarPlaceholder: {
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#fde3cf', // Web-style light brown
         justifyContent: 'center',
         alignItems: 'center',
     },
     avatarText: {
-        fontSize: 32,
+        fontSize: 24,
         fontWeight: 'bold',
-        color: 'white',
+        color: COLORS.mainTitle,
     },
     editAvatarBtn: {
         position: 'absolute',
-        bottom: 0,
-        right: 0,
+        bottom: -2,
+        right: -2,
         backgroundColor: '#10b981',
-        width: 28,
-        height: 28,
-        borderRadius: 14,
+        width: 22,
+        height: 22,
+        borderRadius: 11,
         justifyContent: 'center',
         alignItems: 'center',
-        borderWidth: 2,
+        borderWidth: 1.5,
         borderColor: 'white',
     },
     userInfo: {
         flex: 1,
     },
-    greetingText: {
-        fontSize: 12,
-        color: 'rgba(255,255,255,0.7)',
-        fontWeight: '600',
-    },
-    username: {
-        fontSize: 22,
+    usernameText: {
+        fontSize: 18,
         fontWeight: '900',
-        color: 'white',
+        color: COLORS.mainTitle,
         letterSpacing: -0.5,
     },
-    userIdText: {
+    userIdSubtext: {
         fontSize: 13,
-        color: 'rgba(255,255,255,0.9)',
+        color: '#9ca3af',
         fontWeight: '600',
+        marginTop: 2,
     },
     guestContainer: {
         paddingHorizontal: 20,
@@ -307,59 +332,48 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     sectionTitle: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: '900',
         color: '#111827',
-        marginBottom: 20,
+        marginBottom: 15,
         letterSpacing: -0.5,
     },
-    bentoGrid: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 15,
-    },
-    bentoCard: {
-        width: (width - 55) / 2,
+    menuSection: {
         backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 20,
+        borderRadius: 24,
+        padding: 8,
         elevation: 2,
         shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.05,
         shadowRadius: 10,
         borderWidth: 1,
         borderColor: '#f3f4f6',
     },
-    cardIconContainer: {
-        width: 44,
-        height: 44,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 15,
-    },
-    cardTitle: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: '#374151',
-    },
-    menuSection: {
-        backgroundColor: '#f9fafb',
-        borderRadius: 24,
-        padding: 10,
-    },
     menuItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        paddingVertical: 14,
-        paddingHorizontal: 15,
+        paddingVertical: 12,
+        paddingHorizontal: 12,
+        borderRadius: 16,
+    },
+    menuItemLeft: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    menuIconContainer: {
+        width: 40,
+        height: 40,
+        borderRadius: 12,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     menuItemText: {
         fontSize: 15,
-        fontWeight: '600',
-        color: '#4b5563',
+        fontWeight: '700',
+        color: '#374151',
     },
     langBadge: {
         flexDirection: 'row',
@@ -376,10 +390,10 @@ const styles = StyleSheet.create({
         borderRadius: 6,
     },
     logoutItem: {
-        marginTop: 10,
+        marginTop: 5,
+        paddingTop: 15,
         borderTopWidth: 1,
-        borderTopColor: '#f3f4f6',
-        paddingTop: 20,
+        borderTopColor: '#f9fafb',
     },
     logoutText: {
         color: '#ef4444',

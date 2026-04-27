@@ -24,16 +24,11 @@ const Login = () => {
             notifySuccess('success', t('login_success'));
             navigate('/home');
         } catch (error) {
-            const errorRaw = error.response?.data;
-            let descriptionKey = 'api_error_login';
+            const apiMsg = error.response?.data;
+            const isInvalid = error.response?.status === 401 || apiMsg === 'invalid_credentials';
+            const displayMsg = (typeof apiMsg === 'string' && apiMsg.length > 5) ? (t(apiMsg) || apiMsg) : t(isInvalid ? 'api_error_invalid_credentials' : 'api_error_login');
 
-            if (errorRaw === 'Wrong credentials') {
-                descriptionKey = 'api_error_wrong_credentials';
-            } else if (error.response?.status === 401) {
-                descriptionKey = 'api_error_invalid_credentials';
-            }
-
-            notifyError('error', descriptionKey);
+            notifyError('error', displayMsg);
         } finally {
             setLoading(false);
         }

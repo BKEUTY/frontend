@@ -60,22 +60,17 @@ const Chatbot = () => {
     const fetchHistory = async (id) => {
         if (!id) return;
         setIsLoading(true);
+
         try {
             const response = await chatbotApi.getHistory(id);
-            if (response.data && response.data.length > 0) {
+            if (response.data) {
                 const historyMessages = response.data.map(msg => ({
-                    id: Math.random().toString(),
+                    id: msg.id || Math.random().toString(),
                     sender: msg.sender === 'user' ? 'user' : 'bot',
                     content: msg.content,
                     recommendedProduct: msg.recommendedProduct?.[0] || null
                 }));
                 setMessages(historyMessages);
-            } else {
-                setMessages([{
-                    id: 'greeting',
-                    sender: 'bot',
-                    content: t('chatbot_greeting')
-                }]);
             }
         } catch (error) {
             console.error("Fetch history error", error);
@@ -191,6 +186,15 @@ const Chatbot = () => {
         );
     };
 
+    const renderMessages = [
+        {
+            id: 'greeting',
+            sender: 'bot',
+            content: t('chatbot_greeting')
+        },
+        ...messages
+    ];
+
     return (
         <>
             {!isOpen && (
@@ -235,7 +239,7 @@ const Chatbot = () => {
                         ) : (
                             <FlatList
                                 ref={flatListRef}
-                                data={messages}
+                                data={renderMessages}
                                 keyExtractor={item => item.id}
                                 renderItem={renderMessage}
                                 contentContainerStyle={styles.listContent}

@@ -4,8 +4,8 @@ const chatbotApi = {
     sendMessage: (data) => {
         return axiosClient.post('/api/chatbot/send', data);
     },
-    getHistory: (sessionId) => {
-        return axiosClient.get(`/api/chatbot/history/${sessionId}`);
+    getHistory: (sessionId, page = 0, size = 20) => {
+        return axiosClient.get(`/api/chatbot/history/${sessionId}`, { params: { page, size } });
     }
 };
 

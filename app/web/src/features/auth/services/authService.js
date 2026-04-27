@@ -6,11 +6,15 @@ class AuthApi extends BaseApi {
     }
 
     login(data) {
-        return this.client.post(`${this.resource}/login`, { ...data, clientType: 'USER' });
+        return this.client.post(`${this.resource}/login`, { ...data, clientType: 'USER' }, {
+            skipGlobalErrorHandler: true
+        });
     }
 
     register(data) {
-        return this.client.post(`${this.resource}/register`, data);
+        return this.client.post(`${this.resource}/register`, data, {
+            skipGlobalErrorHandler: true
+        });
     }
 
     refresh(data) {

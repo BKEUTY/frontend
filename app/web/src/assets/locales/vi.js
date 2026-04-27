@@ -555,6 +555,7 @@ export default {
     chatbot_error_auth: "Lỗi xác thực hệ thống AI. Vui lòng liên hệ quản trị viên.",
     chatbot_online: "Đang trực tuyến",
     chatbot_expert: "Chuyên gia tư vấn",
+    chatbot_load_more: "Tải thêm tin nhắn cũ",
     error_session_expired: "Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.",
     pagination_showing: "Hiển thị",
     pagination_of: "trong số",

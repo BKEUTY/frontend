@@ -63,7 +63,7 @@ const Chatbot = ({ isOpen, onClose }) => {
         }
     };
 
-    const messages = historyData ? historyData.map((msg, index) => ({
+    const messages = Array.isArray(historyData) ? historyData.map((msg, index) => ({
         id: msg.id || `${msg.sender}_${index}_${msg.timestamp}`,
         type: 'text',
         sender: msg.sender === 'user' ? 'user' : 'bot',
@@ -97,22 +97,12 @@ const Chatbot = ({ isOpen, onClose }) => {
             </div>
 
             <div className="chatbot-body">
-                {isHistoryLoading && messages.length === 0 ? (
-                    <div className="message bot">
-                        <div className="bot-avatar-group">
-                            <div className="bot-avatar">
-                                <RobotOutlined style={{ fontSize: '20px', color: 'var(--color_main_title)' }} />
-                            </div>
-                            <span className="bot-name">{t('chatbot_expert')}</span>
-                        </div>
-                        <div className="message-content">
-                            <div className="message-text typing-indicator">
-                                <span></span><span></span><span></span>
-                            </div>
-                        </div>
+                {isHistoryLoading && messages.length === 0 && (
+                    <div className="chatbot-loading">
+                         <div className="loader-small"></div>
                     </div>
-                ) : (
-                    displayMessages.map((msg) => (
+                )}
+                {displayMessages.map((msg) => (
                         <div key={msg.id} className={`message ${msg.sender}`}>
                             {msg.sender === 'bot' && (
                                 <div className="bot-avatar-group">
@@ -139,7 +129,7 @@ const Chatbot = ({ isOpen, onClose }) => {
                             </div>
                         </div>
                     ))
-                )}
+                }
                 {sendMessageMutation.isPending && (
                     <div className="message bot">
                         <div className="bot-avatar-group">

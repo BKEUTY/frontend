@@ -108,7 +108,12 @@
 .header-actions {
     display: flex;
     align-items: center;
-    gap: 24px;
+    gap: 16px;
+}
+
+.mobile-cart-badge .ant-badge-count {
+    background: var(--color_main_title) !important;
+    box-shadow: 0 2px 4px rgba(161, 5, 80, 0.3) !important;
 }
 
 .desktop-actions {
@@ -119,22 +124,24 @@
 
 .action-btn-custom {
     display: flex;
-    flex-direction: column;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
+    gap: 10px;
+    height: 48px;
+    padding: 0 16px;
+    border-radius: 24px;
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
     color: var(--color_general_text);
-    background: transparent;
-    border: none;
-    padding: 8px;
-    border-radius: 12px;
-    transition: all 0.3s ease;
-    min-width: 60px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
 }
 
 .action-btn-custom:hover {
-    background: rgba(161, 5, 80, 0.05);
-    transform: translateY(-2px);
+    border-color: var(--color_main_title);
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(161, 5, 80, 0.08);
 }
 
 .action-btn-custom:hover .action-label,
@@ -143,9 +150,8 @@
 }
 
 .action-icon {
-    font-size: 24px;
+    font-size: 20px;
     color: var(--color_general_text);
-    margin-bottom: 4px;
     transition: color 0.3s ease;
 }
 
@@ -207,6 +213,33 @@
     }
 }
 
+@media (max-width: 768px) {
+    .header-container {
+        padding: 0 16px;
+    }
+    
+    .user-name-text,
+    .chevron-icon,
+    .action-label {
+        display: none !important;
+    }
+    
+    .user-profile-trigger,
+    .action-btn-custom {
+        padding: 0 !important;
+        gap: 0 !important;
+        border-radius: 50% !important;
+        width: 44px !important;
+        height: 44px !important;
+        min-width: 44px !important;
+        justify-content: center !important;
+    }
+
+    .header-actions {
+        gap: 10px !important;
+    }
+}
+
 .mobile-drawer .ant-drawer-header {
     border-bottom: 1px solid var(--color_border);
     padding: 16px 24px;
@@ -250,8 +283,13 @@
 }
 
 .mobile-drawer .ant-menu-item-selected {
-    background: linear-gradient(135deg, rgba(161, 5, 80, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%) !important;
-    color: var(--color_main_title) !important;
+    background: linear-gradient(135deg, var(--color_main_title) 0%, var(--color_secondary) 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(161, 5, 80, 0.2);
+}
+
+.mobile-drawer .ant-menu-item-selected .anticon {
+    color: #ffffff !important;
 }
 
 .mobile-drawer .ant-menu-item .anticon {
@@ -270,18 +308,18 @@
 }
 
 .mobile-drawer-footer .ant-btn {
-    height: 48px;
-    border-radius: 12px;
+    height: 52px;
+    border-radius: 26px;
     font-weight: 700;
     font-size: 15px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    border: 1px solid #f1f5f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    color: var(--color_general_text);
-    background: white;
+    gap: 10px;
+    color: #475569;
+    background: #f8fafc;
 }
 
 .mobile-drawer-footer .ant-btn:hover:not(.drawer-logout-btn) {
@@ -291,15 +329,16 @@
 }
 
 .drawer-logout-btn {
-    background-color: #fff1f0 !important;
-    color: #ff4d4f !important;
-    border: 1px solid #ffccc7 !important;
+    background: linear-gradient(135deg, #ff4d4f 0%, #f5222d 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(245, 34, 45, 0.2) !important;
 }
 
 .drawer-logout-btn:hover {
-    background-color: #ff4d4f !important;
-    color: #ffffff !important;
-    border-color: #ff4d4f !important;
+    filter: brightness(1.1);
+    transform: translateY(-1px);
 }
 
 .scrolled {
@@ -311,3 +350,106 @@
     line-height: 70px;
 }
 
+.user-profile-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 200px;
+    height: 48px;
+    gap: 8px;
+    padding: 6px 16px 6px 6px;
+    background: #ffffff;
+    border: 1px solid #f0f0f0;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.user-profile-trigger:hover {
+    border-color: var(--color_main_title);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.user-avatar-custom {
+    font-weight: 700;
+    color: var(--color_main_title) !important;
+    border: 2px solid #ffffff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-name-text {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--color_main_title);
+    max-width: 120px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.chevron-icon {
+    font-size: 10px;
+    color: var(--color_main_title);
+    opacity: 0.7;
+    transition: transform 0.3s ease;
+}
+
+.user-profile-trigger.ant-dropdown-open {
+    border-color: var(--color_main_title);
+    box-shadow: 0 4px 15px rgba(161, 5, 80, 0.1);
+}
+
+.user-profile-trigger.ant-dropdown-open .chevron-icon {
+    transform: rotate(180deg);
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu {
+    padding: 8px;
+    border-radius: 16px;
+    width: 200px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1) !important;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item {
+    padding: 12px 16px;
+    border-radius: 10px;
+    transition: all 0.2s ease;
+    margin-bottom: 2px;
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item:last-child {
+    margin-bottom: 0;
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item .anticon {
+    font-size: 16px;
+    margin-right: 12px;
+    color: var(--color_main_title);
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item span {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--color_main_title);
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item-danger .anticon,
+.header-user-dropdown-menu .ant-dropdown-menu-item-danger span {
+    color: #e74c3c !important;
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item:hover {
+    background-color: rgba(161, 5, 80, 0.05) !important;
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item-danger:hover {
+    background-color: #fff1f0 !important;
+}
+
+.header-user-dropdown-menu .ant-dropdown-menu-item-divider {
+    margin: 8px 0;
+    border-top: 1px solid #f5f5f5;
+}

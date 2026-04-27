@@ -14,7 +14,9 @@ import {
   GiftOutlined,
   ShopOutlined,
   HeartOutlined,
-  LogoutOutlined
+  LogoutOutlined,
+  DownOutlined,
+  HistoryOutlined
 } from '@ant-design/icons';
 import logo_image from "@/assets/images/logo.svg";
 import "./Header.css";
@@ -67,6 +69,31 @@ export default function Header() {
     }
   };
 
+  const userMenuItems = [
+    {
+      key: 'account',
+      icon: <UserOutlined />,
+      label: t('account'),
+      onClick: () => navigate('/account')
+    },
+    {
+      key: 'orders',
+      icon: <HistoryOutlined />,
+      label: t('my_orders') || 'Lịch sử giao dịch',
+      onClick: () => navigate('/account/orders')
+    },
+    {
+      type: 'divider',
+    },
+    {
+      key: 'logout',
+      icon: <LogoutOutlined />,
+      label: t('logout'),
+      onClick: handleLogout,
+      danger: true
+    }
+  ];
+
   return (
     <AntHeader className={`app-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="header-container">
@@ -93,10 +120,31 @@ export default function Header() {
           </Badge>
 
           <div className="desktop-actions">
-            <div className="action-btn-custom" onClick={() => navigate(isAuthenticated ? '/account' : '/login')}>
-              <UserOutlined className="action-icon" />
-              <span className="action-label">{isAuthenticated ? (user?.name || t('account')) : t('not_logged_in')}</span>
-            </div>
+            {isAuthenticated ? (
+              <Dropdown
+                menu={{ items: userMenuItems }}
+                placement="bottomRight"
+                trigger={['click']}
+                overlayClassName="header-user-dropdown-menu"
+              >
+                <div className="user-profile-trigger">
+                  <Avatar 
+                    size={32} 
+                    className="user-avatar-custom"
+                    style={{ backgroundColor: 'var(--color_main_title_light, #fde3cf)' }}
+                  >
+                    {user?.name?.[0]?.toUpperCase() || 'U'}
+                  </Avatar>
+                  <span className="user-name-text">{user?.name || t('account')}</span>
+                  <DownOutlined className="chevron-icon" />
+                </div>
+              </Dropdown>
+            ) : (
+              <div className="action-btn-custom" onClick={() => navigate('/login')}>
+                <UserOutlined className="action-icon" />
+                <span className="action-label">{t('not_logged_in')}</span>
+              </div>
+            )}
 
             <div className="action-btn-custom" onClick={toggleLanguage}>
               <GlobalOutlined className="action-icon" />

@@ -545,6 +545,7 @@ export default {
     chatbot_error_auth: "AI system authentication error. Please contact support.",
     chatbot_online: "Online",
     chatbot_expert: "Beauty Expert",
+    chatbot_load_more: "Load older messages",
     error_session_expired: "Your session has expired. Please log in again.",
     pagination_showing: "Showing",
     pagination_of: "of",

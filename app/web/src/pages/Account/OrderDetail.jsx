@@ -69,10 +69,21 @@ const OrderDetail = () => {
                 shippingStatus={orderData.shippingStatus}
                 paymentMethod={orderData.paymentMethod}
                 paymentStatus={orderData.paymentStatus}
+                orderDate={orderData.orderDate}
+                estShippingDate={orderData.estShippingDate}
             />
 
-            <div className="od-dates">
-                <span>{t('order_time')} <strong>{orderData.formattedDate}</strong></span>
+            <div className="od-info-banner">
+                <div className="od-banner-item">
+                    <span className="od-banner-label">{t('order_date_label')}</span>
+                    <strong className="od-banner-value">{new Date(orderData.orderDate).toLocaleDateString('vi-VN')}</strong>
+                </div>
+                {orderData.estShippingDate && (
+                    <div className="od-banner-item">
+                        <span className="od-banner-label">{t('est_delivery_label')}</span>
+                        <strong className="od-banner-value">{new Date(orderData.estShippingDate).toLocaleDateString('vi-VN')}</strong>
+                    </div>
+                )}
             </div>
 
             <div className="od-items-section">
@@ -154,11 +165,21 @@ const OrderDetail = () => {
                 </div>
                 <div className="od-info-card">
                     <h3 className="od-info-title"><FaMapLocationDot /> {t('delivery_header')}</h3>
-                    <p className="od-info-text">
-                        {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}` : '---'}
-                    </p>
+                    <div className="od-delivery-details">
+                        <p className="od-info-text od-font-bold">{orderData.buyerName || orderData.userName || t('guest')}</p>
+                        <p className="od-info-text">{orderData.buyerPhoneNumber || ''}</p>
+                        <p className="od-info-text">
+                            {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}` : '---'}
+                        </p>
+                    </div>
                 </div>
             </div>
+            {orderData.buyerNote && (
+                <div className="od-info-card od-note-card" style={{ marginTop: '20px' }}>
+                    <h3 className="od-info-title">{t('note')}</h3>
+                    <p className="od-info-text">{orderData.buyerNote}</p>
+                </div>
+            )}
 
             <div className="od-summary-wrapper">
                 <div className="od-summary-card">

@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { notification } from 'antd';
 import queryString from 'query-string';
 import { getTranslation } from '@/utils/translate';
 import { notifyError } from '@/utils/NotificationService';
@@ -16,6 +17,7 @@ const authClient = axios.create({
 });
 
 let isRefreshing = false;
+let isLoggingOut = false;
 let failedQueue = [];
 
 const processQueue = (error, token = null) => {
@@ -30,11 +32,25 @@ const processQueue = (error, token = null) => {
 };
 
 const forceLogout = () => {
+    if (isLoggingOut) return;
+    isLoggingOut = true;
+
     clearAccessToken();
     clearUserSession();
+    
     if (!window.location.pathname.includes('/login')) {
-        notifyError('error', getTranslation('error_session_expired') || 'Session Expired');
-        setTimeout(() => window.location.href = '/login', 1500);
+        notification.error({
+            key: 'session_expired',
+            message: getTranslation('error') || 'Error',
+            description: getTranslation('error_session_expired') || 'Session Expired',
+            duration: 3
+        });
+        setTimeout(() => {
+            window.location.href = '/login';
+            isLoggingOut = false;
+        }, 1500);
+    } else {
+        isLoggingOut = false;
     }
 };
 
@@ -109,6 +125,8 @@ const createAxiosClient = () => {
 
             if (status !== 401 && !originalRequest.skipGlobalErrorHandler) {
                 let fallbackKey = 'error_unknown';
+                let notificationKey = `error_${status || 'network'}`;
+
                 if (status === 403) fallbackKey = 'error_403';
                 else if (status === 404) fallbackKey = 'error_404';
                 else if (status >= 500) fallbackKey = 'error_500';
@@ -119,9 +137,19 @@ const createAxiosClient = () => {
                 const description = originalRequest.customErrorMsg || apiMessage || getTranslation(fallbackKey);
                 
                 if (error.message === 'Network Error') {
-                    notifyError('error', getTranslation('api_error_network') || 'Network Error');
+                    notification.error({
+                        key: 'error_network',
+                        message: getTranslation('error') || 'Error',
+                        description: getTranslation('api_error_network') || 'Network Error',
+                        duration: 3
+                    });
                 } else {
-                    notifyError(originalRequest.customErrorTitle || 'error', description);
+                    notification.error({
+                        key: notificationKey,
+                        message: originalRequest.customErrorTitle || getTranslation('error') || 'Error',
+                        description: description,
+                        duration: 3
+                    });
                 }
                 error.isGlobalHandled = true;
             }

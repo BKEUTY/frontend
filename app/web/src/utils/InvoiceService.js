@@ -36,8 +36,11 @@ const generateInvoice = (orderData, t) => {
 
     doc.setFont("Roboto", "normal");
     doc.setFontSize(10);
-    doc.text(`${t('invoice_date')}: ${orderData.formattedDate}`, 15, 57);
-    doc.text(`${t('invoice_payment')}: ${orderData.paymentMethod}`, 15, 62);
+    doc.text(`${t('invoice_order_date')}: ${new Date(orderData.orderDate).toLocaleDateString('vi-VN')}`, 15, 57);
+    if (orderData.estShippingDate) {
+        doc.text(`${t('invoice_est_delivery')}: ${new Date(orderData.estShippingDate).toLocaleDateString('vi-VN')}`, 15, 62);
+    }
+    doc.text(`${t('invoice_payment')}: ${orderData.paymentMethod}`, 15, 67);
 
     const address = orderData.address;
     const addressStr = typeof address === 'string' ? address : `${address.address}, ${address.ward?.wardName}, ${address.district?.districtName}, ${address.province?.provinceName}`;
@@ -54,71 +57,100 @@ const generateInvoice = (orderData, t) => {
     const splitAddress = doc.splitTextToSize(addressStr, addressWidth);
     doc.text(splitAddress, rightColX, 62);
 
-    let nextY = 62 + (splitAddress.length * 5) + 10;
-    if (nextY < 85) nextY = 85; 
+    let nextY = 67 + (splitAddress.length * 5) + 10;
+    if (nextY < 90) nextY = 90; 
 
-    const tableData = orderData.items.map(item => [
-        item.productVariantName,
-        item.quantity,
-        `${(item.promotionPrice || item.price || 0).toLocaleString("vi-VN")} đ`,
-        `${((item.promotionPrice || item.price || 0) * item.quantity).toLocaleString("vi-VN")} đ`
-    ]);
+    const tableData = orderData.items.map(item => {
+        const originalPrice = item.price || 0;
+        const finalPrice = item.promotionPrice || item.price || 0;
+        const discountPerItem = originalPrice - finalPrice;
+
+        return [
+            item.productVariantName,
+            `${originalPrice.toLocaleString("vi-VN")}${t('unit_vnd')}`,
+            discountPerItem > 0 ? `-${discountPerItem.toLocaleString("vi-VN")}${t('unit_vnd')}` : `0${t('unit_vnd')}`,
+            item.quantity,
+            `${(finalPrice * item.quantity).toLocaleString("vi-VN")}${t('unit_vnd')}`
+        ];
+    });
 
     autoTable(doc, {
         startY: nextY,
-        head: [[t('invoice_product'), t('invoice_qty'), t('invoice_unit_price'), t('invoice_total')]],
+        head: [[
+            t('invoice_product'), 
+            t('invoice_original_price'), 
+            t('invoice_discount_col'), 
+            t('invoice_qty'), 
+            t('invoice_total')
+        ]],
         body: tableData,
         theme: 'grid',
         headStyles: {
             fillColor: primaryColor,
             textColor: [255, 255, 255],
-            fontSize: 10,
+            fontSize: 9,
             halign: 'center',
             font: 'Roboto',
             fontStyle: 'bold'
         },
         styles: {
             font: 'Roboto',
-            fontSize: 9,
+            fontSize: 8,
             cellPadding: 3
         },
         columnStyles: {
-            1: { halign: 'center' },
-            2: { halign: 'right' },
-            3: { halign: 'right' }
+            0: { cellWidth: 'auto' },
+            1: { halign: 'right', cellWidth: 30 },
+            2: { halign: 'right', cellWidth: 30, textColor: primaryColor },
+            3: { halign: 'center', cellWidth: 15 },
+            4: { halign: 'right', cellWidth: 30 }
         }
     });
+
+    const subtotal = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const totalDiscount = orderData.items.reduce((sum, item) => {
+        const price = item.price || 0;
+        const promoPrice = item.promotionPrice || price;
+        return sum + (price > promoPrice ? (price - promoPrice) * item.quantity : 0);
+    }, 0);
 
     const finalY = doc.lastAutoTable.finalY + 10;
     const labelX = 155;
     const valueX = 195;
 
-    doc.setFontSize(10);
-    doc.text(`${t('invoice_subtotal')}:`, labelX, finalY, { align: "right" });
-    doc.text(`${(orderData.total + (orderData.totalDiscount || 0)).toLocaleString("vi-VN")} đ`, valueX, finalY, { align: "right" });
+    let currentY = finalY;
+    const lineHeight = 6;
 
-    if (orderData.totalDiscount > 0) {
+    doc.setFontSize(10);
+    doc.text(`${t('invoice_subtotal')}:`, labelX, currentY, { align: "right" });
+    doc.text(`${subtotal.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
+
+    if (totalDiscount > 0) {
+        currentY += lineHeight;
         doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-        doc.text(`${t('invoice_discount')}:`, labelX, finalY + 7, { align: "right" });
-        doc.text(`-${(orderData.totalDiscount).toLocaleString("vi-VN")} đ`, valueX, finalY + 7, { align: "right" });
+        doc.text(`${t('invoice_discount')}:`, labelX, currentY, { align: "right" });
+        doc.text(`-${totalDiscount.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
         doc.setTextColor(0);
     }
 
-    doc.text(`${t('invoice_shipping')}:`, labelX, finalY + 14, { align: "right" });
-    doc.text(`+${(orderData.shippingFee || 0).toLocaleString("vi-VN")} đ`, valueX, finalY + 14, { align: "right" });
+    currentY += lineHeight;
+    doc.text(`${t('invoice_shipping')}:`, labelX, currentY, { align: "right" });
+    doc.text(`+${(orderData.shippingFee || 0).toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
 
+    currentY += 10;
     doc.setFont("Roboto", "bold");
     doc.setFontSize(14);
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-    doc.text(`${t('invoice_grand_total')}:`, labelX, finalY + 25, { align: "right" });
-    doc.text(`${((orderData.total || 0) + (orderData.shippingFee || 0)).toLocaleString("vi-VN")} đ`, valueX, finalY + 25, { align: "right" });
+    doc.text(`${t('invoice_grand_total')}:`, labelX, currentY, { align: "right" });
+    doc.text(`${((orderData.total || 0) + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
 
     doc.setFont("Roboto", "normal");
     doc.setFontSize(9);
     doc.setTextColor(150);
     doc.text(t('invoice_thanks'), 105, 280, { align: "center" });
 
-    doc.save(`BKEUTY_Invoice_${orderData.orderId}.pdf`);
+    const invoiceFileName = t('invoice_title').toLowerCase().replace(/\s+/g, '_') + `_${orderData.orderId}.pdf`;
+    doc.save(`BKEUTY_${invoiceFileName}`);
 };
 
 export default generateInvoice;

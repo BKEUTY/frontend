@@ -187,7 +187,13 @@ const OrderDetailScreen = () => {
                         </View>
                         <View style={styles.infoContent}>
                             <Text style={styles.infoLabel}>{t('delivery_header')}</Text>
-                            <Text style={styles.infoValue} numberOfLines={2}>
+                            <Text style={[styles.infoValue, { fontWeight: '800' }]} numberOfLines={1}>
+                                {order.buyerName || order.userName || t('guest')}
+                            </Text>
+                            <Text style={styles.infoValue} numberOfLines={1}>
+                                {order.buyerPhoneNumber || ''}
+                            </Text>
+                            <Text style={[styles.infoValue, { fontSize: 11, marginTop: 4 }]} numberOfLines={2}>
                                 {order.address ? `${order.address.address}, ${order.address.ward?.wardName}, ${order.address.district?.districtName}, ${order.address.province?.provinceName}` : '---'}
                             </Text>
                         </View>
@@ -206,6 +212,18 @@ const OrderDetailScreen = () => {
                         </View>
                     </View>
                 </View>
+                
+                {order.buyerNote && (
+                    <View style={[styles.infoCard, { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-start', padding: 15, marginTop: -8, marginBottom: 24 }]}>
+                        <View style={[styles.infoIconBox, { marginBottom: 0, marginRight: 15 }]}>
+                            <Ionicons name="document-text-outline" size={20} color={COLORS.mainTitle} />
+                        </View>
+                        <View style={{ flex: 1 }}>
+                            <Text style={[styles.infoLabel, { marginBottom: 2, textAlign: 'left' }]}>{t('note')}</Text>
+                            <Text style={[styles.infoValue, { textAlign: 'left' }]}>{order.buyerNote}</Text>
+                        </View>
+                    </View>
+                )}
 
                 <View style={styles.summaryCard}>
                     <Text style={styles.summaryTitle}>{t('order_overview')}</Text>

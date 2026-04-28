@@ -43,11 +43,13 @@ const forceLogout = () => {
             key: 'session_expired',
             message: getTranslation('error') || 'Error',
             description: getTranslation('error_session_expired') || 'Session Expired',
-            duration: 3
+            duration: 3,
+            onClose: () => {
+                isLoggingOut = false;
+            }
         });
         setTimeout(() => {
             window.location.href = '/login';
-            isLoggingOut = false;
         }, 1500);
     } else {
         isLoggingOut = false;
@@ -123,7 +125,7 @@ const createAxiosClient = () => {
                 }
             }
 
-            if (status !== 401 && !originalRequest.skipGlobalErrorHandler) {
+            if (status !== 401 && !originalRequest.skipGlobalErrorHandler && !isLoggingOut) {
                 let fallbackKey = 'error_unknown';
                 let notificationKey = `error_${status || 'network'}`;
 
@@ -134,9 +136,13 @@ const createAxiosClient = () => {
                 const errorData = error.response?.data;
                 const apiMessage = typeof errorData === 'string' ? errorData : (errorData?.message || errorData?.error || '');
                 
-                const description = originalRequest.customErrorMsg || apiMessage || getTranslation(fallbackKey);
+                // Prioritize translated message over technical API message for standard errors
+                const translatedFallback = getTranslation(fallbackKey);
+                const description = originalRequest.customErrorMsg || 
+                                   (translatedFallback !== fallbackKey ? translatedFallback : apiMessage) || 
+                                   translatedFallback;
                 
-                if (error.message === 'Network Error') {
+                if (error.message === 'Network Error' || !error.response) {
                     notification.error({
                         key: 'error_network',
                         message: getTranslation('error') || 'Error',

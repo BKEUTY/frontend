@@ -3,7 +3,7 @@ import { useOrders } from '@/features/orders/hooks/useOrders';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useQueryParams } from '@/hooks/useQueryParams';
 import { useLanguage } from '@/store/LanguageContext';
-import { EyeOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
+import { DownOutlined, EyeOutlined, FilterOutlined, SearchOutlined, SortAscendingOutlined } from '@ant-design/icons';
 import { DatePicker, Input, Select, Spin } from 'antd';
 import dayjs from 'dayjs';
 import { useEffect, useMemo, useState } from 'react';
@@ -105,7 +105,7 @@ const MyOrders = () => {
 
             <div className="ord-filter-section-compact">
                 <div className="ord-search-wrapper">
-                    <Search
+                    <Input
                         placeholder={t('search_order_placeholder') || t('search')}
                         allowClear
                         value={searchInput}
@@ -116,58 +116,65 @@ const MyOrders = () => {
                                 setQuery({ search: null, page: 1 });
                             }
                         }}
-                        onSearch={(val) => setQuery({ search: val?.trim?.() || null, page: 1 })}
+                        onPressEnter={(e) => setQuery({ search: e.target.value?.trim?.() || null, page: 1 })}
                         className="ord-compact-search"
+                        suffix={<SearchOutlined style={{ color: '#d51c5d', fontSize: '16px' }} />}
                     />
                 </div>
 
-                <div className="ord-filters-row">
-                    <div className="ord-filter-group">
-                        <FilterOutlined className="ord-filter-icon-only" />
-                        <div className="ord-filter-controls">
-                            <Select
-                                value={status}
-                                onChange={(val) => handleFilterChange({ status: val })}
-                                className="ord-compact-select"
-                                dropdownMatchSelectWidth={false}
-                            >
-                                <Option value="ALL">{t('all')}</Option>
-                                <Option value="NOT_CONFIRMED">{t('status_order_received')}</Option>
-                                <Option value="CONFIRMED">{t('status_shipping')}</Option>
-                                <Option value="SUCCEEDED">{t('order_status_SUCCEEDED')}</Option>
-                                <Option value="CANCELLED">{t('order_status_CANCELLED')}</Option>
-                            </Select>
-                            <RangePicker
-                                value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : null}
-                                onChange={(dates) => {
-                                    handleFilterChange({
-                                        startDate: dates?.[0] ? dates[0].format('YYYY-MM-DD') : null,
-                                        endDate: dates?.[1] ? dates[1].format('YYYY-MM-DD') : null
-                                    });
-                                }}
-                                className="ord-compact-range"
-                                placeholder={[t('startDate'), t('endDate')]}
-                            />
-                        </div>
-                    </div>
+                <div className="ord-filter-group">
+                    <Select
+                        value={status}
+                        onChange={(val) => handleFilterChange({ status: val })}
+                        className="ord-compact-select"
+                        dropdownMatchSelectWidth={false}
+                        suffixIcon={
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <FilterOutlined style={{ color: '#d51c5d', fontSize: '16px' }} />
+                                <DownOutlined style={{ fontSize: '10px', color: 'rgba(0,0,0,0.25)' }} />
+                            </div>
+                        }
+                    >
+                        <Option value="ALL">{t('all')}</Option>
+                        <Option value="NOT_CONFIRMED">{t('status_order_received')}</Option>
+                        <Option value="CONFIRMED">{t('status_shipping')}</Option>
+                        <Option value="SUCCEEDED">{t('order_status_SUCCEEDED')}</Option>
+                        <Option value="CANCELLED">{t('order_status_CANCELLED')}</Option>
+                    </Select>
+                    
+                    <RangePicker
+                        value={startDate && endDate ? [dayjs(startDate), dayjs(endDate)] : null}
+                        onChange={(dates) => {
+                            handleFilterChange({
+                                startDate: dates?.[0] ? dates[0].format('YYYY-MM-DD') : null,
+                                endDate: dates?.[1] ? dates[1].format('YYYY-MM-DD') : null
+                            });
+                        }}
+                        className="ord-compact-range"
+                        placeholder={[t('startDate'), t('endDate')]}
+                        suffixIcon={<FilterOutlined style={{ color: '#d51c5d', fontSize: '16px' }} />}
+                    />
+                </div>
 
-                    <div className="ord-filter-group sort-group">
-                        <SortAscendingOutlined className="ord-filter-icon-only" />
-                        <div className="ord-filter-controls">
-                            <Select
-                                value={sort}
-                                onChange={(val) => handleFilterChange({ sort: val })}
-                                className="ord-compact-select"
-                                dropdownMatchSelectWidth={false}
-                            >
-                                <Option value="default">{t('sort_default')}</Option>
-                                <Option value="date_desc">{t('time_newest')}</Option>
-                                <Option value="date_asc">{t('time_oldest')}</Option>
-                                <Option value="total_desc">{t('price_high_low')}</Option>
-                                <Option value="total_asc">{t('price_low_high')}</Option>
-                            </Select>
-                        </div>
-                    </div>
+                <div className="ord-filter-group sort-group">
+                    <Select
+                        value={sort}
+                        onChange={(val) => handleFilterChange({ sort: val })}
+                        className="ord-compact-select"
+                        dropdownMatchSelectWidth={false}
+                        suffixIcon={
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                <SortAscendingOutlined style={{ color: '#d51c5d', fontSize: '16px' }} />
+                                <DownOutlined style={{ fontSize: '10px', color: 'rgba(0,0,0,0.25)' }} />
+                            </div>
+                        }
+                    >
+                        <Option value="default">{t('sort_default')}</Option>
+                        <Option value="date_desc">{t('time_newest')}</Option>
+                        <Option value="date_asc">{t('time_oldest')}</Option>
+                        <Option value="total_desc">{t('price_high_low')}</Option>
+                        <Option value="total_asc">{t('price_low_high')}</Option>
+                    </Select>
                 </div>
             </div>
 

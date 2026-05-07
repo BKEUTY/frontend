@@ -44,21 +44,21 @@ const generateInvoice = (orderData, t) => {
 
     const address = orderData.address;
     const addressStr = typeof address === 'string' ? address : `${address.address}, ${address.ward?.wardName}, ${address.district?.districtName}, ${address.province?.provinceName}`;
-    
+
     const rightColX = 115;
     const addressWidth = 80;
 
     doc.setFont("Roboto", "bold");
     doc.text(t('invoice_customer'), rightColX, 50);
-    
+
     doc.setFont("Roboto", "normal");
     doc.text(`${orderData.userName || 'Customer'}`, rightColX, 57);
-    
+
     const splitAddress = doc.splitTextToSize(addressStr, addressWidth);
     doc.text(splitAddress, rightColX, 62);
 
     let nextY = 67 + (splitAddress.length * 5) + 10;
-    if (nextY < 90) nextY = 90; 
+    if (nextY < 90) nextY = 90;
 
     const tableData = orderData.items.map(item => {
         const originalPrice = item.price || 0;
@@ -77,10 +77,10 @@ const generateInvoice = (orderData, t) => {
     autoTable(doc, {
         startY: nextY,
         head: [[
-            t('invoice_product'), 
-            t('invoice_original_price'), 
-            t('invoice_discount_col'), 
-            t('invoice_qty'), 
+            t('invoice_product'),
+            t('invoice_original_price'),
+            t('invoice_discount_col'),
+            t('invoice_qty'),
             t('invoice_total')
         ]],
         body: tableData,

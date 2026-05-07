@@ -9,6 +9,7 @@ export default {
     price_range: "Khoảng giá",
     min_price: "Tối thiểu",
     max_price: "Tối đa",
+    price_apply: "Áp dụng",
     apply: "Áp dụng",
     cancel: "Hủy",
     confirm: "Xác nhận",

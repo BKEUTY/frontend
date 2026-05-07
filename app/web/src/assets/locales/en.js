@@ -9,6 +9,7 @@ export default {
     price_range: "Price Range",
     min_price: "Min Price",
     max_price: "Max Price",
+    price_apply: "Apply",
     apply: "Apply",
     cancel: "Cancel",
     confirm: "Confirm",

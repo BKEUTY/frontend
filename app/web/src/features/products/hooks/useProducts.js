@@ -7,12 +7,14 @@ export const useProducts = (params = {}) => {
     search = '',
     categoryId = null,
     sort = 'default',
-    status = 'ACTIVE'
+    status = 'ACTIVE',
+    minPrice,
+    maxPrice
   } = params;
 
 
   return useInfiniteQuery({
-    queryKey: ['products', 'infinite', { size, search, categoryId, sort, status }],
+    queryKey: ['products', 'infinite', { size, search, categoryId, sort, status, minPrice, maxPrice }],
     queryFn: async ({ pageParam = 1 }) => {
       const trimmedSearch = search ? String(search).trim() : '';
       const apiParams = {
@@ -29,6 +31,12 @@ export const useProducts = (params = {}) => {
       }
       if (sort !== 'default') {
         apiParams.sort = sort;
+      }
+      if (minPrice !== undefined && minPrice !== null) {
+        apiParams.minPrice = minPrice;
+      }
+      if (maxPrice !== undefined && maxPrice !== null) {
+        apiParams.maxPrice = maxPrice;
       }
 
       const res = await productApi.getAll(apiParams);
@@ -52,11 +60,13 @@ export const useProductsPaginated = (params = {}) => {
     search = '',
     categoryId = null,
     sort = 'default',
-    status = 'ACTIVE'
+    status = 'ACTIVE',
+    minPrice,
+    maxPrice
   } = params;
 
   const query = useQuery({
-    queryKey: ['products', 'paginated', { page, size, search, categoryId, sort, status }],
+    queryKey: ['products', 'paginated', { page, size, search, categoryId, sort, status, minPrice, maxPrice }],
     queryFn: async () => {
       const trimmedSearch = search ? String(search).trim() : '';
       const apiParams = {
@@ -73,6 +83,12 @@ export const useProductsPaginated = (params = {}) => {
       }
       if (sort !== 'default') {
         apiParams.sort = sort;
+      }
+      if (minPrice !== undefined && minPrice !== null) {
+        apiParams.minPrice = minPrice;
+      }
+      if (maxPrice !== undefined && maxPrice !== null) {
+        apiParams.maxPrice = maxPrice;
       }
 
       const res = await productApi.getAll(apiParams);

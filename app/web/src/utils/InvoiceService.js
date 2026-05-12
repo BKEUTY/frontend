@@ -61,16 +61,18 @@ const generateInvoice = (orderData, t) => {
     if (nextY < 90) nextY = 90;
 
     const tableData = orderData.items.map(item => {
-        const originalPrice = item.price || 0;
-        const finalPrice = item.promotionPrice || item.price || 0;
-        const discountPerItem = originalPrice - finalPrice;
+        const price = Number(item.price) || 0;
+        const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
+        const quantity = Number(item.quantity) || 1;
+        const productDiscount = price - promoPrice;
+        const lineTotal = promoPrice * quantity;
 
         return [
             item.productVariantName,
-            `${originalPrice.toLocaleString("vi-VN")}${t('unit_vnd')}`,
-            discountPerItem > 0 ? `-${discountPerItem.toLocaleString("vi-VN")}${t('unit_vnd')}` : `0${t('unit_vnd')}`,
-            item.quantity,
-            `${(finalPrice * item.quantity).toLocaleString("vi-VN")}${t('unit_vnd')}`
+            `${price.toLocaleString("vi-VN")}${t('unit_vnd')}`,
+            productDiscount > 0 ? `-${productDiscount.toLocaleString("vi-VN")}${t('unit_vnd')}` : `0${t('unit_vnd')}`,
+            quantity,
+            `${lineTotal.toLocaleString("vi-VN")}${t('unit_vnd')}`
         ];
     });
 
@@ -107,13 +109,6 @@ const generateInvoice = (orderData, t) => {
         }
     });
 
-    const subtotal = orderData.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    const totalDiscount = orderData.items.reduce((sum, item) => {
-        const price = item.price || 0;
-        const promoPrice = item.promotionPrice || price;
-        return sum + (price > promoPrice ? (price - promoPrice) * item.quantity : 0);
-    }, 0);
-
     const finalY = doc.lastAutoTable.finalY + 10;
     const labelX = 155;
     const valueX = 195;
@@ -121,28 +116,53 @@ const generateInvoice = (orderData, t) => {
     let currentY = finalY;
     const lineHeight = 6;
 
+    // Summaries logic
+    const subtotal = (orderData.items || []).reduce((sum, item) => {
+        const price = Number(item.price || 0);
+        const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
+        return sum + (promoPrice * Number(item.quantity || 1));
+    }, 0);
+    const voucherDiscount = Number(orderData.voucherDiscountAmount || 0);
+    const shippingFee = Number(orderData.shippingFee || 0);
+    const grandTotal = Number(orderData.total || 0) + shippingFee;
+
+    // Buyer Note Section
+    if (orderData.buyerNote) {
+        doc.setFont("Roboto", "bold");
+        doc.setFontSize(10);
+        doc.setTextColor(0);
+        doc.text(`${t('note') || 'Ghi chú'}:`, 15, currentY);
+        doc.setFont("Roboto", "normal");
+        const splitNote = doc.splitTextToSize(orderData.buyerNote, 100);
+        doc.text(splitNote, 15, currentY + 5);
+    }
+
+    // Display values
     doc.setFontSize(10);
+    doc.setFont("Roboto", "normal");
+    doc.setTextColor(0);
+    
     doc.text(`${t('invoice_subtotal')}:`, labelX, currentY, { align: "right" });
     doc.text(`${subtotal.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
 
-    if (totalDiscount > 0) {
+    if (voucherDiscount > 0) {
         currentY += lineHeight;
         doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
-        doc.text(`${t('invoice_discount')}:`, labelX, currentY, { align: "right" });
-        doc.text(`-${totalDiscount.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
+        doc.text(`${t('voucher_discount')}:`, labelX, currentY, { align: "right" });
+        doc.text(`-${voucherDiscount.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
         doc.setTextColor(0);
     }
 
     currentY += lineHeight;
-    doc.text(`${t('invoice_shipping')}:`, labelX, currentY, { align: "right" });
-    doc.text(`+${(orderData.shippingFee || 0).toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
+    doc.text(`${t('shipping_fee')}:`, labelX, currentY, { align: "right" });
+    doc.text(`+${shippingFee.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
 
     currentY += 10;
     doc.setFont("Roboto", "bold");
     doc.setFontSize(14);
     doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
     doc.text(`${t('invoice_grand_total')}:`, labelX, currentY, { align: "right" });
-    doc.text(`${((orderData.total || 0) + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
+    doc.text(`${grandTotal.toLocaleString("vi-VN")}${t('unit_vnd')}`, valueX, currentY, { align: "right" });
 
     doc.setFont("Roboto", "normal");
     doc.setFontSize(9);

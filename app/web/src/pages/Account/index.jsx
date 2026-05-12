@@ -20,8 +20,11 @@ import {
     EnvironmentOutlined, 
     LogoutOutlined,
     CameraOutlined,
-    RollbackOutlined
+    RollbackOutlined,
+    InfoCircleOutlined,
+    ExclamationCircleOutlined
 } from '@ant-design/icons';
+import { Popover, Modal } from 'antd';
 import ReturnRequests from './ReturnRequests';
 
 export default function Account() {
@@ -34,13 +37,23 @@ export default function Account() {
     const handleUpdate = () => {
     };
 
-    const handleLogout = async () => {
-        try {
-            await logout();
-            navigate('/');
-        } catch (error) {
-            console.error(error);
-        }
+    const handleLogout = () => {
+        Modal.confirm({
+            title: t('confirm_logout_title') || t('logout'),
+            icon: <ExclamationCircleOutlined />,
+            content: t('confirm_logout_message') || 'Bạn có chắc chắn muốn đăng xuất không?',
+            okText: t('yes'),
+            okType: 'danger',
+            cancelText: t('no'),
+            onOk: async () => {
+                try {
+                    await logout();
+                    navigate('/');
+                } catch (error) {
+                    console.error(error);
+                }
+            }
+        });
     };
 
     const isActive = (path) => {
@@ -52,6 +65,14 @@ export default function Account() {
         return false;
     };
 
+    const MEMBERSHIP_NAMES = {
+        0: t('membership_member'),
+        1: t('membership_silver'),
+        2: t('membership_gold'),
+        3: t('membership_platinum'),
+        4: t('membership_diamond')
+    };
+
     return (
         <div className="account-wrapper">
             <div className="account-sidebar">
@@ -61,6 +82,34 @@ export default function Account() {
                     </div>
                     <div className="profile-info">
                         <span className="profile-name">{user?.name || t('account')}</span>
+                        <div className="membership-badge-row">
+                            <span className={`membership-badge membership-level-${user?.membershipLevel ?? 0}`}>
+                                {MEMBERSHIP_NAMES[user?.membershipLevel ?? 0]}
+                            </span>
+                            <Popover 
+                                content={(
+                                    <div className="membership-info-popover">
+                                        <h4 style={{ margin: '0 0 8px 0', color: '#A10550', fontWeight: 700 }}>{t('membership_rules_title')}</h4>
+                                        <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '12px', lineHeight: '1.5' }}>{t('membership_rules_desc')}</p>
+                                        <ul style={{ listStyle: 'none', padding: 0, margin: 0, fontSize: '14px' }}>
+                                            <li style={{ padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>• {t('membership_threshold_member')}</li>
+                                            <li style={{ padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>• {t('membership_threshold_silver')}</li>
+                                            <li style={{ padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>• {t('membership_threshold_gold')}</li>
+                                            <li style={{ padding: '6px 0', borderBottom: '1px solid #f1f5f9' }}>• {t('membership_threshold_platinum')}</li>
+                                            <li style={{ padding: '6px 0' }}>• {t('membership_threshold_diamond')}</li>
+                                        </ul>
+                                        <p style={{ fontSize: '12px', color: '#94a3b8', marginTop: '12px', fontStyle: 'italic', lineHeight: '1.4' }}>
+                                            {t('membership_benefits_note')}
+                                        </p>
+                                    </div>
+                                )} 
+                                title={null} 
+                                trigger="click"
+                                placement="rightTop"
+                            >
+                                <InfoCircleOutlined className="membership-info-icon" />
+                            </Popover>
+                        </div>
                     </div>
                 </div>
                 <nav className="sidebar-nav">
@@ -124,7 +173,7 @@ const AccountInfo = ({ onUpdate }) => {
 
     const fetchProfile = async () => {
         try {
-            const res = await userApi.getProfile({ skipGlobalErrorHandler: true });
+            const res = await userApi.getProfile();
             if (res.data) {
                 const data = res.data;
                 setUserData({
@@ -135,10 +184,12 @@ const AccountInfo = ({ onUpdate }) => {
                     phone: data.phoneNumber || '',
                     dob: data.dob || '',
                     gender: data.gender || 'Nam',
+                    totalSpending: data.totalSpending || 0,
+                    membershipLevel: data.membershipLevel || 0
                 });
             }
         } catch (err) {
-            notify(t('fetch_profile_error'), 'error');
+            console.error('Fetch profile error:', err);
         } finally {
             setIsLoading(false);
         }
@@ -178,8 +229,6 @@ const AccountInfo = ({ onUpdate }) => {
                 phoneNumber: userData.phone,
                 dob: userData.dob,
                 gender: userData.gender
-            }, { 
-                customErrorMsg: t('update_info_error') || t('api_error_general') 
             });
             
             await fetchProfile();
@@ -201,6 +250,8 @@ const AccountInfo = ({ onUpdate }) => {
                 <h1 className="page-title">{t('account')}</h1>
                 <p className="page-subtitle">{t('welcome')} <strong>{userData.firstname} {userData.lastname}</strong></p>
             </div>
+
+            <MembershipProgress spending={userData.totalSpending} level={userData.membershipLevel} />
 
             <div className="info-grid-layout">
                 <div className="info-form-section">
@@ -297,6 +348,74 @@ const AccountInfo = ({ onUpdate }) => {
                         </label>
                     </div>
                     <span className="avatar-hint">{t('update_avatar')}</span>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const MembershipProgress = ({ spending, level }) => {
+    const { t } = useLanguage();
+    
+    const thresholds = [0, 2000000, 5000000, 15000000, 30000000];
+    const levels = [
+        t('membership_member'), 
+        t('membership_silver'), 
+        t('membership_gold'), 
+        t('membership_platinum'), 
+        t('membership_diamond')
+    ];
+
+    const isMaxLevel = level >= 4;
+    const nextLevelIndex = level < 4 ? level + 1 : 4;
+    const currentThreshold = thresholds[level];
+    const nextThreshold = isMaxLevel ? thresholds[level] : thresholds[level + 1];
+    
+    // Calculate progress within the CURRENT segment (0 to 100)
+    const segmentProgress = isMaxLevel ? 100 : Math.min(100, Math.max(0, ((spending - currentThreshold) / (nextThreshold - currentThreshold)) * 100));
+    
+    // Calculate TOTAL progress across the entire bar (0 to 100)
+    // Each segment represents 25% of the total width (100% / 4 segments)
+    const totalProgress = isMaxLevel ? 100 : (level * 25) + (segmentProgress * 0.25);
+
+    const formatCurrency = (val) => {
+        const formatted = new Intl.NumberFormat('vi-VN').format(val);
+        return <>{formatted} <span className="currency">đ</span></>;
+    };
+
+    const needed = isMaxLevel ? 0 : (nextThreshold - spending);
+
+    return (
+        <div className="membership-progress-card">
+            <div className="progress-header">
+                <div className="current-spending">
+                    <span className="label">{t('total_spending') || 'Tổng chi tiêu tích lũy'}:</span>
+                    <span className="value">{formatCurrency(spending)}</span>
+                </div>
+                {!isMaxLevel && (
+                    <div className="next-goal">
+                        <span>{t('need_more_spending') || 'Cần thêm'} <strong>{formatCurrency(needed)}</strong> {t('to_reach') || 'để lên hạng'} <strong>{levels[nextLevelIndex]}</strong></span>
+                    </div>
+                )}
+            </div>
+            
+            <div className="membership-progress-container">
+                <div className="progress-track">
+                    <div className="progress-fill" style={{ width: `${totalProgress}%` }}>
+                        <div className="progress-glow"></div>
+                    </div>
+                </div>
+                <div className="threshold-markers">
+                    {thresholds.map((val, idx) => (
+                        <div 
+                            key={idx} 
+                            className={`marker ${idx <= level ? 'active' : ''} ${idx === nextLevelIndex ? 'next' : ''}`}
+                            style={{ left: `${(idx / 4) * 100}%` }}
+                        >
+                            <div className="marker-dot"></div>
+                            <span className="marker-label">{levels[idx]}</span>
+                        </div>
+                    ))}
                 </div>
             </div>
         </div>

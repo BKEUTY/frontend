@@ -9,12 +9,13 @@ export const useProducts = (params = {}) => {
     sort = 'default',
     status = 'ACTIVE',
     minPrice,
-    maxPrice
+    maxPrice,
+    userId,
+    membershipLevel
   } = params;
 
-
   return useInfiniteQuery({
-    queryKey: ['products', 'infinite', { size, search, categoryId, sort, status, minPrice, maxPrice }],
+    queryKey: ['products', 'infinite', { size, search, categoryId, sort, status, minPrice, maxPrice, userId, membershipLevel }],
     queryFn: async ({ pageParam = 1 }) => {
       const trimmedSearch = search ? String(search).trim() : '';
       const apiParams = {
@@ -23,21 +24,13 @@ export const useProducts = (params = {}) => {
         status,
       };
 
-      if (trimmedSearch) {
-        apiParams.search = trimmedSearch;
-      }
-      if (categoryId && categoryId !== 'all') {
-        apiParams.categoryId = categoryId;
-      }
-      if (sort !== 'default') {
-        apiParams.sort = sort;
-      }
-      if (minPrice !== undefined && minPrice !== null) {
-        apiParams.minPrice = minPrice;
-      }
-      if (maxPrice !== undefined && maxPrice !== null) {
-        apiParams.maxPrice = maxPrice;
-      }
+      if (trimmedSearch) apiParams.search = trimmedSearch;
+      if (categoryId && categoryId !== 'all') apiParams.categoryId = categoryId;
+      if (sort !== 'default') apiParams.sort = sort;
+      if (minPrice !== undefined && minPrice !== null) apiParams.minPrice = minPrice;
+      if (maxPrice !== undefined && maxPrice !== null) apiParams.maxPrice = maxPrice;
+      if (userId) apiParams.userId = userId;
+      if (membershipLevel !== undefined && membershipLevel !== null) apiParams.membershipLevel = membershipLevel;
 
       const res = await productApi.getAll(apiParams);
       return {
@@ -62,11 +55,13 @@ export const useProductsPaginated = (params = {}) => {
     sort = 'default',
     status = 'ACTIVE',
     minPrice,
-    maxPrice
+    maxPrice,
+    userId,
+    membershipLevel
   } = params;
 
   const query = useQuery({
-    queryKey: ['products', 'paginated', { page, size, search, categoryId, sort, status, minPrice, maxPrice }],
+    queryKey: ['products', 'paginated', { page, size, search, categoryId, sort, status, minPrice, maxPrice, userId, membershipLevel }],
     queryFn: async () => {
       const trimmedSearch = search ? String(search).trim() : '';
       const apiParams = {
@@ -75,21 +70,13 @@ export const useProductsPaginated = (params = {}) => {
         status,
       };
 
-      if (trimmedSearch) {
-        apiParams.search = trimmedSearch;
-      }
-      if (categoryId && categoryId !== 'all') {
-        apiParams.categoryId = categoryId;
-      }
-      if (sort !== 'default') {
-        apiParams.sort = sort;
-      }
-      if (minPrice !== undefined && minPrice !== null) {
-        apiParams.minPrice = minPrice;
-      }
-      if (maxPrice !== undefined && maxPrice !== null) {
-        apiParams.maxPrice = maxPrice;
-      }
+      if (trimmedSearch) apiParams.search = trimmedSearch;
+      if (categoryId && categoryId !== 'all') apiParams.categoryId = categoryId;
+      if (sort !== 'default') apiParams.sort = sort;
+      if (minPrice !== undefined && minPrice !== null) apiParams.minPrice = minPrice;
+      if (maxPrice !== undefined && maxPrice !== null) apiParams.maxPrice = maxPrice;
+      if (userId) apiParams.userId = userId;
+      if (membershipLevel !== undefined && membershipLevel !== null) apiParams.membershipLevel = membershipLevel;
 
       const res = await productApi.getAll(apiParams);
       return {

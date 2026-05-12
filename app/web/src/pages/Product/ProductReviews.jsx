@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { StarFilled, CheckCircleFilled, MessageOutlined, EditOutlined, DeleteOutlined, UploadOutlined, DownOutlined, HeartOutlined } from '@ant-design/icons';
 import { Modal, Input, Rate, notification, Upload, Space, Avatar } from 'antd';
 import { useLanguage } from '@/store/LanguageContext';
+import { useNotification } from '@/store/NotificationContext';
 import { Pagination, Skeleton, CButton } from '@/components/common';
 import { useReviews } from '@/features/products/hooks/useReviews';
 import { useAuth } from '@/store/AuthContext';
@@ -11,6 +12,7 @@ const { TextArea } = Input;
 
 const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = {}, onReviewChanged }) => {
     const { t } = useLanguage();
+    const showNotification = useNotification();
     const { user } = useAuth();
     const [page, setPage] = useState(1);
     const [ratingFilter, setRatingFilter] = useState(null);
@@ -54,7 +56,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
 
     const handleOpenReviewModal = (review = null) => {
         if (!user) {
-            notification.warning({ message: t('warning'), description: t('login_required') });
+            showNotification(t('warning'), 'warning', t('login_required'));
             return;
         }
         if (review) {
@@ -81,7 +83,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             }
         } catch (err) {
             onError({ err });
-            notification.error({ message: t('error'), description: t('upload_failed') });
+            showNotification(t('error'), 'error', t('upload_failed'));
         }
     };
 
@@ -97,19 +99,20 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             const payload = { variantId, ...reviewForm };
             if (editingReview) {
                 await updateReview({ id: editingReview.id, data: payload });
-                notification.success({ message: t('success'), description: t('review_update_success') });
+                showNotification(t('success'), 'success', t('review_update_success'));
             } else {
                 await createReview(payload);
-                notification.success({ message: t('success'), description: t('review_create_success') });
+                showNotification(t('success'), 'success', t('review_create_success'));
             }
             setIsReviewModalVisible(false);
             if (onReviewChanged) onReviewChanged();
         } catch (error) {
             const status = error.response?.status;
-            notification.error({ 
-                message: t('error'), 
-                description: (status === 403 || status === 400) ? t('review_not_eligible_msg') : (error.response?.data?.message || t('api_error_general'))
-            });
+            showNotification(
+                t('error'), 
+                'error', 
+                (status === 403 || status === 400) ? t('review_not_eligible_msg') : (error.response?.data?.message || t('api_error_general'))
+            );
         }
     };
 
@@ -123,10 +126,10 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             onOk: async () => {
                 try {
                     await deleteReview(id);
-                    notification.success({ message: t('success'), description: t('delete_success') });
+                    showNotification(t('success'), 'success', t('delete_success'));
                     if (onReviewChanged) onReviewChanged();
                 } catch (error) {
-                    notification.error({ message: t('error'), description: error.response?.data?.message || t('api_error_general') });
+                    showNotification(t('error'), 'error', error.response?.data?.message || t('api_error_general'));
                 }
             }
         });

@@ -50,7 +50,9 @@ const Chatbot = ({ isOpen, onClose }) => {
             await sendMessageMutation.mutateAsync({
                 sessionId: sessionId,
                 message: messageContent,
-                language: language
+                language: language,
+                userId: user?.id,
+                membershipLevel: user?.membershipLevel
             });
         } catch (error) {
             console.error("Failed to send message", error);

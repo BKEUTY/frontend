@@ -8,7 +8,8 @@ import product_cart_image from "@/assets/images/products/product_placeholder_rec
 import { getImageUrl } from "@/services/axiosClient";
 import { SEO } from "@/components/common";
 import { useAuth } from "@/store/AuthContext";
-import { DeleteOutlined, ShoppingOutlined } from '@ant-design/icons';
+import { DeleteOutlined, ShoppingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
 
 export default function Cart() {
   const navigate = useNavigate();
@@ -58,17 +59,25 @@ export default function Cart() {
     });
   };
 
-  const handleDelete = async (cartId) => {
-    if (!window.confirm(t('confirm_delete_item'))) return;
-    try {
-      await removeFromCart(cartId);
-      const newSelected = new Set(selectedIds);
-      newSelected.delete(cartId);
-      setSelectedIds(newSelected);
-      notify(t('delete_success'), "success");
-    } catch {
-      notify(t('delete_error'), "error");
-    }
+  const handleDelete = (cartId) => {
+    Modal.confirm({
+      title: t('confirm_delete_item'),
+      icon: <ExclamationCircleOutlined />,
+      okText: t('yes'),
+      okType: 'danger',
+      cancelText: t('no'),
+      onOk: async () => {
+        try {
+          await removeFromCart(cartId);
+          const newSelected = new Set(selectedIds);
+          newSelected.delete(cartId);
+          setSelectedIds(newSelected);
+          notify(t('delete_success'), "success");
+        } catch {
+          notify(t('delete_error'), "error");
+        }
+      },
+    });
   };
 
   return (

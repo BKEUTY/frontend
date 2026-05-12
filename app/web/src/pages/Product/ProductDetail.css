@@ -114,6 +114,12 @@
     z-index: 10;
 }
 
+.user-promo-badge {
+    background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+    color: #4a4a4a;
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.4);
+}
+
 .product-info-side {
     flex: 1;
     display: flex;

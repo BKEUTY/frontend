@@ -32,7 +32,7 @@ export default function ProductDetail() {
     const { t } = useLanguage();
     const notify = useNotification();
     const { addToCart, fetchCart } = useCart();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, user } = useAuth();
 
     const productId = location.state?.productId ?? getIdFromSlug(slug);
     const fallbackImg = useMemo(() => getRandomImage(), []);
@@ -48,7 +48,7 @@ export default function ProductDetail() {
     const [quantity, setQuantity] = useState(1);
     const { data: relData, isLoading: relLoading } = useRelatedProducts(productData?.name);
 
-    const [currentPrice, setCurrentPrice] = useState({ originPrice: 0, promotionPrice: 0, hasDiscount: false });
+    const [currentPrice, setCurrentPrice] = useState({ originPrice: 0, promotionPrice: 0, appliedPromotionType: null, hasDiscount: false });
 
     const galleryImages = useMemo(() => {
         if (!productData) return [];
@@ -76,12 +76,18 @@ export default function ProductDetail() {
         }
         setIsError(false);
         try {
-            const responseData = (await productApi.getById(productId)).data;
+            const responseData = (await productApi.getById(productId, { 
+                params: { 
+                    userId: user?.id, 
+                    membershipLevel: user?.membershipLevel 
+                } 
+            })).data;
             if (!responseData) throw new Error('Product not found');
 
             setCurrentPrice({
                 originPrice: responseData.originPrice,
                 promotionPrice: responseData.promotionPrice,
+                appliedPromotionType: responseData.appliedPromotionType,
                 hasDiscount: responseData.promotionPrice < responseData.originPrice,
             });
             const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
@@ -244,7 +250,11 @@ export default function ProductDetail() {
                     </div>
                     <div className="main-image">
                         <img src={mainImage} alt={displayName} onError={(e) => { e.target.src = fallbackImg }} />
-                        {currentPrice.hasDiscount && <div className="discount-badge-main">{t('promotion')}</div>}
+                        {currentPrice.hasDiscount && (
+                            <div className={`discount-badge-main ${currentPrice.appliedPromotionType === 'UserPromotion' ? 'user-promo-badge' : ''}`}>
+                                {currentPrice.appliedPromotionType === 'UserPromotion' ? t('promo_type_userpromotion') : t('promotion')}
+                            </div>
+                        )}
                     </div>
                 </div>
 

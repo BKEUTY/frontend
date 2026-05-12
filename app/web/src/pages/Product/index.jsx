@@ -5,6 +5,7 @@ import useClickOutside from "@/hooks/useClickOutside";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useLanguage } from "@/store/LanguageContext";
+import { useAuth } from "@/store/AuthContext";
 import { DownOutlined, MenuOutlined, SearchOutlined, FilterOutlined, SortAscendingOutlined } from '@ant-design/icons';
 import { Input, Select, InputNumber, Popover, Slider } from "antd";
 import { useEffect, useRef, useState } from "react";
@@ -12,6 +13,7 @@ import "./Product.css";
 
 export default function Product() {
   const { t } = useLanguage();
+  const { user } = useAuth();
   const dropdownRef = useRef(null);
   const pageSize = 20;
 
@@ -41,7 +43,9 @@ export default function Product() {
     categoryId: activeCategory,
     sort: sortOption,
     minPrice,
-    maxPrice
+    maxPrice,
+    userId: user?.id,
+    membershipLevel: user?.membershipLevel
   });
 
   const [allProducts, setAllProducts] = useState([]);
@@ -321,6 +325,8 @@ export default function Product() {
                     style={{ width: '100%', height: '100%' }}
                   >
                     <Select.Option value="default">{t('default_sort')}</Select.Option>
+                    <Select.Option value="id_desc">{t('time_newest')}</Select.Option>
+                    <Select.Option value="id_asc">{t('time_oldest')}</Select.Option>
                     <Select.Option value="price_asc">{t('price_low_high')}</Select.Option>
                     <Select.Option value="price_desc">{t('price_high_low')}</Select.Option>
                     <Select.Option value="stock_desc">{t('stock_high_low')}</Select.Option>

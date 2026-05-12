@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import authApi from '../features/auth/services/authService';
+import userApi from '../features/account/services/userService';
 import { 
     setAccessToken, 
     clearAccessToken, 
@@ -39,7 +40,8 @@ const extractUserFromToken = (accessToken) => {
         id: decodedPayload.sub,
         email: decodedPayload.email,
         name: decodedPayload.name,
-        user_role: decodedPayload.user_role
+        user_role: decodedPayload.user_role,
+        membershipLevel: 0
     };
 };
 
@@ -53,6 +55,23 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
     }, []);
 
+    const fetchMembershipLevel = useCallback(async () => {
+        try {
+            const response = await userApi.getProfile();
+            const profile = response.data;
+            if (profile && profile.membershipLevel !== undefined) {
+                setUser(prev => {
+                    if (!prev) return prev;
+                    const updated = { ...prev, membershipLevel: profile.membershipLevel };
+                    setUserSession(updated);
+                    return updated;
+                });
+            }
+        } catch (e) {
+            // Non-critical: profile fetch failure doesn't block auth
+        }
+    }, []);
+
     useEffect(() => {
         const initAuth = () => {
             const token = getAccessToken();
@@ -62,11 +81,12 @@ export const AuthProvider = ({ children }) => {
                 handleSessionCleanup();
             } else {
                 setUser(session);
+                fetchMembershipLevel();
             }
             setIsInitializing(false);
         };
         initAuth();
-    }, [handleSessionCleanup]);
+    }, [handleSessionCleanup, fetchMembershipLevel]);
 
     const login = async (username, password) => {
         const response = await authApi.login({ username, password });
@@ -79,6 +99,18 @@ export const AuthProvider = ({ children }) => {
         setAccessToken(accessToken);
         setUserSession(newUser);
         setUser(newUser);
+
+        // Fetch accurate membershipLevel from profile API
+        try {
+            const profileRes = await userApi.getProfile();
+            if (profileRes.data?.membershipLevel !== undefined) {
+                const updatedUser = { ...newUser, membershipLevel: profileRes.data.membershipLevel };
+                setUserSession(updatedUser);
+                setUser(updatedUser);
+            }
+        } catch (e) {
+            // Non-critical
+        }
         
         return newUser;
     };
@@ -100,7 +132,8 @@ export const AuthProvider = ({ children }) => {
             user_role: user?.user_role,
             isInitializing,
             login,
-            logout
+            logout,
+            refreshMembership: fetchMembershipLevel
         }}>
             {!isInitializing && children}
         </AuthContext.Provider>

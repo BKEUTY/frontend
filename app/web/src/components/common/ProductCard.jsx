@@ -64,7 +64,9 @@ const ProductCard = ({ product, t, isLoading = false }) => {
                 <div className="card-img-container">
                     <img alt={name} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
                     {hasDiscount && (
-                        <div className="card-promo-tag">{t('promotion')}</div>
+                        <div className={`card-promo-tag ${product.appliedPromotionType === 'UserPromotion' ? 'user-promo-tag' : ''}`}>
+                            {product.appliedPromotionType === 'UserPromotion' ? t('promo_type_userpromotion') : t('promotion')}
+                        </div>
                     )}
                 </div>
             }

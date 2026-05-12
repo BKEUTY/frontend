@@ -1,4 +1,4 @@
-import { SEO } from '@/components/common';
+import { SEO, MembershipTag } from '@/components/common';
 import OrderProgress from '@/features/orders/components/OrderProgress';
 import { useLanguage } from '@/store/LanguageContext';
 import { generateSlug } from '@/utils/helpers';
@@ -36,16 +36,15 @@ const OrderDetail = () => {
         );
     }
 
-    const subtotal = orderData.items?.reduce((sum, item) => {
-        return sum + (item.price * item.quantity);
-    }, 0) || 0;
+    const subtotal = (orderData.items || []).reduce((sum, item) => {
+        const price = Number(item.price || 0);
+        const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
+        return sum + (promoPrice * Number(item.quantity || 1));
+    }, 0);
 
-    const totalDiscount = orderData.items?.reduce((sum, item) => {
-        if (item.promotionPrice && item.promotionPrice < item.price) {
-            return sum + ((item.price - item.promotionPrice) * item.quantity);
-        }
-        return sum;
-    }, 0) || 0;
+    const voucherDiscount = Number(orderData.voucherDiscountAmount || 0);
+    const shippingFee = Number(orderData.shippingFee || 0);
+    const grandTotal = Number(orderData.total || 0) + shippingFee;
 
     return (
         <div className="od-container">
@@ -89,10 +88,16 @@ const OrderDetail = () => {
             <div className="od-items-section">
                 <h3 className="od-section-title">{t('order_items')}</h3>
                 <div className="od-items-list">
-                    {orderData.items?.map((item, index) => (
+                    {orderData.items.map((item, index) => {
+                        const isPromo = item.promotionPrice && item.promotionPrice < item.price;
+                        const effectivePrice = isPromo ? item.promotionPrice : item.price;
+                        const voucherUnit = item.voucherDiscountAmount ? Math.round(item.voucherDiscountAmount / item.quantity) : 0;
+                        const lineTotal = (effectivePrice * item.quantity) - item.voucherDiscountAmount;
+
+                        return (
                         <div className="od-item-card" key={index}>
                             <div className="od-item-img">
-                                <img src={item.productVariantImage || 'https://placehold.co/100x100?text=Product'} alt={item.productVariantName} />
+                                <img src={item.productVariantImage} alt={item.productVariantName} />
                             </div>
                             <div className="od-item-details">
                                 <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} state={{ productId: item.productVariantId }} className="od-item-link">
@@ -101,14 +106,28 @@ const OrderDetail = () => {
                                 <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>
                             </div>
                             <div className="od-item-pricing">
-                                {item.promotionPrice && item.promotionPrice < item.price ? (
-                                    <>
-                                        <span className="od-current-price">{item.promotionPrice.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                {isPromo && (
+                                    <div className="od-price-row">
+                                        <span className="od-price-label">{t('original_price')}:</span>
                                         <span className="od-original-price">{item.price.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
-                                    </>
-                                ) : (
-                                    <span className="od-current-price">{item.price.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                    </div>
                                 )}
+                                <div className="od-price-row">
+                                    <span className="od-price-label">{isPromo ? t('promo_price') : t('price')}:</span>
+                                    <span className={`od-unit-price ${voucherUnit > 0 ? 'has-voucher' : ''}`}>
+                                        {effectivePrice.toLocaleString("vi-VN")}{t('unit_vnd')}
+                                    </span>
+                                </div>
+                                {voucherUnit > 0 && (
+                                    <div className="od-price-row">
+                                        <span className="od-price-label">{t('voucher')}:</span>
+                                        <span className="od-voucher-unit">-{voucherUnit.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                    </div>
+                                )}
+                                <div className="od-price-row od-total-row">
+                                    <span className="od-price-label">{t('total')}:</span>
+                                    <span className="od-current-price">{lineTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                </div>
                                 {orderData.status === 'SUCCEEDED' && (
                                     <button
                                         className="od-btn-return"
@@ -124,7 +143,8 @@ const OrderDetail = () => {
                                 )}
                             </div>
                         </div>
-                    ))}
+                        );
+                    })}
                 </div>
             </div>
 
@@ -142,7 +162,7 @@ const OrderDetail = () => {
                         <div className="od-pp-info">
                             <div className="od-pp-info-item">
                                 <span className="label">{t('amount')}</span>
-                                <span className="value highlighting">{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                <span className="value highlighting">{(orderData.total + orderData.shippingFee).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                             </div>
                             <div className="od-pp-info-item">
                                 <span className="label">{t('order_id')}</span>
@@ -166,7 +186,14 @@ const OrderDetail = () => {
                 <div className="od-info-card">
                     <h3 className="od-info-title"><FaMapLocationDot /> {t('delivery_header')}</h3>
                     <div className="od-delivery-details">
-                        <p className="od-info-text od-font-bold">{orderData.buyerName || orderData.userName || t('guest')}</p>
+                        <div className="od-user-header">
+                            <span className="od-info-text od-font-bold">
+                                {orderData.buyerName || orderData.userName || t('guest')}
+                            </span>
+                            {orderData.membershipLevel !== undefined && (
+                                <MembershipTag level={orderData.membershipLevel} />
+                            )}
+                        </div>
                         <p className="od-info-text">{orderData.buyerPhoneNumber || ''}</p>
                         <p className="od-info-text">
                             {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}` : '---'}
@@ -174,37 +201,41 @@ const OrderDetail = () => {
                     </div>
                 </div>
             </div>
-            {orderData.buyerNote && (
-                <div className="od-info-card od-note-card" style={{ marginTop: '20px' }}>
-                    <h3 className="od-info-title">{t('note')}</h3>
-                    <p className="od-info-text">{orderData.buyerNote}</p>
-                </div>
-            )}
-
-            <div className="od-summary-wrapper">
-                <div className="od-summary-card">
-                    <h3 className="od-summary-title">{t('order_overview')}</h3>
-
-                    <div className="od-summary-row">
-                        <span>{t('subtotal')}</span>
-                        <span>{subtotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
-                    </div>
-
-                    {totalDiscount > 0 && (
-                        <div className="od-summary-row od-discount-row">
-                            <span>{t('discount')}</span>
-                            <span>-{totalDiscount.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+            <div className="od-bottom-grid">
+                <div className="od-note-section">
+                    {orderData.buyerNote && (
+                        <div className="od-info-card od-note-card">
+                            <h3 className="od-info-title">{t('note')}</h3>
+                            <p className="od-info-text">{orderData.buyerNote}</p>
                         </div>
                     )}
+                </div>
 
-                    <div className="od-summary-row">
-                        <span>{t('shipping_fee')}</span>
-                        <span>+{(orderData.shippingFee || 0).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
-                    </div>
+                <div className="od-summary-wrapper">
+                    <div className="od-summary-card">
+                        <h3 className="od-summary-title">{t('order_overview')}</h3>
 
-                    <div className="od-summary-row od-total-row">
-                        <span>{t('grand_total')}</span>
-                        <span>{(orderData.total + (orderData.shippingFee || 0)).toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                        <div className="od-summary-row">
+                            <span>{t('subtotal')}</span>
+                            <span>{subtotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                        </div>
+
+                        {voucherDiscount > 0 && (
+                            <div className="od-summary-row od-discount-row" style={{ color: '#C2185B' }}>
+                                <span>{t('voucher_discount') || 'Giảm giá voucher'}</span>
+                                <span>-{voucherDiscount.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                            </div>
+                        )}
+
+                        <div className="od-summary-row">
+                            <span>{t('shipping_fee')}</span>
+                            <span>+{shippingFee.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                        </div>
+
+                        <div className="od-summary-row od-total-row">
+                            <span>{t('grand_total')}</span>
+                            <span>{grandTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                        </div>
                     </div>
                 </div>
             </div>

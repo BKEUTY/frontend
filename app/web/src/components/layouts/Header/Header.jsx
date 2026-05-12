@@ -16,8 +16,10 @@ import {
   HeartOutlined,
   LogoutOutlined,
   DownOutlined,
-  HistoryOutlined
+  HistoryOutlined,
+  ExclamationCircleOutlined
 } from '@ant-design/icons';
+import { Modal } from 'antd';
 import logo_image from "@/assets/images/logo.svg";
 import "./Header.css";
 
@@ -59,14 +61,24 @@ export default function Header() {
     setMobileMenuOpen(false);
   };
 
-  const handleLogout = async () => {
-    try {
-      if (logout) await logout();
-      navigate('/');
-      setMobileMenuOpen(false);
-    } catch (error) {
-      console.error(error);
-    }
+  const handleLogout = () => {
+    Modal.confirm({
+      title: t('confirm_logout_title') || t('logout'),
+      icon: <ExclamationCircleOutlined />,
+      content: t('confirm_logout_message') || 'Bạn có chắc chắn muốn đăng xuất không?',
+      okText: t('yes'),
+      okType: 'danger',
+      cancelText: t('no'),
+      onOk: async () => {
+        try {
+          if (logout) await logout();
+          navigate('/');
+          setMobileMenuOpen(false);
+        } catch (error) {
+          console.error(error);
+        }
+      }
+    });
   };
 
   const userMenuItems = [

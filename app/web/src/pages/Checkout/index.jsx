@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-import { FiTruck, FiCreditCard, FiTrash2, FiCalendar } from "react-icons/fi";
+
 import { useNotification } from "@/store/NotificationContext";
 import { useLanguage } from "@/store/LanguageContext";
 import { usePaymentPolling } from "@/features/checkout/hooks/usePaymentPolling";
@@ -10,7 +10,12 @@ import orderApi from '@/features/orders/services/orderService';
 import { useUserProfile, useUpdateProfile, useAddAddress, useDeleteAddress } from "@/features/account/hooks/useUser";
 import { useProvinces, useDistricts, useWards } from "@/features/account/hooks/useAddress";
 import { useShippingFee, useShippingLeadTime } from "@/features/checkout/hooks/useShipping";
-import { Modal, Select, Tag } from "antd";
+import { Modal, Select } from "antd";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { FiTruck, FiCreditCard, FiTrash2, FiCalendar, FiTag, FiCheckCircle, FiClock } from "react-icons/fi";
+import { useVouchers } from "@/features/promotions/hooks/useVouchers";
+import { useAuth } from "@/store/AuthContext";
+import { useCart } from "@/store/CartContext";
 import "./Checkout.css";
 
 export default function Checkout() {
@@ -19,6 +24,8 @@ export default function Checkout() {
     const notify = useNotification();
     const { t } = useLanguage();
     const queryClient = useQueryClient();
+    const { user } = useAuth();
+    const { fetchCart, clearCartItems } = useCart();
 
     const cartIds = state?.cartIds || [];
     const selectedProducts = state?.selectedProducts || [];
@@ -46,7 +53,10 @@ export default function Checkout() {
     const [selectedAddressIndex, setSelectedAddressIndex] = useState(0);
     const [formData, setFormData] = useState({ fullName: "", phone: "", email: "", note: "" });
     const [newAddr, setNewAddr] = useState({ street: "", province: null, district: null, ward: null });
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
+    const [isVoucherModalOpen, setIsVoucherModalOpen] = useState(false);
 
+    const { data: vouchers, isLoading: isVouchersLoading } = useVouchers({ userId: user?.id });
     const { data: profile, isLoading: isProfileLoading } = useUserProfile();
     const updateProfileMutation = useUpdateProfile();
     const addAddressMutation = useAddAddress();
@@ -55,34 +65,42 @@ export default function Checkout() {
     const handleDeleteAddress = (addr, idx, e) => {
         e.stopPropagation();
         
-        if (!window.confirm(t('confirm_delete_message'))) return;
-        const payload = {
-            address: addr.address,
-            ward: {
-                wardCode: Number(addr.ward.wardCode),
-                wardName: addr.ward.wardName
-            },
-            district: {
-                districtID: Number(addr.district.districtID),
-                districtName: addr.district.districtName
-            },
-            province: {
-                provinceID: Number(addr.province.provinceID),
-                provinceName: addr.province.provinceName
-            }
-        };
+        Modal.confirm({
+            title: t('confirm_delete_message'),
+            icon: <ExclamationCircleOutlined />,
+            okText: t('yes'),
+            okType: 'danger',
+            cancelText: t('no'),
+            onOk: () => {
+                const payload = {
+                    address: addr.address,
+                    ward: {
+                        wardCode: Number(addr.ward.wardCode),
+                        wardName: addr.ward.wardName
+                    },
+                    district: {
+                        districtID: Number(addr.district.districtID),
+                        districtName: addr.district.districtName
+                    },
+                    province: {
+                        provinceID: Number(addr.province.provinceID),
+                        provinceName: addr.province.provinceName
+                    }
+                };
 
-        deleteAddressMutation.mutate(payload, {
-            onSuccess: () => {
-                notify(t('delete_success'), "success");
-                if (selectedAddressIndex === idx) {
-                    setSelectedAddressIndex(0);
-                } else if (selectedAddressIndex > idx) {
-                    setSelectedAddressIndex(prev => prev - 1);
-                }
-            },
-            onError: () => {
-                notify(t('delete_failed'), "error");
+                deleteAddressMutation.mutate(payload, {
+                    onSuccess: () => {
+                        notify(t('delete_success'), "success");
+                        if (selectedAddressIndex === idx) {
+                            setSelectedAddressIndex(0);
+                        } else if (selectedAddressIndex > idx) {
+                            setSelectedAddressIndex(prev => prev - 1);
+                        }
+                    },
+                    onError: () => {
+                        notify(t('delete_failed'), "error");
+                    }
+                });
             }
         });
     };
@@ -103,6 +121,27 @@ export default function Checkout() {
         toDistrictId: currentAddress?.district?.districtID
     });
 
+    const calculateVoucherDiscount = () => {
+        if (!selectedVoucher) return 0;
+        
+        const subtotal = grandTotal;
+        if (selectedVoucher.minOrderValue && subtotal < selectedVoucher.minOrderValue) return 0;
+
+        let discount = 0;
+        if (selectedVoucher.discountType === 'PERCENTAGE') {
+            discount = subtotal * (selectedVoucher.discountValue / 100);
+            if (selectedVoucher.maxDiscount && discount > selectedVoucher.maxDiscount) {
+                discount = selectedVoucher.maxDiscount;
+            }
+        } else {
+            discount = selectedVoucher.discountValue;
+        }
+        return Math.min(discount, subtotal);
+    };
+
+    const voucherDiscount = calculateVoucherDiscount();
+    const finalPaymentAmount = grandTotal + (shippingFee || 0) - voucherDiscount;
+
     useEffect(() => {
         if (profile) {
             setFormData(prev => ({
@@ -122,9 +161,10 @@ export default function Checkout() {
     const handlePaymentSuccess = useCallback(() => {
         notify(t('payment_success_msg'), "success");
         queryClient.invalidateQueries({ queryKey: ['myOrders'] });
-        queryClient.invalidateQueries({ queryKey: ['cartItems'] });
+        clearCartItems(cartIds);
+        fetchCart();
         setTimeout(() => navigate('/thank-you', { state: { orderId: orderData?.orderId } }), 1500);
-    }, [notify, navigate, t, queryClient, orderData]);
+    }, [notify, navigate, t, queryClient, orderData, fetchCart]);
 
     const { checkPaymentStatus } = usePaymentPolling(orderData?.orderId, showQR, handlePaymentSuccess);
 
@@ -148,17 +188,19 @@ export default function Checkout() {
                 note: formData.note,
                 shippingFee: shippingFee || 0,
                 orderItems: cartIds.map(id => ({ cartItemId: id })),
+                voucherId: selectedVoucher?.id,
+                membershipLevel: user?.membershipLevel || 0,
             });
 
-
             const actualData = response.data || response;
+            queryClient.invalidateQueries({ queryKey: ['myOrders'] });
+            clearCartItems(cartIds);
+            fetchCart();
             if (paymentMethod === 'banking') {
                 setOrderData(actualData);
                 setShowQR(true);
             } else {
                 notify(t('order_success'), "success");
-                queryClient.invalidateQueries({ queryKey: ['myOrders'] });
-                queryClient.invalidateQueries({ queryKey: ['cartItems'] });
                 setTimeout(() => navigate('/thank-you', { state: { orderId: actualData?.orderId } }), 1500);
             }
         } catch (error) {
@@ -262,15 +304,13 @@ export default function Checkout() {
                                 </div>
                                 <div className="shipping-info">
                                     <div className="shipping-fee-notice">
-                                        <FiTruck style={{ marginRight: '6px', marginTop: '-2px' }}/>
-                                        {t('shipping_fee')}: <b>{isFeeLoading ? "..." : (shippingFee ? `${shippingFee.toLocaleString("vi-VN")}đ` : "Miễn phí")}</b>
+                                        <FiTruck className="shipping-icon" />
+                                        <span>{t('shipping_fee')}: <b>{isFeeLoading ? "..." : (shippingFee ? `${shippingFee.toLocaleString("vi-VN")}đ` : "Miễn phí")}</b></span>
                                     </div>
                                     
-                                    <div className="shipping-fee-notice" style={{ background: '#f0f9ff', borderColor: '#e0f2fe', color: '#0369a1' }}>
-                                        <FiCalendar style={{ marginRight: '6px', marginTop: '-2px' }}/>
-                                        Dự kiến giao: <b>
-                                            {isLeadTimeLoading ? "..." : (shippingLeadTime ? new Date(shippingLeadTime).toLocaleDateString('vi-VN') : "--/--/----")}
-                                        </b>
+                                    <div className="shipping-fee-notice estimate-notice">
+                                        <FiCalendar className="shipping-icon" />
+                                        <span>Dự kiến giao: <b>{isLeadTimeLoading ? "..." : (shippingLeadTime ? new Date(shippingLeadTime).toLocaleDateString('vi-VN') : "--/--/----")}</b></span>
                                     </div>
                                 </div>
                             </div>
@@ -323,14 +363,15 @@ export default function Checkout() {
                                         </div>
                                         <div className="summary-item-info">
                                             <div className="summary-item-name">{p.name}</div>
-                                            <div className="summary-item-qty">x{p.quantity}</div>
-                                            {hasDiscount && (
-                                                <div className="summary-item-original-price">
-                                                    {p.price.toLocaleString("vi-VN")}đ
-                                                </div>
-                                            )}
+                                            <div className="summary-item-details">
+                                                {hasDiscount && (
+                                                    <span className="item-original-price">{p.price.toLocaleString("vi-VN")}đ</span>
+                                                )}
+                                                <span className="item-current-price">{effectivePrice.toLocaleString("vi-VN")}đ</span>
+                                                <span className="item-qty">x{p.quantity}</span>
+                                            </div>
                                         </div>
-                                        <div className="summary-item-price">
+                                        <div className="summary-item-total">
                                             {(effectivePrice * p.quantity).toLocaleString("vi-VN")}đ
                                         </div>
                                     </div>
@@ -348,6 +389,26 @@ export default function Checkout() {
                                 <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
                             </div>
                         )}
+                        
+                        <div className="summary-divider"></div>
+
+                        {selectedVoucher && (
+                            <div className="summary-row discount">
+                                <span>{t('voucher_discount')}</span>
+                                <span>-{voucherDiscount.toLocaleString("vi-VN")}đ</span>
+                            </div>
+                        )}
+
+                        <div className="voucher-section-summary">
+                            <div className="summary-row voucher-trigger" onClick={() => setIsVoucherModalOpen(true)}>
+                                <div className="voucher-label">
+                                    <FiTag />
+                                    <span>{selectedVoucher ? selectedVoucher.code : t('select_voucher')}</span>
+                                </div>
+                                <span className="voucher-action-text">{selectedVoucher ? t('change') : t('apply')}</span>
+                            </div>
+                        </div>
+
                         <div className="summary-divider"></div>
                         <div className="summary-row">
                             <span>{t('shipping_fee')}</span>
@@ -357,7 +418,7 @@ export default function Checkout() {
                         <div className="summary-divider"></div>
                         <div className="summary-total">
                             <span>{t('total')}</span>
-                            <span className="total-price">{(grandTotal + (shippingFee || 0)).toLocaleString("vi-VN")}đ</span>
+                            <span className="total-price">{Math.max(0, finalPaymentAmount).toLocaleString("vi-VN")}đ</span>
                         </div>
 
                         
@@ -493,7 +554,80 @@ export default function Checkout() {
                     </div>
                 </div>
             </Modal>
+
+            <Modal
+                title={t('select_voucher')}
+                open={isVoucherModalOpen}
+                onCancel={() => setIsVoucherModalOpen(false)}
+                footer={null}
+                className="voucher-selection-modal"
+                width={500}
+            >
+                <div className="voucher-list-container">
+                    {vouchers?.length > 0 ? (
+                        vouchers.map((v) => {
+                            const isApplicable = !v.minOrderValue || grandTotal >= v.minOrderValue;
+                            const hasUsagesLeft = v.remainingUsages === undefined || v.remainingUsages > 0;
+                            const isUsable = isApplicable && hasUsagesLeft;
+                            const isSelected = selectedVoucher?.id === v.id;
+                            
+                            return (
+                                <div 
+                                    key={v.id} 
+                                    className={`voucher-card ${isSelected ? 'selected' : ''} ${!isUsable ? 'disabled' : ''}`}
+                                    onClick={() => isUsable && setSelectedVoucher(isSelected ? null : v)}
+                                >
+                                    <div className="voucher-left-pattern">
+                                        <div className="voucher-type-icon"><FiTag /></div>
+                                    </div>
+                                    <div className="voucher-main">
+                                        <div className="voucher-code-row">
+                                            <span className="voucher-code-badge">{v.code}</span>
+                                            {isSelected && <FiCheckCircle className="selected-check" />}
+                                        </div>
+                                        <div className="voucher-title-text">{v.title}</div>
+                                        <div className="voucher-desc-text">
+                                            {v.discountType === 'PERCENTAGE' 
+                                                ? `${t('discount')} ${v.discountValue}% ${v.maxDiscount ? `(${t('max')} ${v.maxDiscount.toLocaleString()}đ)` : ''}`
+                                                : `${t('discount')} ${v.discountValue.toLocaleString()}đ`
+                                            }
+                                        </div>
+                                        <div className="voucher-min-row">
+                                            {v.minOrderValue > 0 ? `${t('min_order')}: ${v.minOrderValue.toLocaleString()}đ` : t('no_min_order')}
+                                        </div>
+                                        {!isApplicable && (
+                                            <div className="voucher-error-text">
+                                                {t('need_more')} {(v.minOrderValue - grandTotal).toLocaleString()}đ {t('to_apply')}
+                                            </div>
+                                        )}
+                                        {!hasUsagesLeft && (
+                                            <div className="voucher-error-text">
+                                                {t('voucher_no_usages_left')}
+                                            </div>
+                                        )}
+                                        <div className="voucher-meta-info">
+                                            <span>
+                                                <FiClock /> {v.endAt ? `${t('voucher_hsd')}: ${new Date(v.endAt).toLocaleDateString('vi-VN')}` : t('voucher_no_limit')}
+                                            </span>
+                                            <span>
+                                                {v.remainingQuantity != null ? `${t('voucher_remaining')}: ${v.remainingQuantity}` : ''}
+                                                {v.remainingUsages != null ? ` • Lượt còn lại: ${v.remainingUsages}` : (v.usageLimitPerUser ? ` • ${t('voucher_max_usage')}: ${v.usageLimitPerUser} ${t('voucher_per_user')}` : '')}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })
+                    ) : (
+                        <div className="no-vouchers-hint">{t('no_promos_found')}</div>
+                    )}
+                </div>
+                <div className="voucher-modal-footer">
+                    <CButton type="primary" block onClick={() => setIsVoucherModalOpen(false)}>
+                        {t('confirm')}
+                    </CButton>
+                </div>
+            </Modal>
         </main>
     );
 }
-

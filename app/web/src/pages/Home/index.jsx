@@ -5,6 +5,7 @@ import { ProductCard, SEO } from '@/components/common';
 import { useProductsPaginated } from '@/features/products/hooks/useProducts';
 import { usePersonalizedRecommendations } from '@/hooks/useRecommendation';
 import { useLanguage } from '@/store/LanguageContext';
+import { useAuth } from '@/store/AuthContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -14,16 +15,17 @@ const bannerImages = [banner1, banner2];
 
 const Home = () => {
     const { t } = useLanguage();
+    const { user } = useAuth();
     const navigate = useNavigate();
     const [currentBanner, setCurrentBanner] = useState(0);
 
     const { data: recData, isLoading: recLoading } = usePersonalizedRecommendations();
 
-    const { data: topRated, isLoading: topRatedLoading } = useProductsPaginated({ size: 5, sort: 'rating_desc' });
-    const { data: mostReviewed, isLoading: mostReviewedLoading } = useProductsPaginated({ size: 5, sort: 'reviews_desc' });
-    const { data: bestSelling, isLoading: bestSellingLoading } = useProductsPaginated({ size: 5, sort: 'sold_desc' });
-    const { data: premium, isLoading: premiumLoading } = useProductsPaginated({ size: 5, sort: 'price_desc' });
-    const { data: available, isLoading: availableLoading } = useProductsPaginated({ size: 5, sort: 'stock_desc' });
+    const { data: topRated, isLoading: topRatedLoading } = useProductsPaginated({ size: 5, sort: 'rating_desc', userId: user?.id, membershipLevel: user?.membershipLevel });
+    const { data: mostReviewed, isLoading: mostReviewedLoading } = useProductsPaginated({ size: 5, sort: 'reviews_desc', userId: user?.id, membershipLevel: user?.membershipLevel });
+    const { data: bestSelling, isLoading: bestSellingLoading } = useProductsPaginated({ size: 5, sort: 'sold_desc', userId: user?.id, membershipLevel: user?.membershipLevel });
+    const { data: premium, isLoading: premiumLoading } = useProductsPaginated({ size: 5, sort: 'price_desc', userId: user?.id, membershipLevel: user?.membershipLevel });
+    const { data: available, isLoading: availableLoading } = useProductsPaginated({ size: 5, sort: 'stock_desc', userId: user?.id, membershipLevel: user?.membershipLevel });
 
     const sectionsConfig = [
         { id: 'rating', items: topRated?.items || [], isLoading: topRatedLoading, title: t('top_rated') },

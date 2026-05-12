@@ -431,7 +431,7 @@ export default {
     promotion_price: "Giá ưu đãi",
     no_promos_found: "Không tìm thấy chương trình khuyến mãi nào.",
     vip_condition_title: "Điều kiện áp dụng VIP",
-    vip_condition_content: "1. Phải là thành viên đăng ký trên 6 tháng.\n2. Tổng chi tiêu trong 3 tháng gần nhất > 5.000.000đ.\n3. Mã áp dụng 1 lần/tài khoản.",
+    vip_condition_content: "Hạng thành viên được tính tự động dựa trên tổng chi tiêu từ các đơn hàng giao thành công:\n1. Hạng Bạc: Tổng chi tiêu từ 2.000.000đ\n2. Hạng Vàng: Tổng chi tiêu từ 5.000.000đ\n3. Hạng Bạch Kim: Tổng chi tiêu từ 15.000.000đ\n4. Hạng Kim Cương: Tổng chi tiêu từ 30.000.000đ",
     close_hint: "Đóng",
     promo_info_title: "Chi tiết khuyến mãi",
     about_us_banner: "Banner về chúng tôi",

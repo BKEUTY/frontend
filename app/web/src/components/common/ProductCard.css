@@ -63,6 +63,12 @@
     box-shadow: 0 4px 10px rgba(236, 72, 153, 0.3);
 }
 
+.user-promo-tag {
+    background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+    color: #4a4a4a;
+    box-shadow: 0 4px 10px rgba(212, 175, 55, 0.4);
+}
+
 .card-body-content {
     padding: 18px;
     display: flex;

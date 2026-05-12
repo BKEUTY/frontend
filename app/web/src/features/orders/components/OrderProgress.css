@@ -1,22 +1,20 @@
-.order-progress-container {
+.op-container {
     width: 100%;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
+    padding: 15px 20px;
+    background: #ffffff;
     border-radius: 12px;
     border: 1px solid rgba(0, 0, 0, 0.05);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     margin-bottom: 20px;
 }
 
-.progress-track {
+.op-track {
     display: flex;
     justify-content: space-between;
     position: relative;
-    padding: 10px 0;
+    padding: 5px 0;
 }
 
-.progress-step {
+.op-step {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -25,89 +23,89 @@
     z-index: 1;
 }
 
-.step-pointer {
+.op-pointer {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     position: relative;
-    margin-bottom: 8px;
+    margin-bottom: 5px;
 }
 
-.step-dot {
-    width: 12px;
-    height: 12px;
+.op-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
-    background: #e0e0e0;
+    background: #cbd5e1;
     transition: all 0.3s ease;
     border: 2px solid #fff;
-    box-shadow: 0 0 0 2px #f0f2f5;
+    box-shadow: 0 0 0 1px #f1f5f9;
     z-index: 2;
 }
 
-.step-line {
+.op-line {
     position: absolute;
     height: 2px;
     width: 100%;
-    background: #f0f2f5;
+    background: #f1f5f9;
     top: 50%;
     left: 50%;
     transform: translateY(-50%);
     z-index: 1;
 }
 
-.line-fill {
+.op-line-fill {
     width: 0;
     height: 100%;
     background: var(--color_main_title);
 }
 
-.step-label {
-    font-size: 0.7rem;
+.op-label {
+    font-size: 0.8rem;
     font-weight: 500;
-    color: #a0a0a0;
+    color: #64748b;
     text-align: center;
     line-height: 1.2;
     margin-top: 4px;
 }
 
-.progress-step.active .step-dot {
+.op-step.active .op-dot {
     background: var(--color_main_title);
-    transform: scale(1.3);
-    box-shadow: 0 0 0 3px rgba(var(--color_main_title_rgb), 0.1);
+    transform: scale(1.4);
+    box-shadow: 0 0 0 3px rgba(var(--color_main_title_rgb, 161, 5, 80), 0.1);
     animation: active-dot-pulse 2s infinite;
 }
 
 @keyframes active-dot-pulse {
     0% { box-shadow: 0 0 0 0px rgba(var(--color_main_title_rgb, 161, 5, 80), 0.4); }
-    70% { box-shadow: 0 0 0 10px rgba(var(--color_main_title_rgb, 161, 5, 80), 0); }
+    70% { box-shadow: 0 0 0 8px rgba(var(--color_main_title_rgb, 161, 5, 80), 0); }
     100% { box-shadow: 0 0 0 0px rgba(var(--color_main_title_rgb, 161, 5, 80), 0); }
 }
 
-.progress-step.active .step-label {
+.op-step.active .op-label {
     color: var(--color_main_title);
     font-weight: 700;
 }
 
-.progress-step.completed .step-dot {
+.op-step.completed .op-dot {
     background: var(--color_main_title);
 }
 
-.progress-step.completed .line-fill {
+.op-step.completed .op-line-fill {
     width: 100%;
 }
 
-.progress-step.completed .step-label {
-    color: #434343;
+.op-step.completed .op-label {
+    color: #475569;
 }
 
-.order-progress-container.is-cancelled {
-    background: rgba(255, 241, 240, 0.8);
+.op-container.is-cancelled {
+    background: #fff1f0;
     border: 1px solid #ffa39e;
     padding: 12px;
 }
 
-.cancelled-message {
+.op-cancelled-message {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -118,45 +116,33 @@
 }
 
 @media (max-width: 600px) {
-    .order-progress-container {
+    .op-container {
         padding: 10px 5px;
     }
     
-    .progress-track {
+    .op-track {
         padding: 0;
     }
 
-    .step-label {
+    .op-label {
         font-size: 0.6rem;
         word-break: break-word;
         max-width: 60px;
     }
 
-    .step-dot {
-        width: 10px;
-        height: 10px;
+    .op-dot {
+        width: 7px;
+        height: 7px;
     }
 
-    .step-pointer {
+    .op-pointer {
         margin-bottom: 4px;
     }
 }
 
 @media (max-width: 400px) {
-    .step-label {
+    .op-label {
         font-size: 0.55rem;
         max-width: 50px;
     }
-}
-
-.step-date {
-    font-size: 10px;
-    color: #94a3b8;
-    margin-top: 2px;
-    font-weight: 500;
-}
-
-.progress-step.completed .step-date, 
-.progress-step.active .step-date {
-    color: var(--color_main_title);
 }

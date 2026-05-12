@@ -19,6 +19,8 @@ export default function Promotion() {
 
     const page = query.page ? Number(query.page) : 1;
     const filterType = query.status || 'all';
+    const promoType = query.promotionType || 'all';
+    const sortOrder = query.sort || 'id,desc';
     const titleTermFromUrl = query.title || '';
     const startAtParam = query.startAt || null;
     const endAtParam = query.endAt || null;
@@ -27,9 +29,7 @@ export default function Promotion() {
 
     const debouncedSearch = useDebounce(searchInput, 500);
 
-
     const [selectedPromo, setSelectedPromo] = useState(null);
-    const [showVipInfo, setShowVipInfo] = useState(false);
     const [promotions, setPromotions] = useState([]);
     const [metadata, setMetadata] = useState({ productNames: {}, categoryNames: {}, brandNames: {} });
     const [loading, setLoading] = useState(true);
@@ -44,8 +44,10 @@ export default function Promotion() {
                 size: itemsPerPage,
                 title: titleTermFromUrl,
                 status: filterType === 'all' ? '' : filterType,
+                promotionType: promoType === 'all' ? '' : promoType,
                 startAt: startAtParam,
-                endAt: endAtParam
+                endAt: endAtParam,
+                sort: sortOrder === 'default' ? 'id,desc' : sortOrder
             });
             if (res.data) {
                 const fetchedPromotions = res.data.content || [];
@@ -77,7 +79,7 @@ export default function Promotion() {
         } finally {
             setLoading(false);
         }
-    }, [page, titleTermFromUrl, filterType, startAtParam, endAtParam]);
+    }, [page, titleTermFromUrl, filterType, promoType, startAtParam, endAtParam, sortOrder]);
 
     useEffect(() => {
         if (!titleTermFromUrl) setSearchInput('');
@@ -101,6 +103,14 @@ export default function Promotion() {
         setQuery({ status: value === 'all' ? null : value, page: 1 });
     };
 
+    const handleTypeChange = (value) => {
+        setQuery({ promotionType: value === 'all' ? null : value, page: 1 });
+    };
+
+    const handleSortChange = (value) => {
+        setQuery({ sort: value === 'default' ? null : value, page: 1 });
+    };
+
     const handleDateRangeChange = (dates) => {
         if (dates) {
             setQuery({ 
@@ -120,7 +130,7 @@ export default function Promotion() {
 
     const formatDate = (dateStr) => {
         if (!dateStr) return '';
-        return new Date(dateStr).toLocaleDateString('vi-VN');
+        return new Date(dateStr).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
     const formatDiscount = (item) => {
@@ -128,22 +138,30 @@ export default function Promotion() {
         return new Intl.NumberFormat('vi-VN').format(item.discountValue) + 'đ';
     };
 
-    const InfoIcon = () => (
-        <svg
-            width="16" height="16" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-            className="prm-info-icon"
-            onClick={(e) => {
-                e.stopPropagation();
-                setShowVipInfo(true);
-            }}
-            title={t('vip_condition_title')}
-        >
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="12" y1="16" x2="12" y2="12"></line>
-            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-        </svg>
-    );
+    const formatTarget = (item) => {
+        if (item.promotionType === 'VoucherPromotion') return `${t('promo_type_voucherpromotion')}${item.code ? ` (${item.code})` : ''}`;
+        if (item.promotionType === 'UserPromotion') {
+            const parts = [];
+            if (item.birthdayMonth?.length > 0) parts.push(`${t('promo_label_birthday')} ${item.birthdayMonth.join(', ')}`);
+            if (item.membershipLevel?.length > 0) {
+                const levelNames = { 
+                    1: t('membership_silver'), 
+                    2: t('membership_gold'), 
+                    3: t('membership_platinum'), 
+                    4: t('membership_diamond') 
+                };
+                parts.push(`${t('promo_label_membership')} ${item.membershipLevel.map(l => levelNames[l] || l).join(', ')}`);
+            }
+            if (item.userIds?.length > 0) parts.push(t('promo_type_userpromotion'));
+            return parts.length > 0 ? parts.join(' • ') : t('promo_type_userpromotion');
+        }
+        
+        if (item.categoryIds?.length > 0) return t('promo_scope_category');
+        if (item.brandIds?.length > 0) return t('promo_scope_brand');
+        return t('promo_scope_product');
+    };
+
+
 
     return (
         <div className="prm-page-container">
@@ -153,41 +171,67 @@ export default function Promotion() {
             </div>
             
             <div className="prm-page-content">
-                <div className="prm-controls">
-                    <div className="prm-search-status">
-                        <Input
-                            size="large"
-                            placeholder={t('promo_search_placeholder')}
-                            prefix={<SearchOutlined style={{ color: '#bfbfbf' }} />}
-                            value={searchInput}
-                            onChange={(e) => {
-                                const val = e.target.value;
-                                setSearchInput(val);
-                                if (!val) {
-                                    setQuery({ title: null, page: 1 });
-                                }
-                            }}
-                            allowClear
-                            onPressEnter={() => setQuery({ title: searchInput.trim() || null, page: 1 })}
-                            className="prm-search-input"
-                        />
-                        <Select
-                            size="large"
-                            value={filterType}
-                            onChange={handleFilterChange}
-                            className="prm-status-select"
-                            options={[
-                                { value: 'all', label: t('promo_tab_all') },
-                                { value: 'STARTING', label: t('promo_tab_STARTING') },
-                                { value: 'INCOMING', label: t('promo_tab_INCOMING') },
-                                { value: 'DISABLED', label: t('promo_tab_DISABLED') },
-                                { value: 'ENDED', label: t('promo_tab_ENDED') },
-                            ]}
-                        />
-                    </div>
+                <div className="prm-controls animate-slide-up">
+                    <Input
+                        size="large"
+                        placeholder={t('promo_search_placeholder')}
+                        prefix={<SearchOutlined style={{ color: 'var(--retail-accent)', fontSize: '18px' }} />}
+                        value={searchInput}
+                        onChange={(e) => {
+                            const val = e.target.value;
+                            setSearchInput(val);
+                            if (!val) {
+                                setQuery({ title: null, page: 1 });
+                            }
+                        }}
+                        allowClear
+                        onPressEnter={() => setQuery({ title: searchInput.trim() || null, page: 1 })}
+                        className="prm-search-input-luxury"
+                    />
+                    <Select
+                        size="large"
+                        value={filterType}
+                        onChange={handleFilterChange}
+                        placeholder={t('promo_col_status')}
+                        className="prm-select-luxury prm-status-select"
+                        options={[
+                            { value: 'all', label: `${t('promo_col_status')}: ${t('promo_tab_all')}` },
+                            { value: 'STARTING', label: `${t('promo_col_status')}: ${t('promo_tab_STARTING')}` },
+                            { value: 'INCOMING', label: `${t('promo_col_status')}: ${t('promo_tab_INCOMING')}` },
+                            { value: 'DISABLED', label: `${t('promo_col_status')}: ${t('promo_tab_DISABLED')}` },
+                            { value: 'ENDED', label: `${t('promo_col_status')}: ${t('promo_tab_ENDED')}` },
+                        ]}
+                    />
+                    <Select
+                        size="large"
+                        value={promoType}
+                        onChange={handleTypeChange}
+                        placeholder={t('promo_col_type')}
+                        className="prm-select-luxury prm-type-select"
+                        options={[
+                            { value: 'all', label: `${t('promo_col_type')}: ${t('all')}` },
+                            { value: 'ProductPromotion', label: `${t('promo_col_type')}: ${t('promo_type_productpromotion')}` },
+                            { value: 'VoucherPromotion', label: `${t('promo_col_type')}: ${t('promo_type_voucherpromotion')}` },
+                            { value: 'UserPromotion', label: `${t('promo_col_type')}: ${t('promo_type_userpromotion')}` },
+                        ]}
+                    />
+                    <Select
+                        size="large"
+                        value={sortOrder}
+                        onChange={handleSortChange}
+                        placeholder={t('sort_default')}
+                        className="prm-select-luxury prm-sort-select"
+                        options={[
+                            { value: 'default', label: t('sort_default') },
+                            { value: 'id,desc', label: t('time_newest') },
+                            { value: 'id,asc', label: t('time_oldest') },
+                            { value: 'discountValue,desc', label: t('price_high_low') },
+                            { value: 'discountValue,asc', label: t('price_low_high') }
+                        ]}
+                    />
                     <DatePicker.RangePicker
                         size="large"
-                        className="prm-date-range"
+                        className="prm-date-range-luxury"
                         showTime
                         value={startAtParam && endAtParam ? [dayjs(startAtParam), dayjs(endAtParam)] : null}
                         onChange={handleDateRangeChange}
@@ -207,10 +251,10 @@ export default function Promotion() {
                                     <th>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             {t('promo_col_target')}
-                                            <InfoIcon />
                                         </div>
                                     </th>
-                                    <th>{t('promo_col_time')}</th>
+                                    <th style={{ whiteSpace: 'nowrap' }}>{t('promo_col_start_time')}</th>
+                                    <th style={{ whiteSpace: 'nowrap' }}>{t('promo_col_end_time')}</th>
                                     <th style={{ textAlign: 'center' }}>{t('promo_col_status')}</th>
                                 </tr>
                             </thead>
@@ -224,8 +268,9 @@ export default function Promotion() {
                                         >
                                             <td className="prm-title-col">{item.title}</td>
                                             <td><span className="prm-badge-discount">{formatDiscount(item)}</span></td>
-                                            <td>{item.promotionType}</td>
-                                            <td>{formatDate(item.startAt)} - {formatDate(item.endAt)}</td>
+                                            <td>{formatTarget(item)}</td>
+                                            <td style={{ whiteSpace: 'nowrap', color: '#64748b' }}>{formatDate(item.startAt)}</td>
+                                            <td style={{ whiteSpace: 'nowrap', color: '#64748b' }}>{formatDate(item.endAt)}</td>
                                             <td align="center">
                                                 <span className={`prm-status-badge ${item.status.toLowerCase()}`}>
                                                     {t(`promo_status_${item.status}`)}
@@ -235,7 +280,7 @@ export default function Promotion() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="5" className="prm-empty-td">
+                                        <td colSpan="6" className="prm-empty-td">
                                             <EmptyState title={t('no_promos_found')} />
                                         </td>
                                     </tr>
@@ -265,13 +310,16 @@ export default function Promotion() {
                                 <div className="prm-card-row">
                                     <span className="prm-card-label">
                                         {t('promo_col_target')}
-                                        <InfoIcon />
                                     </span>
-                                    <span className="prm-card-value">{item.promotionType}</span>
+                                    <span className="prm-card-value">{formatTarget(item)}</span>
                                 </div>
                                 <div className="prm-card-row">
-                                    <span className="prm-card-label">{t('promo_col_time')}</span>
-                                    <span className="prm-card-value">{formatDate(item.startAt)} - {formatDate(item.endAt)}</span>
+                                    <span className="prm-card-label">{t('promo_col_start_time')}</span>
+                                    <span className="prm-card-value">{formatDate(item.startAt)}</span>
+                                </div>
+                                <div className="prm-card-row">
+                                    <span className="prm-card-label">{t('promo_col_end_time')}</span>
+                                    <span className="prm-card-value">{formatDate(item.endAt)}</span>
                                 </div>
                                 <div className="prm-card-row">
                                     <span className="prm-card-label">{t('promo_col_status')}</span>
@@ -323,10 +371,39 @@ export default function Promotion() {
                                     <span>{new Intl.NumberFormat('vi-VN').format(selectedPromo.maxDiscount)}đ</span>
                                 </div>
                             )}
-                            <div className="prm-modal-row">
-                                <label>{t('promo_col_target')}:</label>
-                                <span>{selectedPromo.promotionType}</span>
-                            </div>
+                             <div className="prm-modal-row">
+                                 <label>{t('promo_col_target')}:</label>
+                                 <span className="prm-text-wrap">{formatTarget(selectedPromo)}</span>
+                             </div>
+
+                             {selectedPromo.promotionType === 'VoucherPromotion' && (
+                                 <>
+                                     {selectedPromo.code && (
+                                         <div className="prm-modal-row">
+                                             <label>{t('promo_code')}:</label>
+                                             <span style={{ color: 'var(--retail-accent)', fontWeight: 700 }}>{selectedPromo.code}</span>
+                                         </div>
+                                     )}
+                                     {selectedPromo.minOrderValue > 0 && (
+                                         <div className="prm-modal-row">
+                                             <label>{t('promo_min_order')}:</label>
+                                             <span>{new Intl.NumberFormat('vi-VN').format(selectedPromo.minOrderValue)}đ</span>
+                                         </div>
+                                     )}
+                                     {selectedPromo.usageLimitPerUser && (
+                                         <div className="prm-modal-row">
+                                             <label>{t('promo_usage_limit')}:</label>
+                                             <span>{selectedPromo.usageLimitPerUser}</span>
+                                         </div>
+                                     )}
+                                     {selectedPromo.remainingQuantity !== null && (
+                                         <div className="prm-modal-row">
+                                             <label>{t('promo_remaining')}:</label>
+                                             <span>{selectedPromo.remainingQuantity}</span>
+                                         </div>
+                                     )}
+                                 </>
+                             )}
 
                             {selectedPromo.categoryIds?.length > 0 && (
                                 <div className="prm-modal-row">
@@ -356,8 +433,12 @@ export default function Promotion() {
                             )}
 
                             <div className="prm-modal-row">
-                                <label>{t('promo_col_time')}:</label>
-                                <span>{formatDate(selectedPromo.startAt)} - {formatDate(selectedPromo.endAt)}</span>
+                                <label>{t('promo_col_start_time')}:</label>
+                                <span>{formatDate(selectedPromo.startAt)}</span>
+                            </div>
+                            <div className="prm-modal-row">
+                                <label>{t('promo_col_end_time')}:</label>
+                                <span>{formatDate(selectedPromo.endAt)}</span>
                             </div>
                             <div className="prm-modal-desc">
                                 <label>{t('description')}:</label>
@@ -373,28 +454,7 @@ export default function Promotion() {
                 </div>
             )}
 
-            {showVipInfo && (
-                <div className="prm-overlay" onClick={() => setShowVipInfo(false)}>
-                    <div className="prm-modal prm-modal-sm" onClick={e => e.stopPropagation()}>
-                        <div className="prm-modal-header">
-                            <h3>{t('vip_condition_title')}</h3>
-                            <button className="prm-modal-close" onClick={() => setShowVipInfo(false)}>&times;</button>
-                        </div>
-                        <div className="prm-modal-body">
-                            <div className="prm-vip-text">
-                                {t('vip_condition_content').split('\n').map((line, i) => (
-                                    <p key={i}>{line}</p>
-                                ))}
-                            </div>
-                        </div>
-                        <div className="prm-modal-footer">
-                            <CButton type="primary" block onClick={() => setShowVipInfo(false)}>
-                                {t('close_hint')}
-                            </CButton>
-                        </div>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 }

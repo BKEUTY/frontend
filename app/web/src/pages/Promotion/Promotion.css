@@ -55,71 +55,84 @@
 }
 
 .prm-page-content {
-    max-width: var(--retail-max-width);
+    max-width: 1500px;
     margin: 0 auto;
+    width: 95%;
 }
 
 .prm-controls {
     display: flex;
-    flex-wrap: wrap;
     gap: 12px;
-    margin: -45px auto 60px;
+    margin: -50px auto 40px;
     align-items: center;
     background: #ffffff;
     padding: 12px;
-    border-radius: 24px;
+    border-radius: 28px;
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
-    max-width: 1000px;
+    max-width: 1650px;
+    width: 95%;
     position: relative;
-    z-index: 10;
+    z-index: 20;
     border: 1px solid rgba(255, 255, 255, 1);
+    flex-wrap: nowrap;
 }
 
-.prm-controls:hover {
-    box-shadow: var(--ecom-shadow-hover);
-}
-
-.prm-search-status {
-    display: flex;
-    gap: 12px;
+.prm-search-input-luxury.ant-input-affix-wrapper-lg {
     flex: 2;
-    min-width: 300px;
-}
-
-.prm-search-input {
-    flex: 1;
-}
-
-.prm-search-input.ant-input-affix-wrapper-lg {
-    border-radius: 16px;
+    min-width: 250px;
+    border-radius: 18px;
     padding: 12px 20px;
-    border: 1px solid #f1f5f9;
     background: #f8fafc;
+    border: 1.5px solid #f1f5f9;
+    transition: all 0.3s ease;
+}
+
+.prm-search-input-luxury.ant-input-affix-wrapper-lg:hover,
+.prm-search-input-luxury.ant-input-affix-wrapper-lg-focused {
+    border-color: var(--retail-accent) !important;
+    background: #ffffff;
+}
+
+.prm-select-luxury {
+    flex: 1;
+    min-width: 150px;
 }
 
 .prm-status-select {
-    min-width: 180px;
+    min-width: 220px;
 }
 
-.prm-status-select .ant-select-selector {
+.prm-type-select {
+    min-width: 240px;
+}
+
+.prm-sort-select {
+    min-width: 220px;
+}
+
+.prm-select-luxury .ant-select-selector {
     border-radius: 16px !important;
     height: 54px !important;
     background: #f8fafc !important;
-    border: 1px solid #f1f5f9 !important;
+    border: 1.5px solid #f1f5f9 !important;
+    transition: all 0.3s ease !important;
 }
 
-.prm-date-range {
+.prm-select-luxury:hover .ant-select-selector {
+    border-color: var(--retail-accent) !important;
+}
+
+.prm-date-range-luxury {
     flex: 1.5;
-    min-width: 340px;
+    min-width: 320px;
     border-radius: 16px !important;
     height: 54px !important;
     background: #f8fafc !important;
-    border: 1px solid #f1f5f9 !important;
+    border: 1.5px solid #f1f5f9 !important;
 }
 
-.prm-date-range:hover,
-.prm-date-range:focus {
-    border-color: var(--ecom-primary) !important;
+.prm-date-range-luxury:hover {
+    border-color: var(--retail-accent) !important;
 }
 
 .prm-status-badge {
@@ -222,18 +235,7 @@
     font-size: 13px;
 }
 
-.prm-info-icon {
-    margin-left: 6px;
-    color: #bfbfbf;
-    cursor: pointer;
-    vertical-align: middle;
-    display: inline-flex;
-    transition: color 0.2s ease;
-}
 
-.prm-info-icon:hover {
-    color: var(--ecom-primary);
-}
 
 .prm-loading {
     text-align: center;
@@ -445,12 +447,7 @@
     border-radius: var(--ecom-radius-md);
 }
 
-.prm-vip-text p {
-    margin: 0 0 12px 0;
-    line-height: 1.6;
-    color: var(--ecom-primary);
-    font-size: 14px;
-}
+
 
 .prm-modal-footer {
     padding: 16px 24px;
@@ -477,6 +474,24 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (max-width: 1350px) {
+    .prm-controls {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
+        padding: 20px;
+    }
+
+    .prm-search-input-luxury.ant-input-affix-wrapper-lg {
+        flex: 1 1 100%;
+    }
+
+    .prm-select-luxury, 
+    .prm-date-range-luxury {
+        flex: 1 1 calc(50% - 16px);
     }
 }
 
@@ -517,25 +532,19 @@
         border-radius: 24px;
         gap: 15px;
         box-shadow: 0 15px 45px rgba(0, 0, 0, 0.12);
+        flex-wrap: wrap;
     }
 
-    .prm-search-status {
-        flex-direction: column;
-        width: 100%;
-        min-width: unset;
-        gap: 15px;
-    }
-
-    .prm-search-input.ant-input-affix-wrapper-lg,
-    .prm-status-select,
-    .prm-date-range {
+    .prm-search-input-luxury.ant-input-affix-wrapper-lg,
+    .prm-select-luxury,
+    .prm-date-range-luxury {
         width: 100% !important;
         min-width: 100% !important;
         height: 54px !important;
         border-radius: 16px !important;
     }
 
-    .prm-status-select .ant-select-selector {
+    .prm-select-luxury .ant-select-selector {
         height: 54px !important;
         border-radius: 16px !important;
     }
@@ -598,4 +607,4 @@
     .prm-status-badge {
         margin-top: 4px;
     }
-}
+}

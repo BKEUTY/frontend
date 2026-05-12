@@ -11,19 +11,19 @@ import {
 import './OrderProgress.css';
 import { useLanguage } from '@/store/LanguageContext';
 
-const OrderProgress = ({ currentStatus, shippingStatus, paymentMethod, paymentStatus, orderDate, estShippingDate }) => {
+const OrderProgress = ({ currentStatus, shippingStatus, paymentMethod, paymentStatus }) => {
     const { t } = useLanguage();
 
     const isBank = paymentMethod?.toUpperCase() === 'BANK';
     const isPaid = paymentStatus?.toUpperCase() === 'PAID';
 
     const steps = [
-        { key: 'RECEIVED', label: t('status_order_received'), date: orderDate },
+        { key: 'RECEIVED', label: t('status_order_received') },
         { key: 'CONFIRMED', label: t('order_status_CONFIRMED') },
         ...(isBank ? [{ key: 'AWAITING_PAY', label: t('status_awaiting_payment') }] : []),
         { key: 'PACKING', label: t('shipping_status_NOT_CREATED') },
         { key: 'SHIPPING', label: t('status_shipping') },
-        { key: 'SUCCEEDED', label: t('order_status_SUCCEEDED'), date: (currentStatus === 'SUCCEEDED' ? estShippingDate : null) }
+        { key: 'SUCCEEDED', label: t('order_status_SUCCEEDED') }
     ];
 
     const getStepIndex = () => {
@@ -48,8 +48,8 @@ const OrderProgress = ({ currentStatus, shippingStatus, paymentMethod, paymentSt
 
     if (isCancelled) {
         return (
-            <div className="order-progress-container is-cancelled">
-                <div className="cancelled-message">
+            <div className="op-container is-cancelled">
+                <div className="op-cancelled-message">
                     <FaBan /> <span>{t('order_status_CANCELLED')}</span>
                 </div>
             </div>
@@ -57,29 +57,24 @@ const OrderProgress = ({ currentStatus, shippingStatus, paymentMethod, paymentSt
     }
 
     return (
-        <div className="order-progress-container">
-            <div className="progress-track">
+        <div className="op-container">
+            <div className="op-track">
                 {steps.map((step, index) => {
                     const isCompleted = index < currentStepIndex;
                     const isActive = index === currentStepIndex;
                     
                     return (
-                        <div key={step.key} className={`progress-step ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`}>
-                            <div className="step-pointer">
-                                <div className="step-dot"></div>
+                        <div key={step.key} className={`op-step ${isCompleted ? 'completed' : ''} ${isActive ? 'active' : ''}`}>
+                            <div className="op-pointer">
+                                <div className="op-dot"></div>
                                 {index < steps.length - 1 && (
-                                    <div className="step-line">
-                                        <div className="line-fill"></div>
+                                    <div className="op-line">
+                                        <div className="op-line-fill"></div>
                                     </div>
                                 )}
                             </div>
-                            <div className="step-label">
+                            <div className="op-label">
                                 {step.label}
-                                {step.date && (
-                                    <div className="step-date">
-                                        {new Date(step.date).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' })}
-                                    </div>
-                                )}
                             </div>
                         </div>
                     );

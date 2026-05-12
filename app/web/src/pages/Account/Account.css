@@ -61,6 +61,66 @@
     color: var(--ac-primary);
 }
 
+.membership-badge {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+}
+
+.membership-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.membership-info-icon {
+    font-size: 14px;
+    color: #94a3b8;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 6px;
+}
+
+.membership-info-icon:hover {
+    color: #A10550;
+    transform: scale(1.1);
+}
+
+.membership-info-popover {
+    padding: 4px;
+    max-width: 280px;
+}
+
+.membership-level-0 {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.membership-level-1 {
+    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+    color: #475569;
+}
+
+.membership-level-2 {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    color: #92400e;
+}
+
+.membership-level-3 {
+    background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
+    color: #6b21a8;
+}
+
+.membership-level-4 {
+    background: linear-gradient(135deg, #a5f3fc, #67e8f9);
+    color: #155e75;
+}
+
 .sidebar-nav {
     display: flex;
     flex-direction: column;
@@ -163,8 +223,6 @@
     font-size: 0.95rem;
 }
 
-
-
 .info-grid-layout {
     display: grid;
     grid-template-columns: 1fr 240px;
@@ -239,7 +297,9 @@
     justify-content: flex-end;
 }
 
-.btn-edit-mode, .btn-save, .btn-cancel {
+.btn-edit-mode,
+.btn-save,
+.btn-cancel {
     min-width: 140px;
     height: 48px;
     font-weight: 700;
@@ -417,8 +477,6 @@
         display: none;
     }
 
-
-
     .form-grid {
         grid-template-columns: 1fr;
     }
@@ -434,3 +492,187 @@
     }
 }
 
+/* Membership Progress - Premium & Compact */
+.membership-progress-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 32px;
+    border: 1px solid #f1f5f9;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    padding: 0 4px;
+}
+
+.current-spending .label {
+    display: block;
+    font-size: 0.7rem;
+    color: #94a3b8;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 2px;
+}
+
+.current-spending .value {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #1e293b;
+    line-height: 1;
+}
+
+.current-spending .value .currency {
+    font-size: 0.9rem;
+    margin-left: 2px;
+    color: #cbd5e1;
+}
+
+.next-goal {
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f8fafc;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #f1f5f9;
+}
+
+.next-goal strong {
+    color: #a10550;
+    font-weight: 700;
+}
+
+.membership-progress-container {
+    padding: 10px 80px 30px;
+    position: relative;
+    background: transparent;
+    border: none;
+}
+
+.membership-progress-card .progress-track {
+    height: 4px;
+    background: #f1f5f9;
+    border-radius: 2px;
+    position: relative;
+}
+
+.membership-progress-card .progress-fill {
+    height: 100%;
+    background: #a10550;
+    border-radius: 2px;
+    position: relative;
+    transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.threshold-markers {
+    position: absolute;
+    top: 10px;
+    left: 80px;
+    right: 80px;
+    height: 4px;
+    pointer-events: none;
+}
+
+.marker {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    top: 2px;
+    transform: translateX(-50%) translateY(-50%);
+}
+
+.marker-dot {
+    width: 10px;
+    height: 10px;
+    background: #ffffff;
+    border: 2px solid #e2e8f0;
+    border-radius: 50%;
+    z-index: 10;
+    transition: all 0.3s ease;
+}
+
+.marker.active .marker-dot {
+    background: #a10550;
+    border-color: #a10550;
+    width: 12px;
+    height: 12px;
+}
+
+.marker.next .marker-dot {
+    border-color: #a10550;
+    box-shadow: 0 0 0 3px rgba(161, 5, 80, 0.1);
+}
+
+.marker-label {
+    position: absolute;
+    top: 16px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    white-space: nowrap;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+}
+
+.marker.active .marker-label {
+    color: #1e293b;
+    font-weight: 800;
+}
+
+.marker.next .marker-label {
+    color: #a10550;
+    font-weight: 800;
+}
+
+@media (max-width: 768px) {
+    .progress-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+        padding: 0 5px;
+    }
+
+    .current-spending .value {
+        font-size: 1.5rem;
+    }
+
+    .membership-progress-container {
+        padding: 20px 40px 50px;
+        margin: 5px 0;
+    }
+
+    .threshold-markers {
+        top: 20px;
+        left: 40px;
+        right: 40px;
+    }
+
+    .marker-label {
+        font-size: 0.55rem;
+        top: 15px;
+        letter-spacing: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .membership-progress-container {
+        padding: 20px 30px 45px;
+    }
+
+    .threshold-markers {
+        left: 30px;
+        right: 30px;
+    }
+
+    .marker-label {
+        font-size: 0.45rem;
+        transform: translateX(-50%) rotate(-15deg);
+        top: 18px;
+    }
+}

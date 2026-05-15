@@ -362,8 +362,7 @@
     }
 
     .home-product-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
+        gap: 15px;
     }
 
     .home-section,

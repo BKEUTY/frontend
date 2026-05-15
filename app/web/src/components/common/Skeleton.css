@@ -1,4 +1,4 @@
-.skeleton {
+.skeleton-loader {
     background: #f0f0f0;
     border-radius: 4px;
     position: relative;
@@ -6,7 +6,7 @@
     display: block;
 }
 
-.skeleton::after {
+.skeleton-loader::after {
     content: '';
     display: block;
     position: absolute;

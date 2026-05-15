@@ -17,6 +17,11 @@
     transform: translateY(-8px);
 }
 
+.product-card:active {
+    transform: translateY(-4px) scale(0.98);
+    transition: transform 0.1s ease;
+}
+
 .product-card-wrapper .ant-card-body {
     padding: 0 !important;
     display: flex;

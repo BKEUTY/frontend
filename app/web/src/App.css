@@ -35,7 +35,7 @@ body {
 
 .main_content {
   flex: 1;
-  padding-top: 90px;
+  padding-top: 70px;
   min-height: calc(100vh - 300px);
   animation: fadeIn var(--transition-normal);
   transition: padding-top 0.3s ease;

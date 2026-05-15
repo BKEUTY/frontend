@@ -201,7 +201,7 @@ export default function Product() {
         }}
         style={{ height: '40px' }}
       >
-        {t('price_apply')}
+        {t('apply')}
       </CButton>
     </div>
   );

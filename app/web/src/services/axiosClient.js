@@ -138,11 +138,17 @@ const createAxiosClient = () => {
                 const errorData = error.response?.data;
                 const apiMessage = typeof errorData === 'string' ? errorData : (errorData?.message || errorData?.error || '');
                 
-                // Prioritize translated message over technical API message for standard errors
                 const translatedFallback = getTranslation(fallbackKey);
-                const description = originalRequest.customErrorMsg || 
-                                   (translatedFallback !== fallbackKey ? translatedFallback : apiMessage) || 
-                                   translatedFallback;
+                let description = originalRequest.customErrorMsg;
+
+                if (!description) {
+                    if (status >= 500) {
+                        // Always use generic message for server errors to avoid leaking info
+                        description = (translatedFallback !== fallbackKey) ? translatedFallback : 'Internal Server Error';
+                    } else {
+                        description = (translatedFallback !== fallbackKey ? translatedFallback : apiMessage) || translatedFallback;
+                    }
+                }
                 
                 if (error.message === 'Network Error' || !error.response) {
                     notification.error({

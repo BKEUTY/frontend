@@ -138,6 +138,9 @@ const createAxiosClient = () => {
                 const errorData = error.response?.data;
                 const apiMessage = typeof errorData === 'string' ? errorData : (errorData?.message || errorData?.error || '');
                 
+                // Log technical error to console for debugging, don't show to user
+                console.error('[API Error Detail]:', apiMessage);
+
                 const translatedFallback = getTranslation(fallbackKey);
                 let description = originalRequest.customErrorMsg;
 
@@ -152,14 +155,14 @@ const createAxiosClient = () => {
                 
                 if (error.message === 'Network Error' || !error.response) {
                     notification.error({
-                        key: 'error_network',
+                        key: 'global_api_error',
                         message: getTranslation('error') || 'Error',
                         description: getTranslation('api_error_network') || 'Network Error',
                         duration: 3
                     });
                 } else {
                     notification.error({
-                        key: notificationKey,
+                        key: 'global_api_error', // Use fixed key to prevent duplicates
                         message: originalRequest.customErrorTitle || getTranslation('error') || 'Error',
                         description: description,
                         duration: 3

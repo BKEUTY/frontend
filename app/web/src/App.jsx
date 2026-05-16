@@ -24,10 +24,10 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <ConfigProvider theme={{ cssVar: true, hashed: false }}>
-          <LanguageProvider>
+    <QueryClientProvider client={queryClient}>
+      <ConfigProvider theme={{ cssVar: true, hashed: false }}>
+        <LanguageProvider>
+          <ErrorBoundary>
             <NotificationProvider>
               <AuthProvider>
                 <CartProvider>
@@ -35,10 +35,10 @@ function App() {
                 </CartProvider>
               </AuthProvider>
             </NotificationProvider>
-          </LanguageProvider>
-        </ConfigProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+          </ErrorBoundary>
+        </LanguageProvider>
+      </ConfigProvider>
+    </QueryClientProvider>
   );
 }
 

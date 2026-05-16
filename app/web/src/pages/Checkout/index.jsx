@@ -32,7 +32,8 @@ export default function Checkout() {
 
     const totals = selectedProducts.reduce((acc, p) => {
         const originalPrice = p.price || 0;
-        const effectivePrice = p.effectivePrice ?? p.promotionPrice ?? originalPrice;
+        const effectivePrice = (p.effectivePrice !== undefined && p.effectivePrice !== null) ? p.effectivePrice : 
+                             ((p.promotionPrice !== undefined && p.promotionPrice !== null) ? p.promotionPrice : originalPrice);
         return {
             original: acc.original + (originalPrice * p.quantity),
             final: acc.final + (effectivePrice * p.quantity)
@@ -354,8 +355,9 @@ export default function Checkout() {
                         <h2 className="summary-title">{t('order_summary')} ({selectedProducts.length} {t('items')})</h2>
                         <div className="order-items-list">
                             {selectedProducts.map((p, idx) => {
-                                const effectivePrice = p.effectivePrice ?? p.promotionPrice ?? p.price;
-                                const hasDiscount = p.price > 0 && effectivePrice < p.price;
+                                const effectivePrice = (p.effectivePrice !== undefined && p.effectivePrice !== null) ? p.effectivePrice : 
+                                                       ((p.promotionPrice !== undefined && p.promotionPrice !== null) ? p.promotionPrice : p.price);
+                                const hasDiscount = effectivePrice < p.price;
                                 return (
                                     <div key={idx} className="summary-item">
                                         <div className="summary-item-image">

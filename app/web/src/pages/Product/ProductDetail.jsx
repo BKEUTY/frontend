@@ -88,7 +88,7 @@ export default function ProductDetail() {
                 originPrice: responseData.originPrice,
                 promotionPrice: responseData.promotionPrice,
                 appliedPromotionType: responseData.appliedPromotionType,
-                hasDiscount: responseData.promotionPrice < responseData.originPrice,
+                hasDiscount: (responseData.promotionPrice !== undefined && responseData.promotionPrice !== null) && responseData.promotionPrice < responseData.originPrice,
             });
             const targetVariant = responseData.variants?.find(v => v.id === responseData.id) || responseData.variants?.[0];
             setProductData(responseData);
@@ -181,7 +181,7 @@ export default function ProductDetail() {
             fetchCart();
 
             const { cartId, price, promotionPrice, quantity: resQty } = response.data || response;
-            const finalPrice = promotionPrice && promotionPrice > 0 ? promotionPrice : price;
+            const finalPrice = (promotionPrice !== undefined && promotionPrice !== null) ? promotionPrice : price;
             const grandTotal = finalPrice * resQty;
 
             navigate('/checkout', {

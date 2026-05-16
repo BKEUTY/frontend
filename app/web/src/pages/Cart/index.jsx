@@ -115,7 +115,7 @@ export default function Cart() {
               </div>
             ) : (
               products.map((product) => {
-                const hasDiscount = product.promotionPrice > 0 && product.promotionPrice < product.price;
+                const hasDiscount = product.promotionPrice !== undefined && product.promotionPrice !== null && product.promotionPrice < product.price;
 
                 return (
                   <div id={product.cartId} className="cart-item-row" key={product.cartId}>

@@ -94,7 +94,7 @@ const CartDrawer = () => {
                     itemLayout="horizontal"
                     dataSource={cartItems}
                     renderItem={item => {
-                        const hasDiscount = item.promotionPrice > 0 && item.promotionPrice < item.price;
+                        const hasDiscount = item.promotionPrice !== undefined && item.promotionPrice !== null && item.promotionPrice < item.price;
 
                         return (
                             <List.Item

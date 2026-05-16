@@ -169,8 +169,12 @@
     }
     .cart-drawer-item-title {
         width: auto;
+        max-width: 200px;
     }
     .cart-drawer-footer-content .total-amount {
         font-size: 1.3rem;
+    }
+    .cart-drawer-antd .ant-list-item {
+        padding: 16px;
     }
 }

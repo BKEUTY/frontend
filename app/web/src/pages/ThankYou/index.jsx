@@ -33,7 +33,7 @@ export default function ThankYou() {
                 </div>
                 
                 <div className="thankyou-actions">
-                    <CButton type="primary" onClick={() => navigate('/account/orders')} className="btn-action">
+                    <CButton type="primary" onClick={() => navigate(`/account/orders/${orderId}`)} className="btn-action">
                         {t('view_orders')}
                     </CButton>
                     <CButton type="outline" onClick={() => navigate('/product')} className="btn-action">

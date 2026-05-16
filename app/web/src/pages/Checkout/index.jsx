@@ -252,7 +252,7 @@ export default function Checkout() {
                         <CButton type="primary" block size="large" loading={isCheckingPayment} onClick={handleManualCheck}>
                             {isCheckingPayment ? t('payment_checking') : t('paid_confirm')}
                         </CButton>
-                        <CButton type="outline" block size="large" onClick={() => navigate('/account/orders')} style={{ marginTop: 12 }}>
+                        <CButton type="outline" block size="large" onClick={() => navigate(`/account/orders/${orderData.orderId}`)} style={{ marginTop: 12 }}>
                             {t('pay_later_and_view_orders')}
                         </CButton>
                     </div>
@@ -282,7 +282,7 @@ export default function Checkout() {
                             </CButton>
                         </div>
                         <div className="form-grid">
-                            <CInput label={t('full_name')} value={formData.fullName} readOnly />
+                            <CInput label={t('full_name')} name="fullName" value={formData.fullName} onChange={handleInputChange} />
                             <CInput label={t('phone')} name="phone" value={formData.phone} onChange={handleInputChange} />
                             <div className="form-group full-width">
                                 <CInput label={t('step_email')} name="email" value={formData.email} onChange={handleInputChange} />

@@ -81,7 +81,7 @@ export default function Account() {
                         <img src={account_image} alt="Avatar" className="profile-avatar" />
                     </div>
                     <div className="profile-info">
-                        <span className="profile-name">{user?.name || t('account')}</span>
+                        <span className="profile-name">{user?.lastname ? `${user.lastname} ${user.firstname}` : (user?.name || t('account'))}</span>
                         <div className="membership-badge-row">
                             <span className={`membership-badge membership-level-${user?.membershipLevel ?? 0}`}>
                                 {MEMBERSHIP_NAMES[user?.membershipLevel ?? 0]}
@@ -248,7 +248,7 @@ const AccountInfo = ({ onUpdate }) => {
             <SEO title={t('account_info') || t('account')} />
             <div className="page-header">
                 <h1 className="page-title">{t('account')}</h1>
-                <p className="page-subtitle">{t('welcome')} <strong>{userData.firstname} {userData.lastname}</strong></p>
+                <p className="page-subtitle">{t('welcome')} <strong>{userData.lastname} {userData.firstname}</strong></p>
             </div>
 
             <MembershipProgress spending={userData.totalSpending} level={userData.membershipLevel} />

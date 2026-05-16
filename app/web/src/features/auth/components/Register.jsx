@@ -26,37 +26,35 @@ const Register = () => {
     const { data: wards } = useWards(addrState.district?.id);
 
     const onFinish = async (values) => {
+        const { username, email, password, firstName, lastName, phoneNumber, street, dateOfBirth } = values;
+        const { province, district, ward } = addrState;
+
         setLoading(true);
         try {
-            const nameParts = values.name.split(' ');
-            const firstName = nameParts[0];
-            const lastName = nameParts.length > 1 ? nameParts.slice(1).join(' ') : firstName;
-
             const data = {
-                username: values.email,
-                email: values.email,
-                password: values.password,
-                firstName: firstName,
-                lastName: lastName,
-                phoneNumber: values.phoneNumber,
-                dateOfBirth: '2000-01-01',
+                username: username.trim(),
+                email: email.trim(),
+                password,
+                firstName: firstName.trim(),
+                lastName: lastName.trim(),
+                phoneNumber: phoneNumber.trim(),
+                dateOfBirth: dateOfBirth || '2000-01-01',
                 address: {
-                    address: values.street,
-                    province: { provinceID: addrState.province.id, provinceName: addrState.province.name },
-                    district: { districtID: addrState.district.id, districtName: addrState.district.name },
-                    ward: { wardCode: addrState.ward.id, wardName: addrState.ward.name }
+                    address: street.trim(),
+                    province: { provinceID: province.id, provinceName: province.name },
+                    district: { districtID: district.id, districtName: district.name },
+                    ward: { wardCode: ward.id, wardName: ward.name }
                 }
             };
 
             await authApi.register(data);
-            
-            notifySuccess(t('success'), t('register_success') || 'Registration Successful');
+            notifySuccess(t('success'), t('register_success'));
             navigate('/login');
         } catch (error) {
             const errorData = error.response?.data;
             const message = typeof errorData === 'string' 
                 ? errorData 
-                : (errorData?.message || error.message || t('register_failed') || 'Registration Failed');
+                : (errorData?.message || error.message || t('register_failed'));
             
             notifyError(t('error'), message);
         } finally {
@@ -109,24 +107,53 @@ const Register = () => {
                         className="auth-form"
                         scrollToFirstError
                     >
+                        <div className="auth-name-row">
+                            <Form.Item
+                                name="lastName"
+                                label={t('last_name')}
+                                rules={[{ required: true, message: t('name_required') }]}
+                                style={{ flex: 1 }}
+                            >
+                                <Input
+                                    prefix={<UserOutlined />}
+                                    placeholder={t('last_name')}
+                                    autoComplete="family-name"
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="firstName"
+                                label={t('first_name')}
+                                rules={[{ required: true, message: t('name_required') }]}
+                                style={{ flex: 1 }}
+                            >
+                                <Input
+                                    prefix={<UserOutlined />}
+                                    placeholder={t('first_name')}
+                                    autoComplete="given-name"
+                                />
+                            </Form.Item>
+                        </div>
+
                         <Form.Item
-                            name="name"
-                            label={t('full_name')}
+                            name="username"
+                            label={t('username')}
                             rules={[
-                                { required: true, message: t('name_required') },
-                                { min: 2, message: t('name_min') }
+                                { required: true, message: t('username_required') || 'Please enter username' },
+                                { min: 3, message: t('username_min') || 'Username must be at least 3 characters' }
                             ]}
                         >
                             <Input
                                 prefix={<UserOutlined />}
-                                placeholder={t('full_name')}
-                                autoComplete="name"
+                                placeholder={t('username')}
+                                autoComplete="username"
                             />
                         </Form.Item>
 
                         <Form.Item
                             name="email"
                             label="Email"
+                            normalize={(value) => value ? value.trim() : value}
                             rules={[
                                 { required: true, message: t('email_required') },
                                 { type: 'email', message: t('email_invalid') }
@@ -191,6 +218,14 @@ const Register = () => {
                             rules={[{ required: true, message: t('phone_required') }]}
                         >
                             <Input placeholder={t('phone_placeholder')} />
+                        </Form.Item>
+
+                        <Form.Item
+                            name="dateOfBirth"
+                            label={t('dob')}
+                            rules={[{ required: true, message: t('dob_required') || "Vui lòng chọn ngày sinh!" }]}
+                        >
+                            <Input type="date" />
                         </Form.Item>
 
                         <Form.Item

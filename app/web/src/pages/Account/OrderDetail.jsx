@@ -74,12 +74,12 @@ const OrderDetail = () => {
 
             <div className="od-info-banner">
                 <div className="od-banner-item">
-                    <span className="od-banner-label">{t('order_date_label')}</span>
+                    <span className="od-banner-label">{t('order_date')}</span>
                     <strong className="od-banner-value">{new Date(orderData.orderDate).toLocaleDateString('vi-VN')}</strong>
                 </div>
                 {orderData.estShippingDate && (
                     <div className="od-banner-item">
-                        <span className="od-banner-label">{t('est_delivery_label')}</span>
+                        <span className="od-banner-label">{t('est_shipping_date')}</span>
                         <strong className="od-banner-value">{new Date(orderData.estShippingDate).toLocaleDateString('vi-VN')}</strong>
                     </div>
                 )}

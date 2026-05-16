@@ -66,11 +66,11 @@ export default function Account() {
     };
 
     const MEMBERSHIP_NAMES = {
-        0: t('membership_member'),
-        1: t('membership_silver'),
-        2: t('membership_gold'),
-        3: t('membership_platinum'),
-        4: t('membership_diamond')
+        0: t('membership_level_0'),
+        1: t('membership_level_1'),
+        2: t('membership_level_2'),
+        3: t('membership_level_3'),
+        4: t('membership_level_4')
     };
 
     return (
@@ -359,11 +359,11 @@ const MembershipProgress = ({ spending, level }) => {
     
     const thresholds = [0, 2000000, 5000000, 15000000, 30000000];
     const levels = [
-        t('membership_member'), 
-        t('membership_silver'), 
-        t('membership_gold'), 
-        t('membership_platinum'), 
-        t('membership_diamond')
+        t('membership_level_0'), 
+        t('membership_level_1'), 
+        t('membership_level_2'), 
+        t('membership_level_3'), 
+        t('membership_level_4')
     ];
 
     const isMaxLevel = level >= 4;

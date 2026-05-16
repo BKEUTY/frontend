@@ -151,7 +151,6 @@ const MyOrders = () => {
                             });
                         }}
                         className="ord-compact-range"
-                        placeholder={[t('startDate'), t('endDate')]}
                         suffixIcon={<FilterOutlined style={{ color: '#d51c5d', fontSize: '16px' }} />}
                     />
                 </div>

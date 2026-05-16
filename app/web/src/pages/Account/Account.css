@@ -99,26 +99,31 @@
 .membership-level-0 {
     background: #f1f5f9;
     color: #64748b;
+    border: 1px solid #e2e8f0;
 }
 
 .membership-level-1 {
-    background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
-    color: #475569;
+    background: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #dbeafe;
 }
 
 .membership-level-2 {
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    color: #92400e;
+    background: #fffbeb;
+    color: #d97706;
+    border: 1px solid #fef3c7;
 }
 
 .membership-level-3 {
-    background: linear-gradient(135deg, #e9d5ff, #d8b4fe);
-    color: #6b21a8;
+    background: #f5f3ff;
+    color: #7c3aed;
+    border: 1px solid #ddd6fe;
 }
 
 .membership-level-4 {
-    background: linear-gradient(135deg, #a5f3fc, #67e8f9);
-    color: #155e75;
+    background: #ecfeff;
+    color: #0891b2;
+    border: 1px solid #cffafe;
 }
 
 .sidebar-nav {

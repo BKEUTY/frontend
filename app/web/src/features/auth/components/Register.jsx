@@ -111,7 +111,7 @@ const Register = () => {
                             <Form.Item
                                 name="lastName"
                                 label={t('last_name')}
-                                rules={[{ required: true, message: t('name_required') }]}
+                                rules={[{ required: true, message: t('last_name_required') }]}
                                 style={{ flex: 1 }}
                             >
                                 <Input
@@ -124,7 +124,7 @@ const Register = () => {
                             <Form.Item
                                 name="firstName"
                                 label={t('first_name')}
-                                rules={[{ required: true, message: t('name_required') }]}
+                                rules={[{ required: true, message: t('first_name_required') }]}
                                 style={{ flex: 1 }}
                             >
                                 <Input
@@ -148,6 +148,14 @@ const Register = () => {
                                 placeholder={t('username')}
                                 autoComplete="username"
                             />
+                        </Form.Item>
+                        
+                        <Form.Item
+                            name="dateOfBirth"
+                            label={t('dob')}
+                            rules={[{ required: true, message: t('dob_required') || "Vui lòng chọn ngày sinh!" }]}
+                        >
+                            <Input type="date" />
                         </Form.Item>
 
                         <Form.Item
@@ -218,14 +226,6 @@ const Register = () => {
                             rules={[{ required: true, message: t('phone_required') }]}
                         >
                             <Input placeholder={t('phone_placeholder')} />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="dateOfBirth"
-                            label={t('dob')}
-                            rules={[{ required: true, message: t('dob_required') || "Vui lòng chọn ngày sinh!" }]}
-                        >
-                            <Input type="date" />
                         </Form.Item>
 
                         <Form.Item

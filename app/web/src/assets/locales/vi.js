@@ -110,6 +110,10 @@ export default {
     phone_required: "Vui lòng nhập số điện thoại!",
     dob_required: "Vui lòng chọn ngày sinh!",
     address_required: "Vui lòng nhập địa chỉ đường/số nhà!",
+    name_required: "Vui lòng không để trống trường này!",
+    first_name_required: "Vui lòng nhập tên!",
+    last_name_required: "Vui lòng nhập họ!",
+    gender_required: "Vui lòng chọn giới tính!",
 
     product: "Sản phẩm",
     service: "Dịch vụ",
@@ -664,5 +668,13 @@ export default {
     membership_benefits_note: "* Hạng thành viên càng cao, bạn càng nhận được nhiều ưu đãi đặc biệt và giảm giá độc quyền.",
     total_spending: "Tổng chi tiêu tích lũy",
     need_more_spending: "Cần thêm",
-    to_reach: "để lên hạng"
+    to_reach: "để lên hạng",
+
+    // --- Error Pages ---
+    error_chunk_title: "Cập nhật mới",
+    error_chunk_desc: "Đã có phiên bản mới của BKEUTY. Vui lòng làm mới trang để cập nhật.",
+    error_chunk_btn: "Cập nhật ngay",
+    error_500_title: "Sự cố hệ thống",
+    error_500_desc: "Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.",
+    error_reload_btn: "Tải lại trang",
 };

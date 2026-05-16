@@ -110,6 +110,10 @@ export default {
     phone_required: "Please enter your phone number!",
     dob_required: "Please select your date of birth!",
     address_required: "Please enter your street address!",
+    name_required: "This field is required!",
+    first_name_required: "Please enter your first name!",
+    last_name_required: "Please enter your last name!",
+    gender_required: "Please select your gender!",
 
     product: "Product",
     service: "Service",
@@ -656,5 +660,13 @@ export default {
     membership_benefits_note: "* Higher membership levels unlock more exclusive deals and special discounts.",
     total_spending: "Total accumulated spending",
     need_more_spending: "Need",
-    to_reach: "to reach"
+    to_reach: "to reach",
+
+    // --- Error Pages ---
+    error_chunk_title: "Update Available",
+    error_chunk_desc: "A new version of BKEUTY is available. Please refresh the page to update.",
+    error_chunk_btn: "Update Now",
+    error_500_title: "System Error",
+    error_500_desc: "An unexpected error occurred. Please try again.",
+    error_reload_btn: "Reload Page",
 };

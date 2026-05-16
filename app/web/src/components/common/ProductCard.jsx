@@ -47,9 +47,9 @@ const ProductCard = ({ product, t, isLoading = false }) => {
     const imagePath = product.imageUrl || product.image;
     const image = imagePath ? getImageUrl(imagePath) : fallbackImg;
     
-    const currentPrice = product.discountPrice ?? product.promotionPrice ?? 0;
+    const currentPrice = product.discountPrice !== undefined && product.discountPrice !== null ? product.discountPrice : (product.promotionPrice ?? product.originPrice ?? 0);
     const oldPrice = product.originPrice ?? 0;
-    const hasDiscount = currentPrice < oldPrice && currentPrice > 0;
+    const hasDiscount = currentPrice < oldPrice;
 
     const handleClick = () => {
         const slug = generateSlug(name, productId);

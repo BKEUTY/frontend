@@ -109,7 +109,7 @@ export default function Header() {
   return (
     <AntHeader className={`app-header ${scrolled ? 'scrolled' : ''}`}>
       <div className="header-container">
-        <div className="logo-section" onClick={() => navigate('/')}>
+        <div className="logo-section" onClick={() => navigate('/home')}>
           <img src={logo_image} alt="BKEUTY" className="header-logo" />
         </div>
 
@@ -180,7 +180,7 @@ export default function Header() {
         className="mobile-drawer"
         closeIcon={<MenuOutlined style={{ fontSize: '20px' }} />}
         extra={
-          <div className="drawer-logo-wrapper" onClick={() => { navigate('/'); setMobileMenuOpen(false); }} style={{ cursor: 'pointer' }}>
+          <div className="drawer-logo-wrapper" onClick={() => { navigate('/home'); setMobileMenuOpen(false); }} style={{ cursor: 'pointer' }}>
             <img src={logo_image} alt="BKEUTY" className="drawer-logo" />
           </div>
         }

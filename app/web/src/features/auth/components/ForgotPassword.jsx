@@ -5,7 +5,7 @@ import { MailOutlined, LockOutlined, SafetyOutlined, EyeInvisibleOutlined, EyeTw
 import { useLanguage } from '@/store/LanguageContext';
 import { SEO } from '@/components/common';
 import './Auth.css';
-import auth_bg from '@/assets/images/banners/auth_background.png';
+import auth_bg from '@/assets/images/banners/auth_background.jpg';
 
 const { Title, Text } = Typography;
 const { Step } = Steps;

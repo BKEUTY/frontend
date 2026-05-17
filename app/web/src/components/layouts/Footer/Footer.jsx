@@ -29,7 +29,7 @@ export default function Footer() {
       <div className="footer-container">
         <div className="footer-top-brand">
           <div className="footer-logo-wrapper">
-            <img src={logo_image} alt="BKEUTY" className="footer-brand-logo" />
+            <img src={logo_image} alt="BKEUTY" className="footer-brand-logo" width="168" height="40" />
           </div>
           <div className="footer-certificates">
             <a href="http://online.gov.vn/Home/WebDetails/113642" target="_blank" rel="noopener noreferrer">
@@ -37,6 +37,8 @@ export default function Footer() {
                 src={logoSaleNoti}
                 alt="Bộ Công Thương"
                 className="gov-cert-img"
+                width="145"
+                height="55"
               />
             </a>
           </div>

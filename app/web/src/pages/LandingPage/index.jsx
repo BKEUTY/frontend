@@ -5,8 +5,8 @@ import { useAuth } from '@/store/AuthContext';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { SEO } from '@/components/common';
 import './LandingPage.css';
-import banner1 from '@/assets/images/banners/banner_home_1.png';
-import banner2 from '@/assets/images/banners/banner_home_2.png';
+import banner1 from '@/assets/images/banners/banner_home_1.jpg';
+import banner2 from '@/assets/images/banners/banner_home_2.jpg';
 
 const images = [banner1, banner2];
 

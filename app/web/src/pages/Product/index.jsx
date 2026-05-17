@@ -355,8 +355,8 @@ export default function Product() {
             ) : (
               <>
                 <div className="product-grid">
-                  {products.map((product) => (
-                    <ProductCard key={`${product.productId}`} product={product} t={t} />
+                  {products.map((product, idx) => (
+                    <ProductCard key={`${product.productId}`} product={product} t={t} priority={idx < 4} />
                   ))}
                 </div>
 

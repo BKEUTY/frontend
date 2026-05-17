@@ -133,32 +133,71 @@ export default function Promotion() {
         return new Date(dateStr).toLocaleString('vi-VN', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit', year: 'numeric' });
     };
 
+    const getPromotionTypeName = (type) => {
+        if (type === 'ProductPromotion') return t('promo_type_productpromotion');
+        if (type === 'VoucherPromotion') return t('promo_type_voucherpromotion');
+        if (type === 'UserPromotion') return t('promo_type_userpromotion');
+        return type;
+    };
+
     const formatDiscount = (item) => {
         if (item.discountType === 'PERCENTAGE') return `${item.discountValue}%`;
         return new Intl.NumberFormat('vi-VN').format(item.discountValue) + 'đ';
     };
 
     const formatTarget = (item) => {
-        if (item.promotionType === 'VoucherPromotion') return `${t('promo_type_voucherpromotion')}${item.code ? ` (${item.code})` : ''}`;
-        if (item.promotionType === 'UserPromotion') {
-            const parts = [];
-            if (item.birthdayMonth?.length > 0) parts.push(`${t('promo_label_birthday')} ${item.birthdayMonth.join(', ')}`);
-            if (item.membershipLevel?.length > 0) {
+        const levels = item.membershipLevels || item.membershipLevel || [];
+        const levelsArray = Array.isArray(levels) ? levels : Array.from(levels);
+        
+        if (item.promotionType === 'VoucherPromotion') {
+            const parts = [`${t('promo_type_voucherpromotion')}${item.code ? ` (${item.code})` : ''}`];
+            if (levelsArray.length > 0) {
                 const levelNames = { 
+                    0: t('membership_level_0'),
                     1: t('membership_level_1'), 
                     2: t('membership_level_2'), 
                     3: t('membership_level_3'),
                     4: t('membership_level_4') 
                 };
-                parts.push(`${t('promo_label_membership')} ${item.membershipLevel.map(l => levelNames[l] || l).join(', ')}`);
+                parts.push(`${t('promo_label_membership')}: ${levelsArray.map(l => levelNames[l] || l).join(', ')}`);
+            }
+            return parts.join(' • ');
+        }
+        
+        if (item.promotionType === 'UserPromotion') {
+            const parts = [];
+            if (item.birthdayMonth?.length > 0) parts.push(`${t('promo_label_birthday')} ${item.birthdayMonth.join(', ')}`);
+            if (levelsArray.length > 0) {
+                const levelNames = { 
+                    0: t('membership_level_0'),
+                    1: t('membership_level_1'), 
+                    2: t('membership_level_2'), 
+                    3: t('membership_level_3'),
+                    4: t('membership_level_4') 
+                };
+                parts.push(`${t('promo_label_membership')}: ${levelsArray.map(l => levelNames[l] || l).join(', ')}`);
             }
             if (item.userIds?.length > 0) parts.push(t('promo_type_userpromotion'));
             return parts.length > 0 ? parts.join(' • ') : t('promo_type_userpromotion');
         }
         
-        if (item.categoryIds?.length > 0) return t('promo_scope_category');
-        if (item.brandIds?.length > 0) return t('promo_scope_brand');
-        return t('promo_scope_product');
+        const targetParts = [];
+        if (item.categoryIds?.length > 0) targetParts.push(t('promo_scope_category'));
+        else if (item.brandIds?.length > 0) targetParts.push(t('promo_scope_brand'));
+        else targetParts.push(t('promo_scope_product'));
+
+        if (levelsArray.length > 0) {
+            const levelNames = { 
+                0: t('membership_level_0'),
+                1: t('membership_level_1'), 
+                2: t('membership_level_2'), 
+                3: t('membership_level_3'),
+                4: t('membership_level_4') 
+            };
+            targetParts.push(`${t('promo_label_membership')}: ${levelsArray.map(l => levelNames[l] || l).join(', ')}`);
+        }
+
+        return targetParts.join(' • ');
     };
 
 
@@ -248,6 +287,7 @@ export default function Promotion() {
                                 <tr>
                                     <th>{t('promo_col_name')}</th>
                                     <th>{t('promo_col_discount')}</th>
+                                    <th>{t('promo_col_type')}</th>
                                     <th>
                                         <div style={{ display: 'flex', alignItems: 'center' }}>
                                             {t('promo_col_target')}
@@ -268,6 +308,7 @@ export default function Promotion() {
                                         >
                                             <td className="prm-title-col">{item.title}</td>
                                             <td><span className="prm-badge-discount">{formatDiscount(item)}</span></td>
+                                            <td>{getPromotionTypeName(item.promotionType)}</td>
                                             <td>{formatTarget(item)}</td>
                                             <td style={{ whiteSpace: 'nowrap', color: '#64748b' }}>{formatDate(item.startAt)}</td>
                                             <td style={{ whiteSpace: 'nowrap', color: '#64748b' }}>{formatDate(item.endAt)}</td>
@@ -280,7 +321,7 @@ export default function Promotion() {
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="6" className="prm-empty-td">
+                                        <td colSpan="7" className="prm-empty-td">
                                             <EmptyState title={t('no_promos_found')} />
                                         </td>
                                     </tr>
@@ -306,6 +347,10 @@ export default function Promotion() {
                                 <div className="prm-card-row">
                                     <span className="prm-card-label">{t('promo_col_discount')}</span>
                                     <span className="prm-card-value prm-highlight">{formatDiscount(item)}</span>
+                                </div>
+                                <div className="prm-card-row">
+                                    <span className="prm-card-label">{t('promo_col_type')}</span>
+                                    <span className="prm-card-value">{getPromotionTypeName(item.promotionType)}</span>
                                 </div>
                                 <div className="prm-card-row">
                                     <span className="prm-card-label">

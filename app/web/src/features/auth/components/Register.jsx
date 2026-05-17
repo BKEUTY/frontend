@@ -9,7 +9,7 @@ import { useProvinces, useDistricts, useWards } from '@/features/account/hooks/u
 import { SEO } from '@/components/common';
 
 import './Auth.css';
-import auth_bg from '@/assets/images/banners/auth_background.png';
+import auth_bg from '@/assets/images/banners/auth_background.jpg';
 
 const { Title, Text } = Typography;
 

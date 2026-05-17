@@ -7,7 +7,7 @@ import { useAuth } from '@/store/AuthContext';
 import { notifyError, notifySuccess } from '@/utils/NotificationService';
 import { SEO } from '@/components/common';
 import './Auth.css';
-import auth_bg from '@/assets/images/banners/auth_background.png';
+import auth_bg from '@/assets/images/banners/auth_background.jpg';
 
 const { Title, Text } = Typography;
 

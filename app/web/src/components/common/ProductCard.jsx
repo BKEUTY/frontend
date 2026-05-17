@@ -15,7 +15,7 @@ import dummy5 from '@/assets/images/products/product_dummy_5.svg';
 const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
 const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
-const ProductCard = ({ product, t, isLoading = false }) => {
+const ProductCard = ({ product, t, isLoading = false, priority = false }) => {
     const navigate = useNavigate();
     const fallbackImg = useMemo(() => getRandomImage(), []);
 
@@ -62,7 +62,15 @@ const ProductCard = ({ product, t, isLoading = false }) => {
             className="product-card-wrapper product-card"
             cover={
                 <div className="card-img-container">
-                    <img alt={name} src={image} onError={(e) => { e.target.src = fallbackImg }} loading="lazy" />
+                    <img 
+                        alt={name} 
+                        src={image} 
+                        onError={(e) => { e.target.src = fallbackImg }} 
+                        loading={priority ? undefined : "lazy"}
+                        fetchpriority={priority ? "high" : undefined}
+                        width="228"
+                        height="228"
+                    />
                     {hasDiscount && (
                         <div className={`card-promo-tag ${product.appliedPromotionType === 'UserPromotion' ? 'user-promo-tag' : ''}`}>
                             {product.appliedPromotionType === 'UserPromotion' ? t('promo_type_userpromotion') : t('promotion')}
@@ -93,7 +101,7 @@ const ProductCard = ({ product, t, isLoading = false }) => {
                 <div className="card-rating-wrap">
                     <Tooltip title={`${Number(product.averageRating || 0).toFixed(1)} ${t('rating')}`}>
                         <div className="card-stars-wrapper">
-                            <Rate disabled defaultValue={product.averageRating || 0} allowHalf className="card-stars" />
+                            <Rate disabled value={product.averageRating || 0} allowHalf className="card-stars" />
                         </div>
                     </Tooltip>
                     <span className="card-review-txt">({product.reviewCount || 0} {t('reviews')})</span>

@@ -1,6 +1,6 @@
 import about_image from "@/assets/images/banners/banner_about_us.svg";
-import banner1 from '@/assets/images/banners/banner_home_1.png';
-import banner2 from '@/assets/images/banners/banner_home_2.png';
+import banner1 from '@/assets/images/banners/banner_home_1.jpg';
+import banner2 from '@/assets/images/banners/banner_home_2.jpg';
 import { ProductCard, SEO } from '@/components/common';
 import { useProductsPaginated } from '@/features/products/hooks/useProducts';
 import { usePersonalizedRecommendations } from '@/hooks/useRecommendation';
@@ -106,11 +106,12 @@ const Home = () => {
                                     <ProductCard key={`ai-shimmer-${i}`} isLoading={true} />
                                 ))
                             ) : (
-                                recData.recommendedProducts.map((item) => (
+                                recData.recommendedProducts.map((item, i) => (
                                     <ProductCard
                                         key={item.productId}
                                         product={item}
                                         t={t}
+                                        priority={i < 4}
                                     />
                                 ))
                             )}
@@ -159,7 +160,7 @@ const Home = () => {
                         </button>
                     </div>
                     <div className="brand-image-box">
-                        <img src={about_image} alt={t('about_us_alt')} />
+                        <img src={about_image} alt={t('about_us_alt')} width="540" height="360" loading="lazy" />
                     </div>
                 </div>
             </section>

@@ -3,7 +3,7 @@ import { useLanguage } from '@/store/LanguageContext';
 import { ClockCircleOutlined, EnvironmentOutlined, MailOutlined, MessageOutlined, PhoneOutlined } from '@ant-design/icons';
 import StaticPageLayout from '@/components/layouts/StaticPageLayout';
 import { SEO } from '@/components/common';
-import contact_map from "@/assets/images/contact_google_map.png";
+import contact_map from "@/assets/images/contact_google_map.jpg";
 import './Contact.css';
 
 const Contact = () => {
@@ -14,7 +14,7 @@ const Contact = () => {
             <p className="contact-intro">{t('contact_intro')}</p>
 
             <div className="map-wrapper">
-                <img src={contact_map} alt="Google Map Store Location" className="contact-map-img" />
+                <img src={contact_map} alt="Google Map Store Location" className="contact-map-img" width="800" height="800" />
             </div>
 
             <div className="contact-info-grid">

@@ -74,11 +74,10 @@ const MyOrders = () => {
         if (orderS === 'CANCELLED') return t('order_status_CANCELLED');
         if (orderS === 'SUCCEEDED') return t('order_status_SUCCEEDED');
 
-        if (payM === 'BANK' && payS === 'UNPAID') {
-            return t('status_awaiting_payment');
+        if (orderS === 'CONFIRMED') {
+            if (payM === 'BANK' && payS === 'UNPAID') return t('status_awaiting_payment');
+            return t('status_shipping');
         }
-
-        if (orderS === 'CONFIRMED') return t('status_shipping');
 
         return t('status_order_received');
     };
@@ -90,7 +89,7 @@ const MyOrders = () => {
 
         if (orderS === 'SUCCEEDED') return 'success';
         if (orderS === 'CANCELLED') return 'danger';
-        if (payM === 'BANK' && payS === 'UNPAID') return 'warning';
+        if (payM === 'BANK' && payS === 'UNPAID' && orderS === 'CONFIRMED') return 'warning';
         if (orderS === 'CONFIRMED') return 'info';
         return 'default';
     };

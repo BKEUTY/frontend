@@ -137,7 +137,8 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
 
     const formatDateTime = (dateString) => {
         if (!dateString) return '';
-        return new Date(dateString).toLocaleString('vi-VN', {
+        const date = dateString.endsWith('Z') ? new Date(dateString) : new Date(dateString + 'Z');
+        return date.toLocaleString('vi-VN', {
             hour: '2-digit',
             minute: '2-digit',
             day: '2-digit',

@@ -13,6 +13,7 @@ import {
   MessageOutlined
 } from '@ant-design/icons';
 import logo_image from "@/assets/images/logo.svg";
+import logoSaleNoti from "@/assets/images/logoSaleNoti.png";
 import "./Footer.css";
 import Chatbot from "@/features/chatbot/components/Chatbot";
 
@@ -33,8 +34,8 @@ export default function Footer() {
           <div className="footer-certificates">
             <a href="http://online.gov.vn/Home/WebDetails/113642" target="_blank" rel="noopener noreferrer">
               <img
-                src="http://online.gov.vn/Content/EndUser/LogoCCDVSaleNoti/logoSaleNoti.png"
-                alt="Đã Thông Báo BCT"
+                src={logoSaleNoti}
+                alt="Bộ Công Thương"
                 className="gov-cert-img"
               />
             </a>

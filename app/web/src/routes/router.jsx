@@ -1,32 +1,33 @@
 import { createBrowserRouter } from 'react-router-dom';
-import React, { lazy, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import Skeleton from '../components/ui/Skeleton';
+import { safeLazy } from '../utils/safeLazy';
 
 // Layouts
 import MainLayout from '../components/layouts/MainLayout';
 import AuthLayout from '../components/layouts/AuthLayout';
 
-// Pages - Lazy Loading for Performance
-const Home = lazy(() => import('../pages/Home'));
-const Product = lazy(() => import('../pages/Product'));
-const ProductDetail = lazy(() => import('../pages/Product/ProductDetail'));
-const Service = lazy(() => import('../pages/Service'));
-const Promotion = lazy(() => import('../pages/Promotion'));
-const Cart = lazy(() => import('../pages/Cart'));
-const Account = lazy(() => import('../pages/Account'));
-const Checkout = lazy(() => import('../pages/Checkout'));
-const ThankYou = lazy(() => import('../pages/ThankYou'));
-const RetailSystem = lazy(() => import('../pages/RetailSystem'));
-const LandingPage = lazy(() => import('../pages/LandingPage'));
-const Login = lazy(() => import('../features/auth/components/Login'));
-const Register = lazy(() => import('../features/auth/components/Register'));
-const ForgotPassword = lazy(() => import('../features/auth/components/ForgotPassword'));
-const AboutUs = lazy(() => import('../pages/AboutUs'));
-const Contact = lazy(() => import('../pages/Contact'));
-const FAQ = lazy(() => import('../pages/FAQ'));
-const Terms = lazy(() => import('../pages/Terms'));
-const NotFound = lazy(() => import('../pages/NotFound'));
-const ServerError = lazy(() => import('../pages/ServerError'));
+// Pages - Lazy Loading for Performance with Deployment Safety
+const Home = safeLazy(() => import('../pages/Home'));
+const Product = safeLazy(() => import('../pages/Product'));
+const ProductDetail = safeLazy(() => import('../pages/Product/ProductDetail'));
+const Service = safeLazy(() => import('../pages/Service'));
+const Promotion = safeLazy(() => import('../pages/Promotion'));
+const Cart = safeLazy(() => import('../pages/Cart'));
+const Account = safeLazy(() => import('../pages/Account'));
+const Checkout = safeLazy(() => import('../pages/Checkout'));
+const ThankYou = safeLazy(() => import('../pages/ThankYou'));
+const RetailSystem = safeLazy(() => import('../pages/RetailSystem'));
+const LandingPage = safeLazy(() => import('../pages/LandingPage'));
+const Login = safeLazy(() => import('../features/auth/components/Login'));
+const Register = safeLazy(() => import('../features/auth/components/Register'));
+const ForgotPassword = safeLazy(() => import('../features/auth/components/ForgotPassword'));
+const AboutUs = safeLazy(() => import('../pages/AboutUs'));
+const Contact = safeLazy(() => import('../pages/Contact'));
+const FAQ = safeLazy(() => import('../pages/FAQ'));
+const Terms = safeLazy(() => import('../pages/Terms'));
+const NotFound = safeLazy(() => import('../pages/NotFound'));
+const ServerError = safeLazy(() => import('../pages/ServerError'));
 
 const router = createBrowserRouter([
   {

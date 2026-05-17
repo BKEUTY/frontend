@@ -1,4 +1,4 @@
-import React, { Suspense, useState, lazy } from 'react';
+import React, { Suspense, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
@@ -7,8 +7,9 @@ import Skeleton from '../ui/Skeleton';
 import ScrollToTop from '../common/ScrollToTop';
 import { MessageOutlined } from '@ant-design/icons';
 import { FloatButton } from 'antd';
+import { safeLazy } from '../../utils/safeLazy';
 
-const Chatbot = lazy(() => import('../../features/chatbot/components/Chatbot'));
+const Chatbot = safeLazy(() => import('../../features/chatbot/components/Chatbot'));
 
 const MainLayout = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);

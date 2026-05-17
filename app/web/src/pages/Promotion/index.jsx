@@ -145,10 +145,10 @@ export default function Promotion() {
             if (item.birthdayMonth?.length > 0) parts.push(`${t('promo_label_birthday')} ${item.birthdayMonth.join(', ')}`);
             if (item.membershipLevel?.length > 0) {
                 const levelNames = { 
-                    1: t('membership_silver'), 
-                    2: t('membership_gold'), 
-                    3: t('membership_platinum'), 
-                    4: t('membership_diamond') 
+                    1: t('membership_level_1'), 
+                    2: t('membership_level_2'), 
+                    3: t('membership_level_3'),
+                    4: t('membership_level_4') 
                 };
                 parts.push(`${t('promo_label_membership')} ${item.membershipLevel.map(l => levelNames[l] || l).join(', ')}`);
             }

@@ -66,8 +66,8 @@ const ReturnRequests = () => {
     const getStatusInfo = (status) => {
         switch(status) {
             case 'PENDING': return { icon: <ClockCircleOutlined />, class: 'status-pending', text: t('pending') };
-            case 'APPROVED': return { icon: <CheckCircleOutlined />, class: 'status-approved', text: t('approved') || "Đã duyệt" };
-            case 'REJECTED': return { icon: <ExclamationCircleOutlined />, class: 'status-rejected', text: t('rejected') || "Từ chối" };
+            case 'APPROVED': return { icon: <CheckCircleOutlined />, class: 'status-approved', text: t('approved') };
+            case 'REJECTED': return { icon: <ExclamationCircleOutlined />, class: 'status-rejected', text: t('rejected') };
             default: return { icon: <ClockCircleOutlined />, class: 'status-default', text: status };
         }
     };

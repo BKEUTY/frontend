@@ -23,16 +23,31 @@ const ProductCard = ({ product, t, isLoading = false, priority = false }) => {
         return (
             <Card
                 className="product-card-wrapper product-card"
-                cover={<Skeleton width="100%" height="240px" borderRadius="16px 16px 0 0" />}
+                cover={
+                    <div className="card-img-container">
+                        <Skeleton width="100%" height="100%" borderRadius="24px 24px 0 0" style={{ position: 'absolute', top: 0, left: 0 }} />
+                    </div>
+                }
                 variant="outlined"
             >
-                <div className="p-4 flex flex-col flex-1">
-                    <Skeleton width="40%" height="12px" borderRadius="100px" className="mb-2.5" />
-                    <Skeleton width="100%" height="20px" borderRadius="4px" className="mb-2.5" />
-                    <Skeleton width="100%" height="20px" borderRadius="4px" className="mb-5" />
-                    <div className="mt-auto pt-3 border-t border-dashed border-[#e2e8f0] flex items-end justify-between gap-2">
-                        <Skeleton width="60%" height="24px" borderRadius="4px" />
-                        <Skeleton width="30%" height="20px" borderRadius="4px" />
+                <div className="card-body-content">
+                    <div className="card-brand-wrap" style={{ marginBottom: '8px' }}>
+                        <Skeleton width="40%" height="12px" borderRadius="100px" />
+                    </div>
+                    <div style={{ height: '2.8rem', overflow: 'hidden', marginBottom: '10px' }}>
+                        <Skeleton width="100%" height="20px" borderRadius="4px" style={{ marginBottom: '4px' }} />
+                        <Skeleton width="70%" height="20px" borderRadius="4px" />
+                    </div>
+                    <div className="card-rating-wrap" style={{ marginBottom: '16px' }}>
+                        <Skeleton width="50%" height="12px" borderRadius="4px" />
+                    </div>
+                    <div className="card-footer-row" style={{ marginTop: 'auto' }}>
+                        <div className="card-price-row">
+                            <Skeleton width="60%" height="24px" borderRadius="4px" />
+                        </div>
+                        <div className="stock-sold-wrapper" style={{ marginTop: '4px' }}>
+                            <Skeleton width="100%" height="20px" borderRadius="10px" />
+                        </div>
                     </div>
                 </div>
             </Card>

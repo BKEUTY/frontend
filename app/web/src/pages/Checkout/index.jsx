@@ -89,7 +89,9 @@ export default function Checkout() {
                     }
                 };
 
-                deleteAddressMutation.mutate(payload, {
+                deleteAddressMutation.mutate({
+                    data: payload
+                }, {
                     onSuccess: () => {
                         notify(t('delete_success'), "success");
                         if (selectedAddressIndex === idx) {
@@ -485,10 +487,12 @@ export default function Checkout() {
                 onOk={() => {
                     if (!newAddr.street || !newAddr.ward) return;
                     addAddressMutation.mutate({
-                        address: newAddr.street,
-                        province: { provinceID: newAddr.province.id, provinceName: newAddr.province.name },
-                        district: { districtID: newAddr.district.id, districtName: newAddr.district.name },
-                        ward: { wardCode: newAddr.ward.id, wardName: newAddr.ward.name }
+                        data: {
+                            address: newAddr.street,
+                            province: { provinceID: newAddr.province.id, provinceName: newAddr.province.name },
+                            district: { districtID: newAddr.district.id, districtName: newAddr.district.name },
+                            ward: { wardCode: newAddr.ward.id, wardName: newAddr.ward.name }
+                        }
                     }, { 
                         onSuccess: () => {
                             setIsAddAddressModalOpen(false);

@@ -27,15 +27,17 @@ export default defineConfig({
         manualChunks(id) {
           if (id.includes('node_modules')) {
             if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-              return 'vendor';
+              return 'vendor-react';
             }
-            if (id.includes('antd') || id.includes('@ant-design/icons')) {
-              return 'antd';
+            if (id.includes('jspdf') || id.includes('html2canvas')) {
+              return 'vendor-pdf';
             }
-            if (id.includes('@tanstack/react-query')) {
-              return 'query';
+            if (id.includes('framer-motion')) {
+              return 'vendor-framer';
             }
-            return 'vendor-libs';
+            if (id.includes('react-icons')) {
+              return 'vendor-icons';
+            }
           }
         },
       },

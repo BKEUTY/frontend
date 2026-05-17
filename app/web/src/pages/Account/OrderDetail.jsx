@@ -148,7 +148,6 @@ const OrderDetail = () => {
                 </div>
             </div>
 
-
             {orderData.paymentMethod === 'BANK' && orderData.paymentStatus === 'UNPAID' && orderData.status !== 'CANCELLED' && (
                 <div className="od-payment-pending-card">
                     <div className="od-pp-header">

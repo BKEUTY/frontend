@@ -156,7 +156,6 @@ export default function Checkout() {
         }
     }, [profile]);
 
-
     useEffect(() => {
         if (!state || cartIds.length === 0) navigate('/cart');
     }, [state, cartIds, navigate]);

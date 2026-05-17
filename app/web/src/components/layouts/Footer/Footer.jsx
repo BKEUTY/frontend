@@ -15,14 +15,12 @@ import {
 import logo_image from "@/assets/images/logo.svg";
 import logoSaleNoti from "@/assets/images/logoSaleNoti.png";
 import "./Footer.css";
-import Chatbot from "@/features/chatbot/components/Chatbot";
 
 const { Footer: AntFooter } = Layout;
 const { Title, Text, Paragraph } = Typography;
 
 export default function Footer() {
   const { t } = useLanguage();
-  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <AntFooter className="app-footer">
@@ -120,18 +118,6 @@ export default function Footer() {
         </div>
       </div>
 
-      <FloatButton.Group shape="circle" style={{ right: 24, bottom: 24 }}>
-        <FloatButton.BackTop />
-        <FloatButton
-          icon={<MessageOutlined />}
-          type="primary"
-          onClick={() => setIsChatOpen(true)}
-          tooltip={t('chat')}
-          style={{ marginTop: 2 }}
-        />
-      </FloatButton.Group>
-
-      <Chatbot isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </AntFooter>
   );
 }

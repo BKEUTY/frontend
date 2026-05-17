@@ -17,13 +17,11 @@ const ForgotPassword = () => {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
 
-
     const MOCK_OTP = '123456';
 
     const handleRequestOTP = (values) => {
         setLoading(true);
         setEmail(values.email);
-
 
         setTimeout(() => {
             setLoading(false);
@@ -37,7 +35,6 @@ const ForgotPassword = () => {
 
     const handleVerifyOTP = (values) => {
         setLoading(true);
-
 
         setTimeout(() => {
             setLoading(false);
@@ -60,7 +57,6 @@ const ForgotPassword = () => {
     const handleResetPassword = (values) => {
         setLoading(true);
 
-
         setTimeout(() => {
             setLoading(false);
             notification.success({
@@ -72,7 +68,6 @@ const ForgotPassword = () => {
             }, 1500);
         }, 1000);
     };
-
 
     const handleResendOTP = () => {
         notification.info({
@@ -109,7 +104,6 @@ const ForgotPassword = () => {
                 </div>
             </div>
 
-
             <div className="auth-form-side">
                 <div className="auth-lang-switch">
                     <Button
@@ -135,7 +129,6 @@ const ForgotPassword = () => {
                             {currentStep === 2 && t('forgot_password_desc_3')}
                         </Text>
                     </div>
-
 
                     <Steps current={currentStep} className="forgot-password-steps">
                         {steps.map((item, index) => (

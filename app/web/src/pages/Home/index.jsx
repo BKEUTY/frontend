@@ -10,6 +10,7 @@ import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Home.css';
+import { Helmet } from 'react-helmet-async';
 
 const bannerImages = [banner1, banner2];
 
@@ -35,7 +36,6 @@ const Home = () => {
         { id: 'stock', items: available?.items || [], isLoading: availableLoading, title: t('top_in_stock') }
     ];
 
-
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentBanner((prev) => (prev + 1) % bannerImages.length);
@@ -52,6 +52,9 @@ const Home = () => {
                 title={t('home')}
                 description={t('brand_tagline')}
             />
+            <Helmet>
+                <link rel="preload" as="image" href={banner1} />
+            </Helmet>
             <div className="home-hero-slider animate-fade-in">
                 <div
                     className="slider-wrapper"
@@ -135,11 +138,12 @@ const Home = () => {
                                         <ProductCard key={`shimmer-${i}`} isLoading={true} />
                                     ))
                                 ) : (
-                                    products.map((item) => (
+                                    products.map((item, i) => (
                                         <ProductCard
                                             key={item.productId}
                                             product={item}
                                             t={t}
+                                            priority={idx === 0 && i < 4}
                                         />
                                     ))
                                 )}
@@ -148,7 +152,6 @@ const Home = () => {
                     </section>
                 );
             })}
-
 
             <section className="home-brand-section">
                 <div className="brand-content-wrapper">

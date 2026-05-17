@@ -94,7 +94,6 @@ export default function Promotion() {
         }
     }, [debouncedSearch, searchInput, titleTermFromUrl, setQuery]);
 
-
     useEffect(() => {
         fetchPromotions();
     }, [fetchPromotions]);
@@ -199,8 +198,6 @@ export default function Promotion() {
 
         return targetParts.join(' • ');
     };
-
-
 
     return (
         <div className="prm-page-container">
@@ -498,7 +495,6 @@ export default function Promotion() {
                     </div>
                 </div>
             )}
-
 
         </div>
     );

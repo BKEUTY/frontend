@@ -26,6 +26,7 @@ import {
 } from '@ant-design/icons';
 import { Popover, Modal } from 'antd';
 import ReturnRequests from './ReturnRequests';
+import MyWallet from './MyWallet';
 
 export default function Account() {
     const notify = useNotification();
@@ -62,6 +63,7 @@ export default function Account() {
         if (path === '/account/appointments' && location.pathname.includes('/appointments')) return true;
         if (path === '/account/address' && location.pathname.includes('/address')) return true;
         if (path === '/account/returns' && location.pathname.includes('/returns')) return true;
+        if (path === '/account/wallet' && location.pathname.includes('/wallet')) return true;
         return false;
     };
 
@@ -133,10 +135,10 @@ export default function Account() {
                         <RollbackOutlined className="nav-icon" />
                         <span>{t('return_requests') || t('my_returns')}</span>
                     </Link>
-                    <div className="nav-item disabled">
+                    <Link to="/account/wallet" className={`nav-item ${isActive('/account/wallet') ? 'active' : ''}`}>
                         <WalletOutlined className="nav-icon" />
                         <span>{t('my_wallet')}</span>
-                    </div>
+                    </Link>
                 </nav>
                 <div className="sidebar-bottom">
                     <div className="nav-item nav-logout" onClick={handleLogout}>
@@ -155,6 +157,7 @@ export default function Account() {
                     <Route path="/appointments" element={<AppointmentList />} />
                     <Route path="/address" element={<ShippingAddress />} />
                     <Route path="/returns" element={<ReturnRequests />} />
+                    <Route path="/wallet" element={<MyWallet />} />
                     <Route path="*" element={<NotFound />} />
                 </Routes>
             </div>

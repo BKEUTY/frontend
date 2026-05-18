@@ -4,6 +4,7 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import { useNotification } from "@/store/NotificationContext";
 import { useLanguage } from "@/store/LanguageContext";
+import { PRODUCT_IMAGE_FALLBACK } from "@/utils/helpers";
 import { usePaymentPolling } from "@/features/checkout/hooks/usePaymentPolling";
 import { CButton, CInput, SEO } from "@/components/common";
 import orderApi from '@/features/orders/services/orderService';
@@ -362,7 +363,11 @@ export default function Checkout() {
                                 return (
                                     <div key={idx} className="summary-item">
                                         <div className="summary-item-image">
-                                            <img src={p.image} alt={p.name} onError={(e) => e.target.src = 'https://placehold.co/100x100?text=Product'} />
+                                            <img 
+                                                src={p.image || PRODUCT_IMAGE_FALLBACK} 
+                                                alt={p.name} 
+                                                onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }} 
+                                            />
                                         </div>
                                         <div className="summary-item-info">
                                             <div className="summary-item-name">{p.name}</div>

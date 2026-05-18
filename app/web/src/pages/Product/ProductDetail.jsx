@@ -329,14 +329,27 @@ export default function ProductDetail() {
                                 </strong>
                             </div>
                         )}
-                        <div className="stock-info">
-                            {t('product_stock_count').replace('{count}', stockQuantity)}
-                        </div>
-                        <div className="sold-info">
-                            {t('product_sold_count').replace('{count}', productData.sold)}
+                        <div className="product-meta-stats-row">
+                            <div className="stat-badge-item stock-badge">
+                                <span className="stat-dot green-dot"></span>
+                                <span className="stat-text">
+                                    {t('product_stock_count').split('{count}')[0]}
+                                    <strong className="stat-value">{stockQuantity}</strong>
+                                    {t('product_stock_count').split('{count}')[1]}
+                                </span>
+                            </div>
+                            <div className="stat-badge-divider"></div>
+                            <div className="stat-badge-item sold-badge">
+                                <span className="stat-dot gray-dot"></span>
+                                <span className="stat-text">
+                                    {t('product_sold_count').split('{count}')[0]}
+                                    <strong className="stat-value">{productData.sold}</strong>
+                                    {t('product_sold_count').split('{count}')[1]}
+                                </span>
+                            </div>
                         </div>
 
-                        <div className="option-group align-center mt-10">
+                        <div className="option-group align-center">
                             <span className="option-label">{t('quantity')}:</span>
                             <div className="input-quantity-wrapper">
                                 <button className="qty-btn" onClick={() => handleQuantityChange(-1)}>-</button>

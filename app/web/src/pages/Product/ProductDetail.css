@@ -139,7 +139,7 @@
     font-size: 2.5rem;
     font-weight: 800;
     line-height: 1.2;
-    margin-bottom: 25px;
+    margin-bottom: 12px;
     color: #0f172a;
     position: relative;
     display: inline-block;
@@ -159,7 +159,7 @@
 .detail-categories {
     display: flex;
     gap: 8px;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
     align-items: center;
 }
 
@@ -182,7 +182,7 @@
     align-items: center;
     gap: 8px;
     color: #475569;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-weight: 600;
 }
 
@@ -191,7 +191,7 @@
 }
 
 .price-box {
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 }
 
 .product-current-price-wrapper {
@@ -219,15 +219,14 @@
 .options-section {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 12px;
     border-top: 1px solid #f1f5f9;
-    padding: 30px 0;
 }
 
 .option-group {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 6px;
 }
 
 .option-group.align-center {
@@ -268,7 +267,7 @@
 }
 
 .selected-variant-info {
-    padding-top: 10px;
+    padding-top: 4px;
 }
 
 .variant-label-title {
@@ -281,16 +280,60 @@
     font-weight: 700;
     font-size: 1.1rem;
 }
-
-.stock-info {
-    font-size: 0.95rem;
-    color: #10b981;
-    font-weight: 600;
+.product-meta-stats-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    background: #f8fafc;
+    border-radius: 12px;
+    padding: 8px 14px;
+    border: 1px solid #f1f5f9;
+    width: fit-content;
+    animation: fadeIn 0.4s ease;
 }
 
-.sold-info {
-    font-size: 0.95rem;
-    color: #64748b;
+.stat-badge-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.green-dot {
+    background-color: #10b981;
+    box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+}
+
+.gray-dot {
+    background-color: #64748b;
+    box-shadow: 0 0 8px rgba(100, 116, 139, 0.4);
+}
+
+.stat-text {
+    font-size: 0.85rem;
+    color: #475569;
+    font-weight: 500;
+}
+
+.stat-value {
+    color: #0f172a;
+    font-weight: 800;
+    font-size: 0.9rem;
+    margin: 0 4px;
+}
+
+.stat-badge-divider {
+    width: 1px;
+    height: 16px;
+    background-color: #e2e8f0;
 }
 
 .input-quantity-wrapper {
@@ -322,7 +365,7 @@
 .actions-wrapper {
     display: flex;
     gap: 15px;
-    margin-top: 25px;
+    margin-top: 15px;
 }
 
 .btn-action-buy {
@@ -509,4 +552,18 @@
 
 .mt-60 {
     margin-top: 60px;
+}
+
+@media (max-width: 480px) {
+    .product-meta-stats-row {
+        flex-wrap: wrap !important;
+        gap: 8px 12px !important;
+        padding: 6px 12px !important;
+        width: 100% !important;
+        justify-content: flex-start !important;
+    }
+    
+    .stat-badge-divider {
+        display: none !important;
+    }
 }

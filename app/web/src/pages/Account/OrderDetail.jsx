@@ -1,19 +1,71 @@
+import React, { useState, useEffect } from 'react';
 import { SEO, MembershipTag } from '@/components/common';
 import OrderProgress from '@/features/orders/components/OrderProgress';
 import { useLanguage } from '@/store/LanguageContext';
-import { generateSlug } from '@/utils/helpers';
+import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
+import { getImageUrl } from '@/services/axiosClient';
 import generateInvoice from '@/utils/InvoiceService';
 import { FaArrowLeft, FaCreditCard, FaDownload, FaMapLocationDot } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useOrderDetail } from '@/features/orders/hooks/useOrders';
+import { useProvinces, useDistricts, useWards } from '@/features/account/hooks/useAddress';
+import orderApi from '@/features/orders/services/orderService';
+import { useNotification } from '@/store/NotificationContext';
+import { Modal, Select, Input, Checkbox, Upload } from 'antd';
+import { InboxOutlined } from '@ant-design/icons';
 import './OrderDetail.css';
 
 const OrderDetail = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { t } = useLanguage();
+    const notify = useNotification();
 
-    const { data: orderData, isLoading, error } = useOrderDetail(id);
+    const { data: orderData, isLoading, error, refetch } = useOrderDetail(id);
+
+    const [isRefundMode, setIsRefundMode] = useState(false);
+    const [selectedItemIds, setSelectedItemIds] = useState(new Set());
+    const [isRefundModalOpen, setIsRefundModalOpen] = useState(false);
+    const [shouldFetchAddress, setShouldFetchAddress] = useState(false);
+    const [refundForm, setRefundForm] = useState({
+        phone: '',
+        street: '',
+        province: null,
+        district: null,
+        ward: null,
+        note: '',
+        images: []
+    });
+    const [isSubmittingRefund, setIsSubmittingRefund] = useState(false);
+
+    const { data: provinces } = useProvinces({ enabled: shouldFetchAddress });
+    const { data: districts } = useDistricts(refundForm.province?.id, { enabled: shouldFetchAddress });
+    const { data: wards } = useWards(refundForm.district?.id, { enabled: shouldFetchAddress });
+
+    useEffect(() => {
+        if (orderData) {
+            setRefundForm(prev => {
+                const addr = orderData.address;
+                return {
+                    ...prev,
+                    phone: orderData.buyerPhoneNumber || '',
+                    street: addr?.address || '',
+                    province: addr?.province ? { 
+                        id: addr.province.provinceID ?? addr.province.ProvinceID, 
+                        name: addr.province.provinceName ?? addr.province.ProvinceName 
+                    } : null,
+                    district: addr?.district ? { 
+                        id: addr.district.districtID ?? addr.district.DistrictID, 
+                        name: addr.district.districtName ?? addr.district.DistrictName 
+                    } : null,
+                    ward: addr?.ward ? { 
+                        id: addr.ward.wardCode ?? addr.ward.WardCode, 
+                        name: addr.ward.wardName ?? addr.ward.WardName 
+                    } : null,
+                };
+            });
+        }
+    }, [orderData]);
 
     if (isLoading) {
         return (
@@ -36,6 +88,66 @@ const OrderDetail = () => {
         );
     }
 
+    const handleSubmitRefund = async () => {
+        if (selectedItemIds.size === 0) {
+            notify(t('refund_select_item_error'), 'error');
+            return;
+        }
+        if (!refundForm.phone || !refundForm.street || !refundForm.province || !refundForm.district || !refundForm.ward) {
+            notify(t('fill_all_fields'), 'error');
+            return;
+        }
+        if (!refundForm.note || refundForm.note.trim() === '') {
+            notify(t('refund_note_empty_error'), 'error');
+            return;
+        }
+
+        setIsSubmittingRefund(true);
+        try {
+            const formData = new FormData();
+            const requestPayload = {
+                orderId: orderData.orderId,
+                orderItemId: Array.from(selectedItemIds),
+                fromAddress: {
+                    address: refundForm.street,
+                    province: {
+                        provinceID: Number(refundForm.province.id),
+                        provinceName: refundForm.province.name
+                    },
+                    district: {
+                        districtID: Number(refundForm.district.id),
+                        districtName: refundForm.district.name
+                    },
+                    ward: {
+                        wardCode: Number(refundForm.ward.id),
+                        wardName: refundForm.ward.name
+                    }
+                },
+                phoneNumber: refundForm.phone,
+                note: refundForm.note
+            };
+
+            formData.append('request', JSON.stringify(requestPayload));
+            if (refundForm.images && refundForm.images.length > 0) {
+                refundForm.images.forEach(file => {
+                    formData.append('images', file.originFileObj || file);
+                });
+            }
+
+            await orderApi.createRefund(formData);
+            notify(t('refund_request_success'), 'success');
+            setIsRefundModalOpen(false);
+            setIsRefundMode(false);
+            setSelectedItemIds(new Set());
+            refetch();
+        } catch (error) {
+            const errorMsg = error.response?.data?.message || t('api_error_general');
+            notify(errorMsg, 'error');
+        } finally {
+            setIsSubmittingRefund(false);
+        }
+    };
+
     const subtotal = (orderData.items || []).reduce((sum, item) => {
         const price = Number(item.price || 0);
         const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
@@ -54,6 +166,42 @@ const OrderDetail = () => {
                     <FaArrowLeft />
                 </button>
                 <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
+                
+                {orderData.status === 'SUCCEEDED' && (
+                    <div className="od-header-actions-refund">
+                        {!isRefundMode ? (
+                            <button
+                                className="od-btn-refund-trigger"
+                                onClick={() => setIsRefundMode(true)}
+                            >
+                                {t('request_refund_order')}
+                            </button>
+                        ) : (
+                            <div className="od-refund-mode-actions">
+                                <button
+                                    className="od-btn-refund-cancel"
+                                    onClick={() => {
+                                        setIsRefundMode(false);
+                                        setSelectedItemIds(new Set());
+                                    }}
+                                >
+                                    {t('cancel')}
+                                </button>
+                                <button
+                                    className="od-btn-refund-continue"
+                                    disabled={selectedItemIds.size === 0}
+                                    onClick={() => {
+                                        setIsRefundModalOpen(true);
+                                        setShouldFetchAddress(true);
+                                    }}
+                                >
+                                    {t('continue')} ({selectedItemIds.size})
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 <button
                     className="od-btn-download"
                     onClick={() => generateInvoice(orderData, t)}
@@ -93,15 +241,44 @@ const OrderDetail = () => {
                         const effectivePrice = isPromo ? item.promotionPrice : item.price;
                         const voucherUnit = item.voucherDiscountAmount ? Math.round(item.voucherDiscountAmount / item.quantity) : 0;
                         const lineTotal = (effectivePrice * item.quantity) - item.voucherDiscountAmount;
+                        const isChecked = selectedItemIds.has(item.orderItemId);
 
                         return (
-                        <div className="od-item-card" key={index}>
-                            <div className="od-item-img">
-                                <img src={item.productVariantImage} alt={item.productVariantName} />
-                            </div>
-                            <div className="od-item-details">
+                        <div className={`od-item-card ${isRefundMode ? 'refund-selectable' : ''} ${isChecked ? 'refund-selected' : ''} ${item.refundOrderId ? 'item-has-refund' : ''}`} key={index}>
+                            {isRefundMode && (
+                                <div className="od-item-select-col">
+                                    <Checkbox
+                                        disabled={!!item.refundOrderId}
+                                        checked={isChecked}
+                                        onChange={() => {
+                                            const newIds = new Set(selectedItemIds);
+                                            if (isChecked) {
+                                                newIds.delete(item.orderItemId);
+                                            } else {
+                                                newIds.add(item.orderItemId);
+                                            }
+                                            setSelectedItemIds(newIds);
+                                        }}
+                                    />
+                                </div>
+                            )}
+                             <div className="od-item-img">
+                                 <img 
+                                     src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK} 
+                                     alt={item.productVariantName} 
+                                     onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
+                                 />
+                             </div>
+                             <div className="od-item-details">
                                 <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} state={{ productId: item.productVariantId }} className="od-item-link">
-                                    <h4 className="od-item-name">{item.productVariantName}</h4>
+                                    <h4 className="od-item-name">
+                                        {item.productVariantName}
+                                        {item.refundOrderId && (
+                                            <span className="od-item-refund-label-tag" style={{ marginLeft: '8px' }}>
+                                                {t('refund_request_label')}
+                                            </span>
+                                        )}
+                                    </h4>
                                 </Link>
                                 <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>
                             </div>
@@ -128,18 +305,10 @@ const OrderDetail = () => {
                                     <span className="od-price-label">{t('total')}:</span>
                                     <span className="od-current-price">{lineTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                                 </div>
-                                {orderData.status === 'SUCCEEDED' && (
-                                    <button
-                                        className="od-btn-return"
-                                        onClick={() => navigate('/account/returns', {
-                                            state: {
-                                                orderId: orderData.orderId,
-                                                item: item
-                                            }
-                                        })}
-                                    >
-                                        {t('request_return')}
-                                    </button>
+                                {item.refundOrderId && (
+                                    <span className={`od-refund-badge ${item.refundStatus?.toLowerCase() || 'pending'}`}>
+                                        {t(`refund_status_${item.refundStatus}`)}
+                                    </span>
                                 )}
                             </div>
                         </div>
@@ -195,7 +364,7 @@ const OrderDetail = () => {
                         </div>
                         <p className="od-info-text">{orderData.buyerPhoneNumber || ''}</p>
                         <p className="od-info-text">
-                            {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName}, ${orderData.address.district?.districtName}, ${orderData.address.province?.provinceName}` : '---'}
+                            {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName || orderData.address.ward?.WardName || ''}, ${orderData.address.district?.districtName || orderData.address.district?.DistrictName || ''}, ${orderData.address.province?.provinceName || orderData.address.province?.ProvinceName || ''}` : '---'}
                         </p>
                     </div>
                 </div>
@@ -221,7 +390,7 @@ const OrderDetail = () => {
 
                         {voucherDiscount > 0 && (
                             <div className="od-summary-row od-discount-row" style={{ color: '#C2185B' }}>
-                                <span>{t('voucher_discount') || 'Giảm giá voucher'}</span>
+                                <span>{t('voucher_discount')}</span>
                                 <span>-{voucherDiscount.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                             </div>
                         )}
@@ -238,6 +407,184 @@ const OrderDetail = () => {
                     </div>
                 </div>
             </div>
+
+            <Modal
+                title={<span className="od-modal-title">{t('request_refund_title')}</span>}
+                open={isRefundModalOpen}
+                onCancel={() => setIsRefundModalOpen(false)}
+                footer={null}
+                width={650}
+                className="od-refund-modal-luxury"
+            >
+                <div className="od-refund-modal-body">
+                    <div className="od-refund-items-summary">
+                        <label className="od-field-label">{t('refund_selected_items')}</label>
+                        <div className="od-refund-summary-list">
+                            {orderData.items
+                                .filter(item => selectedItemIds.has(item.orderItemId))
+                                .map((item, idx) => (
+                                    <div key={idx} className="od-refund-summary-item">
+                                        <img 
+                                            src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK} 
+                                            alt={item.productVariantName} 
+                                            onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
+                                        />
+                                        <div className="item-info">
+                                            <div className="item-name">{item.productVariantName}</div>
+                                            <div className="item-qty">{t('quantity')}: x{item.quantity}</div>
+                                        </div>
+                                    </div>
+                                ))}
+                        </div>
+                    </div>
+
+                    <div className="od-refund-form-grid">
+                        <div className="od-refund-form-group">
+                            <label className="od-field-label">{t('phone')}</label>
+                            <Input
+                                value={refundForm.phone}
+                                onChange={e => setRefundForm(p => ({ ...p, phone: e.target.value }))}
+                                placeholder={t('phone_placeholder')}
+                            />
+                        </div>
+
+                        <div className="od-refund-form-group">
+                            <label className="od-field-label">{t('address')}</label>
+                            <Input
+                                value={refundForm.street}
+                                onChange={e => setRefundForm(p => ({ ...p, street: e.target.value }))}
+                                placeholder={t('address_placeholder')}
+                            />
+                        </div>
+
+                        <div className="od-refund-address-selectors">
+                            <div className="od-select-item">
+                                <label className="od-field-label">{t('province')}</label>
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder={t('select_province')}
+                                    value={refundForm.province?.id}
+                                    options={provinces?.map(p => ({
+                                        value: p.ProvinceID,
+                                        label: p.ProvinceName
+                                    }))}
+                                    onChange={(id, opt) => setRefundForm(p => ({
+                                        ...p,
+                                        province: { id, name: opt.label },
+                                        district: null,
+                                        ward: null
+                                    }))}
+                                    showSearch
+                                    filterOption={(i, o) => o.label.toLowerCase().includes(i.toLowerCase())}
+                                />
+                            </div>
+
+                            <div className="od-select-item">
+                                <label className="od-field-label">{t('district')}</label>
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder={t('select_district')}
+                                    disabled={!refundForm.province}
+                                    value={refundForm.district?.id}
+                                    options={districts?.map(d => ({
+                                        value: d.DistrictID,
+                                        label: d.DistrictName
+                                    }))}
+                                    onChange={(id, opt) => setRefundForm(p => ({
+                                        ...p,
+                                        district: { id, name: opt.label },
+                                        ward: null
+                                    }))}
+                                    showSearch
+                                    filterOption={(i, o) => o.label.toLowerCase().includes(i.toLowerCase())}
+                                />
+                            </div>
+
+                            <div className="od-select-item">
+                                <label className="od-field-label">{t('ward')}</label>
+                                <Select
+                                    style={{ width: '100%' }}
+                                    placeholder={t('select_ward')}
+                                    disabled={!refundForm.district}
+                                    value={refundForm.ward?.id}
+                                    options={wards?.map(w => ({
+                                        value: w.WardCode,
+                                        label: w.WardName
+                                    }))}
+                                    onChange={(id, opt) => setRefundForm(p => ({
+                                        ...p,
+                                        ward: { id, name: opt.label }
+                                    }))}
+                                    showSearch
+                                    filterOption={(i, o) => o.label.toLowerCase().includes(i.toLowerCase())}
+                                />
+                            </div>
+                        </div>
+
+                        <div className="od-refund-form-group full-width">
+                            <label className="od-field-label">{t('return_reason')}</label>
+                            <Input.TextArea
+                                rows={4}
+                                value={refundForm.note}
+                                onChange={e => setRefundForm(p => ({ ...p, note: e.target.value }))}
+                                placeholder={t('desc_placeholder')}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="od-refund-upload-section">
+                        <label className="od-field-label">{t('upload_evidence')}</label>
+                        <Upload.Dragger
+                            multiple
+                            listType="picture"
+                            accept="image/*"
+                            fileList={refundForm.images}
+                            beforeUpload={(file) => {
+                                const isImage = file.type.startsWith('image/');
+                                if (!isImage) {
+                                    notify(t('only_upload_images'), 'error');
+                                    return Upload.LIST_IGNORE;
+                                }
+                                const isLt2M = file.size / 1024 / 1024 < 2;
+                                if (!isLt2M) {
+                                    notify(t('image_size_limit'), 'error');
+                                    return Upload.LIST_IGNORE;
+                                }
+                                return false;
+                            }}
+                            onChange={info => {
+                                let newFileList = [...info.fileList];
+                                if (newFileList.length > 5) {
+                                    notify(t('max_images_limit'), 'warning');
+                                    newFileList = newFileList.slice(0, 5);
+                                }
+                                setRefundForm(p => ({ ...p, images: newFileList }));
+                            }}
+                        >
+                            <p className="ant-upload-drag-icon"><InboxOutlined /></p>
+                            <p className="ant-upload-text">{t('drag_upload_hint')}</p>
+                            <p className="ant-upload-hint">{t('upload_limit_hint')}</p>
+                        </Upload.Dragger>
+                    </div>
+
+                    <div className="od-refund-modal-actions">
+                        <button
+                            className="od-btn-modal-cancel"
+                            onClick={() => setIsRefundModalOpen(false)}
+                            disabled={isSubmittingRefund}
+                        >
+                            {t('back')}
+                        </button>
+                        <button
+                            className="od-btn-modal-submit"
+                            onClick={handleSubmitRefund}
+                            disabled={isSubmittingRefund}
+                        >
+                            {isSubmittingRefund ? t('submitting') : t('confirm')}
+                        </button>
+                    </div>
+                </div>
+            </Modal>
         </div>
     );
 };

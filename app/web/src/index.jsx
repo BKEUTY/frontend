@@ -2,13 +2,19 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { HelmetProvider } from 'react-helmet-async';
 
-import "@fontsource/be-vietnam-pro/400.css";
-import "@fontsource/be-vietnam-pro/700.css";
-import "antd/dist/reset.css";
-
-import "./antd-custom.css";
+// Critical CSS first - layout and design tokens
 import "./global.css";
 import "./index.css";
+
+// Font CSS
+import "@fontsource/be-vietnam-pro/400.css";
+import "@fontsource/be-vietnam-pro/700.css";
+
+// Ant Design base reset (small, foundational)
+import "antd/dist/reset.css";
+
+// Non-critical CSS - Ant Design customizations (loaded after critical path)
+import "./antd-custom.css";
 
 import App from "./App";
 
@@ -20,4 +26,3 @@ root.render(
     </HelmetProvider>
   </React.StrictMode>
 );
-

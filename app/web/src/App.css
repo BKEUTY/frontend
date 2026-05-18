@@ -1,5 +1,6 @@
-@import "tailwindcss";
-
+/* App-specific styles - extends global.css design tokens */
+/* Note: global.css provides :root vars, body styles, and typography */
+/* Note: index.css provides Tailwind utilities and base layer */
 
 :root {
   --color-primary: #ba1a56;
@@ -12,20 +13,9 @@
   --transition-normal: 0.3s ease;
   --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.05);
   --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.1);
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
 }
 
-body {
-  margin: 0;
-  font-family: var(--font-main);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  background-color: #fff;
-  color: var(--color-text-main);
-}
-
+/* App Layout */
 .App {
   display: flex;
   flex-direction: column;
@@ -40,24 +30,7 @@ body {
   transition: padding-top 0.3s ease;
 }
 
-@media (max-width: 992px) {
-  .main_content {
-    padding-top: 70px;
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Scrollbar Customization */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -76,39 +49,25 @@ body {
   background: #aaa;
 }
 
+/* Utility Animations */
 .animate-enter {
   animation: slideUp var(--transition-normal) forwards;
 }
 
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
+/* Skeleton Loading */
 .skeleton-loading {
   background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
-  border-radius: var(--radius-sm);
+  border-radius: 4px;
 }
 
 @keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-
-  100% {
-    background-position: -200% 0;
-  }
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
+/* Lazy Image Loading */
 .img-lazy {
   opacity: 0;
   transition: opacity 0.5s ease-in-out;
@@ -118,12 +77,13 @@ body {
   opacity: 1;
 }
 
+/* Custom Button */
 .btn-primary {
   background-color: var(--color-primary);
   color: #fff;
   border: none;
   padding: 10px 20px;
-  border-radius: var(--radius-md);
+  border-radius: 8px;
   cursor: pointer;
   transition: background-color var(--transition-fast);
   font-weight: 600;
@@ -133,6 +93,7 @@ body {
   background-color: var(--color-primary-hover);
 }
 
+/* Layout Containers */
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -152,6 +113,7 @@ body {
   margin: 0 auto;
 }
 
+/* Home Page Sections */
 .home-section {
   padding: 40px 24px;
 }
@@ -189,6 +151,7 @@ body {
   border-radius: 10px;
 }
 
+/* Product Grid */
 .home-product-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);

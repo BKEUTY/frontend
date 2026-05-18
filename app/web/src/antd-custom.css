@@ -1,27 +1,21 @@
+/* ===================================================================
+   Ant Design Custom Theme Overrides
+   - Only override styles that are actually used by the application
+   - CSS custom properties for theme consistency
+   =================================================================== */
+
 :root {
     --ant-primary-color: var(--color_main_title);
     --ant-primary-color-hover: var(--color_main_title_hover);
     --ant-primary-color-active: #7b1344;
-    --ant-primary-1: #fff0f6;
-    --ant-primary-2: #ffd6e7;
-    --ant-primary-3: #ffadd2;
-    --ant-primary-4: #ff85c0;
-    --ant-primary-5: #f759ab;
-    --ant-primary-6: var(--color_main_title);
-    --ant-primary-7: #7b1344;
-    --ant-success-color: #52c41a;
-    --ant-warning-color: #faad14;
-    --ant-error-color: #ff4d4f;
-    --ant-info-color: #1890ff;
     --ant-text-color: #2c3e50;
     --ant-text-color-secondary: #636e72;
-    --ant-heading-color: #2c3e50;
     --ant-border-color-base: #eff2f5;
     --ant-border-radius-base: 8px;
     --ant-background-color-base: #f8f9fa;
 }
 
-/* Consolidated Input Styles */
+/* === Input Styles === */
 .ant-input,
 .ant-input-password,
 .ant-select-selector {
@@ -29,7 +23,7 @@
     border-color: #eff2f5;
     font-size: 16px;
     padding: 12px 15px;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ant-input:hover,
@@ -60,7 +54,7 @@
     border-radius: 8px;
     border-color: #eff2f5;
     padding: 8px 11px;
-    transition: all 0.3s ease;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .ant-input-affix-wrapper:hover,
@@ -69,11 +63,11 @@
     box-shadow: 0 0 0 2px rgba(163, 2, 81, 0.1);
 }
 
-/* Button Styles */
+/* === Button Styles === */
 .ant-btn {
     border-radius: 8px;
     font-weight: 600;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     height: auto;
     padding: 0 28px;
     font-size: 16px;
@@ -107,7 +101,7 @@
     color: var(--color_main_title);
 }
 
-/* Form Styles */
+/* === Form Styles === */
 .ant-form-item {
     margin-bottom: 20px;
 }
@@ -117,7 +111,7 @@
     color: #2c3e50;
 }
 
-/* Checkbox & Radio */
+/* === Checkbox & Radio === */
 .ant-checkbox-wrapper {
     color: #555;
 }
@@ -140,7 +134,7 @@
     border-color: var(--color_main_title);
 }
 
-/* Typography */
+/* === Typography === */
 .ant-typography a,
 a.ant-typography {
     color: var(--color_main_title);
@@ -152,7 +146,7 @@ a.ant-typography:hover {
     color: var(--color_main_title_hover);
 }
 
-/* Divider */
+/* === Divider === */
 .ant-divider {
     border-color: #eff2f5;
 }
@@ -162,7 +156,7 @@ a.ant-typography:hover {
     font-size: 0.9rem;
 }
 
-/* Card & Modal */
+/* === Card & Modal === */
 .ant-card {
     border-radius: 16px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
@@ -177,14 +171,14 @@ a.ant-typography:hover {
     border-radius: 16px 16px 0 0;
 }
 
-/* Notifications */
+/* === Notifications (consolidated) === */
 .ant-message-notice-content,
 .ant-notification-notice {
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-/* Tabs */
+/* === Tabs === */
 .ant-tabs-tab {
     font-weight: 600;
 }
@@ -197,7 +191,7 @@ a.ant-typography:hover {
     background: var(--color_main_title);
 }
 
-/* Select & Dropdown */
+/* === Select & Dropdown === */
 .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
     background-color: rgba(163, 2, 81, 0.1);
     color: var(--color_main_title);
@@ -208,7 +202,7 @@ a.ant-typography:hover {
     background-color: rgba(163, 2, 81, 0.05);
 }
 
-/* Progress Indicators */
+/* === Progress Indicators === */
 .ant-spin-dot-item {
     background-color: var(--color_main_title);
 }
@@ -229,7 +223,7 @@ a.ant-typography:hover {
     box-shadow: 0 0 0 5px rgba(163, 2, 81, 0.2);
 }
 
-/* Badges & Tags */
+/* === Badges & Tags === */
 .ant-progress-bg {
     background-color: var(--color_main_title);
 }
@@ -244,7 +238,7 @@ a.ant-typography:hover {
     color: var(--color_main_title);
 }
 
-/* Pagination */
+/* === Pagination === */
 .ant-pagination-item-active {
     border-color: var(--color_main_title);
 }
@@ -258,7 +252,7 @@ a.ant-typography:hover {
     border-color: var(--color_main_title);
 }
 
-/* Table */
+/* === Table === */
 .ant-table-thead>tr>th {
     background-color: #faf9f6;
     font-weight: 700;
@@ -269,7 +263,7 @@ a.ant-typography:hover {
     background-color: rgba(163, 2, 81, 0.02);
 }
 
-/* Menu */
+/* === Menu === */
 .ant-menu-item-selected {
     background-color: rgba(163, 2, 81, 0.1);
     color: var(--color_main_title);
@@ -279,18 +273,16 @@ a.ant-typography:hover {
     border-bottom: 1px solid #eff2f5;
 }
 
-
 .ant-tooltip-inner {
     background-color: #2c3e50 !important;
     border-radius: 6px !important;
 }
 
-
 .ant-popover-inner {
     border-radius: 8px !important;
 }
 
-
+/* === Steps === */
 .ant-steps-item-finish .ant-steps-item-icon {
     background-color: var(--color_main_title) !important;
     border-color: var(--color_main_title) !important;
@@ -309,6 +301,7 @@ a.ant-typography:hover {
     border-color: var(--color_main_title) !important;
 }
 
+/* === Dropdown === */
 .ant-dropdown {
     z-index: 1050 !important;
 }
@@ -341,6 +334,156 @@ a.ant-typography:hover {
     color: #ff4d4f !important;
 }
 
+/* === Form Validation === */
+.ant-form-item-explain-error {
+    font-size: 0.8rem !important;
+    color: #ff4d4f !important;
+    margin-top: 4px !important;
+    font-weight: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    animation: slideDownFade 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards !important;
+}
+
+.ant-form-item-has-error .ant-input,
+.ant-form-item-has-error .ant-input-password,
+.ant-form-item-has-error .ant-input-affix-wrapper,
+.ant-form-item-has-error .ant-input:hover,
+.ant-form-item-has-error .ant-input-affix-wrapper:hover {
+    background-color: #fff1f0 !important;
+    border-color: #ff4d4f !important;
+    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1) !important;
+}
+
+.ant-form-item-has-error .ant-input:focus,
+.ant-form-item-has-error .ant-input-affix-wrapper:focus,
+.ant-form-item-has-error .ant-input-focused,
+.ant-form-item-has-error .ant-input-affix-wrapper-focused {
+    box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.15) !important;
+}
+
+@keyframes slideDownFade {
+    0% {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ant-form-item-has-error .ant-input-affix-wrapper .ant-input,
+.ant-form-item-has-error .ant-input-affix-wrapper .ant-input:hover,
+.ant-form-item-has-error .ant-input-affix-wrapper .ant-input:focus {
+    background-color: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* === Notification Customization === */
+.ant-notification {
+    z-index: 9999 !important;
+}
+
+.ant-notification-notice-wrapper {
+    background: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+.ant-notification-notice {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0, 0, 0, 0.05) !important;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15) !important;
+    padding: 20px 24px !important;
+    min-height: auto !important;
+    margin-bottom: 16px !important;
+    width: 380px !important;
+    overflow: hidden !important;
+}
+
+.ant-notification-notice-message {
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    color: #1a1a1a !important;
+    margin-bottom: 6px !important;
+    font-family: 'Inter', sans-serif, 'Be Vietnam Pro' !important;
+    line-height: 1.4 !important;
+}
+
+.ant-notification-notice-description {
+    font-size: 14px !important;
+    color: #666 !important;
+    line-height: 1.5 !important;
+    font-family: 'Inter', sans-serif, 'Be Vietnam Pro' !important;
+}
+
+.ant-notification-notice-icon {
+    font-size: 24px !important;
+    margin-top: 4px !important;
+    position: absolute !important;
+    left: 24px !important;
+}
+
+.ant-notification-notice-with-icon .ant-notification-notice-message,
+.ant-notification-notice-with-icon .ant-notification-notice-description {
+    margin-left: 36px !important;
+}
+
+.ant-notification-notice-content {
+    display: block !important;
+}
+
+.ant-notification-notice-success,
+.ant-notification-notice-error,
+.ant-notification-notice-warning,
+.ant-notification-notice-info {
+    background: rgba(255, 255, 255, 0.95) !important;
+    border-left-width: 4px !important;
+    border-left-style: solid !important;
+}
+
+.ant-notification-notice-success { border-left-color: #4caf50 !important; }
+.ant-notification-notice-success .ant-notification-notice-icon { color: #4caf50 !important; }
+
+.ant-notification-notice-error { border-left-color: #ff4d4f !important; }
+.ant-notification-notice-error .ant-notification-notice-icon { color: #ff4d4f !important; }
+
+.ant-notification-notice-warning { border-left-color: #faad14 !important; }
+.ant-notification-notice-warning .ant-notification-notice-icon { color: #faad14 !important; }
+
+.ant-notification-notice-info { border-left-color: #1890ff !important; }
+.ant-notification-notice-info .ant-notification-notice-icon { color: #1890ff !important; }
+
+.ant-notification-notice-close {
+    top: 18px !important;
+    right: 18px !important;
+    color: #999 !important;
+    font-size: 16px !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+.ant-notification-notice-close:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+    color: #333 !important;
+}
+
+/* ===================================================================
+   Mobile Responsive Overrides
+   - Touch-friendly sizing (min 44px tap targets)
+   - Optimized font sizes for mobile viewport
+   =================================================================== */
 @media (max-width: 768px) {
     .ant-btn {
         padding: 10px 20px !important;
@@ -431,176 +574,7 @@ a.ant-typography:hover {
         align-items: center;
         justify-content: center;
     }
-}
 
-
-
-.ant-form-item-explain-error {
-    font-size: 0.8rem !important;
-    color: #ff4d4f !important;
-    margin-top: 4px !important;
-    font-weight: 500 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    animation: slideDownFade 0.3s cubic-bezier(0.215, 0.61, 0.355, 1) forwards !important;
-}
-
-.ant-form-item-has-error .ant-input,
-.ant-form-item-has-error .ant-input-password,
-.ant-form-item-has-error .ant-input-affix-wrapper,
-.ant-form-item-has-error .ant-input:hover,
-.ant-form-item-has-error .ant-input-affix-wrapper:hover {
-    background-color: #fff1f0 !important;
-    border-color: #ff4d4f !important;
-    box-shadow: 0 0 0 2px rgba(255, 77, 79, 0.1) !important;
-}
-
-.ant-form-item-has-error .ant-input:focus,
-.ant-form-item-has-error .ant-input-affix-wrapper:focus,
-.ant-form-item-has-error .ant-input-focused,
-.ant-form-item-has-error .ant-input-affix-wrapper-focused {
-    box-shadow: 0 0 0 4px rgba(255, 77, 79, 0.15) !important;
-}
-
-@keyframes slideDownFade {
-    0% {
-        opacity: 0;
-        transform: translateY(-5px);
-    }
-
-    100% {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
-.ant-form-item-has-error .ant-input-affix-wrapper .ant-input,
-.ant-form-item-has-error .ant-input-affix-wrapper .ant-input:hover,
-.ant-form-item-has-error .ant-input-affix-wrapper .ant-input:focus {
-    background-color: transparent !important;
-    border-color: transparent !important;
-    box-shadow: none !important;
-}
-
-.ant-notification {
-    z-index: 9999 !important;
-}
-
-.ant-notification-notice-wrapper {
-    background: transparent !important;
-    box-shadow: none !important;
-    border-radius: 0 !important;
-}
-
-.ant-notification-notice {
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(10px) !important;
-    -webkit-backdrop-filter: blur(10px) !important;
-    border-radius: 16px !important;
-    border: 1px solid rgba(0, 0, 0, 0.05) !important;
-    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15) !important;
-    padding: 20px 24px !important;
-    min-height: auto !important;
-    margin-bottom: 16px !important;
-    width: 380px !important;
-    overflow: hidden !important;
-}
-
-.ant-notification-notice-message {
-    font-size: 16px !important;
-    font-weight: 700 !important;
-    color: #1a1a1a !important;
-    margin-bottom: 6px !important;
-    font-family: 'Inter', sans-serif, 'Be Vietnam Pro' !important;
-    line-height: 1.4 !important;
-}
-
-.ant-notification-notice-description {
-    font-size: 14px !important;
-    color: #666 !important;
-    line-height: 1.5 !important;
-    font-family: 'Inter', sans-serif, 'Be Vietnam Pro' !important;
-}
-
-.ant-notification-notice-icon {
-    font-size: 24px !important;
-    margin-top: 4px !important;
-    position: absolute !important;
-    left: 24px !important;
-}
-
-.ant-notification-notice-with-icon .ant-notification-notice-message,
-.ant-notification-notice-with-icon .ant-notification-notice-description {
-    margin-left: 36px !important;
-}
-
-.ant-notification-notice-content {
-    display: block !important;
-}
-
-.ant-notification-notice-success,
-.ant-notification-notice-error,
-.ant-notification-notice-warning,
-.ant-notification-notice-info {
-    background: rgba(255, 255, 255, 0.95) !important;
-    border-left-width: 4px !important;
-    border-left-style: solid !important;
-}
-
-.ant-notification-notice-success {
-    border-left-color: #4caf50 !important;
-}
-
-.ant-notification-notice-success .ant-notification-notice-icon {
-    color: #4caf50 !important;
-}
-
-.ant-notification-notice-error {
-    border-left-color: #ff4d4f !important;
-}
-
-.ant-notification-notice-error .ant-notification-notice-icon {
-    color: #ff4d4f !important;
-}
-
-.ant-notification-notice-warning {
-    border-left-color: #faad14 !important;
-}
-
-.ant-notification-notice-warning .ant-notification-notice-icon {
-    color: #faad14 !important;
-}
-
-.ant-notification-notice-info {
-    border-left-color: #1890ff !important;
-}
-
-.ant-notification-notice-info .ant-notification-notice-icon {
-    color: #1890ff !important;
-}
-
-.ant-notification-notice-close {
-    top: 18px !important;
-    right: 18px !important;
-    color: #999 !important;
-    font-size: 16px !important;
-    width: 24px !important;
-    height: 24px !important;
-    border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.2s ease !important;
-}
-
-.ant-notification-notice-close:hover {
-    background: rgba(0, 0, 0, 0.05) !important;
-    color: #333 !important;
-}
-
-@media (max-width: 768px) {
     .ant-notification {
         width: 100% !important;
         margin: 0 !important;

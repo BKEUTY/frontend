@@ -1,10 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { ConfigProvider } from 'antd';
-import viVN from 'antd/es/locale/vi_VN';
-import enUS from 'antd/es/locale/en_US';
 import dayjs from 'dayjs';
-import 'dayjs/locale/vi';
 
 import { NotificationProvider } from "./store/NotificationContext";
 import { LanguageProvider, useLanguage } from "./store/LanguageContext";
@@ -26,25 +23,46 @@ const queryClient = new QueryClient({
   },
 });
 
+// Cache for loaded locales to avoid re-importing
+const localeCache = {};
+
 const LocalizedApp = () => {
   const { language } = useLanguage();
+  const [antdLocale, setAntdLocale] = useState(null);
   
-  const locale = language === 'vi' ? viVN : enUS;
-  
-  React.useEffect(() => {
-    dayjs.locale(language);
+  useEffect(() => {
+    // Dynamically import locale to reduce initial JS payload
+    const loadLocale = async () => {
+      if (localeCache[language]) {
+        setAntdLocale(localeCache[language]);
+      } else {
+        const localeModule = language === 'vi'
+          ? await import('antd/es/locale/vi_VN')
+          : await import('antd/es/locale/en_US');
+        localeCache[language] = localeModule.default;
+        setAntdLocale(localeModule.default);
+      }
+      // Lazy load dayjs locale only when needed
+      if (language === 'vi') {
+        await import('dayjs/locale/vi');
+      }
+      dayjs.locale(language);
+    };
+    loadLocale();
   }, [language]);
+
+  const theme = useMemo(() => ({ 
+    cssVar: true, 
+    hashed: false,
+    token: {
+      fontFamily: "'Be Vietnam Pro', sans-serif",
+    }
+  }), []);
 
   return (
     <ConfigProvider 
-      locale={locale}
-      theme={{ 
-        cssVar: true, 
-        hashed: false,
-        token: {
-          fontFamily: "'Be Vietnam Pro', sans-serif",
-        }
-      }}
+      locale={antdLocale}
+      theme={theme}
     >
       <ErrorBoundary>
         <NotificationProvider>

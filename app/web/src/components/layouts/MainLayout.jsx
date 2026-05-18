@@ -1,15 +1,15 @@
 import React, { Suspense, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header/Header';
-import Footer from './Footer/Footer';
-import CartDrawer from '../../features/cart/components/CartDrawer';
 import Skeleton from '../ui/Skeleton';
 import ScrollToTop from '../common/ScrollToTop';
-import { MessageOutlined } from '@ant-design/icons';
-import { FloatButton } from 'antd';
 import { safeLazy } from '../../utils/safeLazy';
 
+// Lazy load below-the-fold & user-triggered components to reduce main thread work
+const Footer = safeLazy(() => import('./Footer/Footer'));
+const CartDrawer = safeLazy(() => import('../../features/cart/components/CartDrawer'));
 const Chatbot = safeLazy(() => import('../../features/chatbot/components/Chatbot'));
+const FloatButtonGroup = safeLazy(() => import('./FloatButtonGroup'));
 
 const MainLayout = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -23,8 +23,12 @@ const MainLayout = () => {
           <Outlet />
         </Suspense>
       </main>
-      <Footer />
-      <CartDrawer />
+      <Suspense fallback={null}>
+        <Footer />
+      </Suspense>
+      <Suspense fallback={null}>
+        <CartDrawer />
+      </Suspense>
       
       <Suspense fallback={null}>
         {isChatOpen && (
@@ -33,17 +37,9 @@ const MainLayout = () => {
       </Suspense>
       
       {!isChatOpen && (
-        <FloatButton.Group
-          style={{ right: 24, bottom: 24 }}
-        >
-          <FloatButton.BackTop visibilityHeight={400} />
-          <FloatButton 
-            icon={<MessageOutlined />} 
-            type="primary"
-            onClick={() => setIsChatOpen(true)}
-            tooltip={<div>Bkeuty AI Assistant</div>}
-          />
-        </FloatButton.Group>
+        <Suspense fallback={null}>
+          <FloatButtonGroup onChatOpen={() => setIsChatOpen(true)} />
+        </Suspense>
       )}
     </div>
   );

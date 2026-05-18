@@ -12,11 +12,23 @@
     <link rel="apple-touch-icon" href="/logo_nontext.svg" />
     <link rel="manifest" href="/manifest.json" />
 
-    <!-- Preload critical fonts with font-display: swap to prevent FOUT -->
-    <link rel="preload" as="font" href="/fonts/be-vietnam-pro-400.woff2" type="font/woff2" crossorigin>
-    <link rel="preload" as="font" href="/fonts/be-vietnam-pro-700.woff2" type="font/woff2" crossorigin>
-
     <title>BKEUTY</title>
+
+    <!-- DNS prefetch for API endpoints -->
+    <link rel="dns-prefetch" href="https://bkeuty.vercel.app" />
+
+    <!-- Critical CSS: Inline above-the-fold styles to prevent render-blocking -->
+    <style>
+        /* Critical path CSS - inlined for instant first paint */
+        *,*::before,*::after{box-sizing:border-box}
+        body{margin:0;padding:0;font-family:'Be Vietnam Pro',sans-serif;font-size:16px;font-weight:400;background-color:#fdf2f8;color:#1e293b;line-height:1.6;-webkit-font-smoothing:antialiased}
+        #root{display:flex;flex-direction:column;min-height:100vh}
+        .App{display:flex;flex-direction:column;min-height:100vh}
+        .main_content{flex:1;padding-top:70px;min-height:calc(100vh - 300px)}
+        .layout_fallback{padding:40px;max-width:1200px;margin:0 auto}
+        /* Critical header skeleton */
+        .ant-layout-header{line-height:normal}
+    </style>
 </head>
 
 <body>
@@ -25,4 +37,4 @@
     <script type="module" src="/src/index.jsx"></script>
 </body>
 
-</html>
+</html>

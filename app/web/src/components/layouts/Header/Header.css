@@ -12,7 +12,8 @@
     height: 80px !important;
     display: flex;
     align-items: center;
-    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    transition: height 0.4s cubic-bezier(0.165, 0.84, 0.44, 1),
+                box-shadow 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
     line-height: normal !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.4);
 }
@@ -67,7 +68,7 @@
     align-items: center;
     color: var(--color_general_text) !important;
     padding: 0 18px !important;
-    transition: all 0.3s ease;
+    transition: color 0.3s ease;
     height: 80px;
     line-height: 80px;
     position: relative;
@@ -134,7 +135,8 @@
     background: #ffffff;
     border: 1px solid #f0f0f0;
     color: var(--color_general_text);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
     cursor: pointer;
 }
@@ -171,6 +173,9 @@
     .app-header {
         height: 70px !important;
         padding: 0 !important;
+        /* Reduce blur on mobile for better GPU performance */
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
     }
 
     .header-container {
@@ -363,7 +368,9 @@
     border: 1px solid #f0f0f0;
     border-radius: 24px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: border-color 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+                box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 

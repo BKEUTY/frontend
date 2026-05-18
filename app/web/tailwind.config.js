@@ -8,4 +8,12 @@ export default {
     extend: {},
   },
   plugins: [],
+  // Aggressive CSS purging - remove unused utilities
+  safelist: [
+    // Only whitelist styles that are dynamically applied
+    'hidden',
+    'block',
+    'flex',
+    'grid',
+  ],
 }

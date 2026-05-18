@@ -1,18 +1,17 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { HelmetProvider } from 'react-helmet-async';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+// Load only essential font weights (400 & 700) to reduce CSS payload
 import "@fontsource/be-vietnam-pro/400.css";
-import "@fontsource/be-vietnam-pro/500.css";
-import "@fontsource/be-vietnam-pro/600.css";
 import "@fontsource/be-vietnam-pro/700.css";
-import "@fontsource/be-vietnam-pro/800.css";
-import "antd/dist/reset.css";
+// Use optimized Ant Design CSS reset - only component styles, not full browser reset
+import "antd/dist/reset-only.css";
 
-import "./index.css";
-import "./global.css";
 import "./antd-custom.css";
+import "./global.css";
+import "./index.css";
 
 import App from "./App";
 

@@ -244,12 +244,12 @@ export default function ProductDetail() {
                     <div className="thumbnail-list">
                         {galleryImages.map((img, idx) => (
                             <div key={idx} className={`thumb-item ${mainImage === img ? 'active' : ''}`} onClick={() => setMainImage(img)}>
-                                <img src={img} alt={`Thumb ${idx}`} />
+                                <img src={img} alt={`Thumb ${idx}`} loading="lazy" />
                             </div>
                         ))}
                     </div>
                     <div className="main-image">
-                        <img src={mainImage} alt={displayName} onError={(e) => { e.target.src = fallbackImg }} />
+                        <img src={mainImage} alt={displayName} fetchpriority="high" onError={(e) => { e.target.src = fallbackImg }} />
                         {currentPrice.hasDiscount && (
                             <div className={`discount-badge-main ${currentPrice.appliedPromotionType === 'UserPromotion' ? 'user-promo-badge' : ''}`}>
                                 {currentPrice.appliedPromotionType === 'UserPromotion' ? t('promo_type_userpromotion') : t('promotion')}

@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import addressApi from '../services/addressService';
 
-export const useProvinces = () => {
+export const useProvinces = (options = {}) => {
     return useQuery({
         queryKey: ['provinces'],
         queryFn: async () => {
@@ -9,10 +9,11 @@ export const useProvinces = () => {
             return response.data?.data || [];
         },
         staleTime: 24 * 60 * 60 * 1000, 
+        ...options,
     });
 };
 
-export const useDistricts = (provinceId) => {
+export const useDistricts = (provinceId, options = {}) => {
     return useQuery({
         queryKey: ['districts', provinceId],
         queryFn: async () => {
@@ -20,12 +21,13 @@ export const useDistricts = (provinceId) => {
             const response = await addressApi.getDistricts(provinceId);
             return response.data?.data || [];
         },
-        enabled: !!provinceId,
         staleTime: 24 * 60 * 60 * 1000,
+        ...options,
+        enabled: (options.enabled !== undefined ? options.enabled : true) && !!provinceId,
     });
 };
 
-export const useWards = (districtId) => {
+export const useWards = (districtId, options = {}) => {
     return useQuery({
         queryKey: ['wards', districtId],
         queryFn: async () => {
@@ -33,7 +35,8 @@ export const useWards = (districtId) => {
             const response = await addressApi.getWards(districtId);
             return response.data?.data || [];
         },
-        enabled: !!districtId,
         staleTime: 24 * 60 * 60 * 1000,
+        ...options,
+        enabled: (options.enabled !== undefined ? options.enabled : true) && !!districtId,
     });
 };

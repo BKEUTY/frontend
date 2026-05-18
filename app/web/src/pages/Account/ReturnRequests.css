@@ -109,8 +109,10 @@
 }
 
 .status-pending { background: #fffbeb; color: #d97706; }
-.status-approved { background: #ecfdf5; color: #059669; }
+.status-approved { background: #f0fdf4; color: #16a34a; }
 .status-rejected { background: #fef2f2; color: #dc2626; }
+.status-completed { background: #eff6ff; color: #2563eb; }
+.status-refunded { background: #f5f3ff; color: #7c3aed; }
 
 .info-row {
     display: flex;
@@ -180,6 +182,15 @@
 .return-form .ant-select-selector,
 .return-form .ant-input {
     border-radius: 12px !important;
+}
+
+.btn-create-return {
+    box-shadow: none !important;
+}
+
+.btn-create-return:hover {
+    box-shadow: none !important;
+    transform: none !important;
 }
 
 @keyframes sa-slide-up {

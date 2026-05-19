@@ -268,7 +268,7 @@
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
     width: 100%;
-    max-width: 480px;
+    max-width: 500px;
     border: 1px solid #f0f0f0;
 }
 
@@ -311,14 +311,17 @@
 .cart-total-row {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
+    align-items: center;
     margin-bottom: 25px;
+    gap: 15px;
 }
 
 .total-label {
     font-size: 1.1rem;
     font-weight: 600;
     color: #333;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .total-amount {
@@ -519,6 +522,10 @@
 
     .cart-summary-box {
         padding: 20px;
+    }
+
+    .total-label {
+        font-size: 0.95rem;
     }
 
     .total-amount {

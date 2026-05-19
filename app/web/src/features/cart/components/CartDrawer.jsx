@@ -5,9 +5,8 @@ import { DeleteOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useCart } from '@/store/CartContext';
 import { useLanguage } from '@/store/LanguageContext';
 import { CButton, EmptyState } from '@/components/common';
-import { generateSlug } from '@/utils/helpers';
+import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
 import './CartDrawer.css';
-import product_cart_image from "@/assets/images/products/product_placeholder_rect.svg";
 import { getImageUrl } from "@/services/axiosClient";
 
 const { Text } = Typography;
@@ -125,10 +124,16 @@ const CartDrawer = () => {
                                             <Avatar 
                                                 shape="square" 
                                                 size={64} 
-                                                src={item.image ? getImageUrl(item.image) : product_cart_image} 
                                                 onClick={() => handleItemClick(item.name, item.productVariantId)}
-                                                style={{ cursor: 'pointer' }}
-                                            />
+                                                style={{ cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+                                            >
+                                                <img 
+                                                    src={item.image ? getImageUrl(item.image) : PRODUCT_IMAGE_FALLBACK}
+                                                    onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK }}
+                                                    alt="product"
+                                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                                />
+                                            </Avatar>
                                         </div>
                                     }
                                     title={

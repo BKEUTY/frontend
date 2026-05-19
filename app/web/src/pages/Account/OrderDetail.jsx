@@ -154,7 +154,7 @@ const OrderDetail = () => {
         return sum + (promoPrice * Number(item.quantity || 1));
     }, 0);
 
-    const voucherDiscount = Number(orderData.voucherDiscountAmount || 0);
+    const voucherDiscount = (orderData.items || []).reduce((sum, item) => sum + Number(item.voucherDiscountAmount || 0), 0);
     const shippingFee = Number(orderData.shippingFee || 0);
     const grandTotal = Number(orderData.total || 0) + shippingFee;
 

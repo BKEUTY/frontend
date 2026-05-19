@@ -4,11 +4,10 @@ import { useState } from "react";
 import { useNotification } from "@/store/NotificationContext";
 import { useLanguage } from "@/store/LanguageContext";
 import { useCart } from "@/store/CartContext";
-import product_cart_image from "@/assets/images/products/product_placeholder_rect.svg";
 import { getImageUrl } from "@/services/axiosClient";
 import { SEO } from "@/components/common";
 import { useAuth } from "@/store/AuthContext";
-import { generateSlug } from "@/utils/helpers";
+import { generateSlug, PRODUCT_IMAGE_FALLBACK } from "@/utils/helpers";
 import { DeleteOutlined, ShoppingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
@@ -139,9 +138,9 @@ export default function Cart() {
                         <img
                           className="cart-product-img"
                           loading="lazy"
-                          src={product.image ? getImageUrl(product.image) : product_cart_image}
+                          src={product.image ? getImageUrl(product.image) : PRODUCT_IMAGE_FALLBACK}
                           alt="product"
-                          onError={(e) => { e.target.src = product_cart_image }}
+                          onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK }}
                         />
                       </div>
                       <div className="cart-product-details">

@@ -36,14 +36,24 @@ const generateInvoice = async (orderData, t) => {
 
     doc.setFont("Roboto", "normal");
     doc.setFontSize(10);
-    doc.text(`${t('invoice_order_date')}: ${new Date(orderData.orderDate).toLocaleDateString('vi-VN')}`, 15, 57);
+    const formattedOrderDate = orderData.orderDate ? new Date(orderData.orderDate).toLocaleDateString('vi-VN') : '---';
+    doc.text(`${t('invoice_order_date')}: ${formattedOrderDate}`, 15, 57);
     if (orderData.estShippingDate) {
-        doc.text(`${t('invoice_est_delivery')}: ${new Date(orderData.estShippingDate).toLocaleDateString('vi-VN')}`, 15, 62);
+        const formattedEstDate = new Date(orderData.estShippingDate).toLocaleDateString('vi-VN');
+        doc.text(`${t('invoice_est_delivery')}: ${formattedEstDate}`, 15, 62);
     }
-    doc.text(`${t('invoice_payment')}: ${orderData.paymentMethod}`, 15, 67);
+    const paymentMethodsMap = {
+        'CASH': t('invoice_cash'),
+        'BANK_TRANSFER': t('invoice_bank_transfer'),
+        'CREDIT_CARD': t('invoice_credit_card')
+    };
+    const displayPayment = paymentMethodsMap[orderData.paymentMethod] || orderData.paymentMethod || '---';
+    doc.text(`${t('invoice_payment')}: ${displayPayment}`, 15, 67);
 
     const address = orderData.address;
-    const addressStr = typeof address === 'string' ? address : `${address.address}, ${address.ward?.wardName}, ${address.district?.districtName}, ${address.province?.provinceName}`;
+    const addressStr = typeof address === 'string'
+        ? address.split('|')[0]
+        : `${address?.address || ''}, ${address?.ward?.wardName || ''}, ${address?.district?.districtName || ''}, ${address?.province?.provinceName || ''}`;
 
     const rightColX = 115;
     const addressWidth = 80;
@@ -52,7 +62,7 @@ const generateInvoice = async (orderData, t) => {
     doc.text(t('invoice_customer'), rightColX, 50);
 
     doc.setFont("Roboto", "normal");
-    doc.text(`${orderData.userName || 'Customer'}`, rightColX, 57);
+    doc.text(`${orderData.userName || t('guest')}`, rightColX, 57);
 
     const splitAddress = doc.splitTextToSize(addressStr, addressWidth);
     doc.text(splitAddress, rightColX, 62);
@@ -61,16 +71,18 @@ const generateInvoice = async (orderData, t) => {
     if (nextY < 90) nextY = 90;
 
     const tableData = orderData.items.map(item => {
-        const price = Number(item.price) || 0;
-        const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
-        const quantity = Number(item.quantity) || 1;
+        const price = Number(item.price);
+        const promoPrice = (item.promotionPrice != null && item.promotionPrice < price) ? item.promotionPrice : price;
+        const quantity = item.quantity;
         const productDiscount = price - promoPrice;
-        const lineTotal = promoPrice * quantity;
+        const itemVoucherDiscount = item.voucherDiscountAmount || 0;
+        const lineTotal = (promoPrice * quantity) - itemVoucherDiscount;
 
         return [
             item.productVariantName,
             `${price.toLocaleString("vi-VN")}${t('unit_vnd')}`,
             productDiscount > 0 ? `-${productDiscount.toLocaleString("vi-VN")}${t('unit_vnd')}` : `0${t('unit_vnd')}`,
+            itemVoucherDiscount > 0 ? `-${itemVoucherDiscount.toLocaleString("vi-VN")}${t('unit_vnd')}` : `0${t('unit_vnd')}`,
             quantity,
             `${lineTotal.toLocaleString("vi-VN")}${t('unit_vnd')}`
         ];
@@ -82,6 +94,7 @@ const generateInvoice = async (orderData, t) => {
             t('invoice_product'),
             t('invoice_original_price'),
             t('invoice_discount_col'),
+            t('voucher'),
             t('invoice_qty'),
             t('invoice_total')
         ]],
@@ -102,10 +115,11 @@ const generateInvoice = async (orderData, t) => {
         },
         columnStyles: {
             0: { cellWidth: 'auto' },
-            1: { halign: 'right', cellWidth: 30 },
-            2: { halign: 'right', cellWidth: 30, textColor: primaryColor },
-            3: { halign: 'center', cellWidth: 15 },
-            4: { halign: 'right', cellWidth: 30 }
+            1: { halign: 'right', cellWidth: 25 },
+            2: { halign: 'right', cellWidth: 25, textColor: primaryColor },
+            3: { halign: 'right', cellWidth: 25, textColor: primaryColor },
+            4: { halign: 'center', cellWidth: 18 },
+            5: { halign: 'right', cellWidth: 25 }
         }
     });
 
@@ -117,14 +131,14 @@ const generateInvoice = async (orderData, t) => {
     const lineHeight = 6;
 
     // Summaries logic
-    const subtotal = (orderData.items || []).reduce((sum, item) => {
-        const price = Number(item.price || 0);
-        const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
-        return sum + (promoPrice * Number(item.quantity || 1));
+    const subtotal = orderData.items.reduce((sum, item) => {
+        const price = Number(item.price);
+        const promoPrice = (item.promotionPrice != null && item.promotionPrice < price) ? item.promotionPrice : price;
+        return sum + (promoPrice * item.quantity);
     }, 0);
-    const voucherDiscount = Number(orderData.voucherDiscountAmount || 0);
-    const shippingFee = Number(orderData.shippingFee || 0);
-    const grandTotal = Number(orderData.total || 0) + shippingFee;
+    const voucherDiscount = orderData.items.reduce((sum, item) => sum + (item.voucherDiscountAmount || 0), 0);
+    const shippingFee = orderData.shippingFee || 0;
+    const grandTotal = orderData.total + shippingFee;
 
     // Buyer Note Section
     if (orderData.buyerNote) {

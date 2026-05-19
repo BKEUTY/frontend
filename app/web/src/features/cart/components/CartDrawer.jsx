@@ -5,6 +5,7 @@ import { DeleteOutlined, ShoppingCartOutlined } from '@ant-design/icons';
 import { useCart } from '@/store/CartContext';
 import { useLanguage } from '@/store/LanguageContext';
 import { CButton, EmptyState } from '@/components/common';
+import { generateSlug } from '@/utils/helpers';
 import './CartDrawer.css';
 import product_cart_image from "@/assets/images/products/product_placeholder_rect.svg";
 import { getImageUrl } from "@/services/axiosClient";
@@ -17,6 +18,12 @@ const CartDrawer = () => {
     const navigate = useNavigate();
     const [selectedIds, setSelectedIds] = useState(new Set());
 
+    const handleItemClick = (name, productVariantId) => {
+        closeCart();
+        const slug = generateSlug(name, productVariantId);
+        navigate(`/product/${slug}`, { state: { productId: productVariantId } });
+    };
+
     const toggleSelect = (id) => {
         const newSet = new Set(selectedIds);
         if (newSet.has(id)) newSet.delete(id);
@@ -26,7 +33,7 @@ const CartDrawer = () => {
 
     const selectedTotal = cartItems
         .filter(item => selectedIds.has(item.cartId))
-        .reduce((sum, item) => sum + item.promotionPrice * item.quantity, 0);
+        .reduce((sum, item) => sum + (item.promotionPrice ?? item.price ?? 0) * item.quantity, 0);
 
     const selectedTotalItemsCount = cartItems
         .filter(item => selectedIds.has(item.cartId))
@@ -119,11 +126,18 @@ const CartDrawer = () => {
                                                 shape="square" 
                                                 size={64} 
                                                 src={item.image ? getImageUrl(item.image) : product_cart_image} 
+                                                onClick={() => handleItemClick(item.name, item.productVariantId)}
+                                                style={{ cursor: 'pointer' }}
                                             />
                                         </div>
                                     }
                                     title={
-                                        <Text ellipsis={{ tooltip: item.name }} className="cart-drawer-item-title">
+                                        <Text 
+                                            ellipsis={{ tooltip: item.name }} 
+                                            className="cart-drawer-item-title"
+                                            onClick={() => handleItemClick(item.name, item.productVariantId)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
                                             {item.name}
                                         </Text>
                                     }
@@ -131,14 +145,14 @@ const CartDrawer = () => {
                                         <div className="cart-drawer-item-desc">
                                             <Text type="secondary">x{item.quantity}</Text>
                                             <div className="cart-drawer-price-row">
-                                                <Text strong className="cart-drawer-item-price">
-                                                    {item.promotionPrice.toLocaleString('vi-VN')}đ
-                                                </Text>
-                                                {hasDiscount && (
-                                                    <Text delete className="cart-drawer-item-old-price">
-                                                        {item.price.toLocaleString('vi-VN')}đ
-                                                    </Text>
-                                                )}
+                                                 <Text strong className="cart-drawer-item-price">
+                                                     {(item.promotionPrice ?? item.price ?? 0).toLocaleString('vi-VN')}đ
+                                                 </Text>
+                                                 {hasDiscount && (
+                                                     <Text delete className="cart-drawer-item-old-price">
+                                                         {(item.price ?? 0).toLocaleString('vi-VN')}đ
+                                                     </Text>
+                                                 )}
                                             </div>
                                         </div>
                                     }

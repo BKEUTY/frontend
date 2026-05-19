@@ -70,14 +70,19 @@ export const CartProvider = ({ children }) => {
                 const localCart = await getLocalCart();
                 if (localCart.length > 0) {
                     const token = await AsyncStorage.getItem('token');
-                    await Promise.all(
-                        localCart.map(({ productVariantId, quantity }) =>
-                            axiosClient.post('/api/cart', { productVariantId, quantity }, {
+                    for (const item of localCart) {
+                        try {
+                            await axiosClient.post('/api/cart', {
+                                productVariantId: item.productVariantId,
+                                quantity: item.quantity
+                            }, {
                                 headers: token ? { Authorization: `Bearer ${token}` } : {},
                                 skipGlobalErrorHandler: true
-                            }).catch(console.error)
-                        )
-                    );
+                            });
+                        } catch (err) {
+                            console.error("Failed to sync mobile guest cart item", err);
+                        }
+                    }
                     await clearLocalCart();
                 }
             }

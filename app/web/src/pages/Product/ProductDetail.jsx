@@ -180,9 +180,11 @@ export default function ProductDetail() {
             const response = await cartApi.create({ productVariantId: productData.id, quantity, buyNow: true });
             fetchCart();
 
-            const { cartId, price, promotionPrice, quantity: resQty } = response.data || response;
+            const { cartId, quantity: resQty } = response.data || response;
+            const price = currentPrice.originPrice;
+            const promotionPrice = currentPrice.promotionPrice;
             const finalPrice = (promotionPrice !== undefined && promotionPrice !== null) ? promotionPrice : price;
-            const grandTotal = finalPrice * resQty;
+            const grandTotal = finalPrice * (resQty || quantity);
 
             navigate('/checkout', {
                 state: {
@@ -193,7 +195,7 @@ export default function ProductDetail() {
                         name: productData.name,
                         price: price,
                         promotionPrice: promotionPrice,
-                        quantity: resQty,
+                        quantity: resQty || quantity,
                         image: mainImage,
                         effectivePrice: finalPrice
                     }]

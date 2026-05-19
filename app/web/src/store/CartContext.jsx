@@ -39,11 +39,16 @@ export const CartProvider = ({ children }) => {
             if (isAuthenticated) {
                 const localCart = getLocalCart();
                 if (localCart.length > 0) {
-                    await Promise.all(
-                        localCart.map(({ productVariantId, quantity }) =>
-                            cartApi.create({ productVariantId, quantity }).catch(console.error)
-                        )
-                    );
+                    for (const item of localCart) {
+                        try {
+                            await cartApi.create({
+                                productVariantId: item.productVariantId,
+                                quantity: item.quantity
+                            });
+                        } catch (err) {
+                            console.error("Failed to sync guest cart item", err);
+                        }
+                    }
                     clearLocalCart();
                 }
             }
@@ -62,8 +67,31 @@ export const CartProvider = ({ children }) => {
 
         if (isAuthenticated) {
             try {
-                await cartApi.create({ productVariantId, quantity });
-                await fetchCart();
+                const res = await cartApi.create({ productVariantId, quantity });
+                const added = res.data;
+                setCartItems(prev => {
+                    const exists = prev.find(item => item.productVariantId === added.productVariantId);
+                    if (exists) {
+                        return prev.map(item =>
+                            item.productVariantId === added.productVariantId
+                                ? mapCartItem({ 
+                                    ...item, 
+                                    cartId: added.cartId, 
+                                    quantity: added.quantity 
+                                  })
+                                : item
+                        );
+                    }
+                    return [...prev, mapCartItem({
+                        cartId: added.cartId,
+                        productVariantId: added.productVariantId,
+                        name: name,
+                        price: price,
+                        promotionPrice: promotionPrice ?? price,
+                        image: image,
+                        quantity: added.quantity
+                    })];
+                });
             } catch (error) {
                 console.error(error);
             }

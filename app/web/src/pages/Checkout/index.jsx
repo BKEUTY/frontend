@@ -373,14 +373,14 @@ export default function Checkout() {
                                             <div className="summary-item-name">{p.name}</div>
                                             <div className="summary-item-details">
                                                 {hasDiscount && (
-                                                    <span className="item-original-price">{p.price.toLocaleString("vi-VN")}đ</span>
+                                                    <span className="item-original-price">{(p.price ?? 0).toLocaleString("vi-VN")}đ</span>
                                                 )}
-                                                <span className="item-current-price">{effectivePrice.toLocaleString("vi-VN")}đ</span>
+                                                <span className="item-current-price">{(effectivePrice ?? 0).toLocaleString("vi-VN")}đ</span>
                                                 <span className="item-qty">x{p.quantity}</span>
                                             </div>
                                         </div>
                                         <div className="summary-item-total">
-                                            {(effectivePrice * p.quantity).toLocaleString("vi-VN")}đ
+                                            {((effectivePrice ?? 0) * p.quantity).toLocaleString("vi-VN")}đ
                                         </div>
                                     </div>
                                 );

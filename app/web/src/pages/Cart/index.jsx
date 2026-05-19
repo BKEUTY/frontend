@@ -8,6 +8,7 @@ import product_cart_image from "@/assets/images/products/product_placeholder_rec
 import { getImageUrl } from "@/services/axiosClient";
 import { SEO } from "@/components/common";
 import { useAuth } from "@/store/AuthContext";
+import { generateSlug } from "@/utils/helpers";
 import { DeleteOutlined, ShoppingOutlined, ExclamationCircleOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
 
@@ -19,6 +20,11 @@ export default function Cart() {
   const { isAuthenticated } = useAuth();
 
   const [selectedIds, setSelectedIds] = useState(new Set());
+
+  const handleItemClick = (name, productVariantId) => {
+    const slug = generateSlug(name, productVariantId);
+    navigate(`/product/${slug}`, { state: { productId: productVariantId } });
+  };
 
   const handleSelectOne = (id) => {
     const newSelected = new Set(selectedIds);
@@ -129,7 +135,7 @@ export default function Cart() {
                     </div>
 
                     <div className="cart-col-product cart-product-info">
-                      <div className="cart-product-img-wrapper">
+                      <div className="cart-product-img-wrapper" onClick={() => handleItemClick(product.name, product.productVariantId)} style={{ cursor: 'pointer' }}>
                         <img
                           className="cart-product-img"
                           loading="lazy"
@@ -139,7 +145,7 @@ export default function Cart() {
                         />
                       </div>
                       <div className="cart-product-details">
-                        <p className="cart-product-name">{product.name}</p>
+                        <p className="cart-product-name" onClick={() => handleItemClick(product.name, product.productVariantId)} style={{ cursor: 'pointer' }}>{product.name}</p>
                       </div>
                     </div>
 

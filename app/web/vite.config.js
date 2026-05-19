@@ -43,42 +43,81 @@ export default defineConfig({
             if (
               id.includes("react/") ||
               id.includes("react-dom") ||
-              id.includes("react-router-dom") ||
+              id.includes("react-router") ||
+              id.includes("@remix-run") ||
               id.includes("scheduler")
-            )
+            ) {
               return "vendor-react";
+            }
 
-            if (id.includes("antd") || id.includes("@ant-design"))
+            if (
+              id.includes("antd") ||
+              id.includes("@ant-design") ||
+              id.includes("rc-")
+            ) {
               return "vendor-antd";
+            }
 
             if (
               id.includes("jspdf") ||
-              id.includes("html2canvas") ||
-              id.includes("jspdf-autotable")
-            )
+              id.includes("html2canvas")
+            ) {
               return "vendor-pdf";
+            }
 
-            if (id.includes("framer-motion")) return "vendor-animation";
+            if (id.includes("framer-motion")) {
+              return "vendor-animation";
+            }
 
-            if (id.includes("react-icons")) return "vendor-icons";
+            if (id.includes("react-icons")) {
+              return "vendor-icons";
+            }
 
             if (
-              id.includes("@tanstack/react-query") ||
+              id.includes("@tanstack") ||
               id.includes("axios") ||
-              id.includes("query-string")
-            )
+              id.includes("query-string") ||
+              id.includes("decode-uri-component") ||
+              id.includes("split-on-first") ||
+              id.includes("filter-obj")
+            ) {
               return "vendor-data";
+            }
 
             if (
               id.includes("dayjs") ||
               id.includes("react-helmet-async") ||
-              id.includes("react-markdown")
-            )
+              id.includes("react-markdown") ||
+              id.includes("unified") ||
+              id.includes("remark-") ||
+              id.includes("rehype-") ||
+              id.includes("vfile") ||
+              id.includes("unist-") ||
+              id.includes("mdast-") ||
+              id.includes("micromark") ||
+              id.includes("parse5") ||
+              id.includes("trough") ||
+              id.includes("bail") ||
+              id.includes("is-plain-obj") ||
+              id.includes("property-information") ||
+              id.includes("space-separated-tokens") ||
+              id.includes("comma-separated-tokens") ||
+              id.includes("web-namespaces") ||
+              id.includes("html-void-elements") ||
+              id.includes("zwitch") ||
+              id.includes("longest-streak") ||
+              id.includes("markdown-table") ||
+              id.includes("decode-named-character") ||
+              id.includes("character-entities")
+            ) {
               return "vendor-utils";
+            }
 
-            if (id.includes("@fontsource")) return "vendor-fonts";
+            if (id.includes("@fontsource")) {
+              return "vendor-fonts";
+            }
 
-            return "vendor";
+            return "vendor-others";
           }
         },
         chunkFileNames: "assets/[name]-[hash].js",

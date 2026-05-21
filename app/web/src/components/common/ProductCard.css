@@ -276,3 +276,83 @@
         font-size: 10px;
     }
 }
+
+/* Quick Add to Cart Button styling */
+.card-quick-add-btn {
+    position: absolute;
+    bottom: 16px;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--color_main_title) 0%, var(--color_secondary) 100%);
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(161, 5, 80, 0.4);
+    opacity: 0;
+    transform: scale(0.8);
+    transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
+    z-index: 12;
+}
+
+.card-quick-add-btn .quick-add-icon {
+    color: #ffffff;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Show on card hover */
+.product-card:hover .card-quick-add-btn {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.card-quick-add-btn:hover {
+    background: linear-gradient(135deg, var(--color_secondary) 0%, var(--color_main_title) 100%);
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 20px rgba(161, 5, 80, 0.6);
+}
+
+.card-quick-add-btn:active {
+    transform: scale(0.95) !important;
+}
+
+/* Disabled state (out of stock) */
+.card-quick-add-btn.disabled {
+    background: #e2e8f0;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+.card-quick-add-btn.disabled .quick-add-icon {
+    color: #94a3b8;
+}
+
+.card-quick-add-btn.disabled:hover {
+    background: #e2e8f0;
+    transform: scale(1) !important;
+    box-shadow: none;
+}
+
+/* Mobile responsiveness - always show but slightly smaller */
+@media (max-width: 768px) {
+    .card-quick-add-btn {
+        opacity: 1;
+        transform: scale(1);
+        bottom: 10px;
+        right: 10px;
+        width: 36px;
+        height: 36px;
+        box-shadow: 0 4px 10px rgba(161, 5, 80, 0.3);
+    }
+
+    .card-quick-add-btn .quick-add-icon {
+        font-size: 15px;
+    }
+}
+

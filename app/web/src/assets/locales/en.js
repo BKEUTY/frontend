@@ -703,7 +703,7 @@ export default {
     only_upload_images: "Only images are allowed!",
     image_size_limit: "Image size must be less than 2MB!",
     max_images_limit: "Maximum of 5 images can be uploaded!",
-    
+
     // --- Return & Refund Requests ---
     refund_amount: "Refund Amount",
     select_order_to_refund_hint: "Please select an order from your purchase history to request a refund!",

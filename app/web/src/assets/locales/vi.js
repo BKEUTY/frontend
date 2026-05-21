@@ -705,7 +705,7 @@ export default {
     only_upload_images: "Chỉ được phép tải lên hình ảnh!",
     image_size_limit: "Kích thước ảnh phải nhỏ hơn 2MB!",
     max_images_limit: "Chỉ được phép tải lên tối đa 5 hình ảnh!",
-    
+
     // --- Return & Refund Requests ---
     refund_amount: "Số tiền hoàn lại",
     select_order_to_refund_hint: "Vui lòng chọn một đơn hàng từ lịch sử mua hàng để yêu cầu hoàn tiền!",

@@ -1,7 +1,10 @@
+import { ShoppingOutlined } from '@ant-design/icons';
 import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
 import { Card, Rate, Tooltip } from 'antd';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '@/store/CartContext';
+import { useNotification } from '@/store/NotificationContext';
 import { getImageUrl } from '../../services/axiosClient';
 import './ProductCard.css';
 import Skeleton from './Skeleton';
@@ -9,6 +12,34 @@ import Skeleton from './Skeleton';
 const ProductCard = ({ product, t, isLoading = false, priority = false }) => {
     const navigate = useNavigate();
     const fallbackImg = PRODUCT_IMAGE_FALLBACK;
+    const { addToCart } = useCart();
+    const notify = useNotification();
+
+    const handleAddToCart = async (e) => {
+        e.stopPropagation();
+        
+        const isOutOfStock = (product.stockQuantity ?? 1) <= 0 || product.status === 'INACTIVE';
+        if (isOutOfStock) {
+            notify(t('out_of_stock_msg'), 'error');
+            return;
+        }
+
+        try {
+            await addToCart({
+                productVariantId: product.productId || product.id,
+                quantity: 1,
+                name: product.variantName || product.name,
+                price: product.originPrice ?? 0,
+                promotionPrice: product.discountPrice !== undefined && product.discountPrice !== null 
+                    ? product.discountPrice 
+                    : (product.promotionPrice ?? product.originPrice ?? 0),
+                image: product.imageUrl || product.image
+            });
+            notify(t('add_cart_success'), 'success');
+        } catch (err) {
+            notify(t('api_error_add_cart'), 'error');
+        }
+    };
 
     if (isLoading) {
         return (
@@ -82,6 +113,13 @@ const ProductCard = ({ product, t, isLoading = false, priority = false }) => {
                             {product.appliedPromotionType === 'UserPromotion' ? t('promo_type_userpromotion') : t('promotion')}
                         </div>
                     )}
+                    <button 
+                        className={`card-quick-add-btn ${(product.stockQuantity ?? 1) <= 0 || product.status === 'INACTIVE' ? 'disabled' : ''}`}
+                        onClick={handleAddToCart}
+                        aria-label="Add to cart"
+                    >
+                        <ShoppingOutlined className="quick-add-icon" />
+                    </button>
                 </div>
             }
             onClick={handleClick}

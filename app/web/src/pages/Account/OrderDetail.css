@@ -768,27 +768,38 @@
 }
 
 .od-refund-badge.pending {
-    background: #fffbeb;
+    background-color: #fef3c7;
     color: #d97706;
 }
 
 .od-refund-badge.approved {
-    background: #ecfdf5;
-    color: #059669;
-}
-
-.od-refund-badge.rejected {
-    background: #fef2f2;
-    color: #dc2626;
-}
-
-.od-refund-badge.completed {
-    background: #eff6ff;
+    background-color: #dbeafe;
     color: #2563eb;
 }
 
+.od-refund-badge.rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.od-refund-badge.completed,
+.od-refund-badge.delivered {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.od-refund-badge.refunding {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.od-refund-badge.refund_failed {
+    background-color: #fca5a5;
+    color: #991b1b;
+}
+
 .od-refund-badge.refunded {
-    background: #faf5ff;
+    background-color: #f3e8ff;
     color: #7c3aed;
 }
 
@@ -1122,14 +1133,15 @@
     color: #dc2626;
 }
 
-.od-refund-badge.completed {
+.od-refund-badge.completed,
+.od-refund-badge.delivered {
     background-color: #d1fae5;
     color: #059669;
 }
 
 .od-refund-badge.refunding {
-    background-color: #f3e8ff;
-    color: #7c3aed;
+    background-color: #e0e7ff;
+    color: #4338ca;
 }
 
 .od-refund-badge.refund_failed {
@@ -1138,8 +1150,8 @@
 }
 
 .od-refund-badge.refunded {
-    background-color: #ecfdf5;
-    color: #047857;
+    background-color: #f3e8ff;
+    color: #7c3aed;
 }
 
 /* Responsive media queries for Customer Refund UI */

@@ -31,9 +31,9 @@ const ReturnRequests = () => {
         setLoading(true);
         try {
             const response = await orderApi.getMyRefunds({ page: currentPage, size: pageSize });
-            setReturns(response.data?.content || []);
-            setTotalItems(response.data?.totalElements || 0);
-            setTotalPages(response.data?.totalPages || 0);
+            setReturns(response.data?.content ?? []);
+            setTotalItems(response.data?.totalElements ?? 0);
+            setTotalPages(response.data?.totalPages ?? 0);
         } catch (err) {
             notify(t('api_error_general'), 'error');
         } finally {
@@ -54,8 +54,13 @@ const ReturnRequests = () => {
                 return { icon: <CheckCircleOutlined />, class: 'status-approved', text: t('refund_status_APPROVED') };
             case 'REJECTED': 
                 return { icon: <ExclamationCircleOutlined />, class: 'status-rejected', text: t('refund_status_REJECTED') };
+            case 'DELIVERED':
             case 'COMPLETED': 
-                return { icon: <CheckCircleOutlined />, class: 'status-completed', text: t('refund_status_COMPLETED') };
+                return { icon: <CheckCircleOutlined />, class: 'status-completed', text: t('refund_status_DELIVERED') };
+            case 'REFUNDING':
+                return { icon: <ClockCircleOutlined />, class: 'status-refunding', text: t('refund_status_REFUNDING') };
+            case 'REFUND_FAILED':
+                return { icon: <ExclamationCircleOutlined />, class: 'status-refund_failed', text: t('refund_status_REFUND_FAILED') };
             case 'REFUNDED': 
                 return { icon: <CheckCircleOutlined />, class: 'status-refunded', text: t('refund_status_REFUNDED') };
             default: 
@@ -112,16 +117,16 @@ const ReturnRequests = () => {
                                     </div>
                                     <div className="info-row">
                                         <span className="label">{t('return_reason')}:</span>
-                                        <span className="value highlight">{item.note || '---'}</span>
+                                        <span className="value highlight">{item.note ?? '---'}</span>
                                     </div>
                                     <div className="info-row">
                                         <span className="label">{t('refund_amount')}:</span>
                                         <span className="value price" style={{ color: '#e11d48', fontWeight: 600 }}>
-                                            {(item.total || 0).toLocaleString('vi-VN')}₫
+                                            {(item.total ?? 0).toLocaleString('vi-VN')}₫
                                         </span>
                                     </div>
                                     <div className="info-items" style={{ marginTop: '12px' }}>
-                                        {(item.items || []).map((prod, i) => (
+                                        {(item.items ?? []).map((prod, i) => (
                                             <span key={i} className="item-tag">{prod}</span>
                                         ))}
                                     </div>
@@ -143,7 +148,7 @@ const ReturnRequests = () => {
                 )}
             </div>
 
-            {/* Pagination */}
+
             {returns.length > 0 && totalPages > 1 && (
                 <div className="returns-pagination" style={{ display: 'flex', justifyContent: 'center', marginTop: '30px' }}>
                     <Pagination
@@ -159,7 +164,7 @@ const ReturnRequests = () => {
                 </div>
             )}
 
-            {/* Refund Detail Modal */}
+
             <Modal
                 title={<span className="ret-modal-title" style={{ fontSize: '18px', fontWeight: 800, background: 'linear-gradient(90deg, var(--color_main_title), var(--color_secondary))', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{t('request_refund_title')} #{selectedRefund?.id}</span>}
                 open={!!selectedRefund}
@@ -177,7 +182,7 @@ const ReturnRequests = () => {
                                 {t('refund_selected_items')}
                             </label>
                             <div className="ret-refund-summary-list" style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '150px', overflowY: 'auto' }}>
-                                {(selectedRefund.items || []).map((item, index) => (
+                                {(selectedRefund.items ?? []).map((item, index) => (
                                     <div key={index} className="ret-refund-summary-item" style={{ display: 'flex', alignItems: 'center', gap: '12px', background: '#fff', padding: '10px 14px', borderRadius: '10px', border: '1px solid #f1f5f9' }}>
                                         <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--color_main_title)' }} />
                                         <div className="item-info" style={{ flex: 1 }}>
@@ -208,7 +213,7 @@ const ReturnRequests = () => {
                             <div className="ret-refund-detail-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                                 <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{t('refund_amount')}</span>
                                 <span className="ret-refund-detail-value" style={{ color: '#e11d48', fontWeight: 700, fontSize: '15px' }}>
-                                    {(selectedRefund.total || 0).toLocaleString('vi-VN')}₫
+                                    {(selectedRefund.total ?? 0).toLocaleString('vi-VN')}₫
                                 </span>
                             </div>
 
@@ -220,21 +225,21 @@ const ReturnRequests = () => {
                             </div>
 
                             <div className="ret-refund-detail-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                                <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Trạng thái</span>
+                                <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{t('status')}</span>
                                 <div>
-                                    <span className={`od-refund-badge ${selectedRefund.status?.toLowerCase() || 'pending'}`} style={{ marginTop: '0px' }}>
+                                    <span className={`od-refund-badge ${selectedRefund.status?.toLowerCase() ?? 'pending'}`} style={{ marginTop: '0px' }}>
                                         {t(`refund_status_${selectedRefund.status}`)}
                                     </span>
                                 </div>
                             </div>
 
                             <div className="ret-refund-detail-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px', gridColumn: 'span 2' }}>
-                                <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Số điện thoại</span>
-                                <span className="ret-refund-detail-value" style={{ color: '#334155', fontWeight: 600 }}>{selectedRefund.phoneNumber || '---'}</span>
+                                <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{t('phone')}</span>
+                                <span className="ret-refund-detail-value" style={{ color: '#334155', fontWeight: 600 }}>{selectedRefund.phoneNumber ?? '---'}</span>
                             </div>
 
                             <div className="ret-refund-detail-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px', gridColumn: 'span 2' }}>
-                                <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Địa chỉ</span>
+                                <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{t('address')}</span>
                                 <span className="ret-refund-detail-value" style={{ color: '#334155', fontWeight: 600 }}>
                                     {selectedRefund.fromAddress ? selectedRefund.fromAddress.split('|')[0] : '---'}
                                 </span>
@@ -243,13 +248,13 @@ const ReturnRequests = () => {
                             <div className="ret-refund-detail-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px', gridColumn: 'span 2' }}>
                                 <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{t('return_reason')}</span>
                                 <span className="ret-refund-detail-value" style={{ whiteSpace: 'pre-wrap', background: '#f8fafc', padding: '10px 14px', borderRadius: '10px', border: '1px solid #f1f5f9', color: '#334155', minHeight: '40px' }}>
-                                    {selectedRefund.note || '---'}
+                                    {selectedRefund.note ?? '---'}
                                 </span>
                             </div>
 
                             {selectedRefund.evidenceImageUrls && selectedRefund.evidenceImageUrls.length > 0 && (
                                 <div className="ret-refund-detail-group" style={{ display: 'flex', flexDirection: 'column', gap: '4px', gridColumn: 'span 2' }}>
-                                    <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>Ảnh bằng chứng</span>
+                                    <span className="ret-refund-detail-label" style={{ fontSize: '12px', fontWeight: 700, color: '#64748b', textTransform: 'uppercase' }}>{t('upload_evidence')}</span>
                                     <div className="ret-refund-evidence-gallery" style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', marginTop: '5px' }}>
                                         {selectedRefund.evidenceImageUrls.map((imgUrl, i) => (
                                             <img 
@@ -269,7 +274,7 @@ const ReturnRequests = () => {
                 )}
             </Modal>
 
-            {/* Image Preview Modal */}
+
             <Modal
                 open={!!previewImage}
                 footer={null}

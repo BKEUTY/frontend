@@ -48,8 +48,8 @@ const OrderDetail = () => {
                 const addr = orderData.address;
                 return {
                     ...prev,
-                    phone: orderData.buyerPhoneNumber || '',
-                    street: addr?.address || '',
+                    phone: orderData.buyerPhoneNumber ?? '',
+                    street: addr?.address ?? '',
                     province: addr?.province ? { 
                         id: addr.province.provinceID ?? addr.province.ProvinceID, 
                         name: addr.province.provinceName ?? addr.province.ProvinceName 
@@ -77,7 +77,7 @@ const OrderDetail = () => {
         );
     }
 
-    if (error || !orderData) {
+    if (error ? true : !orderData) {
         return (
             <div className="od-container od-not-found">
                 <p>{error ? t('api_error_general') : t('order_not_found')}</p>
@@ -93,11 +93,11 @@ const OrderDetail = () => {
             notify(t('refund_select_item_error'), 'error');
             return;
         }
-        if (!refundForm.phone || !refundForm.street || !refundForm.province || !refundForm.district || !refundForm.ward) {
+        if ([refundForm.phone, refundForm.street, refundForm.province, refundForm.district, refundForm.ward].some(field => !field)) {
             notify(t('fill_all_fields'), 'error');
             return;
         }
-        if (!refundForm.note || refundForm.note.trim() === '') {
+        if (!(refundForm.note?.trim())) {
             notify(t('refund_note_empty_error'), 'error');
             return;
         }
@@ -130,7 +130,7 @@ const OrderDetail = () => {
             formData.append('request', JSON.stringify(requestPayload));
             if (refundForm.images && refundForm.images.length > 0) {
                 refundForm.images.forEach(file => {
-                    formData.append('images', file.originFileObj || file);
+                    formData.append('images', file.originFileObj ?? file);
                 });
             }
 
@@ -141,22 +141,22 @@ const OrderDetail = () => {
             setSelectedItemIds(new Set());
             refetch();
         } catch (error) {
-            const errorMsg = error.response?.data?.message || t('api_error_general');
+            const errorMsg = error.response?.data?.message ?? t('api_error_general');
             notify(errorMsg, 'error');
         } finally {
             setIsSubmittingRefund(false);
         }
     };
 
-    const subtotal = (orderData.items || []).reduce((sum, item) => {
-        const price = Number(item.price || 0);
+    const subtotal = (orderData.items ?? []).reduce((sum, item) => {
+        const price = Number(item.price ?? 0);
         const promoPrice = (item.promotionPrice != null && Number(item.promotionPrice) < price) ? Number(item.promotionPrice) : price;
-        return sum + (promoPrice * Number(item.quantity || 1));
+        return sum + (promoPrice * Number(item.quantity ?? 1));
     }, 0);
 
-    const voucherDiscount = (orderData.items || []).reduce((sum, item) => sum + Number(item.voucherDiscountAmount || 0), 0);
-    const shippingFee = Number(orderData.shippingFee || 0);
-    const grandTotal = Number(orderData.total || 0) + shippingFee;
+    const voucherDiscount = (orderData.items ?? []).reduce((sum, item) => sum + Number(item.voucherDiscountAmount ?? 0), 0);
+    const shippingFee = Number(orderData.shippingFee ?? 0);
+    const grandTotal = Number(orderData.total ?? 0) + shippingFee;
 
     return (
         <div className="od-container">
@@ -306,7 +306,7 @@ const OrderDetail = () => {
                                     <span className="od-current-price">{lineTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
                                 </div>
                                 {item.refundOrderId && (
-                                    <span className={`od-refund-badge ${item.refundStatus?.toLowerCase() || 'pending'}`}>
+                                    <span className={`od-refund-badge ${item.refundStatus?.toLowerCase() ?? 'pending'}`}>
                                         {t(`refund_status_${item.refundStatus}`)}
                                     </span>
                                 )}
@@ -356,15 +356,15 @@ const OrderDetail = () => {
                     <div className="od-delivery-details">
                         <div className="od-user-header">
                             <span className="od-info-text od-font-bold">
-                                {orderData.buyerName || orderData.userName || t('guest')}
+                                {orderData.buyerName ?? (orderData.userName ?? t('guest'))}
                             </span>
                             {orderData.membershipLevel !== undefined && (
                                 <MembershipTag level={orderData.membershipLevel} />
                             )}
                         </div>
-                        <p className="od-info-text">{orderData.buyerPhoneNumber || ''}</p>
+                        <p className="od-info-text">{orderData.buyerPhoneNumber ?? ''}</p>
                         <p className="od-info-text">
-                            {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName || orderData.address.ward?.WardName || ''}, ${orderData.address.district?.districtName || orderData.address.district?.DistrictName || ''}, ${orderData.address.province?.provinceName || orderData.address.province?.ProvinceName || ''}` : '---'}
+                            {orderData.address ? `${orderData.address.address}, ${orderData.address.ward?.wardName ?? (orderData.address.ward?.WardName ?? '')}, ${orderData.address.district?.districtName ?? (orderData.address.district?.DistrictName ?? '')}, ${orderData.address.province?.provinceName ?? (orderData.address.province?.ProvinceName ?? '')}` : '---'}
                         </p>
                     </div>
                 </div>
@@ -417,6 +417,9 @@ const OrderDetail = () => {
                 className="od-refund-modal-luxury"
             >
                 <div className="od-refund-modal-body">
+                    <div style={{ backgroundColor: '#fffbeb', color: '#d97706', padding: '10px 14px', borderRadius: '8px', border: '1px solid #fef3c7', fontSize: '13px', marginBottom: '16px', lineHeight: '1.4' }}>
+                        {t('refund_warning_shipping')}
+                    </div>
                     <div className="od-refund-items-summary">
                         <label className="od-field-label">{t('refund_selected_items')}</label>
                         <div className="od-refund-summary-list">

@@ -108,11 +108,13 @@
     letter-spacing: 0.5px;
 }
 
-.status-pending { background: #fffbeb; color: #d97706; }
-.status-approved { background: #f0fdf4; color: #16a34a; }
-.status-rejected { background: #fef2f2; color: #dc2626; }
-.status-completed { background: #eff6ff; color: #2563eb; }
-.status-refunded { background: #f5f3ff; color: #7c3aed; }
+.status-pending { background: #fef3c7; color: #d97706; }
+.status-approved { background: #dbeafe; color: #2563eb; }
+.status-rejected { background: #fee2e2; color: #dc2626; }
+.status-completed, .status-delivered { background: #d1fae5; color: #059669; }
+.status-refunding { background: #e0e7ff; color: #4338ca; }
+.status-refund_failed { background: #fca5a5; color: #991b1b; }
+.status-refunded { background: #f3e8ff; color: #7c3aed; }
 
 .info-row {
     display: flex;
@@ -201,5 +203,53 @@
 @media (max-width: 768px) {
     .page-header { flex-direction: column; gap: 20px; }
     .returns-list { grid-template-columns: 1fr; }
+}
+
+.od-refund-badge {
+    display: inline-block;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+    width: fit-content;
+}
+
+.od-refund-badge.pending {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.od-refund-badge.approved {
+    background-color: #dbeafe;
+    color: #2563eb;
+}
+
+.od-refund-badge.rejected {
+    background-color: #fee2e2;
+    color: #dc2626;
+}
+
+.od-refund-badge.completed,
+.od-refund-badge.delivered {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+.od-refund-badge.refunding {
+    background-color: #e0e7ff;
+    color: #4338ca;
+}
+
+.od-refund-badge.refund_failed {
+    background-color: #fca5a5;
+    color: #991b1b;
+}
+
+.od-refund-badge.refunded {
+    background-color: #f3e8ff;
+    color: #7c3aed;
 }
 

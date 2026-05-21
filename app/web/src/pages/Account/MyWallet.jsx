@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Spin, Empty, Modal, Input } from 'antd';
+import { Spin, Empty } from 'antd';
 import { 
     WalletOutlined, 
     EyeOutlined, 
@@ -9,62 +9,40 @@ import {
     HistoryOutlined
 } from '@ant-design/icons';
 import { useLanguage } from '@/store/LanguageContext';
-import { useNotification } from '@/store/NotificationContext';
 import { useUserProfile } from '@/features/account/hooks/useUser';
+import { useNavigate } from 'react-router-dom';
 import orderApi from '@/features/orders/services/orderService';
 import { CButton, SEO } from '@/components/common';
 import './MyWallet.css';
 
 const MyWallet = () => {
     const { t } = useLanguage();
-    const notify = useNotification();
-    const { data: profile, isLoading: isProfileLoading, refetch: refetchProfile } = useUserProfile();
+    const navigate = useNavigate();
+    const { data: profile, isLoading: isProfileLoading } = useUserProfile();
 
     const [isBalanceVisible, setIsBalanceVisible] = useState(true);
     const [transactions, setTransactions] = useState([]);
     const [isRefundsLoading, setIsRefundsLoading] = useState(true);
-    const [isDepositOpen, setIsDepositOpen] = useState(false);
-    const [amount, setAmount] = useState('');
 
     const fetchWalletData = async () => {
         setIsRefundsLoading(true);
         try {
             const refundsRes = await orderApi.getMyRefunds({ page: 1, size: 50 });
-            const refundsList = refundsRes.data?.content || [];
+            const refundsList = refundsRes.data?.content ?? [];
             
             const actualTx = refundsList.map(item => ({
                 id: `REF-${item.id}`,
                 type: 'REFUND',
                 title: `${t('wallet_refund_from_order')} #${item.orderId}`,
-                amount: item.total || 0,
+                amount: item.total ?? 0,
                 createdAt: item.createdAt,
                 status: item.status,
+                orderId: item.orderId,
                 isCredit: true
             }));
 
-            const baseMockTx = [
-                {
-                    id: 'TX-90237',
-                    type: 'DEPOSIT',
-                    title: t('wallet_deposit_to_wallet'),
-                    amount: 500000,
-                    createdAt: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-                    status: 'APPROVED',
-                    isCredit: true
-                },
-                {
-                    id: 'TX-80123',
-                    type: 'PAYMENT',
-                    title: `${t('wallet_payment_for_order')} #20`,
-                    amount: 250000,
-                    createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-                    status: 'APPROVED',
-                    isCredit: false
-                }
-            ];
-
-            const combinedTx = [...actualTx, ...baseMockTx].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-            setTransactions(combinedTx);
+            const sortedTx = [...actualTx].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            setTransactions(sortedTx);
         } catch (err) {
             console.error('Fetch refunds error inside wallet:', err);
         } finally {
@@ -76,28 +54,17 @@ const MyWallet = () => {
         fetchWalletData();
     }, [t]);
 
-    const handleDeposit = () => {
-        if (!amount || isNaN(amount) || Number(amount) <= 0) {
-            notify(t('wallet_invalid_amount'), 'warning');
-            return;
-        }
-        notify(t('wallet_deposit_success'), 'success');
-        setIsDepositOpen(false);
-        setAmount('');
-        refetchProfile();
-    };
-
     const getStatusBadgeClass = (status) => {
         const lower = status?.toLowerCase();
-        if (lower === 'approved' || lower === 'completed' || lower === 'refunded') return 'tx-status-success';
-        if (lower === 'rejected' || lower === 'failed') return 'tx-status-failed';
+        if (lower === 'refunded') return 'tx-status-success';
+        if (['rejected', 'refund_failed', 'failed'].includes(lower)) return 'tx-status-failed';
         return 'tx-status-pending';
     };
 
     const getStatusText = (status) => {
         const lower = status?.toLowerCase();
-        if (lower === 'approved' || lower === 'completed' || lower === 'refunded') return t('wallet_status_success');
-        if (lower === 'rejected' || lower === 'failed') return t('wallet_status_failed');
+        if (lower === 'refunded') return t('wallet_status_success');
+        if (['rejected', 'refund_failed', 'failed'].includes(lower)) return t('wallet_status_failed');
         return t('wallet_status_pending');
     };
 
@@ -132,7 +99,7 @@ const MyWallet = () => {
                             <div className="wallet-balance-row">
                                 <span className="wallet-balance-value">
                                     {isBalanceVisible 
-                                        ? `${(profile?.wallet || 0).toLocaleString('vi-VN')}₫`
+                                        ? `${(profile?.wallet ?? 0).toLocaleString('vi-VN')}₫`
                                         : '••••••••'
                                     }
                                 </span>
@@ -149,14 +116,6 @@ const MyWallet = () => {
                             <span className="wallet-owner-name">
                                 {profile?.lastname ? `${profile.lastname} ${profile.firstname}` : t('wallet_default_owner')}
                             </span>
-                            <CButton
-                                type="primary"
-                                icon={<PlusCircleOutlined />}
-                                onClick={() => setIsDepositOpen(true)}
-                                className="wallet-card-deposit-btn"
-                            >
-                                {t('wallet_deposit')}
-                            </CButton>
                         </div>
                     </div>
                 </div>
@@ -169,11 +128,17 @@ const MyWallet = () => {
                 </div>
 
                 <div className="transaction-list">
-                    {isProfileLoading || isRefundsLoading ? (
+                    {isProfileLoading ? (
+                        <div className="loading-state"><Spin size="large" /></div>
+                    ) : isRefundsLoading ? (
                         <div className="loading-state"><Spin size="large" /></div>
                     ) : transactions.length > 0 ? (
                         transactions.map((tx) => (
-                            <div key={tx.id} className="transaction-item">
+                            <div 
+                                key={tx.id} 
+                                className={`transaction-item ${tx.orderId ? 'clickable' : ''}`}
+                                onClick={() => tx.orderId && navigate(`/account/orders/${tx.orderId}`)}
+                            >
                                 <div className="tx-left">
                                     <div className={`tx-icon-circle ${tx.isCredit ? 'credit' : 'debit'}`}>
                                         {tx.isCredit ? <PlusCircleOutlined /> : <MinusCircleOutlined />}
@@ -200,30 +165,6 @@ const MyWallet = () => {
                     )}
                 </div>
             </div>
-
-            <Modal
-                title={<span className="wallet-modal-title"><PlusCircleOutlined style={{ color: '#a10550' }} /> {t('wallet_deposit')}</span>}
-                open={isDepositOpen}
-                onCancel={() => setIsDepositOpen(false)}
-                onOk={handleDeposit}
-                okText={t('wallet_confirm_deposit')}
-                cancelText={t('cancel')}
-                className="wallet-modal-premium"
-                centered
-            >
-                <div className="wallet-modal-body" style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '16px' }}>
-                    <div className="input-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                        <label className="input-label" style={{ fontSize: '13px', fontWeight: 600, color: '#475569' }}>{t('wallet_deposit_amount_label')}</label>
-                        <Input 
-                            value={amount} 
-                            onChange={(e) => setAmount(e.target.value)} 
-                            placeholder={t('wallet_deposit_amount_placeholder')} 
-                            type="number"
-                            size="large"
-                        />
-                    </div>
-                </div>
-            </Modal>
         </div>
     );
 };

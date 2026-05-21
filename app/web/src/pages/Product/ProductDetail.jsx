@@ -8,22 +8,13 @@ import { useAuth } from '@/store/AuthContext';
 import { useCart } from '@/store/CartContext';
 import { useLanguage } from '@/store/LanguageContext';
 import { useNotification } from '@/store/NotificationContext';
-import { generateSlug, getIdFromSlug } from '@/utils/helpers';
+import { generateSlug, getIdFromSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
 import { ShoppingOutlined, StarFilled } from '@ant-design/icons';
 import { Tag } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import './ProductDetail.css';
 import ProductReviews from './ProductReviews';
-
-import dummy1 from '@/assets/images/products/product_dummy_1.jpg';
-import dummy2 from '@/assets/images/products/product_dummy_2.jpg';
-import dummy3 from '@/assets/images/products/product_dummy_3.jpg';
-import dummy4 from '@/assets/images/products/product_dummy_4.jpg';
-import dummy5 from '@/assets/images/products/product_dummy_5.svg';
-
-const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
-const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
 
 export default function ProductDetail() {
     const { slug } = useParams();
@@ -35,7 +26,7 @@ export default function ProductDetail() {
     const { isAuthenticated, user } = useAuth();
 
     const productId = location.state?.productId ?? getIdFromSlug(slug);
-    const fallbackImg = useMemo(() => getRandomImage(), []);
+    const fallbackImg = PRODUCT_IMAGE_FALLBACK;
 
     const [productData, setProductData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -52,17 +43,50 @@ export default function ProductDetail() {
 
     const galleryImages = useMemo(() => {
         if (!productData) return [];
-        const variantImage = productData.variants?.find(v => v.id === productData.id)?.productImageUrl;
-        const images = [
-            productData.image ? getImageUrl(productData.image) : fallbackImg,
-            variantImage ? getImageUrl(variantImage) : getRandomImage()
-        ].filter(Boolean);
+        const images = [];
+        
+        if (productData.productImages && productData.productImages.length > 0) {
+            productData.productImages.forEach(img => {
+                const url = typeof img === 'object' ? img.imageUrl : img;
+                if (url) images.push(getImageUrl(url));
+            });
+        } else if (productData.image) {
+            if (Array.isArray(productData.image)) {
+                productData.image.forEach(img => {
+                    if (img) {
+                        const resolvedUrl = getImageUrl(img);
+                        if (resolvedUrl && !images.includes(resolvedUrl)) {
+                            images.push(resolvedUrl);
+                        }
+                    }
+                });
+            } else {
+                const resolvedUrl = getImageUrl(productData.image);
+                if (resolvedUrl && !images.includes(resolvedUrl)) {
+                    images.push(resolvedUrl);
+                }
+            }
+        }
 
-        const uniqueImages = [...new Set(images)];
-        if (uniqueImages.length < 2) uniqueImages.push(getRandomImage());
+        const targetVariant = productData.variants?.find(v => v.id === productData.id);
+        if (targetVariant?.productImageUrl) {
+            const variantUrls = Array.isArray(targetVariant.productImageUrl) 
+                ? targetVariant.productImageUrl 
+                : [targetVariant.productImageUrl];
+            variantUrls.forEach(url => {
+                if (url) {
+                    const fullUrl = getImageUrl(url);
+                    if (!images.includes(fullUrl)) images.push(fullUrl);
+                }
+            });
+        }
 
-        return uniqueImages;
-    }, [productData, fallbackImg]);
+        if (images.length === 0) {
+            images.push(PRODUCT_IMAGE_FALLBACK);
+        }
+
+        return images;
+    }, [productData]);
 
     useEffect(() => {
         if (galleryImages.length > 0) setMainImage(galleryImages[0]);

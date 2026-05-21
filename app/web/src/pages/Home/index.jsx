@@ -158,7 +158,7 @@ const Home = () => {
                     <div className="brand-text-box">
                         <h2>{t('brand_story')}</h2>
                         <p>{t('brand_desc')}</p>
-                        <button className="btn-explore-brand" onClick={() => navigate('/about')}>
+                        <button className="btn-explore-brand" onClick={() => navigate('/about-brand')}>
                             {t('explore_more')}
                         </button>
                     </div>

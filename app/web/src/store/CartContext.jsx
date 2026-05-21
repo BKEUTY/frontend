@@ -62,7 +62,6 @@ export const CartProvider = ({ children }) => {
     const closeCart = () => setIsCartOpen(false);
 
     const addToCart = async (product) => {
-        setIsCartOpen(true);
         const { productVariantId, quantity, name, price, promotionPrice, image } = product;
 
         if (isAuthenticated) {
@@ -92,8 +91,10 @@ export const CartProvider = ({ children }) => {
                         quantity: added.quantity
                     })];
                 });
+                setIsCartOpen(true);
             } catch (error) {
                 console.error(error);
+                throw error;
             }
         } else {
             const localCart = getLocalCart();
@@ -114,6 +115,7 @@ export const CartProvider = ({ children }) => {
             }
             saveLocalCart(localCart);
             setCartItems(localCart);
+            setIsCartOpen(true);
         }
     };
 

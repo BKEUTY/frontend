@@ -41,10 +41,10 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
         fetchStats: true
     });
 
-    const currentRatingCounts = statsData || ratingCounts || {};
-    const reviewsToShow = isExpanded ? (reviewsData?.reviews?.content || reviewsData?.content || []) : [];
-    const totalElements = isExpanded ? (reviewsData?.reviews?.totalElements || reviewsData?.totalElements || reviewCount) : reviewCount;
-    const totalPages = isExpanded ? (reviewsData?.reviews?.totalPages || reviewsData?.totalPages || 1) : 1;
+    const currentRatingCounts = statsData ?? (ratingCounts ?? {});
+    const reviewsToShow = isExpanded ? (reviewsData?.reviews?.content ?? (reviewsData?.content ?? [])) : [];
+    const totalElements = isExpanded ? (reviewsData?.reviews?.totalElements ?? (reviewsData?.totalElements ?? reviewCount)) : reviewCount;
+    const totalPages = isExpanded ? (reviewsData?.reviews?.totalPages ?? (reviewsData?.totalPages ?? 1)) : 1;
 
     const handleFilterChange = (type, value) => {
         if (!isExpanded) setIsExpanded(true);
@@ -61,8 +61,8 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
         }
         if (review) {
             setEditingReview(review);
-            setReviewForm({ rating: review.rating, comment: review.comment, images: review.images || [] });
-            setFileList((review.images || []).map((url, idx) => ({ uid: `-${idx}`, name: 'image.png', status: 'done', url })));
+            setReviewForm({ rating: review.rating, comment: review.comment, images: review.images ?? [] });
+            setFileList((review.images ?? []).map((url, idx) => ({ uid: `-${idx}`, name: 'image.png', status: 'done', url })));
         } else {
             setEditingReview(null);
             setReviewForm({ rating: 5, comment: '', images: [] });
@@ -77,8 +77,9 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             const formData = new FormData();
             formData.append('file', file);
             const res = await uploadImage(formData);
-            if(res.data?.url) {
-                setReviewForm(prev => ({ ...prev, images: [...prev.images, res.data.url] }));
+            const imageUrl = typeof res.data === 'string' ? res.data : (res.data?.url ?? '');
+            if (imageUrl) {
+                setReviewForm(prev => ({ ...prev, images: [...prev.images, imageUrl] }));
                 onSuccess("Ok");
             }
         } catch (err) {
@@ -111,7 +112,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
             showNotification(
                 t('error'), 
                 'error', 
-                (status === 403 || status === 400) ? t('review_not_eligible_msg') : (error.response?.data?.message || t('api_error_general'))
+                [400, 403].includes(status) ? t('review_not_eligible_msg') : (error.response?.data?.message ?? t('api_error_general'))
             );
         }
     };
@@ -151,13 +152,13 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
         <div className="pr-container">
             <div className="pr-dashboard">
                 <div className="pr-overview">
-                    <span className="pr-big-score">{Number(averageRating || 0).toFixed(1)}</span>
+                    <span className="pr-big-score">{Number(averageRating ?? 0).toFixed(1)}</span>
                     <div className="pr-star-stack">
                         <div className="pr-star-row">
                             {[...Array(5)].map((_, i) => (
                                 <StarFilled 
                                     key={i} 
-                                    style={{ color: i < Math.round(Number(averageRating || 0)) ? '#f59e0b' : '#e2e8f0' }} 
+                                    style={{ color: i < Math.round(Number(averageRating ?? 0)) ? '#f59e0b' : '#e2e8f0' }} 
                                 />
                             ))}
                         </div>
@@ -166,7 +167,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                 </div>
                 <div className="pr-bars-container">
                     {[5, 4, 3, 2, 1].map((star) => {
-                        const count = currentRatingCounts[star] || 0;
+                        const count = currentRatingCounts[star] ?? 0;
                         const percentage = reviewCount > 0 ? (count / reviewCount) * 100 : 0;
                         return (
                             <div key={star} className={`pr-bar-row ${ratingFilter === star ? 'active' : ''}`} onClick={() => handleFilterChange('rating', star)}>
@@ -204,10 +205,10 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                 ) : (
                     reviewsToShow.map((rev) => (
                         <div key={rev.id} className="pr-card">
-                            <Avatar className="pr-user-avatar" style={{ backgroundColor: 'var(--color_main_title)' }}>{rev.userName?.charAt(0) || 'U'}</Avatar>
+                            <Avatar className="pr-user-avatar" style={{ backgroundColor: 'var(--color_main_title)' }}>{rev.userName?.charAt(0) ?? 'U'}</Avatar>
                             <div className="pr-main-content">
                                 <div className="pr-card-header">
-                                    <span className="pr-user-name">{rev.userName || 'User'}</span>
+                                    <span className="pr-user-name">{rev.userName ?? 'User'}</span>
                                     <span className="pr-post-date">{formatDateTime(rev.createdAt)}</span>
                                 </div>
                                 <div className="pr-rating-meta">

@@ -1,4 +1,4 @@
-import { generateSlug } from '@/utils/helpers';
+import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
 import { Card, Rate, Tooltip } from 'antd';
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -6,18 +6,9 @@ import { getImageUrl } from '../../services/axiosClient';
 import './ProductCard.css';
 import Skeleton from './Skeleton';
 
-import dummy1 from '@/assets/images/products/product_dummy_1.jpg';
-import dummy2 from '@/assets/images/products/product_dummy_2.jpg';
-import dummy3 from '@/assets/images/products/product_dummy_3.jpg';
-import dummy4 from '@/assets/images/products/product_dummy_4.jpg';
-import dummy5 from '@/assets/images/products/product_dummy_5.svg';
-
-const dummyImages = [dummy1, dummy2, dummy3, dummy4, dummy5];
-const getRandomImage = () => dummyImages[Math.floor(Math.random() * dummyImages.length)];
-
 const ProductCard = ({ product, t, isLoading = false, priority = false }) => {
     const navigate = useNavigate();
-    const fallbackImg = useMemo(() => getRandomImage(), []);
+    const fallbackImg = PRODUCT_IMAGE_FALLBACK;
 
     if (isLoading) {
         return (

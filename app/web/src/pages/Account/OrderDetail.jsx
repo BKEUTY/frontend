@@ -50,17 +50,17 @@ const OrderDetail = () => {
                     ...prev,
                     phone: orderData.buyerPhoneNumber ?? '',
                     street: addr?.address ?? '',
-                    province: addr?.province ? { 
-                        id: addr.province.provinceID ?? addr.province.ProvinceID, 
-                        name: addr.province.provinceName ?? addr.province.ProvinceName 
+                    province: addr?.province ? {
+                        id: addr.province.provinceID ?? addr.province.ProvinceID,
+                        name: addr.province.provinceName ?? addr.province.ProvinceName
                     } : null,
-                    district: addr?.district ? { 
-                        id: addr.district.districtID ?? addr.district.DistrictID, 
-                        name: addr.district.districtName ?? addr.district.DistrictName 
+                    district: addr?.district ? {
+                        id: addr.district.districtID ?? addr.district.DistrictID,
+                        name: addr.district.districtName ?? addr.district.DistrictName
                     } : null,
-                    ward: addr?.ward ? { 
-                        id: addr.ward.wardCode ?? addr.ward.WardCode, 
-                        name: addr.ward.wardName ?? addr.ward.WardName 
+                    ward: addr?.ward ? {
+                        id: addr.ward.wardCode ?? addr.ward.WardCode,
+                        name: addr.ward.wardName ?? addr.ward.WardName
                     } : null,
                 };
             });
@@ -107,7 +107,9 @@ const OrderDetail = () => {
             const formData = new FormData();
             const requestPayload = {
                 orderId: orderData.orderId,
-                orderItemId: Array.from(selectedItemIds),
+                orderItemId: Array.from(selectedItemIds)
+                    .map(idx => orderData.items[idx]?.orderItemId || orderData.items[idx]?.id)
+                    .filter(id => id !== undefined && id !== null),
                 fromAddress: {
                     address: refundForm.street,
                     province: {
@@ -166,7 +168,7 @@ const OrderDetail = () => {
                     <FaArrowLeft />
                 </button>
                 <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
-                
+
                 {orderData.status === 'SUCCEEDED' && (
                     <div className="od-header-actions-refund">
                         {!isRefundMode ? (
@@ -211,8 +213,8 @@ const OrderDetail = () => {
                 </button>
             </div>
 
-            <OrderProgress 
-                currentStatus={orderData.status} 
+            <OrderProgress
+                currentStatus={orderData.status}
                 shippingStatus={orderData.shippingStatus}
                 paymentMethod={orderData.paymentMethod}
                 paymentStatus={orderData.paymentStatus}
@@ -241,77 +243,77 @@ const OrderDetail = () => {
                         const effectivePrice = isPromo ? item.promotionPrice : item.price;
                         const voucherUnit = item.voucherDiscountAmount ? Math.round(item.voucherDiscountAmount / item.quantity) : 0;
                         const lineTotal = (effectivePrice * item.quantity) - item.voucherDiscountAmount;
-                        const isChecked = selectedItemIds.has(item.orderItemId);
+                        const isChecked = selectedItemIds.has(index);
 
                         return (
-                        <div className={`od-item-card ${isRefundMode ? 'refund-selectable' : ''} ${isChecked ? 'refund-selected' : ''} ${item.refundOrderId ? 'item-has-refund' : ''}`} key={index}>
-                            {isRefundMode && (
-                                <div className="od-item-select-col">
-                                    <Checkbox
-                                        disabled={!!item.refundOrderId}
-                                        checked={isChecked}
-                                        onChange={() => {
-                                            const newIds = new Set(selectedItemIds);
-                                            if (isChecked) {
-                                                newIds.delete(item.orderItemId);
-                                            } else {
-                                                newIds.add(item.orderItemId);
-                                            }
-                                            setSelectedItemIds(newIds);
-                                        }}
+                            <div className={`od-item-card ${isRefundMode ? 'refund-selectable' : ''} ${isChecked ? 'refund-selected' : ''} ${item.refundOrderId ? 'item-has-refund' : ''}`} key={index}>
+                                {isRefundMode && (
+                                    <div className="od-item-select-col">
+                                        <Checkbox
+                                            disabled={!!item.refundOrderId}
+                                            checked={isChecked}
+                                            onChange={() => {
+                                                const newIds = new Set(selectedItemIds);
+                                                if (isChecked) {
+                                                    newIds.delete(index);
+                                                } else {
+                                                    newIds.add(index);
+                                                }
+                                                setSelectedItemIds(newIds);
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                <div className="od-item-img">
+                                    <img
+                                        src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK}
+                                        alt={item.productVariantName}
+                                        onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
                                     />
                                 </div>
-                            )}
-                             <div className="od-item-img">
-                                 <img 
-                                     src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK} 
-                                     alt={item.productVariantName} 
-                                     onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
-                                 />
-                             </div>
-                             <div className="od-item-details">
-                                <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} state={{ productId: item.productVariantId }} className="od-item-link">
-                                    <h4 className="od-item-name">
-                                        {item.productVariantName}
-                                        {item.refundOrderId && (
-                                            <span className="od-item-refund-label-tag" style={{ marginLeft: '8px' }}>
-                                                {t('refund_request_label')}
-                                            </span>
-                                        )}
-                                    </h4>
-                                </Link>
-                                <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>
-                            </div>
-                            <div className="od-item-pricing">
-                                {isPromo && (
-                                    <div className="od-price-row">
-                                        <span className="od-price-label">{t('original_price')}:</span>
-                                        <span className="od-original-price">{item.price.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
-                                    </div>
-                                )}
-                                <div className="od-price-row">
-                                    <span className="od-price-label">{isPromo ? t('promo_price') : t('price')}:</span>
-                                    <span className={`od-unit-price ${voucherUnit > 0 ? 'has-voucher' : ''}`}>
-                                        {effectivePrice.toLocaleString("vi-VN")}{t('unit_vnd')}
-                                    </span>
+                                <div className="od-item-details">
+                                    <Link to={`/product/${generateSlug(item.productVariantName, item.productVariantId)}`} state={{ productId: item.productVariantId }} className="od-item-link">
+                                        <h4 className="od-item-name">
+                                            {item.productVariantName}
+                                            {item.refundOrderId && (
+                                                <span className="od-item-refund-label-tag" style={{ marginLeft: '8px' }}>
+                                                    {t('refund_request_label')}
+                                                </span>
+                                            )}
+                                        </h4>
+                                    </Link>
+                                    <p className="od-item-qty">{t('quantity')} x{item.quantity}</p>
                                 </div>
-                                {voucherUnit > 0 && (
+                                <div className="od-item-pricing">
+                                    {isPromo && (
+                                        <div className="od-price-row">
+                                            <span className="od-price-label">{t('original_price')}:</span>
+                                            <span className="od-original-price">{item.price.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                        </div>
+                                    )}
                                     <div className="od-price-row">
-                                        <span className="od-price-label">{t('voucher')}:</span>
-                                        <span className="od-voucher-unit">-{voucherUnit.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                        <span className="od-price-label">{isPromo ? t('promo_price') : t('price')}:</span>
+                                        <span className={`od-unit-price ${voucherUnit > 0 ? 'has-voucher' : ''}`}>
+                                            {effectivePrice.toLocaleString("vi-VN")}{t('unit_vnd')}
+                                        </span>
                                     </div>
-                                )}
-                                <div className="od-price-row od-total-row">
-                                    <span className="od-price-label">{t('total')}:</span>
-                                    <span className="od-current-price">{lineTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                    {voucherUnit > 0 && (
+                                        <div className="od-price-row">
+                                            <span className="od-price-label">{t('voucher')}:</span>
+                                            <span className="od-voucher-unit">-{voucherUnit.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                        </div>
+                                    )}
+                                    <div className="od-price-row od-total-row">
+                                        <span className="od-price-label">{t('total')}:</span>
+                                        <span className="od-current-price">{lineTotal.toLocaleString("vi-VN")}{t('unit_vnd')}</span>
+                                    </div>
+                                    {item.refundOrderId && (
+                                        <span className={`od-refund-badge ${item.refundStatus?.toLowerCase() ?? 'pending'}`}>
+                                            {t(`refund_status_${item.refundStatus}`)}
+                                        </span>
+                                    )}
                                 </div>
-                                {item.refundOrderId && (
-                                    <span className={`od-refund-badge ${item.refundStatus?.toLowerCase() ?? 'pending'}`}>
-                                        {t(`refund_status_${item.refundStatus}`)}
-                                    </span>
-                                )}
                             </div>
-                        </div>
                         );
                     })}
                 </div>
@@ -424,12 +426,12 @@ const OrderDetail = () => {
                         <label className="od-field-label">{t('refund_selected_items')}</label>
                         <div className="od-refund-summary-list">
                             {orderData.items
-                                .filter(item => selectedItemIds.has(item.orderItemId))
+                                .filter((item, idx) => selectedItemIds.has(idx))
                                 .map((item, idx) => (
                                     <div key={idx} className="od-refund-summary-item">
-                                        <img 
-                                            src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK} 
-                                            alt={item.productVariantName} 
+                                        <img
+                                            src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK}
+                                            alt={item.productVariantName}
                                             onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
                                         />
                                         <div className="item-info">

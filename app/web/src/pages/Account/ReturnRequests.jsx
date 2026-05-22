@@ -10,6 +10,7 @@ import {
 import { useLanguage } from '@/store/LanguageContext';
 import { useNotification } from '@/store/NotificationContext';
 import { CButton, SEO, Pagination } from '@/components/common';
+import { getOptimizedImageUrl } from '@/services/axiosClient';
 import orderApi from '@/features/orders/services/orderService';
 import './ReturnRequests.css';
 
@@ -259,7 +260,7 @@ const ReturnRequests = () => {
                                         {selectedRefund.evidenceImageUrls.map((imgUrl, i) => (
                                             <img 
                                                 key={i} 
-                                                src={imgUrl} 
+                                                src={getOptimizedImageUrl(imgUrl, 256)} 
                                                 alt="evidence" 
                                                 className="ret-refund-evidence-thumb" 
                                                 style={{ width: '80px', height: '80px', objectFit: 'cover', borderRadius: '8px', border: '1px solid #e2e8f0', cursor: 'pointer', transition: 'transform 0.2s ease' }}
@@ -282,7 +283,7 @@ const ReturnRequests = () => {
                 width={600}
                 centered
             >
-                <img alt="preview" style={{ width: '100%', borderRadius: '12px' }} src={previewImage} />
+                <img alt="preview" style={{ width: '100%', borderRadius: '12px' }} src={getOptimizedImageUrl(previewImage, 1080)} />
             </Modal>
         </div>
     );

@@ -7,7 +7,7 @@ import { useLanguage } from '@/store/LanguageContext';
 import { CButton, EmptyState } from '@/components/common';
 import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
 import './CartDrawer.css';
-import { getImageUrl } from "@/services/axiosClient";
+import { getImageUrl, getOptimizedImageUrl } from "@/services/axiosClient";
 
 const { Text } = Typography;
 
@@ -128,7 +128,7 @@ const CartDrawer = () => {
                                                 style={{ cursor: 'pointer', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                             >
                                                 <img 
-                                                    src={item.image ? getImageUrl(item.image) : PRODUCT_IMAGE_FALLBACK}
+                                                    src={item.image ? getOptimizedImageUrl(item.image, 256) : PRODUCT_IMAGE_FALLBACK}
                                                     onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK }}
                                                     alt="product"
                                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}

@@ -3,7 +3,7 @@ import { SEO, MembershipTag } from '@/components/common';
 import OrderProgress from '@/features/orders/components/OrderProgress';
 import { useLanguage } from '@/store/LanguageContext';
 import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
-import { getImageUrl } from '@/services/axiosClient';
+import { getImageUrl, getOptimizedImageUrl } from '@/services/axiosClient';
 import generateInvoice from '@/utils/InvoiceService';
 import { FaArrowLeft, FaCreditCard, FaDownload, FaMapLocationDot } from "react-icons/fa6";
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -266,7 +266,7 @@ const OrderDetail = () => {
                                 )}
                                 <div className="od-item-img">
                                     <img
-                                        src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK}
+                                        src={item.productVariantImage ? getOptimizedImageUrl(item.productVariantImage, 256) : PRODUCT_IMAGE_FALLBACK}
                                         alt={item.productVariantName}
                                         onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
                                     />
@@ -430,7 +430,7 @@ const OrderDetail = () => {
                                 .map((item, idx) => (
                                     <div key={idx} className="od-refund-summary-item">
                                         <img
-                                            src={item.productVariantImage ? getImageUrl(item.productVariantImage) : PRODUCT_IMAGE_FALLBACK}
+                                            src={item.productVariantImage ? getOptimizedImageUrl(item.productVariantImage, 256) : PRODUCT_IMAGE_FALLBACK}
                                             alt={item.productVariantName}
                                             onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
                                         />

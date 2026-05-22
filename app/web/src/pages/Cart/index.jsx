@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useNotification } from "@/store/NotificationContext";
 import { useLanguage } from "@/store/LanguageContext";
 import { useCart } from "@/store/CartContext";
-import { getImageUrl } from "@/services/axiosClient";
+import { getImageUrl, getOptimizedImageUrl } from "@/services/axiosClient";
 import { SEO } from "@/components/common";
 import { useAuth } from "@/store/AuthContext";
 import { generateSlug, PRODUCT_IMAGE_FALLBACK } from "@/utils/helpers";
@@ -138,7 +138,7 @@ export default function Cart() {
                         <img
                           className="cart-product-img"
                           loading="lazy"
-                          src={product.image ? getImageUrl(product.image) : PRODUCT_IMAGE_FALLBACK}
+                          src={product.image ? getOptimizedImageUrl(product.image, 256) : PRODUCT_IMAGE_FALLBACK}
                           alt="product"
                           onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK }}
                         />

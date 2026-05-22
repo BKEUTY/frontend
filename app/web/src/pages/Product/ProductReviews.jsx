@@ -6,6 +6,7 @@ import { useNotification } from '@/store/NotificationContext';
 import { Pagination, Skeleton, CButton } from '@/components/common';
 import { useReviews } from '@/features/products/hooks/useReviews';
 import { useAuth } from '@/store/AuthContext';
+import { getOptimizedImageUrl } from '@/services/axiosClient';
 import './ProductReviews.css';
 
 const { TextArea } = Input;
@@ -219,7 +220,7 @@ const ProductReviews = ({ variantId, averageRating, reviewCount, ratingCounts = 
                                 {rev.images?.length > 0 && (
                                     <div className="pr-image-gallery">
                                         {rev.images.filter(img => img?.trim()).map((img, idx) => (
-                                            <img key={idx} src={img} alt="review" className="pr-review-img" onClick={() => window.open(img, '_blank')} />
+                                            <img key={idx} src={getOptimizedImageUrl(img, 256)} alt="review" className="pr-review-img" onClick={() => window.open(img, '_blank')} />
                                         ))}
                                     </div>
                                 )}

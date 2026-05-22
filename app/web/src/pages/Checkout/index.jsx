@@ -7,6 +7,7 @@ import { useLanguage } from "@/store/LanguageContext";
 import { PRODUCT_IMAGE_FALLBACK } from "@/utils/helpers";
 import { usePaymentPolling } from "@/features/checkout/hooks/usePaymentPolling";
 import { CButton, CInput, SEO } from "@/components/common";
+import { getOptimizedImageUrl } from "@/services/axiosClient";
 import orderApi from '@/features/orders/services/orderService';
 import { useUserProfile, useUpdateProfile, useAddAddress, useDeleteAddress } from "@/features/account/hooks/useUser";
 import { useProvinces, useDistricts, useWards } from "@/features/account/hooks/useAddress";
@@ -364,7 +365,7 @@ export default function Checkout() {
                                     <div key={idx} className="summary-item">
                                         <div className="summary-item-image">
                                             <img 
-                                                src={p.image || PRODUCT_IMAGE_FALLBACK} 
+                                                src={p.image ? getOptimizedImageUrl(p.image, 256) : PRODUCT_IMAGE_FALLBACK} 
                                                 alt={p.name} 
                                                 onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }} 
                                             />

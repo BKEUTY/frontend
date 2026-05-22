@@ -50,21 +50,6 @@ export default defineConfig({
               return "vendor-react";
             }
 
-            if (
-              id.includes("antd") ||
-              id.includes("@ant-design") ||
-              id.includes("rc-")
-            ) {
-              return "vendor-antd";
-            }
-
-            if (
-              id.includes("jspdf") ||
-              id.includes("html2canvas")
-            ) {
-              return "vendor-pdf";
-            }
-
             if (id.includes("framer-motion")) {
               return "vendor-animation";
             }
@@ -111,10 +96,6 @@ export default defineConfig({
               id.includes("character-entities")
             ) {
               return "vendor-utils";
-            }
-
-            if (id.includes("@fontsource")) {
-              return "vendor-fonts";
             }
 
             return "vendor-others";

@@ -3,7 +3,7 @@ import cartApi from '@/features/cart/services/cartService';
 import productApi from '@/features/products/services/productService';
 import { useRelatedProducts } from '@/hooks/useRecommendation';
 import NotFound from '@/pages/NotFound';
-import { getImageUrl } from '@/services/axiosClient';
+import { getImageUrl, getOptimizedImageUrl } from '@/services/axiosClient';
 import { useAuth } from '@/store/AuthContext';
 import { useCart } from '@/store/CartContext';
 import { useLanguage } from '@/store/LanguageContext';
@@ -270,12 +270,12 @@ export default function ProductDetail() {
                     <div className="thumbnail-list">
                         {galleryImages.map((img, idx) => (
                             <div key={idx} className={`thumb-item ${mainImage === img ? 'active' : ''}`} onClick={() => setMainImage(img)}>
-                                <img src={img} alt={`Thumb ${idx}`} loading="lazy" />
+                                <img src={getOptimizedImageUrl(img, 256)} alt={`Thumb ${idx}`} loading="lazy" />
                             </div>
                         ))}
                     </div>
                     <div className="main-image">
-                        <img src={mainImage} alt={displayName} fetchpriority="high" onError={(e) => { e.target.src = fallbackImg }} />
+                        <img src={getOptimizedImageUrl(mainImage, 1080)} alt={displayName} fetchpriority="high" onError={(e) => { e.target.src = fallbackImg }} />
                         {currentPrice.hasDiscount && (
                             <div className={`discount-badge-main ${currentPrice.appliedPromotionType === 'UserPromotion' ? 'user-promo-badge' : ''}`}>
                                 {currentPrice.appliedPromotionType === 'UserPromotion' ? t('promo_type_userpromotion') : t('promotion')}

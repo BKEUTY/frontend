@@ -6,9 +6,7 @@ import { HelmetProvider } from 'react-helmet-async';
 import "./global.css";
 import "./index.css";
 
-// Font CSS
-import "@fontsource/be-vietnam-pro/400.css";
-import "@fontsource/be-vietnam-pro/700.css";
+
 
 // Ant Design base reset (small, foundational)
 import "antd/dist/reset.css";

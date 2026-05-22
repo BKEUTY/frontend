@@ -5,7 +5,7 @@ import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/store/CartContext';
 import { useNotification } from '@/store/NotificationContext';
-import { getImageUrl } from '../../services/axiosClient';
+import { getImageUrl, getOptimizedImageUrl } from '../../services/axiosClient';
 import './ProductCard.css';
 import Skeleton from './Skeleton';
 
@@ -82,7 +82,7 @@ const ProductCard = ({ product, t, isLoading = false, priority = false }) => {
     const productId = product.productId || product.id;
     const name = product.variantName || product.name;
     const imagePath = product.imageUrl || product.image;
-    const image = imagePath ? getImageUrl(imagePath) : fallbackImg;
+    const image = imagePath ? getOptimizedImageUrl(imagePath, 384) : fallbackImg;
     
     const currentPrice = product.discountPrice !== undefined && product.discountPrice !== null ? product.discountPrice : (product.promotionPrice ?? product.originPrice ?? 0);
     const oldPrice = product.originPrice ?? 0;

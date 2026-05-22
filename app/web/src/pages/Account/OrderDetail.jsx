@@ -169,7 +169,7 @@ const OrderDetail = () => {
                 </button>
                 <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
 
-                {orderData.status === 'SUCCEEDED' && (
+                {orderData.status === 'SUCCEEDED' && !orderData.items?.some(item => item.refundOrderId) && (
                     <div className="od-header-actions-refund">
                         {!isRefundMode ? (
                             <button
@@ -250,7 +250,7 @@ const OrderDetail = () => {
                                 {isRefundMode && (
                                     <div className="od-item-select-col">
                                         <Checkbox
-                                            disabled={!!item.refundOrderId}
+                                            disabled={!!item.refundOrderId || orderData.items?.some(i => i.refundOrderId)}
                                             checked={isChecked}
                                             onChange={() => {
                                                 const newIds = new Set(selectedItemIds);

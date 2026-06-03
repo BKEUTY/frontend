@@ -1,4 +1,4 @@
-import { CButton, Pagination, ProductCard, SEO } from "@/components/common";
+import { CButton, Pagination, ProductCard, SEO, AnimatedPage } from "@/components/common";
 import { useProductsPaginated } from "@/features/products/hooks/useProducts";
 import productApi from "@/features/products/services/productService";
 import useClickOutside from "@/hooks/useClickOutside";
@@ -207,8 +207,9 @@ export default function Product() {
   );
 
   return (
-    <main className="product-page-wrapper">
-      <SEO title={t('all_products')} description={t('search_hint')} />
+    <AnimatedPage>
+      <main className="product-page-wrapper">
+        <SEO title={t('all_products')} description={t('search_hint')} />
       <div className="product-top-bar">
         <div className="top-bar-left">
           <div className="cat-dropdown-container" ref={dropdownRef}>
@@ -380,6 +381,7 @@ export default function Product() {
           </section>
         </div>
       </div>
-    </main>
+      </main>
+    </AnimatedPage>
   );
 }

@@ -1,4 +1,4 @@
-import { Pagination, SEO } from '@/components/common';
+import { Pagination, SEO, AnimatedPage } from '@/components/common';
 import { useOrders } from '@/features/orders/hooks/useOrders';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useQueryParams } from '@/hooks/useQueryParams';
@@ -95,8 +95,9 @@ const MyOrders = () => {
     };
 
     return (
-        <div className="account-info-container">
-            <SEO title={t('my_orders')} />
+        <AnimatedPage>
+            <div className="account-info-container">
+                <SEO title={t('my_orders')} />
 
             <div className="page-header">
                 <h1 className="page-title">{t('my_orders')}</h1>
@@ -303,8 +304,8 @@ const MyOrders = () => {
                 </div>
             </div>
         </div>
+        </AnimatedPage>
     );
 };
 
 export default MyOrders;
-

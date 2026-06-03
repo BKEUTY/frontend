@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SEO, MembershipTag } from '@/components/common';
+import { SEO, MembershipTag, AnimatedPage } from '@/components/common';
 import OrderProgress from '@/features/orders/components/OrderProgress';
 import { useLanguage } from '@/store/LanguageContext';
 import { generateSlug, PRODUCT_IMAGE_FALLBACK } from '@/utils/helpers';
@@ -81,7 +81,16 @@ const OrderDetail = () => {
         return (
             <div className="od-container od-not-found">
                 <p>{error ? t('api_error_general') : t('order_not_found')}</p>
-                <button onClick={() => navigate('/account/orders')} className="od-btn-fallback">
+                <button 
+                    onClick={() => {
+                        if (window.history.length > 1) {
+                            navigate(-1);
+                        } else {
+                            navigate('/account/orders');
+                        }
+                    }} 
+                    className="od-btn-fallback"
+                >
                     <FaArrowLeft /> {t('back')}
                 </button>
             </div>
@@ -161,13 +170,23 @@ const OrderDetail = () => {
     const grandTotal = Number(orderData.total ?? 0) + shippingFee;
 
     return (
-        <div className="od-container">
-            <SEO title={`${t('order_id_label')} #${orderData.orderId}`} />
-            <div className="od-header">
-                <button className="od-btn-back" onClick={() => navigate('/account/orders')}>
-                    <FaArrowLeft />
-                </button>
-                <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
+        <AnimatedPage>
+            <div className="od-container">
+                <SEO title={`${t('order_id_label')} #${orderData.orderId}`} />
+                <div className="od-header">
+                    <button 
+                        className="od-btn-back" 
+                        onClick={() => {
+                            if (window.history.length > 1) {
+                                navigate(-1);
+                            } else {
+                                navigate('/account/orders');
+                            }
+                        }}
+                    >
+                        <FaArrowLeft />
+                    </button>
+                    <h2 className="od-title">{t('order_id_label')} #{orderData.orderId}</h2>
 
                 {orderData.status === 'SUCCEEDED' && !orderData.items?.some(item => item.refundOrderId) && (
                     <div className="od-header-actions-refund">
@@ -591,6 +610,7 @@ const OrderDetail = () => {
                 </div>
             </Modal>
         </div>
+        </AnimatedPage>
     );
 };
 

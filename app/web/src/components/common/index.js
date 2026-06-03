@@ -10,3 +10,4 @@ export { default as CButton } from './CButton';
 export { default as CInput } from './CInput';
 export { default as SEO } from './SEO';
 export { default as MembershipTag } from './MembershipTag';
+export { default as AnimatedPage } from './AnimatedPage';

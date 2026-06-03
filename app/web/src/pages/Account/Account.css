@@ -681,3 +681,35 @@
         top: 18px;
     }
 }
+
+/* Fix Title alignment of Account subpages to be Left-Aligned */
+.account-info-container .page-header,
+.shipping-address-container .page-header,
+.return-requests-container .page-header,
+.account-main-content .page-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: 100% !important;
+}
+
+.account-info-container .page-title,
+.shipping-address-container .page-title,
+.return-requests-container .page-title,
+.account-main-content .page-title {
+    text-align: left !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+    display: inline-block !important;
+}
+
+.account-info-container .page-title::after,
+.shipping-address-container .page-title::after,
+.return-requests-container .page-title::after,
+.account-main-content .page-title::after {
+    left: 0 !important;
+    transform: none !important;
+    right: auto !important;
+}

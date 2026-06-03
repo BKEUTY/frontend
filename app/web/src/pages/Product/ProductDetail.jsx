@@ -1,4 +1,4 @@
-import { CButton, ProductCard, SEO, Skeleton } from '@/components/common';
+import { CButton, ProductCard, SEO, Skeleton, AnimatedPage } from '@/components/common';
 import cartApi from '@/features/cart/services/cartService';
 import productApi from '@/features/products/services/productService';
 import { useRelatedProducts } from '@/hooks/useRecommendation';
@@ -252,18 +252,30 @@ export default function ProductDetail() {
     ];
 
     return (
-        <div className="product-detail-page">
-            <div className="product-detail-container">
-                <SEO
-                    title={displayName}
-                    description={productData.description}
-                    image={mainImage}
-                />
-            <div className="breadcrumb">
-                <Link to={'/product'} state={{ fromDetail: true }}>{t('product')}</Link>
-                <span className="divider">/</span>
-                <span className="current">{displayName}</span>
-            </div>
+        <AnimatedPage>
+            <div className="product-detail-page">
+                <div className="product-detail-container">
+                    <SEO
+                        title={displayName}
+                        description={productData.description}
+                        image={mainImage}
+                    />
+                <div className="breadcrumb">
+                    <Link 
+                        to="/product" 
+                        state={{ fromDetail: true }}
+                        onClick={(e) => {
+                            if (window.history.length > 1) {
+                                e.preventDefault();
+                                navigate(-1);
+                            }
+                        }}
+                    >
+                        {t('product')}
+                    </Link>
+                    <span className="divider">/</span>
+                    <span className="current">{displayName}</span>
+                </div>
 
             <div className="product-top-section">
                 <div className="product-gallery">
@@ -448,5 +460,6 @@ export default function ProductDetail() {
             </div>
             </div>
         </div>
+        </AnimatedPage>
     );
 }

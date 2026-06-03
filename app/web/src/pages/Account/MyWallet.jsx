@@ -12,7 +12,7 @@ import { useLanguage } from '@/store/LanguageContext';
 import { useUserProfile } from '@/features/account/hooks/useUser';
 import { useNavigate } from 'react-router-dom';
 import orderApi from '@/features/orders/services/orderService';
-import { CButton, SEO } from '@/components/common';
+import { CButton, SEO, AnimatedPage } from '@/components/common';
 import './MyWallet.css';
 
 const MyWallet = () => {
@@ -69,8 +69,9 @@ const MyWallet = () => {
     };
 
     return (
-        <div className="my-wallet-container">
-            <SEO title={t('my_wallet')} />
+        <AnimatedPage>
+            <div className="my-wallet-container">
+                <SEO title={t('my_wallet')} />
             <div className="page-header">
                 <div className="header-left">
                     <h1 className="page-title">{t('my_wallet')}</h1>
@@ -166,6 +167,7 @@ const MyWallet = () => {
                 </div>
             </div>
         </div>
+        </AnimatedPage>
     );
 };
 

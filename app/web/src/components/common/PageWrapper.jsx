@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography, Space, Card } from 'antd';
+import AnimatedPage from './AnimatedPage';
 import './PageWrapper.css';
 
 const { Title, Text } = Typography;
@@ -14,25 +15,27 @@ const PageWrapper = ({
     noCard = false
 }) => {
     return (
-        <div className={`page-wrapper-container ${className}`}>
-            {(title || subtitle || extra) && (
-                <div className="page-header">
-                    <div className="header-content">
-                        {title && <h1 className="page-title">{title}</h1>}
-                        {subtitle && <div className="page-subtitle-wrapper"><span className="page-subtitle">{subtitle}</span></div>}
+        <AnimatedPage>
+            <div className={`page-wrapper-container ${className}`}>
+                {(title || subtitle || extra) && (
+                    <div className="page-header">
+                        <div className="header-content">
+                            {title && <h1 className="page-title">{title}</h1>}
+                            {subtitle && <div className="page-subtitle-wrapper"><span className="page-subtitle">{subtitle}</span></div>}
+                        </div>
+                        {extra && <div className="header-extra">{extra}</div>}
                     </div>
-                    {extra && <div className="header-extra">{extra}</div>}
-                </div>
-            )}
-
-            <div className="page-content">
-                {noCard ? children : (
-                    <Card variant="borderless" className="beauty-card" loading={loading} styles={{ body: { padding: 0 } }}>
-                        {children}
-                    </Card>
                 )}
+
+                <div className="page-content">
+                    {noCard ? children : (
+                        <Card variant="borderless" className="beauty-card" loading={loading} styles={{ body: { padding: 0 } }}>
+                            {children}
+                        </Card>
+                    )}
+                </div>
             </div>
-        </div>
+        </AnimatedPage>
     );
 };
 

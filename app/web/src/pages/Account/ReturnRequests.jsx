@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { useLanguage } from '@/store/LanguageContext';
 import { useNotification } from '@/store/NotificationContext';
-import { CButton, SEO, Pagination } from '@/components/common';
+import { CButton, SEO, Pagination, AnimatedPage } from '@/components/common';
 import { getOptimizedImageUrl } from '@/services/axiosClient';
 import orderApi from '@/features/orders/services/orderService';
 import './ReturnRequests.css';
@@ -75,8 +75,9 @@ const ReturnRequests = () => {
     };
 
     return (
-        <div className="return-requests-container">
-            <SEO title={t('return_requests')} />
+        <AnimatedPage>
+            <div className="return-requests-container">
+                <SEO title={t('return_requests')} />
             <div className="page-header">
                 <div className="header-left">
                     <h1 className="page-title">{t('return_requests')}</h1>
@@ -286,6 +287,7 @@ const ReturnRequests = () => {
                 <img alt="preview" style={{ width: '100%', borderRadius: '12px' }} src={getOptimizedImageUrl(previewImage, 1080)} />
             </Modal>
         </div>
+        </AnimatedPage>
     );
 };
 

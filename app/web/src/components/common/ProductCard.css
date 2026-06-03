@@ -277,7 +277,6 @@
     }
 }
 
-/* Quick Add to Cart Button styling */
 .card-quick-add-btn {
     position: absolute;
     bottom: 16px;
@@ -306,7 +305,6 @@
     justify-content: center;
 }
 
-/* Show on card hover */
 .product-card:hover .card-quick-add-btn {
     opacity: 1;
     transform: scale(1);
@@ -322,7 +320,6 @@
     transform: scale(0.95) !important;
 }
 
-/* Disabled state (out of stock) */
 .card-quick-add-btn.disabled {
     background: #e2e8f0;
     box-shadow: none;
@@ -339,7 +336,6 @@
     box-shadow: none;
 }
 
-/* Mobile responsiveness - always show but slightly smaller */
 @media (max-width: 768px) {
     .card-quick-add-btn {
         opacity: 1;

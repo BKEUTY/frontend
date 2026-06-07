@@ -27,10 +27,16 @@ publicAxiosClient.interceptors.response.use(
             const errorData = response?.data;
             const apiMessage = typeof errorData === 'string' ? errorData : (errorData?.message || errorData?.error || '');
             
-            let description = apiMessage || getTranslation(fallbackKey);
+            let description = '';
+            if (status >= 500) {
+                const translatedFallback = getTranslation('error_500');
+                description = (translatedFallback !== 'error_500') ? translatedFallback : 'Internal Server Error';
+            } else {
+                description = apiMessage || getTranslation(fallbackKey);
+            }
             
-            if (error.message === 'Network Error') {
-                description = getTranslation('api_error_network');
+            if (error.message === 'Network Error' || !response) {
+                description = getTranslation('api_error_network') || 'Network Error';
             }
 
             notifyError(originalRequest?.errorMessage || 'error', description);

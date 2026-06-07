@@ -1,23 +1,22 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
-
-import { useNotification } from "@/store/NotificationContext";
-import { useLanguage } from "@/store/LanguageContext";
-import { PRODUCT_IMAGE_FALLBACK } from "@/utils/helpers";
-import { usePaymentPolling } from "@/features/checkout/hooks/usePaymentPolling";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { CButton, CInput, SEO } from "@/components/common";
-import { getOptimizedImageUrl } from "@/services/axiosClient";
-import orderApi from '@/features/orders/services/orderService';
-import { useUserProfile, useUpdateProfile, useAddAddress, useDeleteAddress } from "@/features/account/hooks/useUser";
-import { useProvinces, useDistricts, useWards } from "@/features/account/hooks/useAddress";
+import { useDistricts, useProvinces, useWards } from "@/features/account/hooks/useAddress";
+import { useAddAddress, useDeleteAddress, useUpdateProfile, useUserProfile } from "@/features/account/hooks/useUser";
+import { usePaymentPolling } from "@/features/checkout/hooks/usePaymentPolling";
 import { useShippingFee, useShippingLeadTime } from "@/features/checkout/hooks/useShipping";
-import { Modal, Select } from "antd";
-import { ExclamationCircleOutlined } from "@ant-design/icons";
-import { FiTruck, FiCreditCard, FiTrash2, FiCalendar, FiTag, FiCheckCircle, FiClock } from "react-icons/fi";
+import orderApi from '@/features/orders/services/orderService';
 import { useVouchers } from "@/features/promotions/hooks/useVouchers";
+import { getOptimizedImageUrl } from "@/services/axiosClient";
 import { useAuth } from "@/store/AuthContext";
 import { useCart } from "@/store/CartContext";
+import { useLanguage } from "@/store/LanguageContext";
+import { useNotification } from "@/store/NotificationContext";
+import { PRODUCT_IMAGE_FALLBACK } from "@/utils/helpers";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
+import { Modal, Select } from "antd";
+import { FiCalendar, FiCheckCircle, FiClock, FiCreditCard, FiTag, FiTrash2, FiTruck } from "react-icons/fi";
 import "./Checkout.css";
 
 export default function Checkout() {
@@ -34,8 +33,8 @@ export default function Checkout() {
 
     const totals = selectedProducts.reduce((acc, p) => {
         const originalPrice = p.price || 0;
-        const effectivePrice = (p.effectivePrice !== undefined && p.effectivePrice !== null) ? p.effectivePrice : 
-                             ((p.promotionPrice !== undefined && p.promotionPrice !== null) ? p.promotionPrice : originalPrice);
+        const effectivePrice = (p.effectivePrice !== undefined && p.effectivePrice !== null) ? p.effectivePrice :
+            ((p.promotionPrice !== undefined && p.promotionPrice !== null) ? p.promotionPrice : originalPrice);
         return {
             original: acc.original + (originalPrice * p.quantity),
             final: acc.final + (effectivePrice * p.quantity)
@@ -67,7 +66,7 @@ export default function Checkout() {
 
     const handleDeleteAddress = (addr, idx, e) => {
         e.stopPropagation();
-        
+
         Modal.confirm({
             title: t('confirm_delete_message'),
             icon: <ExclamationCircleOutlined />,
@@ -128,7 +127,7 @@ export default function Checkout() {
 
     const calculateVoucherDiscount = () => {
         if (!selectedVoucher) return 0;
-        
+
         const subtotal = grandTotal;
         if (selectedVoucher.minOrderValue && subtotal < selectedVoucher.minOrderValue) return 0;
 
@@ -311,7 +310,7 @@ export default function Checkout() {
                                         <FiTruck className="shipping-icon" />
                                         <span>{t('shipping_fee')}: <b>{isFeeLoading ? "..." : (shippingFee ? `${shippingFee.toLocaleString("vi-VN")}đ` : "Miễn phí")}</b></span>
                                     </div>
-                                    
+
                                     <div className="shipping-fee-notice estimate-notice">
                                         <FiCalendar className="shipping-icon" />
                                         <span>Dự kiến giao: <b>{isLeadTimeLoading ? "..." : (shippingLeadTime ? new Date(shippingLeadTime).toLocaleDateString('vi-VN') : "--/--/----")}</b></span>
@@ -326,12 +325,12 @@ export default function Checkout() {
 
                         <div className="form-group full-width mt-15">
                             <label className="c-input-label">{t('note')}</label>
-                            <textarea 
-                                className="c-input-field c-textarea" 
-                                name="note" 
-                                value={formData.note} 
-                                onChange={handleInputChange} 
-                                placeholder={t('note_placeholder')} 
+                            <textarea
+                                className="c-input-field c-textarea"
+                                name="note"
+                                value={formData.note}
+                                onChange={handleInputChange}
+                                placeholder={t('note_placeholder')}
                             />
                         </div>
                     </div>
@@ -358,16 +357,16 @@ export default function Checkout() {
                         <h2 className="summary-title">{t('order_summary')} ({selectedProducts.length} {t('items')})</h2>
                         <div className="order-items-list">
                             {selectedProducts.map((p, idx) => {
-                                const effectivePrice = (p.effectivePrice !== undefined && p.effectivePrice !== null) ? p.effectivePrice : 
-                                                       ((p.promotionPrice !== undefined && p.promotionPrice !== null) ? p.promotionPrice : p.price);
+                                const effectivePrice = (p.effectivePrice !== undefined && p.effectivePrice !== null) ? p.effectivePrice :
+                                    ((p.promotionPrice !== undefined && p.promotionPrice !== null) ? p.promotionPrice : p.price);
                                 const hasDiscount = effectivePrice < p.price;
                                 return (
                                     <div key={idx} className="summary-item">
                                         <div className="summary-item-image">
-                                            <img 
-                                                src={p.image ? getOptimizedImageUrl(p.image, 256) : PRODUCT_IMAGE_FALLBACK} 
-                                                alt={p.name} 
-                                                onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }} 
+                                            <img
+                                                src={p.image ? getOptimizedImageUrl(p.image, 256) : PRODUCT_IMAGE_FALLBACK}
+                                                alt={p.name}
+                                                onError={(e) => { e.target.src = PRODUCT_IMAGE_FALLBACK; }}
                                             />
                                         </div>
                                         <div className="summary-item-info">
@@ -398,7 +397,7 @@ export default function Checkout() {
                                 <span>-{totalDiscount.toLocaleString("vi-VN")}đ</span>
                             </div>
                         )}
-                        
+
                         <div className="summary-divider"></div>
 
                         {selectedVoucher && (
@@ -430,7 +429,7 @@ export default function Checkout() {
                             <span className="total-price">{Math.max(0, finalPaymentAmount).toLocaleString("vi-VN")}đ</span>
                         </div>
 
-                        
+
                         <div className="checkout-actions">
                             <CButton type="primary" block size="large" loading={isProcessing} disabled={isProcessing} onClick={handleCheckout}>
                                 {isProcessing ? t('loading') : (paymentMethod === 'banking' ? t('continue_payment') : t('place_order'))}
@@ -459,8 +458,8 @@ export default function Checkout() {
             >
                 <div className="address-list-container">
                     {profile?.addresses?.map((addr, idx) => (
-                        <div 
-                            key={idx} 
+                        <div
+                            key={idx}
                             className={`address-item-card ${selectedAddressIndex === idx ? 'selected' : ''}`}
                             onClick={() => setSelectedAddressIndex(idx)}
                         >
@@ -471,7 +470,7 @@ export default function Checkout() {
                             </div>
 
                             {profile.addresses.length > 1 && (
-                                <button 
+                                <button
                                     className="btn-delete-addr"
                                     onClick={(e) => handleDeleteAddress(addr, idx, e)}
                                     disabled={deleteAddressMutation.isPending}
@@ -498,7 +497,7 @@ export default function Checkout() {
                             district: { districtID: newAddr.district.id, districtName: newAddr.district.name },
                             ward: { wardCode: newAddr.ward.id, wardName: newAddr.ward.name }
                         }
-                    }, { 
+                    }, {
                         onSuccess: () => {
                             setIsAddAddressModalOpen(false);
                             setIsAddressModalOpen(false);
@@ -508,7 +507,7 @@ export default function Checkout() {
                             } else {
                                 setSelectedAddressIndex(0);
                             }
-                        } 
+                        }
                     });
 
                 }}
@@ -516,9 +515,9 @@ export default function Checkout() {
                 cancelText={t('back')}
             >
                 <div className="add-addr-modal-body">
-                    <CInput 
-                        label={t('address')} 
-                        placeholder={t('address_placeholder')} 
+                    <CInput
+                        label={t('address')}
+                        placeholder={t('address_placeholder')}
                         value={newAddr.street}
                         onChange={(e) => setNewAddr(p => ({ ...p, street: e.target.value }))}
                     />
@@ -529,8 +528,8 @@ export default function Checkout() {
                                 style={{ width: '100%' }}
                                 placeholder={t('select_province')}
                                 value={newAddr.province?.id}
-                                options={provinces?.map((p, index) => ({ 
-                                    value: p.ProvinceID, 
+                                options={provinces?.map((p, index) => ({
+                                    value: p.ProvinceID,
                                     key: index,
                                     label: p.ProvinceName
                                 }))}

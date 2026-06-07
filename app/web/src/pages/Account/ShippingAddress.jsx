@@ -117,16 +117,18 @@ const ShippingAddress = () => {
             <div className="address-list-grid">
                 {profile?.addresses && profile.addresses.length > 0 ? (
                     profile.addresses.map((addr, idx) => (
-                        <div key={idx} className="address-card">
+                        <div key={idx} className={`address-card ${idx === 0 ? 'is-default' : ''}`}>
                             <div className="card-icon">
                                 <EnvironmentOutlined />
                             </div>
                             <div className="card-content">
-                                <div className="addr-street">{addr.address}</div>
+                                <div className="card-header-row">
+                                    <div className="addr-street">{addr.address}</div>
+                                    {idx === 0 && <span className="default-badge">{t('default') || "Mặc định"}</span>}
+                                </div>
                                 <div className="addr-location">
                                     {addr.ward.wardName}, {addr.district.districtName}, {addr.province.provinceName}
                                 </div>
-                                {idx === 0 && <span className="default-badge">{t('default') || "Mặc định"}</span>}
                             </div>
                             <div className="card-actions">
                                 <Tooltip title={t('delete')}>
